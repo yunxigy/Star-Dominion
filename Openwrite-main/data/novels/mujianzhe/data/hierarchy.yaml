@@ -1,0 +1,819 @@
+story_info:
+  title: 附录
+arcs:
+- id: arc_001
+  title: 【第一幕：点火】
+  sections:
+  - sec_001
+  - sec_002
+  - sec_003
+  - sec_004
+  chapters:
+  - ch_001
+  - ch_002
+  - ch_003
+  - ch_004
+  - ch_005
+  - ch_006
+  - ch_007
+  - ch_008
+  - ch_009
+  - ch_010
+  - ch_011
+  - ch_012
+  - ch_013
+  - ch_014
+  - ch_015
+  - ch_016
+  - ch_017
+  - ch_018
+  - ch_019
+  - ch_020
+  - ch_021
+  - ch_022
+  - ch_023
+  - ch_024
+  - ch_025
+  - ch_026
+  - ch_027
+  - ch_028
+  - ch_029
+  - ch_030
+  - ch_031
+  - ch_032
+  description: ch_001 - ch_032
+- id: arc_002
+  title: 【第二幕：入戏】
+  sections:
+  - sec_005
+  - sec_006
+  - sec_007
+  - sec_008
+  chapters:
+  - ch_033
+  - ch_034
+  - ch_035
+  - ch_036
+  - ch_037
+  - ch_038
+  - ch_039
+  - ch_040
+  - ch_041
+  - ch_042
+  - ch_043
+  - ch_044
+  - ch_045
+  - ch_046
+  - ch_047
+  - ch_048
+  - ch_049
+  - ch_050
+  - ch_051
+  - ch_052
+  - ch_053
+  - ch_054
+  - ch_055
+  - ch_056
+  - ch_057
+  - ch_058
+  - ch_059
+  - ch_060
+  - ch_061
+  - ch_062
+  - ch_063
+  - ch_064
+  description: ch_033 - ch_064
+- id: arc_003
+  title: 【第三幕：深陷】
+  sections:
+  - sec_009
+  - sec_010
+  - sec_011
+  - sec_012
+  chapters:
+  - ch_065
+  - ch_066
+  - ch_067
+  - ch_068
+  - ch_069
+  - ch_070
+  - ch_071
+  - ch_072
+  - ch_073
+  - ch_074
+  - ch_075
+  - ch_076
+  - ch_077
+  - ch_078
+  - ch_079
+  - ch_080
+  - ch_081
+  - ch_082
+  - ch_083
+  - ch_084
+  - ch_085
+  - ch_086
+  - ch_087
+  - ch_088
+  - ch_089
+  - ch_090
+  - ch_091
+  - ch_092
+  - ch_093
+  - ch_094
+  - ch_095
+  - ch_096
+  description: ch_065 - ch_096
+- id: arc_004
+  title: 【第四幕：余波】
+  sections:
+  - sec_013
+  chapters:
+  - ch_097
+  - ch_098
+  - ch_099
+  - ch_100
+  - ch_101
+  - ch_102
+  - ch_103
+  - ch_104
+  description: ch_097 - ch_104
+- id: arc_005
+  title: 主角设定
+  sections:
+  - sec_014
+  - sec_015
+  - sec_016
+  - sec_017
+  - sec_018
+  chapters: []
+- id: arc_006
+  title: 回响「观众席就位」
+  sections:
+  - sec_019
+  - sec_020
+  - sec_021
+  chapters: []
+- id: arc_007
+  title: 主要角色
+  sections:
+  - sec_022
+  - sec_023
+  chapters: []
+sections:
+- id: sec_001
+  title: 第1节：灵界异动
+  arc_id: arc_001
+  chapters:
+  - ch_001
+  - ch_002
+  - ch_003
+  - ch_004
+  - ch_005
+  - ch_006
+  - ch_007
+  - ch_008
+  summary: '**核心事件**：
+
+    沈烬在港口码头区"捡垃圾"时遭遇史核回响失控引发的灵界异动，钥匙手链激活，点燃灵性之火，被归墟吸纳。
+
+    **关键内容**：
+
+    **关键设定**：
+
+    **本节悬念**：谁引爆了回响？手链与飞升时代的关联？
+
+    ---'
+- id: sec_002
+  title: 第2节：准备期
+  arc_id: arc_001
+  chapters:
+  - ch_009
+  - ch_010
+  - ch_011
+  - ch_012
+  - ch_013
+  - ch_014
+  - ch_015
+  - ch_016
+  summary: '**核心事件**：
+
+    入职后的准备期，沈烬接受基础训练，同时继续经营工坊，通过黑市筹备装备，为首次进入回响做准备。
+
+    **关键内容**：
+
+    **关键设定**：
+
+    **本节悬念**：白续为何对手链感兴趣？黑市线人提到的"引爆者"是谁？沈烬的准备是否充分？
+
+    ---'
+- id: sec_003
+  title: 第3节：队友集结
+  arc_id: arc_001
+  chapters:
+  - ch_017
+  - ch_018
+  - ch_019
+  - ch_020
+  - ch_021
+  - ch_022
+  - ch_023
+  - ch_024
+  summary: '**核心事件**：
+
+    沈烬完成培训，被分配首次外勤任务，与队友正式组队，在任务前建立初步默契。
+
+    **关键内容**：
+
+    **关键设定**：
+
+    **本节悬念**：这个任务会是什么？队友之间能否配合默契？黑市提到的"高价收购者"是谁？
+
+    ---'
+- id: sec_004
+  title: 第4节：回响初啼
+  arc_id: arc_001
+  chapters:
+  - ch_025
+  - ch_026
+  - ch_027
+  - ch_028
+  - ch_029
+  - ch_030
+  - ch_031
+  - ch_032
+  summary: '**核心事件**：
+
+    沈烬与队友首次进入「观众席就位」回响，各自获得不同身份，分散在回响中。沈烬以"赴约而来的侦探"身份调查异常，遇见委托调查的伶舟。
+
+    **关键内容**：
+
+    **关键设定**：
+
+    **本节悬念**：人格覆盖的机制是什么？伶舟何时能真正信任沈烬？
+
+    ---'
+- id: sec_005
+  title: 第5节：万戏遗产
+  arc_id: arc_002
+  chapters:
+  - ch_033
+  - ch_034
+  - ch_035
+  - ch_036
+  - ch_037
+  - ch_038
+  - ch_039
+  - ch_040
+  summary: '**核心事件**：
+
+    沈烬整合回响中获得的信息，发现港口地下遗迹与回响的物理连接，队友钩子逐步显露。
+
+    **关键内容**：
+
+    **关键设定**：
+
+    **本节悬念**：白续在遗迹中寻找什么？燕回为何对回响如此熟悉？
+
+    ---'
+- id: sec_006
+  title: 第6节：导览迷局
+  arc_id: arc_002
+  chapters:
+  - ch_041
+  - ch_042
+  - ch_043
+  - ch_044
+  - ch_045
+  - ch_046
+  - ch_047
+  - ch_048
+  summary: '**核心事件**：
+
+    第二次进入回响，深入仪式核心区，与伶舟建立合作关系，发现"英雄模板覆盖"的真相。
+
+    **关键内容**：
+
+    **关键设定**：
+
+    **本节悬念**：仪式的核心在哪里？如何破坏整个仪式？
+
+    ---'
+- id: sec_007
+  title: 第7节：承认机制
+  arc_id: arc_002
+  chapters:
+  - ch_049
+  - ch_050
+  - ch_051
+  - ch_052
+  - ch_053
+  - ch_054
+  - ch_055
+  - ch_056
+  summary: '**核心事件**：
+
+    理解观众承认机制核心，发现白续的异常活动，反派动机浮现。
+
+    **关键内容**：
+
+    **本节悬念**："人格覆盖"是什么？白续想"复活"的到底是谁？
+
+    ---'
+- id: sec_008
+  title: 第8节：暗流涌动
+  arc_id: arc_002
+  chapters:
+  - ch_057
+  - ch_058
+  - ch_059
+  - ch_060
+  - ch_061
+  - ch_062
+  - ch_063
+  - ch_064
+  summary: '**核心事件**：
+
+    调查深入，发现白续完整计划，老刑旧案钩子浮现。
+
+    **关键内容**：
+
+    **本节悬念**：老刑旧案的完整真相？"种子"已经种下了多少？
+
+    ---'
+- id: sec_009
+  title: 第9节：角色侵蚀
+  arc_id: arc_003
+  chapters:
+  - ch_065
+  - ch_066
+  - ch_067
+  - ch_068
+  - ch_069
+  - ch_070
+  - ch_071
+  - ch_072
+  summary: '**核心事件**：
+
+    第三次进入回响，找到叙事深渊，解开谜语第三句，首次遭遇白续投影，理解"观众承认机制"的真相。
+
+    **关键内容**：
+
+    **本节悬念**：如何改写仪式核心？现实中白续的仪式进展如何？
+
+    ---'
+- id: sec_010
+  title: 第10节：双线交织
+  arc_id: arc_003
+  chapters:
+  - ch_073
+  - ch_074
+  - ch_075
+  - ch_076
+  - ch_077
+  - ch_078
+  - ch_079
+  - ch_080
+  summary: '**核心事件**：
+
+    双线调查深入，整合所有情报，制定最终计划。
+
+    **关键内容**：
+
+    **本节悬念**：双线行动能否成功？
+
+    ---'
+- id: sec_011
+  title: 第11节：观众席就位
+  arc_id: arc_003
+  chapters:
+  - ch_081
+  - ch_082
+  - ch_083
+  - ch_084
+  - ch_085
+  - ch_086
+  - ch_087
+  - ch_088
+  summary: '**核心事件**：
+
+    沈烬第四次进入「观众席就位」回响，通过追查老邢旧案意外获取的关键线索，破解仪式核心，制作假面，获得【出戏之隙】印。
+
+    **关键内容（战前）**：
+
+    **关键内容（战中）**：
+
+    **关键内容（战后）**：
+
+    **关键设定**：
+
+    **本节悬念**：
+
+    ---'
+- id: sec_012
+  title: 第12节：出戏之时
+  arc_id: arc_003
+  chapters:
+  - ch_089
+  - ch_090
+  - ch_091
+  - ch_092
+  - ch_093
+  - ch_094
+  - ch_095
+  - ch_096
+  summary: '**核心事件**：
+
+    双线决战。沈烬回归现实，使用【出戏之隙】印让白续"出戏"，打断其被熵灾污染和独角蛊惑的状态，白续醒悟后牺牲自己阻止仪式，独角降临一半，沈烬用假面临时爆种击退独角。
+
+    **关键内容**：
+
+    **本节悬念**：续存派高层是谁？伶舟的"自己的故事"会是什么？
+
+    ---'
+- id: sec_013
+  title: 第13节：现实余波
+  arc_id: arc_004
+  chapters:
+  - ch_097
+  - ch_098
+  - ch_099
+  - ch_100
+  - ch_101
+  - ch_102
+  - ch_103
+  - ch_104
+  summary: '**核心事件**：
+
+    战后整理，团队羁绊加深，为第二卷埋下钩子。
+
+    最后一次进入回响，沈烬回去收尾，并且和伶舟告别，伶舟指出，他实际应该不是一个侦探，真实一个神秘的男人，沈烬想解释，但是伶舟把手指放到他唇上，让主角不用解释，然后和他说接下来的计划，然后正式告别，希望之后能再次见面。
+
+    **关键内容**：
+
+    ---'
+- id: sec_014
+  title: 基本信息
+  arc_id: arc_005
+  chapters: []
+- id: sec_015
+  title: 穿越前
+  arc_id: arc_005
+  chapters: []
+- id: sec_016
+  title: 穿越后三年
+  arc_id: arc_005
+  chapters: []
+- id: sec_017
+  title: 点火期能力（四名位基础）
+  arc_id: arc_005
+  chapters: []
+  summary: '| 名位 | 技能 | 类型 | 效果 |
+
+    |------|------|------|------|
+
+    | 叙演位 | 共感之瞳 | 感知 | 感知情绪、判断说谎、察觉隐藏意图 |
+
+    | 命炉位 | 燃命之躯 | 爆发 | 30秒内力量+50%、速度+30%，结束后虚弱5分钟 |
+
+    | 构装位 | 结构视界 | 感知 | 看见内部结构、灵性回路、弱点标记 |
+
+    | 契律位 | 律令之锋 | 附魔 | 为武器附加规则穿透：3分钟或5次攻击 |'
+- id: sec_018
+  title: 系统"统子"
+  arc_id: arc_005
+  chapters: []
+- id: sec_019
+  title: 背景
+  arc_id: arc_006
+  chapters: []
+- id: sec_020
+  title: 内部结构
+  arc_id: arc_006
+  chapters: []
+- id: sec_021
+  title: 系统任务
+  arc_id: arc_006
+  chapters: []
+  summary: '**谜语**："找到没有演员的舞台，阅读未被演出的剧本，在观众席就位之前，你是否会为之鼓掌？"'
+- id: sec_022
+  title: 现实线
+  arc_id: arc_007
+  chapters: []
+- id: sec_023
+  title: 回响线
+  arc_id: arc_007
+  chapters: []
+chapters:
+- id: ch_001
+  title: 第1章
+  section_id: sec_001
+- id: ch_002
+  title: 第2章
+  section_id: sec_001
+- id: ch_003
+  title: 第3章
+  section_id: sec_001
+- id: ch_004
+  title: 第4章
+  section_id: sec_001
+- id: ch_005
+  title: 第5章
+  section_id: sec_001
+- id: ch_006
+  title: 第6章
+  section_id: sec_001
+- id: ch_007
+  title: 第7章
+  section_id: sec_001
+- id: ch_008
+  title: 第8章
+  section_id: sec_001
+- id: ch_009
+  title: 第9章
+  section_id: sec_002
+- id: ch_010
+  title: 第10章
+  section_id: sec_002
+- id: ch_011
+  title: 第11章
+  section_id: sec_002
+- id: ch_012
+  title: 第12章
+  section_id: sec_002
+- id: ch_013
+  title: 第13章
+  section_id: sec_002
+- id: ch_014
+  title: 第14章
+  section_id: sec_002
+- id: ch_015
+  title: 第15章
+  section_id: sec_002
+- id: ch_016
+  title: 第16章
+  section_id: sec_002
+- id: ch_017
+  title: 第17章
+  section_id: sec_003
+- id: ch_018
+  title: 第18章
+  section_id: sec_003
+- id: ch_019
+  title: 第19章
+  section_id: sec_003
+- id: ch_020
+  title: 第20章
+  section_id: sec_003
+- id: ch_021
+  title: 第21章
+  section_id: sec_003
+- id: ch_022
+  title: 第22章
+  section_id: sec_003
+- id: ch_023
+  title: 第23章
+  section_id: sec_003
+- id: ch_024
+  title: 第24章
+  section_id: sec_003
+- id: ch_025
+  title: 第25章
+  section_id: sec_004
+- id: ch_026
+  title: 第26章
+  section_id: sec_004
+- id: ch_027
+  title: 第27章
+  section_id: sec_004
+- id: ch_028
+  title: 第28章
+  section_id: sec_004
+- id: ch_029
+  title: 第29章
+  section_id: sec_004
+- id: ch_030
+  title: 第30章
+  section_id: sec_004
+- id: ch_031
+  title: 第31章
+  section_id: sec_004
+- id: ch_032
+  title: 第32章
+  section_id: sec_004
+- id: ch_033
+  title: 第33章
+  section_id: sec_005
+- id: ch_034
+  title: 第34章
+  section_id: sec_005
+- id: ch_035
+  title: 第35章
+  section_id: sec_005
+- id: ch_036
+  title: 第36章
+  section_id: sec_005
+- id: ch_037
+  title: 第37章
+  section_id: sec_005
+- id: ch_038
+  title: 第38章
+  section_id: sec_005
+- id: ch_039
+  title: 第39章
+  section_id: sec_005
+- id: ch_040
+  title: 第40章
+  section_id: sec_005
+- id: ch_041
+  title: 第41章
+  section_id: sec_006
+- id: ch_042
+  title: 第42章
+  section_id: sec_006
+- id: ch_043
+  title: 第43章
+  section_id: sec_006
+- id: ch_044
+  title: 第44章
+  section_id: sec_006
+- id: ch_045
+  title: 第45章
+  section_id: sec_006
+- id: ch_046
+  title: 第46章
+  section_id: sec_006
+- id: ch_047
+  title: 第47章
+  section_id: sec_006
+- id: ch_048
+  title: 第48章
+  section_id: sec_006
+- id: ch_049
+  title: 第49章
+  section_id: sec_007
+- id: ch_050
+  title: 第50章
+  section_id: sec_007
+- id: ch_051
+  title: 第51章
+  section_id: sec_007
+- id: ch_052
+  title: 第52章
+  section_id: sec_007
+- id: ch_053
+  title: 第53章
+  section_id: sec_007
+- id: ch_054
+  title: 第54章
+  section_id: sec_007
+- id: ch_055
+  title: 第55章
+  section_id: sec_007
+- id: ch_056
+  title: 第56章
+  section_id: sec_007
+- id: ch_057
+  title: 第57章
+  section_id: sec_008
+- id: ch_058
+  title: 第58章
+  section_id: sec_008
+- id: ch_059
+  title: 第59章
+  section_id: sec_008
+- id: ch_060
+  title: 第60章
+  section_id: sec_008
+- id: ch_061
+  title: 第61章
+  section_id: sec_008
+- id: ch_062
+  title: 第62章
+  section_id: sec_008
+- id: ch_063
+  title: 第63章
+  section_id: sec_008
+- id: ch_064
+  title: 第64章
+  section_id: sec_008
+- id: ch_065
+  title: 第65章
+  section_id: sec_009
+- id: ch_066
+  title: 第66章
+  section_id: sec_009
+- id: ch_067
+  title: 第67章
+  section_id: sec_009
+- id: ch_068
+  title: 第68章
+  section_id: sec_009
+- id: ch_069
+  title: 第69章
+  section_id: sec_009
+- id: ch_070
+  title: 第70章
+  section_id: sec_009
+- id: ch_071
+  title: 第71章
+  section_id: sec_009
+- id: ch_072
+  title: 第72章
+  section_id: sec_009
+- id: ch_073
+  title: 第73章
+  section_id: sec_010
+- id: ch_074
+  title: 第74章
+  section_id: sec_010
+- id: ch_075
+  title: 第75章
+  section_id: sec_010
+- id: ch_076
+  title: 第76章
+  section_id: sec_010
+- id: ch_077
+  title: 第77章
+  section_id: sec_010
+- id: ch_078
+  title: 第78章
+  section_id: sec_010
+- id: ch_079
+  title: 第79章
+  section_id: sec_010
+- id: ch_080
+  title: 第80章
+  section_id: sec_010
+- id: ch_081
+  title: 第81章
+  section_id: sec_011
+- id: ch_082
+  title: 第82章
+  section_id: sec_011
+- id: ch_083
+  title: 第83章
+  section_id: sec_011
+- id: ch_084
+  title: 第84章
+  section_id: sec_011
+- id: ch_085
+  title: 第85章
+  section_id: sec_011
+- id: ch_086
+  title: 第86章
+  section_id: sec_011
+- id: ch_087
+  title: 第87章
+  section_id: sec_011
+- id: ch_088
+  title: 第88章
+  section_id: sec_011
+- id: ch_089
+  title: 第89章
+  section_id: sec_012
+- id: ch_090
+  title: 第90章
+  section_id: sec_012
+- id: ch_091
+  title: 第91章
+  section_id: sec_012
+- id: ch_092
+  title: 第92章
+  section_id: sec_012
+- id: ch_093
+  title: 第93章
+  section_id: sec_012
+- id: ch_094
+  title: 第94章
+  section_id: sec_012
+- id: ch_095
+  title: 第95章
+  section_id: sec_012
+- id: ch_096
+  title: 第96章
+  section_id: sec_012
+- id: ch_097
+  title: 第97章
+  section_id: sec_013
+- id: ch_098
+  title: 第98章
+  section_id: sec_013
+- id: ch_099
+  title: 第99章
+  section_id: sec_013
+- id: ch_100
+  title: 第100章
+  section_id: sec_013
+- id: ch_101
+  title: 第101章
+  section_id: sec_013
+- id: ch_102
+  title: 第102章
+  section_id: sec_013
+- id: ch_103
+  title: 第103章
+  section_id: sec_013
+- id: ch_104
+  title: 第104章
+  section_id: sec_013

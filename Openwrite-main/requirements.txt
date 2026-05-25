@@ -1,0 +1,13 @@
+# OpenWrite — 运行时依赖
+pydantic>=2.0,<3.0
+pyyaml>=6.0
+openai>=1.0
+anthropic>=0.18
+prompt_toolkit>=3.0
+
+# Web 服务
+fastapi>=0.115
+uvicorn[standard]>=0.30
+
+# .env 支持 (可选但推荐)
+python-dotenv>=1.0

@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell($proc = Start-Process -FilePath \"e:\\\\AI\\\\fanyi\\\\ScreenTranslator\\\\bin\\\\Debug\\\\net8.0-windows\\\\win-x64\\\\ScreenTranslator.exe\" -PassThru; Start-Sleep -Seconds 3; if \\(!$proc.HasExited\\) { Write-Output \"App is running \\(PID: $\\($proc.Id\\)\\)\" } else { Write-Output \"App exited with code: $\\($proc.ExitCode\\)\" })",
+      "PowerShell($proc = Get-Process ScreenTranslator -ErrorAction SilentlyContinue; if \\($proc\\) { Write-Output \"进程运行中 PID=$\\($proc.Id\\)\" } else { Write-Output \"进程未运行\" })"
+    ]
+  }
+}

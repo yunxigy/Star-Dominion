@@ -1,0 +1,27 @@
+# 小说项目配置示例
+# 文件路径: novel_config.yaml（项目根目录）
+#
+# 此文件由 init_project.py 自动生成，也可以手动创建/编辑。
+# ContextBuilder 和 WorkflowScheduler 等工具读取此配置。
+
+# 小说 ID（对应 data/novels/{novel_id}/ 目录名）
+novel_id: my_novel
+
+# 提取风格源 ID（对应 data/novels/{novel_id}/data/sources/{style_id}/）
+# 留空则仅使用通用 craft + 本书风格指纹
+style_id: ""
+
+# 当前写作进度（由工具自动更新）
+current_arc: arc_001
+current_chapter: ch_001
+
+# --- 以下为可选配置 ---
+
+# 目标提取风格源（可选，用于风格合成）
+# 示例: style_id: office_excerpt
+
+# 章节默认字数（可选）
+# default_word_count: 4000
+
+# Token 预算上限（可选，默认 24000）
+# max_tokens: 24000

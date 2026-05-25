@@ -1,0 +1,6 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!-- 全局样式（主要用于 OverlayWindow，实际渲染由 DrawingVisual 完成） -->
+
+</ResourceDictionary>
