@@ -3,10 +3,10 @@ import * as pdfjsLib from 'pdfjs-dist';
 import { useFileUpload, UploadZone, Btn, TextArea, copyToClipboard } from '../shared';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
 
 const ExtractPdfText: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, triggerUpload, inputProps } = useFileUpload('.pdf');
+  const { files, triggerUpload, inputProps, handleFiles } = useFileUpload('.pdf');
   const [text, setText] = useState('');
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
@@ -64,7 +64,7 @@ const ExtractPdfText: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       <p className="text-slate-400 text-sm">上传PDF文件，提取文字内容。</p>
       <input {...inputProps} />
       {!file ? (
-        <UploadZone onUpload={triggerUpload} accept=".pdf" label="点击上传PDF文件" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept=".pdf" label="点击上传PDF文件" />
       ) : (
         <div className="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-2">
           <span className="text-sm text-slate-200">{file.name}</span>

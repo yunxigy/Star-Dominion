@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react';
 
 // ── 通用文件上传 Hook ──────────────────────────────────────
 
@@ -28,15 +28,16 @@ export function useFileUpload(accept: string = '*') {
 
 export const UploadZone: React.FC<{
   onUpload: () => void;
+  onDropFiles?: (files: FileList) => void;
   accept?: string;
   label?: string;
   sublabel?: string;
-}> = ({ onUpload, accept, label = '拖拽或点击上传文件', sublabel }) => (
+}> = ({ onUpload, onDropFiles, accept, label = '拖拽或点击上传文件', sublabel }) => (
   <div
     className="border-2 border-dashed border-slate-700 rounded-xl p-10 text-center cursor-pointer hover:border-violet-500/50 transition-colors"
     onClick={onUpload}
     onDragOver={e => { e.preventDefault(); e.stopPropagation(); }}
-    onDrop={e => { e.preventDefault(); e.stopPropagation(); }}
+    onDrop={e => { e.preventDefault(); e.stopPropagation(); if (e.dataTransfer.files.length && onDropFiles) onDropFiles(e.dataTransfer.files); }}
   >
     <div className="text-slate-600 mb-2">
       <svg className="w-10 h-10 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -154,4 +155,50 @@ export function downloadDataUrl(dataUrl: string, filename: string) {
 
 export function copyToClipboard(text: string) {
   navigator.clipboard.writeText(text);
+}
+
+// ── Object URL 内存安全工具 ──────────────────────────────
+
+/** 自动管理 Object URL 生命周期：创建、替换、卸载时自动 revoke */
+export function useObjectUrl(blob: Blob | null): string {
+  const [url, setUrl] = useState('');
+  const prevRef = useRef('');
+  useEffect(() => {
+    if (!blob) {
+      if (prevRef.current) URL.revokeObjectURL(prevRef.current);
+      prevRef.current = '';
+      setUrl('');
+      return;
+    }
+    const next = URL.createObjectURL(blob);
+    if (prevRef.current) URL.revokeObjectURL(prevRef.current);
+    prevRef.current = next;
+    setUrl(next);
+    return () => { URL.revokeObjectURL(next); };
+  }, [blob]);
+  return url;
+}
+
+/** 从 File 创建 memoized Object URL，组件卸载时自动 revoke */
+export function useFileObjectUrl(file: File | undefined): string {
+  const url = useMemo(() => file ? URL.createObjectURL(file) : '', [file]);
+  useEffect(() => {
+    return () => { if (url) URL.revokeObjectURL(url); };
+  }, [url]);
+  return url;
+}
+
+/** 加载图片后自动 revoke 中间 Object URL */
+export async function loadImageFromBlob(blob: Blob): Promise<HTMLImageElement> {
+  const url = URL.createObjectURL(blob);
+  try {
+    return await loadImage(url);
+  } finally {
+    URL.revokeObjectURL(url);
+  }
+}
+
+/** 批量 revoke Object URL 数组（用于 unmount cleanup） */
+export function revokeUrls(urls: string[]) {
+  urls.forEach(u => { if (u) URL.revokeObjectURL(u); });
 }

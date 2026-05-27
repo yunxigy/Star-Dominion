@@ -1,13 +1,15 @@
-import React, { useState, useRef } from 'react';
-import { useFileUpload, UploadZone, Btn, loadImage, canvasToBlob, downloadBlob } from '../shared';
+import React, { useState, useRef, useEffect } from 'react';
+import { useFileUpload, UploadZone, Btn, loadImage, loadImageFromBlob, canvasToBlob, downloadBlob, revokeUrls } from '../shared';
 
 const CompressImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles } = useFileUpload('image/*');
+  const { files, inputProps, triggerUpload, clearFiles, handleFiles } = useFileUpload('image/*');
   const [quality, setQuality] = useState(0.6);
   const [originalSize, setOriginalSize] = useState(0);
   const [compressedSize, setCompressedSize] = useState(0);
   const [originalUrl, setOriginalUrl] = useState('');
   const [compressedUrl, setCompressedUrl] = useState('');
+
+  useEffect(() => () => revokeUrls([originalUrl, compressedUrl]), [originalUrl, compressedUrl]);
   const [processing, setProcessing] = useState(false);
 
   const handleCompress = async () => {
@@ -36,7 +38,7 @@ const CompressImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   const handleDownload = async () => {
     if (!files[0]) return;
-    const img = await loadImage(URL.createObjectURL(files[0]));
+    const img = await loadImageFromBlob(files[0]);
     const canvas = document.createElement('canvas');
     canvas.width = img.width;
     canvas.height = img.height;
@@ -57,7 +59,7 @@ const CompressImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     <div className="space-y-3">
       <input {...inputProps} />
       {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} accept="image/*" label="上传图片" sublabel="支持 JPG/PNG/WebP" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept="image/*" label="上传图片" sublabel="支持 JPG/PNG/WebP" />
       ) : (
         <>
           <div className="flex items-center gap-2 text-sm text-slate-300">

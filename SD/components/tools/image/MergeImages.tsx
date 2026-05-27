@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
-import { useFileUpload, UploadZone, Btn, loadImage, canvasToBlob, downloadBlob } from '../shared';
+import React, { useEffect, useState } from 'react';
+import { useFileUpload, UploadZone, Btn, loadImage, loadImageFromBlob, canvasToBlob, downloadBlob , revokeUrls } from '../shared';
 
 type Direction = 'horizontal' | 'vertical';
 
 const MergeImages: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles } = useFileUpload('image/*');
+  const { files, inputProps, triggerUpload, clearFiles, handleFiles } = useFileUpload('image/*');
   const [direction, setDirection] = useState<Direction>('horizontal');
   const [gap, setGap] = useState(0);
   const [preview, setPreview] = useState('');
@@ -14,7 +14,7 @@ const MergeImages: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     if (files.length < 2) return;
     setProcessing(true);
     try {
-      const images = await Promise.all(files.map(f => loadImage(URL.createObjectURL(f))));
+      const images = await Promise.all(files.map(f => loadImageFromBlob(f)));
 
       let totalW = 0, totalH = 0;
       if (direction === 'horizontal') {
@@ -59,7 +59,7 @@ const MergeImages: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     <div className="space-y-3">
       <input {...inputProps} />
       {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} accept="image/*" label="上传多张图片" sublabel="至少需要2张图片" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept="image/*" label="上传多张图片" sublabel="至少需要2张图片" />
       ) : (
         <>
           <div className="space-y-1">

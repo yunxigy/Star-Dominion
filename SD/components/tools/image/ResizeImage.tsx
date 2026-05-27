@@ -1,8 +1,8 @@
-import React, { useState, useRef } from 'react';
-import { useFileUpload, UploadZone, Btn, loadImage, canvasToBlob, downloadBlob } from '../shared';
+import React, { useEffect, useState, useRef } from 'react';
+import { useFileUpload, UploadZone, Btn, loadImage, loadImageFromBlob, canvasToBlob, downloadBlob , revokeUrls } from '../shared';
 
 const ResizeImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles } = useFileUpload('image/*');
+  const { files, inputProps, triggerUpload, clearFiles, handleFiles } = useFileUpload('image/*');
   const [width, setWidth] = useState('');
   const [height, setHeight] = useState('');
   const [lockRatio, setLockRatio] = useState(true);
@@ -14,7 +14,7 @@ const ResizeImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const handleFileLoad = async () => {
     if (!files[0]) return;
     try {
-      const img = await loadImage(URL.createObjectURL(files[0]));
+      const img = await loadImageFromBlob(files[0]);
       setNaturalW(img.width);
       setNaturalH(img.height);
       setWidth(String(img.width));
@@ -42,7 +42,7 @@ const ResizeImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     if (!files[0] || !width || !height) return;
     setProcessing(true);
     try {
-      const img = await loadImage(URL.createObjectURL(files[0]));
+      const img = await loadImageFromBlob(files[0]);
       const canvas = document.createElement('canvas');
       canvas.width = Number(width);
       canvas.height = Number(height);
@@ -59,7 +59,7 @@ const ResizeImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   const handleDownload = async () => {
     if (!files[0] || !width || !height) return;
-    const img = await loadImage(URL.createObjectURL(files[0]));
+    const img = await loadImageFromBlob(files[0]);
     const canvas = document.createElement('canvas');
     canvas.width = Number(width);
     canvas.height = Number(height);
@@ -74,7 +74,7 @@ const ResizeImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     <div className="space-y-3">
       <input {...inputProps} />
       {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} accept="image/*" label="上传图片" sublabel="支持 JPG/PNG/WebP" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept="image/*" label="上传图片" sublabel="支持 JPG/PNG/WebP" />
       ) : (
         <>
           <div className="flex items-center gap-2 text-sm text-slate-300">

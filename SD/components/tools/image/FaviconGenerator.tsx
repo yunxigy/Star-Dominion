@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useFileUpload, UploadZone, Btn, loadImage, canvasToBlob, downloadBlob } from '../shared';
+import React, { useState, useEffect } from 'react';
+import { useFileUpload, UploadZone, Btn, loadImage, loadImageFromBlob, canvasToBlob, downloadBlob, revokeUrls } from '../shared';
 
 interface FaviconSize {
   size: number;
@@ -17,10 +17,12 @@ const FAVICON_SIZES: FaviconSize[] = [
 ];
 
 const FaviconGenerator: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles } = useFileUpload('image/*');
+  const { files, inputProps, triggerUpload, clearFiles, handleFiles } = useFileUpload('image/*');
   const [selectedSizes, setSelectedSizes] = useState<Set<number>>(new Set([16, 32, 64]));
   const [previews, setPreviews] = useState<Map<number, string>>(new Map());
   const [processing, setProcessing] = useState(false);
+
+  useEffect(() => () => revokeUrls([...previews.values()]), [previews]);
 
   const toggleSize = (size: number) => {
     setSelectedSizes(prev => {
@@ -35,7 +37,7 @@ const FaviconGenerator: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     if (!files[0] || selectedSizes.size === 0) return;
     setProcessing(true);
     try {
-      const img = await loadImage(URL.createObjectURL(files[0]));
+      const img = await loadImageFromBlob(files[0]);
       const newPreviews = new Map<number, string>();
 
       for (const size of selectedSizes) {
@@ -75,7 +77,7 @@ const FaviconGenerator: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     <div className="space-y-3">
       <input {...inputProps} />
       {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} accept="image/*" label="上传图片" sublabel="建议使用正方形图片" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept="image/*" label="上传图片" sublabel="建议使用正方形图片" />
       ) : (
         <>
           <div className="flex items-center gap-2 text-sm text-slate-300">

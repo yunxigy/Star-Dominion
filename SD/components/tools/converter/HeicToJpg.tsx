@@ -13,7 +13,7 @@ interface ConvertedFile {
 }
 
 const HeicToJpg: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles, removeFile } = useFileUpload('.heic,.heif');
+  const { files, inputProps, triggerUpload, clearFiles, removeFile, handleFiles } = useFileUpload('.heic,.heif');
   const [quality, setQuality] = useState(80);
   const [results, setResults] = useState<ConvertedFile[]>([]);
   const [processing, setProcessing] = useState(false);
@@ -64,7 +64,7 @@ const HeicToJpg: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     <div className="space-y-3">
       <input {...inputProps} />
       {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} accept=".heic,.heif" label="上传 HEIC 图片" sublabel="支持 .heic / .heif 格式 (iPhone 照片)" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept=".heic,.heif" label="上传 HEIC 图片" sublabel="支持 .heic / .heif 格式 (iPhone 照片)" />
       ) : (
         <>
           <div className="space-y-1">

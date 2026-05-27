@@ -145,22 +145,10 @@ export const PROJECTS_DATA: Project[] = [
     icon: 'Layers'
   },
   {
-    id: 'p7',
-    title: 'PDF转换',
-    description: 'PDF与图片格式互转',
-    icon: 'FileText'
-  },
-  {
     id: 'p8',
     title: '鼠标反应测试',
     description: '测试你的反应速度',
     icon: 'MousePointerClick'
-  },
-  {
-    id: 'p9',
-    title: '图片格式转换',
-    description: 'PNG/JPG/WebP 格式互转',
-    icon: 'Image'
   }
 ];
 

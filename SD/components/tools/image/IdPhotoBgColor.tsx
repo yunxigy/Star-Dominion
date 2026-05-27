@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { useFileUpload, UploadZone, Btn, loadImage, canvasToBlob, downloadBlob } from '../shared';
+import { useFileUpload, UploadZone, Btn, loadImage, loadImageFromBlob, canvasToBlob, downloadBlob, useFileObjectUrl } from '../shared';
 
 type BgColor = 'blue' | 'red' | 'white';
 
@@ -61,7 +61,8 @@ const isBackground = (r: number, g: number, b: number, targetBg: BgColor, sensit
 };
 
 const IdPhotoBgColor: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles } = useFileUpload('image/*');
+  const { files, inputProps, triggerUpload, clearFiles, handleFiles } = useFileUpload('image/*');
+  const fileUrl = useFileObjectUrl(files[0]);
   const [targetColor, setTargetColor] = useState<BgColor>('blue');
   const [sensitivity, setSensitivity] = useState(50);
   const [preview, setPreview] = useState('');
@@ -71,7 +72,7 @@ const IdPhotoBgColor: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     if (!files[0]) return;
     setProcessing(true);
     try {
-      const img = await loadImage(URL.createObjectURL(files[0]));
+      const img = await loadImageFromBlob(files[0]);
       const canvas = document.createElement('canvas');
       canvas.width = img.width;
       canvas.height = img.height;
@@ -125,7 +126,7 @@ const IdPhotoBgColor: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   const handleDownload = async () => {
     if (!files[0]) return;
-    const img = await loadImage(URL.createObjectURL(files[0]));
+    const img = await loadImageFromBlob(files[0]);
     const canvas = document.createElement('canvas');
     canvas.width = img.width;
     canvas.height = img.height;
@@ -165,7 +166,7 @@ const IdPhotoBgColor: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     <div className="space-y-3">
       <input {...inputProps} />
       {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} accept="image/*" label="上传证件照" sublabel="上传带背景色的证件照" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept="image/*" label="上传证件照" sublabel="上传带背景色的证件照" />
       ) : (
         <>
           <div className="flex items-center gap-2 text-sm text-slate-300">
@@ -212,7 +213,7 @@ const IdPhotoBgColor: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <p className="text-xs text-slate-500 mb-1">原图</p>
-                  <img src={URL.createObjectURL(files[0])} className="rounded-lg max-h-48 w-full object-contain bg-slate-800" />
+                  <img src={fileUrl} className="rounded-lg max-h-48 w-full object-contain bg-slate-800" />
                 </div>
                 <div>
                   <p className="text-xs text-slate-500 mb-1">换底后</p>

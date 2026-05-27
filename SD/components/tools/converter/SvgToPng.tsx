@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useFileUpload, UploadZone, Btn, canvasToBlob, downloadBlob } from '../shared';
+import React, { useState, useEffect } from 'react';
+import { useFileUpload, UploadZone, Btn, canvasToBlob, downloadBlob, revokeUrls } from '../shared';
 
 interface ConvertedFile {
   name: string;
@@ -11,12 +11,14 @@ interface ConvertedFile {
 }
 
 const SvgToPng: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles, removeFile } = useFileUpload('image/svg+xml');
+  const { files, inputProps, triggerUpload, clearFiles, removeFile, handleFiles } = useFileUpload('image/svg+xml');
   const [width, setWidth] = useState(512);
   const [height, setHeight] = useState(512);
   const [keepRatio, setKeepRatio] = useState(true);
   const [results, setResults] = useState<ConvertedFile[]>([]);
   const [processing, setProcessing] = useState(false);
+
+  useEffect(() => () => { results.forEach(r => { if (r.originalUrl) URL.revokeObjectURL(r.originalUrl); if (r.convertedUrl) URL.revokeObjectURL(r.convertedUrl); }); }, [results]);
   const [error, setError] = useState('');
 
   const formatSize = (bytes: number) => {
@@ -97,7 +99,7 @@ const SvgToPng: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     <div className="space-y-3">
       <input {...inputProps} />
       {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} accept="image/svg+xml,.svg" label="上传 SVG 文件" sublabel="支持 .svg 矢量图格式" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept="image/svg+xml,.svg" label="上传 SVG 文件" sublabel="支持 .svg 矢量图格式" />
       ) : (
         <>
           <div className="space-y-1">

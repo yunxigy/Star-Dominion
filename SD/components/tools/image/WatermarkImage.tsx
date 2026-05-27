@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useFileUpload, UploadZone, Btn, loadImage, canvasToBlob, downloadBlob } from '../shared';
+import React, { useEffect, useState } from 'react';
+import { useFileUpload, UploadZone, Btn, loadImage, loadImageFromBlob, canvasToBlob, downloadBlob , revokeUrls } from '../shared';
 
 type Position = 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right' | 'center';
 
@@ -12,7 +12,7 @@ const POSITIONS: { value: Position; label: string }[] = [
 ];
 
 const WatermarkImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles } = useFileUpload('image/*');
+  const { files, inputProps, triggerUpload, clearFiles, handleFiles } = useFileUpload('image/*');
   const [text, setText] = useState('水印文字');
   const [position, setPosition] = useState<Position>('bottom-right');
   const [opacity, setOpacity] = useState(0.5);
@@ -35,7 +35,7 @@ const WatermarkImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     if (!files[0] || !text) return;
     setProcessing(true);
     try {
-      const img = await loadImage(URL.createObjectURL(files[0]));
+      const img = await loadImageFromBlob(files[0]);
       const canvas = document.createElement('canvas');
       canvas.width = img.width;
       canvas.height = img.height;
@@ -67,7 +67,7 @@ const WatermarkImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   const handleDownload = async () => {
     if (!files[0] || !text) return;
-    const img = await loadImage(URL.createObjectURL(files[0]));
+    const img = await loadImageFromBlob(files[0]);
     const canvas = document.createElement('canvas');
     canvas.width = img.width;
     canvas.height = img.height;
@@ -94,7 +94,7 @@ const WatermarkImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     <div className="space-y-3">
       <input {...inputProps} />
       {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} accept="image/*" label="上传图片" sublabel="支持 JPG/PNG/WebP" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept="image/*" label="上传图片" sublabel="支持 JPG/PNG/WebP" />
       ) : (
         <>
           <div className="flex items-center gap-2 text-sm text-slate-300">

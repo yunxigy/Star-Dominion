@@ -1,6 +1,7 @@
 import React from 'react';
 import { PROJECTS_DATA } from '../constants';
-import * as Icons from 'lucide-react';
+import { Code2, ExternalLink } from 'lucide-react';
+import { getIcon } from '../lib/iconMap';
 import { motion } from 'framer-motion';
 
 interface ProjectListProps {
@@ -29,12 +30,12 @@ export const ProjectList: React.FC<ProjectListProps> = ({ onOpenVits, onOpenMedi
   return (
     <div className="flex flex-col space-y-4">
       <h2 className="text-2xl font-bold text-amber-200 border-b border-white/8 pb-2 mb-4 tracking-wider flex items-center gap-2">
-        <Icons.Code2 className="w-6 h-6 text-amber-400" />
+        <Code2 className="w-6 h-6 text-amber-400" />
         个人项目
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
         {PROJECTS_DATA.map((project, index) => {
-          const IconComponent = (Icons as any)[project.icon] || Icons.Folder;
+          const IconComponent = getIcon(project.icon);
           const isInteractive = project.id === 'p2' || project.id === 'p3' || project.id === 'p6' || project.id === 'p5' || project.id === 'p8';
           
           return (
@@ -63,7 +64,7 @@ export const ProjectList: React.FC<ProjectListProps> = ({ onOpenVits, onOpenMedi
                  <div>
                    <h3 className="text-lg font-bold text-amber-50 group-hover:text-amber-300 transition-colors flex items-center gap-2">
                      {project.title}
-                     {isInteractive && <Icons.ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />}
+                     {isInteractive && <ExternalLink className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />}
                    </h3>
                    <p className="text-sm text-slate-400 mt-1">
                      {project.description}

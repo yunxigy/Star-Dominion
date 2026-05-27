@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { useFileUpload, UploadZone, Btn, loadImage, canvasToBlob, downloadBlob } from '../shared';
+import { useFileUpload, UploadZone, Btn, loadImage, loadImageFromBlob, canvasToBlob, downloadBlob , revokeUrls } from '../shared';
 
 const CropImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles } = useFileUpload('image/*');
+  const { files, inputProps, triggerUpload, clearFiles, handleFiles } = useFileUpload('image/*');
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const [w, setW] = useState(0);
@@ -15,7 +15,7 @@ const CropImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   useEffect(() => {
     if (files[0]) {
-      loadImage(URL.createObjectURL(files[0])).then(img => {
+      loadImageFromBlob(files[0]).then(img => {
         setNaturalW(img.width);
         setNaturalH(img.height);
         setW(img.width);
@@ -30,7 +30,7 @@ const CropImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     if (!files[0]) return;
     setProcessing(true);
     try {
-      const img = await loadImage(URL.createObjectURL(files[0]));
+      const img = await loadImageFromBlob(files[0]);
       const canvas = document.createElement('canvas');
       canvas.width = w;
       canvas.height = h;
@@ -47,7 +47,7 @@ const CropImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   const handleDownload = async () => {
     if (!files[0]) return;
-    const img = await loadImage(URL.createObjectURL(files[0]));
+    const img = await loadImageFromBlob(files[0]);
     const canvas = document.createElement('canvas');
     canvas.width = w;
     canvas.height = h;
@@ -69,7 +69,7 @@ const CropImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     <div className="space-y-3">
       <input {...inputProps} />
       {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} accept="image/*" label="上传图片" sublabel="支持 JPG/PNG/WebP" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept="image/*" label="上传图片" sublabel="支持 JPG/PNG/WebP" />
       ) : (
         <>
           <div className="flex items-center gap-2 text-sm text-slate-300">

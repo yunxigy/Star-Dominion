@@ -3,7 +3,7 @@ import { jsPDF } from 'jspdf';
 import { useFileUpload, UploadZone, Btn } from '../shared';
 
 const WordToPdf: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, triggerUpload, inputProps } = useFileUpload('.docx');
+  const { files, triggerUpload, inputProps, handleFiles } = useFileUpload('.docx');
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
   const hiddenRef = useRef<HTMLDivElement>(null);
@@ -90,7 +90,7 @@ const WordToPdf: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       <p className="text-slate-400 text-sm">上传 .docx 文件，转换为PDF。需要安装 mammoth 和 html2canvas 依赖。</p>
       <input {...inputProps} />
       {!file ? (
-        <UploadZone onUpload={triggerUpload} accept=".docx" label="点击上传Word文件" sublabel="支持 .docx 格式" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept=".docx" label="点击上传Word文件" sublabel="支持 .docx 格式" />
       ) : (
         <div className="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-2">
           <span className="text-sm text-slate-200">{file.name} ({(file.size / 1024).toFixed(1)} KB)</span>

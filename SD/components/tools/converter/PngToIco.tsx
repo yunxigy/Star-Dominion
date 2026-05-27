@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useFileUpload, UploadZone, Btn, loadImage, downloadBlob } from '../shared';
+import React, { useState, useEffect } from 'react';
+import { useFileUpload, UploadZone, Btn, loadImage, downloadBlob, revokeUrls } from '../shared';
 
 interface ConvertedFile {
   name: string;
@@ -12,10 +12,12 @@ interface ConvertedFile {
 const ICO_SIZES = [16, 32, 48, 64, 128, 256];
 
 const PngToIco: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles, removeFile } = useFileUpload('image/png');
+  const { files, inputProps, triggerUpload, clearFiles, removeFile, handleFiles } = useFileUpload('image/png');
   const [selectedSizes, setSelectedSizes] = useState<number[]>([16, 32, 48, 64, 128, 256]);
   const [results, setResults] = useState<ConvertedFile[]>([]);
   const [processing, setProcessing] = useState(false);
+
+  useEffect(() => () => { results.forEach(r => { if (r.originalUrl) URL.revokeObjectURL(r.originalUrl); }); }, [results]);
   const [error, setError] = useState('');
 
   const formatSize = (bytes: number) => {
@@ -132,7 +134,7 @@ const PngToIco: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     <div className="space-y-3">
       <input {...inputProps} />
       {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} accept="image/png" label="上传 PNG 图片" sublabel="转换为 ICO 图标文件" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept="image/png" label="上传 PNG 图片" sublabel="转换为 ICO 图标文件" />
       ) : (
         <>
           <div className="space-y-1">

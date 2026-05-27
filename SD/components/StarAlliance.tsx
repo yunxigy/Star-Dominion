@@ -1,19 +1,20 @@
 import React from 'react';
 import { STAR_ALLIANCE_DATA } from '../constants';
-import * as Icons from 'lucide-react';
+import { Orbit } from 'lucide-react';
+import { getIcon } from '../lib/iconMap';
 import { motion } from 'framer-motion';
 
 export const StarAlliance: React.FC = () => {
   return (
     <div className="flex flex-col space-y-4">
       <h2 className="text-2xl font-bold text-blue-200 border-b border-blue-800 pb-2 mb-4 tracking-wider flex items-center gap-2">
-        <Icons.Orbit className="w-6 h-6 text-blue-400" />
+        <Orbit className="w-6 h-6 text-blue-400" />
         星盟组成
       </h2>
       <div className="space-y-4">
         {STAR_ALLIANCE_DATA.map((item, index) => {
           // Dynamic Icon loading
-          const IconComponent = (Icons as any)[item.icon] || Icons.Star;
+          const IconComponent = getIcon(item.icon);
 
           return (
             <motion.div

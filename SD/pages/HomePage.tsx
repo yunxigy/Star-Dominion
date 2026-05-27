@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
+import { getIcon } from '../lib/iconMap';
 import { PlanSection } from '../components/PlanSection';
 import { VitsModal } from '../components/VitsModal';
 import { GalleryModal } from '../components/GalleryModal';
@@ -109,7 +110,7 @@ export const HomePage: React.FC = () => {
       {/* Navigation Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7 gap-6 mb-16">
         {navCards.map((card, index) => {
-          const IconComponent = (Icons as any)[card.icon] || Icons.Star;
+          const IconComponent = getIcon(card.icon);
           return (
             <motion.div
               key={card.path}
@@ -141,7 +142,7 @@ export const HomePage: React.FC = () => {
                 {/* Arrow indicator */}
                 <div className="relative mt-4 flex items-center gap-1 text-sm text-slate-500 group-hover:text-slate-300 transition-colors">
                   <span>进入</span>
-                  <Icons.ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>
               </Link>
             </motion.div>

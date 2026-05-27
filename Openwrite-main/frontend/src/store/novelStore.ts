@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import type { NovelConfig, NovelInfo } from '../types/novel'
 import * as novelApi from '../api/novels'
 
@@ -16,7 +17,7 @@ interface NovelStore {
   refreshStatus: () => Promise<void>
 }
 
-export const useNovelStore = create<NovelStore>((set, get) => ({
+export const useNovelStore = create<NovelStore>()(persist((set, get) => ({
   novels: [],
   currentNovelId: null,
   config: null,
@@ -72,4 +73,7 @@ export const useNovelStore = create<NovelStore>((set, get) => ({
       set({ error: (e as Error).message })
     }
   },
+}), {
+  name: 'openwrite-novel',
+  partialize: (state) => ({ currentNovelId: state.currentNovelId }),
 }))

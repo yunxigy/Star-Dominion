@@ -3,7 +3,7 @@ import { jsPDF } from 'jspdf';
 import { useFileUpload, UploadZone, Btn } from '../shared';
 
 const ImageToPdf: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, removeFile, clearFiles, triggerUpload, inputProps } = useFileUpload('image/*');
+  const { files, removeFile, clearFiles, triggerUpload, inputProps, handleFiles } = useFileUpload('image/*');
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
   const [pageSize, setPageSize] = useState<'a4' | 'fit'>('a4');
@@ -61,7 +61,7 @@ const ImageToPdf: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       <p className="text-slate-400 text-sm">上传多张图片，合并为一个PDF文件。</p>
       <input {...inputProps} />
       {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} accept="image/*" label="点击上传图片" sublabel="支持 JPG、PNG 等格式" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept="image/*" label="点击上传图片" sublabel="支持 JPG、PNG 等格式" />
       ) : (
         <div className="space-y-2">
           {files.map((f, i) => (

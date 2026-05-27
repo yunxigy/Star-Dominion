@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Callable, Optional
@@ -24,6 +25,8 @@ class AutoWriterConfig:
     guidance: str = ""            # 全局写作指导
     start_chapter: str = ""       # 起始章节（空=从下一章开始）
     max_chapters: int = 0         # 最多写几章（0=写到大纲结束）
+    auto_outline: bool = True     # 大纲用完时自动生成新大纲
+    outline_batch: int = 5        # 每次自动生成的章节数
 
 
 @dataclass
@@ -73,42 +76,62 @@ class AutoWriter:
             return AutoWriteResult(stopped_reason="error")
 
         novel_id = cfg.get("novel_id", "")
-        planned = self._load_planned_chapters(novel_id)
-        written = set(_list_chapter_ids(self.project_root, novel_id))
+        total_generated = 0  # 自动生成的大纲批次计数
 
-        # 确定待写章节列表
-        if self.config.start_chapter:
-            start = self.config.start_chapter
-        else:
-            start = _get_next_chapter(self.project_root, novel_id)
-
-        todo = [ch for ch in planned if _ch_num(ch) >= _ch_num(start) and ch not in written]
-        if not todo:
-            return AutoWriteResult(stopped_reason="completed")
-
-        if self.config.max_chapters > 0:
-            todo = todo[: self.config.max_chapters]
-
-        self._emit("started", total=len(todo), chapters=todo)
+        self._emit("started", total=0, chapters=[])
 
         results: list[ChapterResult] = []
-        for i, chapter_id in enumerate(todo):
-            if self.cancelled:
-                self._emit("cancelled", completed=len(results))
+        chapter_index = 0
+
+        while not self.cancelled:
+            # 加载当前大纲和已写章节
+            planned = self._load_planned_chapters(novel_id)
+            written = set(_list_chapter_ids(self.project_root, novel_id))
+
+            # 确定待写章节列表
+            if self.config.start_chapter and chapter_index == 0:
+                start = self.config.start_chapter
+            else:
+                start = _get_next_chapter(self.project_root, novel_id)
+
+            todo = [ch for ch in planned if _ch_num(ch) >= _ch_num(start) and ch not in written]
+
+            if self.config.max_chapters > 0:
+                remaining = self.config.max_chapters - len(results)
+                todo = todo[:remaining]
+
+            # 大纲用完且开启自动生成
+            if not todo and self.config.auto_outline:
+                self._emit("outline_generating", batch=total_generated + 1)
+                new_chapters = await self._generate_outline(novel_id)
+                if not new_chapters:
+                    self._emit("outline_failed", message="无法生成新大纲")
+                    break
+                total_generated += 1
+                self._emit("outline_generated", chapters=new_chapters, batch=total_generated)
+                continue  # 重新加载大纲
+
+            if not todo:
                 break
 
-            while self.paused:
-                await asyncio.sleep(0.5)
+            for chapter_id in todo:
                 if self.cancelled:
+                    self._emit("cancelled", completed=len(results))
                     break
 
-            self._emit("chapter_start", chapter=chapter_id, index=i, total=len(todo))
-            cr = await self._write_and_review(chapter_id, novel_id)
-            results.append(cr)
+                while self.paused:
+                    await asyncio.sleep(0.5)
+                    if self.cancelled:
+                        break
 
-            self._emit("chapter_done", chapter=chapter_id, score=cr.score,
-                        passed=cr.passed, retries=cr.retries, word_count=cr.word_count,
-                        error=cr.error, completed=len(results), total=len(todo))
+                self._emit("chapter_start", chapter=chapter_id, index=chapter_index, total=len(todo) + len(results))
+                cr = await self._write_and_review(chapter_id, novel_id)
+                results.append(cr)
+                chapter_index += 1
+
+                self._emit("chapter_done", chapter=chapter_id, score=cr.score,
+                            passed=cr.passed, retries=cr.retries, word_count=cr.word_count,
+                            error=cr.error, completed=len(results), total=len(todo) + len(results))
 
         total_passed = sum(1 for r in results if r.passed)
         reason = "cancelled" if self.cancelled else "completed"
@@ -224,6 +247,132 @@ class AutoWriter:
             None, _exec_review_chapter, self.project_root, args
         )
 
+    async def _generate_outline(self, novel_id: str) -> list[str]:
+        """使用 AI 自动生成新大纲章节，返回新章节 ID 列表。"""
+        from tools.llm import LLMClient, LLMConfig
+        from tools.cli import _load_config, _list_chapter_ids
+
+        try:
+            llm_config = LLMConfig.from_env()
+            client = LLMClient(llm_config)
+        except Exception as e:
+            logger.error(f"初始化 LLM 客户端失败: {e}")
+            return []
+
+        # 读取已有大纲和最近章节
+        hierarchy_path = self.project_root / "data" / "novels" / novel_id / "data" / "hierarchy.yaml"
+        with open(hierarchy_path, "r", encoding="utf-8") as f:
+            hierarchy_data = yaml.safe_load(f) or {}
+
+        # 读取最近 3 章内容作为上下文
+        written_ids = _list_chapter_ids(self.project_root, novel_id)
+        recent_chapters = []
+        from tools.cli import _load_chapter
+        for ch_id in written_ids[-3:]:
+            content = _load_chapter(self.project_root, novel_id, ch_id)
+            if content:
+                recent_chapters.append(f"## {ch_id}\n{content[:800]}")
+
+        # 构建提示词
+        existing_arcs = hierarchy_data.get("arcs", [])
+        arc_summaries = []
+        for arc in existing_arcs:
+            arc_summaries.append(f"- {arc.get('title', '')} (id: {arc.get('id', '')})")
+
+        batch_size = self.config.outline_batch
+        prompt = f"""你是一个网文大纲规划专家。请根据以下信息，为小说续写 {batch_size} 个新章节的大纲。
+
+## 已有篇章结构
+{chr(10).join(arc_summaries)}
+
+## 最近章节内容（用于保持情节连贯）
+{chr(10).join(recent_chapters) if recent_chapters else "（暂无已写章节）"}
+
+## 全局写作指导
+{self.config.guidance if self.config.guidance else "（无）"}
+
+## 要求
+1. 每个章节需要一个简洁标题
+2. 情节要连贯推进，有起承转合
+3. 需要有冲突、悬念或转折
+
+请以 YAML 格式输出，格式如下：
+```yaml
+sections:
+- id: sec_NNN
+  title: 第N章 章节标题
+  summary: 一句话概括本章内容
+```
+
+只输出 YAML，不要其他内容。"""
+
+        try:
+            response = await client.chat(
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.8,
+                max_tokens=2000,
+            )
+            content = response.get("content", "")
+
+            # 提取 YAML
+            yaml_match = re.search(r"```yaml\s*\n(.*?)\n```", content, re.DOTALL)
+            if yaml_match:
+                yaml_content = yaml_match.group(1)
+            else:
+                yaml_content = content
+
+            new_data = yaml.safe_load(yaml_content) or {}
+            new_sections = new_data.get("sections", [])
+
+            if not new_sections:
+                return []
+
+            # 生成对应的章节 ID
+            next_num = len(written_ids) + 1
+            new_chapter_ids = []
+            for i, sec in enumerate(new_sections):
+                ch_id = f"ch_{next_num + i:03d}"
+                sec_id = f"sec_{next_num + i:03d}"
+                sec["id"] = sec_id
+                new_chapter_ids.append(ch_id)
+
+            # 更新 hierarchy.yaml
+            self._append_to_hierarchy(novel_id, new_sections, new_chapter_ids)
+
+            return new_chapter_ids
+
+        except Exception as e:
+            logger.error(f"自动生成大纲失败: {e}")
+            return []
+
+    def _append_to_hierarchy(self, novel_id: str, new_sections: list[dict], new_chapter_ids: list[str]):
+        """将新生成的大纲追加到 hierarchy.yaml。"""
+        hierarchy_path = self.project_root / "data" / "novels" / novel_id / "data" / "hierarchy.yaml"
+
+        with open(hierarchy_path, "r", encoding="utf-8") as f:
+            data = yaml.safe_load(f) or {}
+
+        # 找到最后一个 arc 或创建新的
+        arcs = data.get("arcs", [])
+        if arcs:
+            last_arc = arcs[-1]
+        else:
+            last_arc = {"id": "arc_001", "title": "自动生成", "sections": [], "chapters": []}
+            arcs.append(last_arc)
+
+        # 添加新 sections 到最后一个 arc
+        for sec in new_sections:
+            sec_id = sec.get("id", "")
+            if sec_id:
+                last_arc.setdefault("sections", []).append(sec_id)
+
+        # 添加新 sections 到全局 sections 列表
+        data.setdefault("sections", []).extend(new_sections)
+
+        # 保存
+        with open(hierarchy_path, "w", encoding="utf-8") as f:
+            yaml.dump(data, f, allow_unicode=True, default_flow_style=False, sort_keys=False)
+
     def _load_planned_chapters(self, novel_id: str) -> list[str]:
         """从 hierarchy.yaml 加载大纲中的所有章节 ID。"""
         hierarchy_path = (
@@ -235,10 +384,27 @@ class AutoWriter:
         with open(hierarchy_path, "r", encoding="utf-8") as f:
             data = yaml.safe_load(f) or {}
 
+        # 建立 section_id → chapter_id 的映射表
+        sections = data.get("sections", [])
+        sec_to_ch: dict[str, str] = {}
+        for sec in sections:
+            sid = sec.get("id", "")
+            if sid.startswith("sec_"):
+                ch_id = "ch_" + sid[4:]  # sec_001 → ch_001
+                sec_to_ch[sid] = ch_id
+
         chapters: list[str] = []
         for arc in data.get("arcs", []):
-            chapters.extend(arc.get("chapters", []))
-        return sorted(chapters, key=_ch_num)
+            # 优先读 chapters，若为空则从 sections 推导
+            arc_chapters = arc.get("chapters", [])
+            if arc_chapters:
+                chapters.extend(arc_chapters)
+            else:
+                for sid in arc.get("sections", []):
+                    if sid in sec_to_ch:
+                        chapters.append(sec_to_ch[sid])
+
+        return sorted(set(chapters), key=_ch_num)
 
     def _emit(self, event_type: str, **kwargs):
         """发送进度事件。"""

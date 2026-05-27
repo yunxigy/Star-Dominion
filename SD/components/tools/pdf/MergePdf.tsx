@@ -4,10 +4,10 @@ import { jsPDF } from 'jspdf';
 import { useFileUpload, UploadZone, Btn } from '../shared';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
 
 const MergePdf: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, removeFile, clearFiles, triggerUpload, inputProps } = useFileUpload('.pdf');
+  const { files, removeFile, clearFiles, triggerUpload, inputProps, handleFiles } = useFileUpload('.pdf');
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -57,7 +57,7 @@ const MergePdf: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       <p className="text-slate-400 text-sm">上传多个PDF文件，按上传顺序合并为一个PDF。</p>
       <input {...inputProps} />
       {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} accept=".pdf" label="点击或拖拽上传PDF文件" sublabel="支持多个文件" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept=".pdf" label="点击或拖拽上传PDF文件" sublabel="支持多个文件" />
       ) : (
         <div className="space-y-2">
           {files.map((f, i) => (

@@ -1,19 +1,21 @@
-import React, { useState } from 'react';
-import { useFileUpload, UploadZone, Btn, loadImage, canvasToBlob, downloadBlob } from '../shared';
+import React, { useState, useEffect } from 'react';
+import { useFileUpload, UploadZone, Btn, loadImage, loadImageFromBlob, canvasToBlob, downloadBlob, revokeUrls } from '../shared';
 
 type GridSize = 2 | 3 | 4;
 
 const SplitImageGrid: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles } = useFileUpload('image/*');
+  const { files, inputProps, triggerUpload, clearFiles, handleFiles } = useFileUpload('image/*');
   const [gridSize, setGridSize] = useState<GridSize>(3);
   const [pieces, setPieces] = useState<string[]>([]);
   const [processing, setProcessing] = useState(false);
+
+  useEffect(() => () => revokeUrls(pieces), [pieces]);
 
   const handleSplit = async () => {
     if (!files[0]) return;
     setProcessing(true);
     try {
-      const img = await loadImage(URL.createObjectURL(files[0]));
+      const img = await loadImageFromBlob(files[0]);
       const cellW = Math.floor(img.width / gridSize);
       const cellH = Math.floor(img.height / gridSize);
       const results: string[] = [];
@@ -56,7 +58,7 @@ const SplitImageGrid: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     <div className="space-y-3">
       <input {...inputProps} />
       {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} accept="image/*" label="上传图片" sublabel="将图片切割为网格" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept="image/*" label="上传图片" sublabel="将图片切割为网格" />
       ) : (
         <>
           <div className="flex items-center gap-2 text-sm text-slate-300">

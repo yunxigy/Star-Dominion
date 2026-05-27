@@ -4,10 +4,10 @@ import * as pdfjsLib from 'pdfjs-dist';
 import { useFileUpload, UploadZone, Btn, TextInput } from '../shared';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
-  'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+  `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
 
 const PdfEncrypt: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, triggerUpload, inputProps } = useFileUpload('.pdf');
+  const { files, triggerUpload, inputProps, handleFiles } = useFileUpload('.pdf');
   const [userPassword, setUserPassword] = useState('');
   const [ownerPassword, setOwnerPassword] = useState('');
   const [status, setStatus] = useState('');
@@ -65,7 +65,7 @@ const PdfEncrypt: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       <p className="text-slate-400 text-sm">上传PDF文件，设置密码保护。注意: jsPDF的加密功能有限，建议用于简单场景。</p>
       <input {...inputProps} />
       {!file ? (
-        <UploadZone onUpload={triggerUpload} accept=".pdf" label="点击上传PDF文件" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept=".pdf" label="点击上传PDF文件" />
       ) : (
         <div className="bg-slate-800/50 border border-slate-700 rounded-lg px-3 py-2">
           <span className="text-sm text-slate-200">{file.name} ({(file.size / 1024).toFixed(1)} KB)</span>

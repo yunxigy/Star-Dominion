@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { useFileUpload, UploadZone, Btn, ResultBox, copyToClipboard } from '../shared';
 
 const ImageToBase64: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles } = useFileUpload('image/*');
+  const { files, inputProps, triggerUpload, clearFiles, handleFiles } = useFileUpload('image/*');
   const [base64, setBase64] = useState('');
   const [preview, setPreview] = useState('');
   const [processing, setProcessing] = useState(false);
@@ -32,7 +32,7 @@ const ImageToBase64: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     <div className="space-y-3">
       <input {...inputProps} />
       {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} accept="image/*" label="上传图片" sublabel="支持 JPG/PNG/WebP/GIF" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept="image/*" label="上传图片" sublabel="支持 JPG/PNG/WebP/GIF" />
       ) : (
         <>
           <div className="flex items-center gap-2 text-sm text-slate-300">

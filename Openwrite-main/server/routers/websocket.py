@@ -343,6 +343,8 @@ async def auto_write_websocket(websocket: WebSocket):
                     guidance=str(cfg_data.get("guidance", "")),
                     start_chapter=str(cfg_data.get("start_chapter", "")),
                     max_chapters=int(cfg_data.get("max_chapters", 0)),
+                    auto_outline=bool(cfg_data.get("auto_outline", True)),
+                    outline_batch=int(cfg_data.get("outline_batch", 5)),
                 )
 
                 _loop = asyncio.get_running_loop()

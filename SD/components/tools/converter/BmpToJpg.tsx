@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useFileUpload, UploadZone, Btn, loadImage, canvasToBlob, downloadBlob } from '../shared';
+import React, { useState, useEffect } from 'react';
+import { useFileUpload, UploadZone, Btn, loadImage, canvasToBlob, downloadBlob, revokeUrls } from '../shared';
 
 interface ConvertedFile {
   name: string;
@@ -11,10 +11,12 @@ interface ConvertedFile {
 }
 
 const BmpToJpg: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles, removeFile } = useFileUpload('image/bmp,image/x-ms-bmp,image/x-windows-bmp,.bmp');
+  const { files, inputProps, triggerUpload, clearFiles, removeFile, handleFiles } = useFileUpload('image/bmp,image/x-ms-bmp,image/x-windows-bmp,.bmp');
   const [quality, setQuality] = useState(80);
   const [results, setResults] = useState<ConvertedFile[]>([]);
   const [processing, setProcessing] = useState(false);
+
+  useEffect(() => () => { results.forEach(r => { URL.revokeObjectURL(r.originalUrl); URL.revokeObjectURL(r.convertedUrl); }); }, [results]);
   const [error, setError] = useState('');
 
   const formatSize = (bytes: number) => {
@@ -67,7 +69,7 @@ const BmpToJpg: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     <div className="space-y-3">
       <input {...inputProps} />
       {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} accept=".bmp,image/bmp" label="上传 BMP 图片" sublabel="支持 .bmp 位图格式" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept=".bmp,image/bmp" label="上传 BMP 图片" sublabel="支持 .bmp 位图格式" />
       ) : (
         <>
           <div className="space-y-1">

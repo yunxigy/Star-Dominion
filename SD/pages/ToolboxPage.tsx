@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
+import { Menu, Search, SearchX } from 'lucide-react';
+import { getIcon } from '../lib/iconMap';
 import { CATEGORIES, TOOLS, getToolsByCategory } from '../tools/registry';
 import { useToolRunner } from '../components/ToolRunner';
 import { ProjectList } from '../components/ProjectList';
@@ -46,7 +47,7 @@ export const ToolboxPage: React.FC = () => {
           onClick={() => setSidebarOpen(!sidebarOpen)}
           className="p-2 rounded-lg glass-card text-slate-300"
         >
-          <Icons.Menu className="w-5 h-5" />
+          <Menu className="w-5 h-5" />
         </button>
         <h1 className="text-xl font-bold text-white">在线工具箱</h1>
       </div>
@@ -61,7 +62,7 @@ export const ToolboxPage: React.FC = () => {
         `}>
           {/* Search */}
           <div className="relative mb-4">
-            <Icons.Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
             <input
               type="text"
               placeholder="搜索工具..."
@@ -74,7 +75,7 @@ export const ToolboxPage: React.FC = () => {
           {/* Category list */}
           <nav className="flex-1 space-y-1 overflow-y-auto">
             {CATEGORIES.map(cat => {
-              const CatIcon = (Icons as any)[cat.icon] || Icons.Star;
+              const CatIcon = getIcon(cat.icon);
               const count = getToolsByCategory(cat.id).length;
               const isActive = cat.id === activeCategory && !search.trim();
               return (
@@ -122,7 +123,7 @@ export const ToolboxPage: React.FC = () => {
           {/* Search result indicator */}
           {search.trim() && (
             <div className="mb-4 flex items-center gap-2 text-sm text-slate-400">
-              <Icons.Search className="w-4 h-4" />
+              <Search className="w-4 h-4" />
               <span>搜索 "{search}" 找到 {displayTools.length} 个工具</span>
               <button onClick={() => setSearch('')} className="text-violet-400 hover:text-violet-300 ml-2">清除</button>
             </div>
@@ -131,13 +132,13 @@ export const ToolboxPage: React.FC = () => {
           {/* Tool grid */}
           {displayTools.length === 0 ? (
             <div className="text-center py-20">
-              <Icons.SearchX className="w-12 h-12 text-slate-600 mx-auto mb-3" />
+              <SearchX className="w-12 h-12 text-slate-600 mx-auto mb-3" />
               <p className="text-slate-500">没有找到匹配的工具</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
               {displayTools.map((tool, index) => {
-                const ToolIcon = (Icons as any)[tool.icon] || Icons.Star;
+                const ToolIcon = getIcon(tool.icon);
                 return (
                   <motion.button
                     key={tool.id}

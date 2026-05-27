@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { persist } from 'zustand/middleware'
 import type { ChatMessage, AgentType } from '../types/agent'
 
 interface ChatStore {
@@ -35,7 +36,7 @@ function makeId(): string {
   return `msg_${_nextId++}_${Date.now()}`
 }
 
-export const useChatStore = create<ChatStore>((set) => ({
+export const useChatStore = create<ChatStore>()(persist((set) => ({
   activeAgent: 'dante',
   messages: [],
   isStreaming: false,
@@ -128,4 +129,10 @@ export const useChatStore = create<ChatStore>((set) => ({
   setTurnsProcessed: (n) => set({ turnsProcessed: n }),
   setConnected: (v) => set({ isConnected: v }),
   clearMessages: () => set({ messages: [], streamingContent: '', isStreaming: false }),
+}), {
+  name: 'openwrite-chat',
+  partialize: (state) => ({
+    messages: state.messages,
+    activeAgent: state.activeAgent,
+  }),
 }))

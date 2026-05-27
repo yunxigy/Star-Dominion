@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { useFileUpload, UploadZone, Btn, copyToClipboard, loadImage } from '../shared';
+import { useFileUpload, UploadZone, Btn, copyToClipboard, loadImage, loadImageFromBlob } from '../shared';
 
 // Color conversion utilities
 const rgbToHex = (r: number, g: number, b: number): string => {
@@ -24,7 +24,7 @@ const rgbToHsl = (r: number, g: number, b: number): { h: number; s: number; l: n
 };
 
 const ColorPicker: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles } = useFileUpload('image/*');
+  const { files, inputProps, triggerUpload, clearFiles, handleFiles } = useFileUpload('image/*');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [color, setColor] = useState<{ r: number; g: number; b: number } | null>(null);
   const [imgLoaded, setImgLoaded] = useState(false);
@@ -32,7 +32,7 @@ const ColorPicker: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const loadToCanvas = useCallback(async () => {
     if (!files[0] || !canvasRef.current) return;
     try {
-      const img = await loadImage(URL.createObjectURL(files[0]));
+      const img = await loadImageFromBlob(files[0]);
       const canvas = canvasRef.current;
       canvas.width = img.width;
       canvas.height = img.height;
@@ -71,7 +71,7 @@ const ColorPicker: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     <div className="space-y-3">
       <input {...inputProps} />
       {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} accept="image/*" label="上传图片" sublabel="点击图片取色" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept="image/*" label="上传图片" sublabel="点击图片取色" />
       ) : (
         <>
           <div className="flex items-center gap-2 text-sm text-slate-300">

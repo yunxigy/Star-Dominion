@@ -1,7 +1,8 @@
 import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import * as Icons from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import { getIcon } from '../lib/iconMap';
 import { getToolsByCategory, CATEGORIES } from '../tools/registry';
 import { useToolRunner } from '../components/ToolRunner';
 
@@ -21,14 +22,14 @@ export const ToolCategoryPage: React.FC = () => {
     );
   }
 
-  const CatIcon = (Icons as any)[cat.icon] || Icons.Star;
+  const CatIcon = getIcon(cat.icon);
 
   return (
     <div>
       {/* Hero */}
       <div className="mb-10 flex items-center gap-4">
         <Link to="/gj" className="text-slate-400 hover:text-white transition-colors">
-          <Icons.ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-5 h-5" />
         </Link>
         <div className={`inline-flex p-3 rounded-xl bg-gradient-to-br ${cat.gradient} shadow-lg`}>
           <CatIcon className="w-7 h-7 text-white" />
@@ -42,7 +43,7 @@ export const ToolCategoryPage: React.FC = () => {
       {/* Tool grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
         {tools.map((tool, index) => {
-          const ToolIcon = (Icons as any)[tool.icon] || Icons.Star;
+          const ToolIcon = getIcon(tool.icon);
           return (
             <motion.div
               key={tool.id}

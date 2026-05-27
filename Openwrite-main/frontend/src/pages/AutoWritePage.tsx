@@ -7,6 +7,8 @@ interface AutoWriteConfig {
   guidance: string
   start_chapter: string
   max_chapters: number
+  auto_outline: boolean
+  outline_batch: number
 }
 
 interface ChapterResult {
@@ -34,21 +36,39 @@ const DEFAULT_CONFIG: AutoWriteConfig = {
   guidance: '',
   start_chapter: '',
   max_chapters: 0,
+  auto_outline: true,
+  outline_batch: 5,
+}
+
+const STORAGE_KEYS = {
+  config: 'autowrite_config',
+  logs: 'autowrite_logs',
+  results: 'autowrite_results',
+  progress: 'autowrite_progress',
+} as const
+
+function loadFromStorage<T>(key: string, fallback: T): T {
+  try {
+    const raw = localStorage.getItem(key)
+    return raw ? JSON.parse(raw) : fallback
+  } catch {
+    return fallback
+  }
 }
 
 export default function AutoWritePage() {
-  const [config, setConfig] = useState<AutoWriteConfig>(DEFAULT_CONFIG)
+  const [config, setConfig] = useState<AutoWriteConfig>(() => loadFromStorage(STORAGE_KEYS.config, DEFAULT_CONFIG))
   const [status, setStatus] = useState<WsStatus>('disconnected')
-  const [logs, setLogs] = useState<LogEntry[]>([])
-  const [results, setResults] = useState<ChapterResult[]>([])
+  const [logs, setLogs] = useState<LogEntry[]>(() => loadFromStorage(STORAGE_KEYS.logs, []))
+  const [results, setResults] = useState<ChapterResult[]>(() => loadFromStorage(STORAGE_KEYS.results, []))
   const [currentChapter, setCurrentChapter] = useState('')
   const [currentPhase, setCurrentPhase] = useState('')
-  const [totalChapters, setTotalChapters] = useState(0)
-  const [completedCount, setCompletedCount] = useState(0)
+  const [totalChapters, setTotalChapters] = useState(() => loadFromStorage(STORAGE_KEYS.progress, { total: 0 }).total)
+  const [completedCount, setCompletedCount] = useState(() => loadFromStorage(STORAGE_KEYS.progress, { completed: 0 }).completed)
   const [showConfig, setShowConfig] = useState(true)
 
   const wsRef = useRef<WebSocket | null>(null)
-  const logIdRef = useRef(0)
+  const logIdRef = useRef(logs.length > 0 ? Math.max(...logs.map(l => l.id)) : 0)
   const logsEndRef = useRef<HTMLDivElement>(null)
 
   const addLog = useCallback((text: string, type: LogEntry['type'] = 'info') => {
@@ -60,6 +80,24 @@ export default function AutoWritePage() {
   useEffect(() => {
     logsEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [logs])
+
+  // Persist to localStorage
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.config, JSON.stringify(config))
+  }, [config])
+
+  useEffect(() => {
+    const trimmed = logs.length > 500 ? logs.slice(-500) : logs
+    localStorage.setItem(STORAGE_KEYS.logs, JSON.stringify(trimmed))
+  }, [logs])
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.results, JSON.stringify(results))
+  }, [results])
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEYS.progress, JSON.stringify({ total: totalChapters, completed: completedCount }))
+  }, [totalChapters, completedCount])
 
   const connect = useCallback(() => {
     if (wsRef.current?.readyState === WebSocket.OPEN) return
@@ -155,6 +193,22 @@ export default function AutoWritePage() {
           `  ⚠ 分数 ${msg.score} 未达阈值，开始第 ${msg.attempt}/${msg.max} 次修订`,
           'warning'
         )
+        break
+
+      case 'outline_generating':
+        setCurrentPhase('生成新大纲中...')
+        addLog(`  📝 大纲用完，正在自动生成第 ${msg.batch} 批新大纲...`, 'info')
+        break
+
+      case 'outline_generated':
+        setCurrentPhase('')
+        setTotalChapters(prev => prev + (msg.chapters as string[]).length)
+        addLog(`  ✓ 已生成 ${(msg.chapters as string[]).length} 个新章节大纲`, 'success')
+        break
+
+      case 'outline_failed':
+        setCurrentPhase('')
+        addLog(`  ✗ 自动生成大纲失败: ${msg.message}`, 'error')
         break
 
       case 'completed': {
@@ -302,6 +356,28 @@ export default function AutoWritePage() {
                 style={{ width: '100%', padding: '6px 8px', border: '1px solid #d0d0d0', borderRadius: 4 }}
               />
             </div>
+            <div>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#666', cursor: 'pointer' }}>
+                <input
+                  type="checkbox" checked={config.auto_outline}
+                  onChange={e => updateConfig('auto_outline', e.target.checked)}
+                  style={{ width: 16, height: 16 }}
+                />
+                大纲用完时自动生成
+              </label>
+            </div>
+            {config.auto_outline && (
+              <div>
+                <label style={{ display: 'block', fontSize: 13, color: '#666', marginBottom: 4 }}>
+                  每次生成章节数
+                </label>
+                <input
+                  type="number" min={1} max={20} value={config.outline_batch}
+                  onChange={e => updateConfig('outline_batch', +e.target.value)}
+                  style={{ width: '100%', padding: '6px 8px', border: '1px solid #d0d0d0', borderRadius: 4 }}
+                />
+              </div>
+            )}
             <div style={{ gridColumn: '1 / -1' }}>
               <label style={{ display: 'block', fontSize: 13, color: '#666', marginBottom: 4 }}>
                 起始章节 (留空=从下一章开始)
@@ -377,7 +453,14 @@ export default function AutoWritePage() {
         )}
         {status === 'done' && (
           <button
-            onClick={() => { setStatus('disconnected'); setLogs([]); setResults([]); }}
+            onClick={() => {
+              setStatus('disconnected')
+              setLogs([])
+              setResults([])
+              setCompletedCount(0)
+              setTotalChapters(0)
+              Object.values(STORAGE_KEYS).forEach(k => localStorage.removeItem(k))
+            }}
             style={{
               background: '#7c8aff', color: '#fff', border: 'none', borderRadius: 6,
               padding: '10px 24px', fontSize: 14, fontWeight: 600, cursor: 'pointer',

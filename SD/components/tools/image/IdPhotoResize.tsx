@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useFileUpload, UploadZone, Btn, loadImage, canvasToBlob, downloadBlob } from '../shared';
+import React, { useEffect, useState } from 'react';
+import { useFileUpload, UploadZone, Btn, loadImage, loadImageFromBlob, canvasToBlob, downloadBlob , revokeUrls } from '../shared';
 
 interface PhotoSize {
   name: string;
@@ -20,7 +20,7 @@ const PHOTO_SIZES: PhotoSize[] = [
 ];
 
 const IdPhotoResize: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles } = useFileUpload('image/*');
+  const { files, inputProps, triggerUpload, clearFiles, handleFiles } = useFileUpload('image/*');
   const [selectedSize, setSelectedSize] = useState<PhotoSize>(PHOTO_SIZES[0]);
   const [preview, setPreview] = useState('');
   const [processing, setProcessing] = useState(false);
@@ -29,7 +29,7 @@ const IdPhotoResize: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     if (!files[0]) return;
     setProcessing(true);
     try {
-      const img = await loadImage(URL.createObjectURL(files[0]));
+      const img = await loadImageFromBlob(files[0]);
       const canvas = document.createElement('canvas');
       canvas.width = selectedSize.width;
       canvas.height = selectedSize.height;
@@ -66,7 +66,7 @@ const IdPhotoResize: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   const handleDownload = async () => {
     if (!files[0]) return;
-    const img = await loadImage(URL.createObjectURL(files[0]));
+    const img = await loadImageFromBlob(files[0]);
     const canvas = document.createElement('canvas');
     canvas.width = selectedSize.width;
     canvas.height = selectedSize.height;
@@ -94,7 +94,7 @@ const IdPhotoResize: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     <div className="space-y-3">
       <input {...inputProps} />
       {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} accept="image/*" label="上传照片" sublabel="上传证件照或正面免冠照片" />
+        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept="image/*" label="上传照片" sublabel="上传证件照或正面免冠照片" />
       ) : (
         <>
           <div className="flex items-center gap-2 text-sm text-slate-300">
