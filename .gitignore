@@ -32,3 +32,10 @@ npm-debug.log*
 # Env files
 .env.local
 .env.*.local
+
+# 守岸人数据目录（含 API Key）
+守岸人3.0/data/
+守岸人2.0/data/
+
+# SillyTavern（第三方项目，不提交）
+SillyTavern/

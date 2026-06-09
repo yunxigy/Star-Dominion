@@ -3,8 +3,8 @@ import * as pdfjsLib from 'pdfjs-dist';
 import { jsPDF } from 'jspdf';
 import { useFileUpload, UploadZone, Btn } from '../shared';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+
 
 const QUALITY_OPTIONS = [
   { label: '低压缩 (高质量)', scale: 1.2, quality: 0.85 },

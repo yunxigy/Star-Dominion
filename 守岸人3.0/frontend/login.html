@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登录 - 守岸人 2.0</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <style>
+    .auth-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      position: relative;
+      z-index: 10;
+    }
+    .auth-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 40px;
+      width: 400px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+    .auth-card h2 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: var(--tethys-blue);
+      font-size: 28px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-color);
+      font-size: 14px;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.9);
+      transition: all 0.3s;
+    }
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--tethys-blue);
+      box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.1);
+    }
+    .auth-btn {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--tethys-blue), var(--tethys-light));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .auth-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 119, 182, 0.4);
+    }
+    .auth-links {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    .auth-links a {
+      color: var(--tethys-blue);
+      text-decoration: none;
+    }
+    .auth-links a:hover {
+      text-decoration: underline;
+    }
+    .error-msg {
+      background: rgba(255, 0, 0, 0.1);
+      color: #d32f2f;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      display: none;
+      font-size: 14px;
+    }
+    .back-link {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      background: rgba(255, 255, 255, 0.2);
+      padding: 8px 16px;
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+    .back-link:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <!-- 视频背景 -->
+  <video id="bg-video" autoplay muted loop>
+    <source src="/static/bg.mp4" type="video/mp4">
+  </video>
+
+  <!-- 粒子特效层 -->
+  <div id="effects-layer"></div>
+
+  <a href="/" class="back-link">← 返回首页</a>
+
+  <div class="auth-container">
+    <div class="auth-card">
+      <h2>欢迎回来</h2>
+      <div class="error-msg" id="error-msg"></div>
+      <form id="login-form">
+        <div class="form-group">
+          <label>用户名 / 邮箱</label>
+          <input type="text" id="email" placeholder="用户名或邮箱" required>
+        </div>
+        <div class="form-group">
+          <label>密码</label>
+          <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="auth-btn">登录</button>
+      </form>
+      <div class="auth-links">
+        还没有账号？<a href="/register.html">立即注册</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 检查是否已登录
+    const token = localStorage.getItem('token');
+    if (token) {
+      window.location.href = '/';
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = document.getElementById('email').value;
+      const password = document.getElementById('password').value;
+      const errorMsg = document.getElementById('error-msg');
+      const btn = document.querySelector('.auth-btn');
+      errorMsg.style.display = 'none';
+      btn.disabled = true;
+      btn.textContent = '登录中...';
+
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+        if (response.ok) {
+          localStorage.setItem('token', data.access_token);
+          localStorage.setItem('refresh_token', data.refresh_token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          window.location.href = '/';
+        } else {
+          errorMsg.textContent = data.detail || '登录失败';
+          errorMsg.style.display = 'block';
+          btn.disabled = false;
+          btn.textContent = '登录';
+        }
+      } catch (err) {
+        errorMsg.textContent = '网络错误，请稍后重试';
+        errorMsg.style.display = 'block';
+        btn.disabled = false;
+        btn.textContent = '登录';
+      }
+    });
+  </script>
+</body>
+</html>

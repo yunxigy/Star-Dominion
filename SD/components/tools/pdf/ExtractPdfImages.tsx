@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import { useFileUpload, UploadZone, Btn, downloadBlob } from '../shared';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+
 
 interface ExtractedImage {
   dataUrl: string;

@@ -5,11 +5,17 @@ export interface ToolDef {
   name: string;
   description: string;
   icon: string;
-  category: 'pdf' | 'image' | 'converter' | 'dev' | 'calc' | 'fun' | 'image-enhance' | 'test' | 'tarot' | 'mouse';
-  color: 'red' | 'emerald' | 'violet' | 'amber' | 'cyan' | 'pink' | 'blue' | 'lime';
+  category: 'pdf' | 'image' | 'converter' | 'dev' | 'calc' | 'fun' | 'image-enhance' | 'test' | 'tarot' | 'mouse' | 'document';
+  color: 'red' | 'emerald' | 'violet' | 'amber' | 'cyan' | 'pink' | 'blue' | 'lime' | 'indigo';
   gradient: string;
   glow: string;
   component: React.LazyExoticComponent<React.FC<{ onClose: () => void }>>;
+  /** 隐私级别 */
+  privacy?: 'local' | 'third-party-api' | 'backend-upload';
+  /** 工具状态 */
+  status?: 'stable' | 'beta' | 'experimental';
+  /** 搜索标签（拼音、别名） */
+  tags?: string[];
 }
 
 // ── PDF 工具 ──────────────────────────────────────────────
@@ -151,13 +157,24 @@ const PollingRate = React.lazy(() => import('../components/tools/mouse/PollingRa
 const JitterTest = React.lazy(() => import('../components/tools/mouse/JitterTest'));
 const DragTest = React.lazy(() => import('../components/tools/mouse/DragTest'));
 
+// ── 文档处理 ───────────────────────────────────────────────
+const PlagiarismCheck = React.lazy(() => import('../components/tools/document/PlagiarismCheck'));
+const OcrRecognition = React.lazy(() => import('../components/tools/document/OcrRecognition'));
+const TextTranslate = React.lazy(() => import('../components/tools/document/TextTranslate'));
+const TextSummarize = React.lazy(() => import('../components/tools/document/TextSummarize'));
+const GrammarCheck = React.lazy(() => import('../components/tools/document/GrammarCheck'));
+const TextToSpeech = React.lazy(() => import('../components/tools/document/TextToSpeech'));
+const CaseConverter = React.lazy(() => import('../components/tools/document/CaseConverter'));
+const WordCount = React.lazy(() => import('../components/tools/document/WordCount'));
+const TextDiff = React.lazy(() => import('../components/tools/document/TextDiff'));
+
 // ── 注册表 ───────────────────────────────────────────────
 
 export const TOOLS: ToolDef[] = [
   // PDF 工具
-  { id: 'merge-pdf', name: 'PDF 合并', description: '多个 PDF 合并为一个文件', icon: 'Merge', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: MergePdf },
-  { id: 'split-pdf', name: 'PDF 拆分', description: '按页码拆分 PDF 文件', icon: 'Scissors', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: SplitPdf },
-  { id: 'compress-pdf', name: 'PDF 压缩', description: '减小 PDF 文件体积', icon: 'Minimize2', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: CompressPdf },
+  { id: 'merge-pdf', name: 'PDF 合并', description: '多个 PDF 合并为一个文件', icon: 'Merge', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: MergePdf, tags: ['hebing', 'merge', 'combine', '拼接'] },
+  { id: 'split-pdf', name: 'PDF 拆分', description: '按页码拆分 PDF 文件', icon: 'Scissors', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: SplitPdf, tags: ['chaifen', 'split', '拆开', '分割'] },
+  { id: 'compress-pdf', name: 'PDF 压缩', description: '减小 PDF 文件体积', icon: 'Minimize2', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: CompressPdf, tags: ['yasuo', 'compress', '缩小', '减小'] },
   { id: 'pdf-to-image', name: 'PDF 转图片', description: 'PDF 页面转为 PNG/JPG 图片', icon: 'Image', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: PdfToImage },
   { id: 'image-to-pdf', name: '图片转 PDF', description: '多张图片合并为 PDF', icon: 'FileImage', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: ImageToPdf },
   { id: 'rotate-pdf', name: 'PDF 旋转', description: '旋转 PDF 页面方向', icon: 'RotateCw', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: RotatePdf },
@@ -169,9 +186,9 @@ export const TOOLS: ToolDef[] = [
   { id: 'word-to-pdf', name: 'Word 转 PDF', description: 'Word 文档转换为 PDF 格式', icon: 'FileSpreadsheet', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: WordToPdf },
 
   // 图片工具
-  { id: 'compress-image', name: '图片压缩', description: '压缩图片文件大小', icon: 'Minimize2', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: CompressImage },
-  { id: 'resize-image', name: '图片改尺寸', description: '调整图片宽高像素', icon: 'Maximize2', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: ResizeImage },
-  { id: 'crop-image', name: '图片裁剪', description: '自由裁剪图片区域', icon: 'Crop', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: CropImage },
+  { id: 'compress-image', name: '图片压缩', description: '压缩图片文件大小', icon: 'Minimize2', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: CompressImage, tags: ['yasuo', 'compress', '缩小', '图片压缩'] },
+  { id: 'resize-image', name: '图片改尺寸', description: '调整图片宽高像素', icon: 'Maximize2', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: ResizeImage, tags: ['chicun', 'resize', '像素', '缩放', '放大', '缩小'] },
+  { id: 'crop-image', name: '图片裁剪', description: '自由裁剪图片区域', icon: 'Crop', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: CropImage, tags: ['caijian', 'crop', '剪切', '裁切'] },
   { id: 'watermark-image', name: '图片加水印', description: '为图片添加文字水印', icon: 'Droplets', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: WatermarkImage },
   { id: 'image-to-base64', name: '图片转 Base64', description: '图片编码为 Base64 文本', icon: 'Code', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: ImageToBase64 },
   { id: 'base64-to-image', name: 'Base64 转图片', description: 'Base64 文本解码为图片', icon: 'Image', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: Base64ToImage },
@@ -292,6 +309,17 @@ export const TOOLS: ToolDef[] = [
   { id: 'polling-rate', name: '回报率测试', description: '估算鼠标 USB 回报率 Hz', icon: 'Activity', category: 'mouse', color: 'lime', gradient: 'from-lime-600 to-green-600', glow: 'rgba(132,204,22,0.3)', component: PollingRate },
   { id: 'jitter-test', name: '抖动测试', description: '检测鼠标静止时的抖动漂移', icon: 'TrendingUp', category: 'mouse', color: 'lime', gradient: 'from-lime-600 to-green-600', glow: 'rgba(132,204,22,0.3)', component: JitterTest },
   { id: 'drag-test', name: '拖拽测试', description: '测试拖拽操作的精度和稳定性', icon: 'Move', category: 'mouse', color: 'lime', gradient: 'from-lime-600 to-green-600', glow: 'rgba(132,204,22,0.3)', component: DragTest },
+
+  // 文档处理
+  { id: 'plagiarism-check', name: '论文查重', description: '上传两篇论文比对相似度', icon: 'FileSearch', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: PlagiarismCheck, privacy: 'backend-upload', status: 'beta' },
+  { id: 'ocr-recognition', name: 'OCR 文字识别', description: '从图片中提取文字内容', icon: 'ScanText', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: OcrRecognition, privacy: 'local', status: 'stable' },
+  { id: 'text-translate', name: '文本翻译', description: '多语言文本互译', icon: 'Languages', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: TextTranslate, privacy: 'third-party-api', status: 'stable' },
+  { id: 'text-summarize', name: '文本摘要', description: '自动提取文本关键内容', icon: 'AlignLeft', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: TextSummarize },
+  { id: 'grammar-check', name: '语法检查', description: '检查文本语法和拼写错误', icon: 'CheckSquare', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: GrammarCheck },
+  { id: 'text-to-speech', name: '文本转语音', description: '将文本转换为语音朗读', icon: 'Volume2', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: TextToSpeech },
+  { id: 'case-converter', name: '大小写转换', description: '英文文本大小写批量转换', icon: 'CaseSensitive', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: CaseConverter },
+  { id: 'word-count', name: '字数统计', description: '统计文本字数、词数、行数', icon: 'FileText', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: WordCount },
+  { id: 'text-diff', name: '文本对比', description: '对比两段文本的差异之处', icon: 'GitCompare', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: TextDiff },
 ];
 
 export const CATEGORIES = [
@@ -305,6 +333,7 @@ export const CATEGORIES = [
   { id: 'test', name: '测评中心', description: 'MBTI、人格、性格测试', icon: 'Brain', color: 'violet', gradient: 'from-violet-600 to-purple-600' },
   { id: 'tarot', name: '塔罗星座', description: '塔罗占卜、星座运势', icon: 'Sparkles', color: 'blue', gradient: 'from-blue-600 to-indigo-600' },
   { id: 'mouse', name: '鼠标测试', description: 'CPS、DPI、反应速度、抖动', icon: 'MousePointerClick', color: 'lime', gradient: 'from-lime-600 to-green-600' },
+  { id: 'document', name: '文档处理', description: 'OCR、翻译、查重、语法检查', icon: 'FileEdit', color: 'indigo', gradient: 'from-indigo-600 to-blue-600' },
 ] as const;
 
 export function getToolsByCategory(category: string): ToolDef[] {

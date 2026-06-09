@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>角色库 - 守岸人 2.0</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <style>
+    .page-container {
+      position: relative;
+      z-index: 10;
+      padding: 20px;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    .page-title {
+      color: white;
+      font-size: 28px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    .nav-links {
+      display: flex;
+      gap: 15px;
+    }
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      padding: 8px 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s;
+    }
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    .nav-link.active {
+      background: var(--tethys-blue);
+    }
+    .search-bar {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+    .search-input {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 25px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      font-size: 16px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+    .search-input:focus {
+      outline: none;
+      box-shadow: 0 4px 20px rgba(0, 119, 182, 0.3);
+    }
+    .filter-btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 25px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(10px);
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--tethys-blue);
+      color: white;
+    }
+    .characters-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 25px;
+    }
+    .character-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      transition: all 0.3s;
+      cursor: pointer;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .character-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+    .character-avatar {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background: linear-gradient(135deg, var(--tethys-blue), var(--tethys-light));
+    }
+    .character-info {
+      padding: 20px;
+    }
+    .character-name {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--text-color);
+    }
+    .character-desc {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .character-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 15px;
+    }
+    .tag {
+      padding: 4px 12px;
+      background: rgba(0, 119, 182, 0.1);
+      color: var(--tethys-blue);
+      border-radius: 12px;
+      font-size: 12px;
+    }
+    .nsfw-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #e91e63;
+      color: white;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+    }
+    .character-card-wrapper {
+      position: relative;
+    }
+    .loading {
+      text-align: center;
+      color: white;
+      padding: 50px;
+      font-size: 18px;
+    }
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: white;
+    }
+    .user-avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logout-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 6px 15px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .logout-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  </style>
+</head>
+<body>
+  <!-- 视频背景 -->
+  <video id="bg-video" autoplay muted loop>
+    <source src="/static/bg.mp4" type="video/mp4">
+  </video>
+
+  <!-- 粒子特效层 -->
+  <div id="effects-layer"></div>
+
+  <div class="page-container">
+    <div class="page-header">
+      <h1 class="page-title">角色库</h1>
+      <div class="nav-links">
+        <a href="/" class="nav-link">首页</a>
+        <a href="/characters.html" class="nav-link active">角色库</a>
+        <a href="/stories.html" class="nav-link">剧情</a>
+        <a href="/group-chat.html" class="nav-link">群聊</a>
+        <div class="user-info" id="user-info" style="display:none;">
+          <div class="user-avatar">👤</div>
+          <span id="username"></span>
+          <button class="logout-btn" onclick="logout()">退出</button>
+        </div>
+        <a href="/login.html" class="nav-link" id="login-link">登录</a>
+      </div>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" class="search-input" id="search-input" placeholder="搜索角色...">
+      <button class="filter-btn active" onclick="filterCharacters('all')">全部</button>
+      <button class="filter-btn" onclick="filterCharacters('safe')">普通</button>
+      <button class="filter-btn" onclick="filterCharacters('nsfw')">R18</button>
+    </div>
+
+    <div class="characters-grid" id="characters-grid">
+      <div class="loading">加载中...</div>
+    </div>
+  </div>
+
+  <script>
+    // XSS 防护
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    let currentFilter = 'all';
+    let characters = [];
+
+    // 检查登录状态
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+    if (user) {
+      document.getElementById('user-info').style.display = 'flex';
+      document.getElementById('username').textContent = user.username;
+      document.getElementById('login-link').style.display = 'none';
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/';
+    }
+
+    async function loadCharacters() {
+      try {
+        const headers = {};
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+        const response = await fetch('/api/characters', { headers });
+        if (response.ok) {
+          characters = await response.json();
+          renderCharacters();
+        }
+      } catch (err) {
+        console.error('Failed to load characters:', err);
+      }
+    }
+
+    function renderCharacters() {
+      const grid = document.getElementById('characters-grid');
+      const search = document.getElementById('search-input').value.toLowerCase();
+
+      let filtered = characters;
+
+      // 搜索过滤
+      if (search) {
+        filtered = filtered.filter(c =>
+          c.name.toLowerCase().includes(search) ||
+          c.description?.toLowerCase().includes(search)
+        );
+      }
+
+      // NSFW过滤
+      if (currentFilter === 'safe') {
+        filtered = filtered.filter(c => !c.is_nsfw);
+      } else if (currentFilter === 'nsfw') {
+        filtered = filtered.filter(c => c.is_nsfw);
+      }
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '<div class="loading">没有找到角色</div>';
+        return;
+      }
+
+      grid.innerHTML = filtered.map(char => `
+        <div class="character-card-wrapper">
+          ${char.is_nsfw ? '<span class="nsfw-badge">R18</span>' : ''}
+          <a href="/?character=${escapeHtml(char.id)}" class="character-card">
+            <div class="character-avatar" style="display:flex;align-items:center;justify-content:center;font-size:60px;">
+              ${char.avatar_url ? `<img src="${escapeHtml(char.avatar_url)}" style="width:100%;height:100%;object-fit:cover;">` : '🤖'}
+            </div>
+            <div class="character-info">
+              <div class="character-name">${escapeHtml(char.name)}</div>
+              <div class="character-desc">${escapeHtml(char.description || '暂无描述')}</div>
+              ${char.tags && char.tags.length > 0 ? `
+                <div class="character-tags">
+                  ${char.tags.slice(0, 3).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}
+                </div>
+              ` : ''}
+            </div>
+          </a>
+        </div>
+      `).join('');
+    }
+
+    function filterCharacters(filter) {
+      currentFilter = filter;
+      document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      renderCharacters();
+    }
+
+    document.getElementById('search-input').addEventListener('input', renderCharacters);
+
+    loadCharacters();
+  </script>
+</body>
+</html>

@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>群聊 - 守岸人 2.0</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { height: 100vh; overflow: hidden; display: flex; }
+
+    /* 左侧列表 */
+    .sidebar {
+      width: 300px;
+      min-width: 300px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px);
+      border-right: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      z-index: 10;
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .sidebar-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    .add-btn {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--tethys-blue), var(--tethys-light));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 22px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .add-btn:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,119,182,0.3); }
+
+    .sidebar-nav {
+      padding: 10px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .nav-btn {
+      flex: 1;
+      padding: 8px;
+      background: rgba(0, 0, 0, 0.03);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+      color: #666;
+      text-decoration: none;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .nav-btn:hover { background: rgba(0, 119, 182, 0.1); color: var(--tethys-blue); }
+
+    .group-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+
+    .group-item {
+      padding: 15px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+      margin-bottom: 8px;
+      border: 2px solid transparent;
+    }
+    .group-item:hover { background: rgba(0, 119, 182, 0.08); }
+    .group-item.active {
+      background: rgba(0, 119, 182, 0.12);
+      border-color: var(--tethys-blue);
+    }
+    .group-name { font-weight: 600; color: var(--text-color); margin-bottom: 4px; }
+    .group-meta { font-size: 12px; color: #999; }
+
+    .sidebar-footer {
+      padding: 15px;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .user-card {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px;
+      background: rgba(0, 119, 182, 0.05);
+      border-radius: 12px;
+    }
+    .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--tethys-blue), var(--tethys-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 18px;
+    }
+    .user-name { font-weight: 600; color: var(--text-color); }
+    .user-role { font-size: 12px; color: #999; }
+
+    /* 主体聊天区 */
+    .main-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: linear-gradient(180deg, #f0f4f8 0%, #e8ecf1 100%);
+    }
+
+    .chat-header {
+      padding: 15px 25px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chat-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+
+    .header-actions { display: flex; gap: 10px; }
+
+    .action-btn {
+      padding: 8px 16px;
+      background: rgba(0, 0, 0, 0.05);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--text-color);
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .action-btn:hover { background: rgba(0, 0, 0, 0.1); }
+
+    /* 成员栏 */
+    .members-bar {
+      padding: 10px 25px;
+      background: rgba(255, 255, 255, 0.7);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+    }
+
+    .member-chip {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      background: rgba(0, 119, 182, 0.08);
+      border-radius: 20px;
+      font-size: 13px;
+      color: var(--text-color);
+      white-space: nowrap;
+    }
+
+    .member-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--tethys-blue), var(--tethys-light));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    /* 消息区域 */
+    .messages-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 25px;
+    }
+
+    .message {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .message.user-message { flex-direction: row-reverse; }
+
+    .msg-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--tethys-blue), var(--tethys-light));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .msg-content { max-width: 65%; }
+
+    .msg-name {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .msg-bubble {
+      padding: 14px 18px;
+      border-radius: 18px;
+      line-height: 1.7;
+      color: var(--text-color);
+      font-size: 15px;
+    }
+
+    .message:not(.user-message) .msg-bubble {
+      background: white;
+      border-top-left-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .message.user-message .msg-bubble {
+      background: linear-gradient(135deg, var(--tethys-blue), var(--tethys-light));
+      color: white;
+      border-top-right-radius: 4px;
+    }
+
+    .msg-time {
+      font-size: 11px;
+      color: #999;
+      margin-top: 4px;
+    }
+    .message.user-message .msg-time { text-align: right; }
+
+    /* 输入区域 */
+    .input-area {
+      padding: 20px 25px;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .input-row {
+      display: flex;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    .msg-input {
+      flex: 1;
+      padding: 14px 20px;
+      border: 2px solid rgba(0, 0, 0, 0.08);
+      border-radius: 24px;
+      font-size: 15px;
+      background: white;
+      transition: border-color 0.2s;
+      font-family: inherit;
+    }
+    .msg-input:focus {
+      outline: none;
+      border-color: var(--tethys-blue);
+    }
+
+    .send-btn {
+      padding: 14px 28px;
+      background: linear-gradient(135deg, var(--tethys-blue), var(--tethys-light));
+      color: white;
+      border: none;
+      border-radius: 24px;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .send-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,119,182,0.3); }
+    .send-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .mention-hint {
+      font-size: 12px;
+      color: #999;
+      margin-top: 8px;
+      padding-left: 20px;
+    }
+
+    /* 空状态 */
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #999;
+    }
+    .empty-state .icon { font-size: 64px; margin-bottom: 20px; }
+    .empty-state .text { font-size: 18px; }
+
+    /* 弹窗 */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-overlay.active { display: flex; }
+
+    .modal {
+      background: white;
+      border-radius: 20px;
+      padding: 30px;
+      width: 500px;
+      max-width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    }
+
+    .modal h3 {
+      color: var(--tethys-blue);
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-color);
+      font-weight: 500;
+    }
+    .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      font-size: 15px;
+      background: white;
+      font-family: inherit;
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--tethys-blue);
+      box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.1);
+    }
+
+    .character-select-list {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      padding: 10px;
+    }
+
+    .character-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: background 0.2s;
+      margin-bottom: 6px;
+    }
+    .character-option:hover { background: rgba(0, 119, 182, 0.08); }
+    .character-option.selected { background: rgba(0, 119, 182, 0.15); }
+
+    .character-option input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--tethys-blue);
+    }
+
+    .char-avatar-small {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--tethys-blue), var(--tethys-light));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+      margin-top: 25px;
+    }
+
+    .btn-primary {
+      padding: 12px 30px;
+      background: linear-gradient(135deg, var(--tethys-blue), var(--tethys-light));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,119,182,0.3); }
+
+    .btn-secondary {
+      padding: 12px 30px;
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--text-color);
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-secondary:hover { background: rgba(0, 0, 0, 0.1); }
+
+    /* 设置面板 */
+    .settings-panel {
+      position: fixed;
+      right: -350px;
+      top: 0;
+      width: 350px;
+      height: 100%;
+      background: white;
+      box-shadow: -5px 0 20px rgba(0, 0, 0, 0.1);
+      z-index: 50;
+      transition: right 0.3s ease;
+      padding: 25px;
+      overflow-y: auto;
+    }
+    .settings-panel.show { right: 0; }
+
+    .settings-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-color);
+      margin-bottom: 25px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .close-btn {
+      width: 32px;
+      height: 32px;
+      background: rgba(0, 0, 0, 0.05);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .settings-section { margin-bottom: 25px; }
+    .settings-section h4 {
+      font-size: 14px;
+      color: #999;
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .settings-label {
+      display: block;
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 6px;
+    }
+
+    .settings-input, .settings-select {
+      width: 100%;
+      padding: 10px 14px;
+      background: rgba(0, 0, 0, 0.03);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      color: var(--text-color);
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    .member-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      background: rgba(0, 0, 0, 0.02);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .member-info { display: flex; align-items: center; gap: 10px; }
+
+    .member-remove {
+      background: rgba(244, 67, 54, 0.1);
+      color: #f44336;
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .member-remove:hover { background: rgba(244, 67, 54, 0.2); }
+
+    .save-btn {
+      width: 100%;
+      padding: 12px;
+      background: var(--tethys-blue);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 15px;
+      margin-top: 15px;
+      transition: all 0.2s;
+    }
+    .save-btn:hover { background: #0066a0; }
+  </style>
+</head>
+<body>
+  <!-- 视频背景 -->
+  <video id="bg-video" autoplay muted loop>
+    <source src="/static/bg.mp4" type="video/mp4">
+  </video>
+
+  <!-- 粒子特效层 -->
+  <div id="effects-layer"></div>
+
+  <!-- 左侧列表 -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-title">💬 群聊</div>
+      <button class="add-btn" onclick="openCreateModal()">+</button>
+    </div>
+
+    <div class="sidebar-nav">
+      <a href="/" class="nav-btn">🏠 首页</a>
+      <a href="/characters.html" class="nav-btn">📚 角色</a>
+      <a href="/stories.html" class="nav-btn">📖 剧情</a>
+    </div>
+
+    <div class="group-list" id="group-list">
+      <div class="empty-state" style="height:200px;">
+        <div style="font-size:48px;margin-bottom:10px;">💬</div>
+        <div>暂无群聊</div>
+      </div>
+    </div>
+
+    <div class="sidebar-footer">
+      <div class="user-card" id="user-card">
+        <div class="user-avatar" id="user-avatar">👤</div>
+        <div>
+          <div class="user-name" id="user-name">未登录</div>
+          <div class="user-role" id="user-role">请先登录</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 主体聊天区 -->
+  <div class="main-panel">
+    <div class="chat-header">
+      <div class="chat-title" id="chat-title">选择一个群聊开始对话</div>
+      <div class="header-actions" id="header-actions" style="display:none;">
+        <button class="action-btn" onclick="toggleSettings()">⚙️ 设置</button>
+      </div>
+    </div>
+
+    <div class="members-bar" id="members-bar" style="display:none;"></div>
+
+    <div class="messages-area" id="messages-area">
+      <div class="empty-state">
+        <div class="icon">💬</div>
+        <div class="text">选择左侧的群聊开始对话</div>
+      </div>
+    </div>
+
+    <div class="input-area" id="input-area" style="display:none;">
+      <div class="input-row">
+        <input type="text" class="msg-input" id="msg-input" placeholder="输入消息...（用@角色名可以指定回复）">
+        <button class="send-btn" id="send-btn" onclick="sendMessage()">发送</button>
+      </div>
+      <div class="mention-hint">💡 输入 @角色名 可以指定某个角色回复</div>
+    </div>
+  </div>
+
+  <!-- 设置面板 -->
+  <div class="settings-panel" id="settings-panel">
+    <div class="settings-title">
+      群聊设置
+      <button class="close-btn" onclick="toggleSettings()">✕</button>
+    </div>
+
+    <div class="settings-section">
+      <h4>基本信息</h4>
+      <label class="settings-label">群聊名称</label>
+      <input type="text" class="settings-input" id="settings-name">
+      <label class="settings-label">群聊描述</label>
+      <textarea class="settings-input" id="settings-desc" rows="3"></textarea>
+    </div>
+
+    <div class="settings-section">
+      <h4>发言顺序</h4>
+      <select class="settings-select" id="settings-turn-order">
+        <option value="round_robin">轮流发言</option>
+        <option value="random">随机发言</option>
+        <option value="triggered">@触发发言</option>
+      </select>
+    </div>
+
+    <div class="settings-section">
+      <h4>群成员</h4>
+      <div id="member-list"></div>
+      <button class="save-btn" onclick="addMember()">+ 添加成员</button>
+    </div>
+
+    <button class="save-btn" onclick="saveSettings()">保存设置</button>
+  </div>
+
+  <!-- 创建群聊弹窗 -->
+  <div class="modal-overlay" id="create-modal">
+    <div class="modal">
+      <h3>✨ 创建新群聊</h3>
+      <div class="form-group">
+        <label>群聊名称</label>
+        <input type="text" id="new-group-name" placeholder="给群聊起个名字">
+      </div>
+      <div class="form-group">
+        <label>群聊描述（可选）</label>
+        <textarea id="new-group-desc" placeholder="描述一下这个群聊..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>发言顺序</label>
+        <select id="new-group-turn-order">
+          <option value="round_robin">轮流发言</option>
+          <option value="random">随机发言</option>
+          <option value="triggered">@触发发言</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>选择角色（至少选一个）</label>
+        <div class="character-select-list" id="character-select-list">
+          <div style="text-align:center;padding:20px;color:#999;">加载中...</div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeCreateModal()">取消</button>
+        <button class="btn-primary" onclick="createGroup()">创建群聊</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+    if (!token) {
+      window.location.href = '/login.html';
+    }
+
+    // 显示用户信息
+    if (user) {
+      document.getElementById('user-name').textContent = user.username;
+      document.getElementById('user-role').textContent = user.role === 'admin' ? '管理员' : '用户';
+    }
+
+    let groups = [];
+    let characters = [];
+    let currentGroup = null;
+    let isSending = false;
+
+    // 加载群聊列表
+    async function loadGroups() {
+      try {
+        const res = await fetch('/api/group-chat', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          groups = await res.json();
+          renderGroups();
+        }
+      } catch (err) {
+        console.error('加载群聊失败:', err);
+      }
+    }
+
+    function renderGroups() {
+      const list = document.getElementById('group-list');
+      if (groups.length === 0) {
+        list.innerHTML = '<div class="empty-state" style="height:200px;"><div style="font-size:48px;margin-bottom:10px;">💬</div><div>暂无群聊</div></div>';
+        return;
+      }
+
+      list.innerHTML = groups.map(g => `
+        <div class="group-item ${currentGroup?.id === g.id ? 'active' : ''}"
+             onclick="selectGroup('${escapeHtml(g.id)}')">
+          <div class="group-name">${escapeHtml(g.name)}</div>
+          <div class="group-meta">${g.member_count || 0} 位成员</div>
+        </div>
+      `).join('');
+    }
+
+    // 加载角色列表
+    async function loadCharacters() {
+      try {
+        const res = await fetch('/api/characters', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          characters = await res.json();
+        }
+      } catch (err) {
+        console.error('加载角色失败:', err);
+      }
+    }
+
+    // 选择群聊
+    async function selectGroup(groupId) {
+      try {
+        const res = await fetch(`/api/group-chat/${groupId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          currentGroup = await res.json();
+          document.getElementById('chat-title').textContent = currentGroup.name;
+          document.getElementById('members-bar').style.display = 'flex';
+          document.getElementById('input-area').style.display = 'block';
+          document.getElementById('header-actions').style.display = 'flex';
+          renderMembers();
+          await loadMessages();
+          renderGroups();
+        }
+      } catch (err) {
+        console.error('加载群聊详情失败:', err);
+      }
+    }
+
+    function renderMembers() {
+      const bar = document.getElementById('members-bar');
+      bar.innerHTML = (currentGroup.members || []).map(m => `
+        <div class="member-chip">
+          <div class="member-avatar">${escapeHtml(m.character_name?.[0] || '?')}</div>
+          <span>${escapeHtml(m.character_name || '未知')}</span>
+        </div>
+      `).join('');
+    }
+
+    async function loadMessages() {
+      if (!currentGroup) return;
+      try {
+        const res = await fetch(`/api/group-chat/${currentGroup.id}/messages`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          const messages = await res.json();
+          renderMessages(messages);
+        }
+      } catch (err) {
+        console.error('加载消息失败:', err);
+      }
+    }
+
+    function renderMessages(messages) {
+      const area = document.getElementById('messages-area');
+      if (messages.length === 0) {
+        area.innerHTML = '<div class="empty-state"><div class="icon">💬</div><div class="text">暂无消息，开始对话吧</div></div>';
+        return;
+      }
+
+      area.innerHTML = messages.map(msg => {
+        const isUser = msg.role === 'user';
+        const name = isUser ? '我' : (msg.character_name || '未知');
+        const avatar = isUser ? '👤' : (msg.character_name?.[0] || '?');
+        const text = msg.content?.text || '';
+        const time = msg.created_at ? new Date(msg.created_at).toLocaleTimeString('zh-CN') : '';
+
+        return `
+          <div class="message ${isUser ? 'user-message' : ''}">
+            <div class="msg-avatar">${escapeHtml(avatar)}</div>
+            <div class="msg-content">
+              <div class="msg-name">${escapeHtml(name)}</div>
+              <div class="msg-bubble">${escapeHtml(text)}</div>
+              <div class="msg-time">${time}</div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      area.scrollTop = area.scrollHeight;
+    }
+
+    // 发送消息
+    async function sendMessage() {
+      const input = document.getElementById('msg-input');
+      const text = input.value.trim();
+      if (!text || !currentGroup || isSending) return;
+
+      isSending = true;
+      document.getElementById('send-btn').disabled = true;
+      input.value = '';
+
+      // 解析@提及
+      const mentionRegex = /@(\S+)/g;
+      const mentions = [];
+      let match;
+      while ((match = mentionRegex.exec(text)) !== null) {
+        const charName = match[1];
+        const member = currentGroup.members?.find(m => m.character_name === charName);
+        if (member) {
+          mentions.push(member.character_id);
+        }
+      }
+
+      try {
+        const res = await fetch(`/api/group-chat/${currentGroup.id}/send`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            text: text,
+            mention_char_ids: mentions.length > 0 ? mentions : null,
+          })
+        });
+
+        if (res.ok) {
+          await loadMessages();
+        } else {
+          const data = await res.json();
+          alert(data.detail || '发送失败');
+        }
+      } catch (err) {
+        alert('网络错误');
+      } finally {
+        isSending = false;
+        document.getElementById('send-btn').disabled = false;
+      }
+    }
+
+    document.getElementById('msg-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+
+    // 创建群聊
+    async function openCreateModal() {
+      await loadCharacters();
+      renderCharacterSelect();
+      document.getElementById('create-modal').classList.add('active');
+    }
+
+    function closeCreateModal() {
+      document.getElementById('create-modal').classList.remove('active');
+    }
+
+    function renderCharacterSelect() {
+      const list = document.getElementById('character-select-list');
+      if (characters.length === 0) {
+        list.innerHTML = '<div style="text-align:center;padding:20px;color:#999;">暂无角色，请先创建角色</div>';
+        return;
+      }
+
+      list.innerHTML = characters.map(c => `
+        <label class="character-option">
+          <input type="checkbox" value="${escapeHtml(c.id)}">
+          <div class="char-avatar-small">${escapeHtml(c.name?.[0] || '?')}</div>
+          <span>${escapeHtml(c.name)}</span>
+        </label>
+      `).join('');
+    }
+
+    async function createGroup() {
+      const name = document.getElementById('new-group-name').value.trim();
+      const desc = document.getElementById('new-group-desc').value;
+      const turnOrder = document.getElementById('new-group-turn-order').value;
+
+      if (!name) {
+        alert('请输入群聊名称');
+        return;
+      }
+
+      const selectedIds = Array.from(
+        document.querySelectorAll('#character-select-list input[type="checkbox"]:checked')
+      ).map(cb => cb.value);
+
+      if (selectedIds.length === 0) {
+        alert('请至少选择一个角色');
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/group-chat', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            name: name,
+            description: desc,
+            character_ids: selectedIds,
+            turn_order: turnOrder,
+          })
+        });
+
+        if (res.ok) {
+          closeCreateModal();
+          await loadGroups();
+          document.getElementById('new-group-name').value = '';
+          document.getElementById('new-group-desc').value = '';
+        } else {
+          const data = await res.json();
+          alert(data.detail || '创建失败');
+        }
+      } catch (err) {
+        alert('网络错误');
+      }
+    }
+
+    // 设置面板
+    function toggleSettings() {
+      const panel = document.getElementById('settings-panel');
+      panel.classList.toggle('show');
+
+      if (panel.classList.contains('show') && currentGroup) {
+        document.getElementById('settings-name').value = currentGroup.name || '';
+        document.getElementById('settings-desc').value = currentGroup.description || '';
+        document.getElementById('settings-turn-order').value = currentGroup.turn_order || 'round_robin';
+        renderMemberList();
+      }
+    }
+
+    function renderMemberList() {
+      const list = document.getElementById('member-list');
+      if (!currentGroup?.members) {
+        list.innerHTML = '<div style="text-align:center;padding:20px;color:#999;">暂无成员</div>';
+        return;
+      }
+
+      list.innerHTML = currentGroup.members.map(m => `
+        <div class="member-item">
+          <div class="member-info">
+            <div class="member-avatar">${escapeHtml(m.character_name?.[0] || '?')}</div>
+            <span>${escapeHtml(m.character_name || '未知')}</span>
+          </div>
+          <button class="member-remove" onclick="removeMember('${escapeHtml(m.character_id)}')">移除</button>
+        </div>
+      `).join('');
+    }
+
+    async function saveSettings() {
+      if (!currentGroup) return;
+      const name = document.getElementById('settings-name').value.trim();
+      if (!name) { alert('请输入群聊名称'); return; }
+
+      try {
+        const res = await fetch(`/api/group-chat/${currentGroup.id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            name: name,
+            description: document.getElementById('settings-desc').value,
+            turn_order: document.getElementById('settings-turn-order').value,
+          })
+        });
+
+        if (res.ok) {
+          await selectGroup(currentGroup.id);
+          await loadGroups();
+          toggleSettings();
+        }
+      } catch (err) {
+        alert('保存失败');
+      }
+    }
+
+    async function addMember() {
+      if (!currentGroup) return;
+      await loadCharacters();
+      const options = characters.map(c => c.name).join('\n');
+      const input = prompt(`输入要添加的角色名称：\n\n可选角色：\n${options}`);
+      if (!input) return;
+
+      const character = characters.find(c => c.name === input.trim());
+      if (!character) { alert('未找到该角色'); return; }
+
+      try {
+        const res = await fetch(`/api/group-chat/${currentGroup.id}/members`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ character_id: character.id })
+        });
+
+        if (res.ok) {
+          await selectGroup(currentGroup.id);
+        } else {
+          const data = await res.json();
+          alert(data.detail || '添加失败');
+        }
+      } catch (err) {
+        alert('网络错误');
+      }
+    }
+
+    async function removeMember(characterId) {
+      if (!currentGroup || !confirm('确定要移除该成员吗？')) return;
+      try {
+        const res = await fetch(`/api/group-chat/${currentGroup.id}/members/${characterId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        if (res.ok) {
+          await selectGroup(currentGroup.id);
+        }
+      } catch (err) {
+        alert('移除失败');
+      }
+    }
+
+    // 初始化
+    loadGroups();
+  </script>
+</body>
+</html>

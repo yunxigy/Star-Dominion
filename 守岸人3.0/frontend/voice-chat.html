@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>语音陪伴 - 守岸人 2.0</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <style>
+    body {
+      overflow: hidden;
+    }
+
+    .voice-container {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* 顶部状态栏 */
+    .status-bar {
+      position: absolute;
+      top: 20px;
+      left: 0;
+      right: 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 30px;
+    }
+
+    .back-link {
+      color: white;
+      text-decoration: none;
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      transition: all 0.2s;
+    }
+
+    .back-link:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .session-info {
+      color: white;
+      text-align: center;
+    }
+
+    .session-timer {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    /* 角色头像区域 */
+    .avatar-section {
+      position: relative;
+      margin-bottom: 40px;
+    }
+
+    .character-avatar {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--tethys-blue), var(--tethys-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 60px;
+      color: white;
+      position: relative;
+      z-index: 2;
+    }
+
+    .character-avatar img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    /* 呼吸动画 */
+    @keyframes breathe {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+
+    /* 说话动画 */
+    @keyframes speaking {
+      0%, 100% { transform: scale(1); }
+      25% { transform: scale(1.05); }
+      75% { transform: scale(0.95); }
+    }
+
+    .avatar-ring {
+      position: absolute;
+      top: -10px;
+      left: -10px;
+      right: -10px;
+      bottom: -10px;
+      border-radius: 50%;
+      border: 3px solid var(--tethys-blue);
+      animation: breathe 3s ease-in-out infinite;
+      z-index: 1;
+    }
+
+    .avatar-ring.speaking {
+      animation: speaking 0.5s ease-in-out infinite;
+      border-color: #4caf50;
+    }
+
+    .avatar-ring.listening {
+      border-color: #ff9800;
+      animation: breathe 1.5s ease-in-out infinite;
+    }
+
+    .character-name {
+      color: white;
+      font-size: 24px;
+      font-weight: 600;
+      margin-top: 20px;
+      text-align: center;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+
+    .status-text {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+      margin-top: 8px;
+      text-align: center;
+    }
+
+    /* 字幕区域 */
+    .subtitle-area {
+      position: absolute;
+      bottom: 150px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80%;
+      max-width: 600px;
+      text-align: center;
+    }
+
+    .subtitle {
+      color: white;
+      font-size: 18px;
+      line-height: 1.6;
+      padding: 15px 25px;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      border-radius: 15px;
+      display: none;
+    }
+
+    .subtitle.show {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .subtitle.user {
+      background: rgba(0, 119, 182, 0.5);
+    }
+
+    .subtitle.assistant {
+      background: rgba(0, 0, 0, 0.5);
+    }
+
+    /* 底部控制区 */
+    .controls {
+      position: absolute;
+      bottom: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .mic-btn {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--tethys-blue), var(--tethys-light));
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: white;
+      position: relative;
+      transition: all 0.2s;
+    }
+
+    .mic-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .mic-btn:active {
+      transform: scale(0.95);
+    }
+
+    .mic-btn.recording {
+      background: linear-gradient(135deg, #f44336, #e91e63);
+    }
+
+    /* 波纹动画 */
+    @keyframes ripple {
+      0% {
+        transform: scale(1);
+        opacity: 0.5;
+      }
+      100% {
+        transform: scale(2);
+        opacity: 0;
+      }
+    }
+
+    .mic-ripple {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border-radius: 50%;
+      border: 2px solid var(--tethys-blue);
+      animation: ripple 1.5s ease-out infinite;
+      display: none;
+    }
+
+    .mic-btn.recording .mic-ripple {
+      display: block;
+      border-color: #f44336;
+    }
+
+    .control-hint {
+      color: rgba(255, 255, 255, 0.6);
+      font-size: 13px;
+    }
+
+    .control-buttons {
+      display: flex;
+      gap: 15px;
+    }
+
+    .ctrl-btn {
+      padding: 10px 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      border-radius: 20px;
+      color: white;
+      cursor: pointer;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .ctrl-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .ctrl-btn.danger {
+      background: rgba(244, 67, 54, 0.3);
+    }
+
+    .ctrl-btn.danger:hover {
+      background: rgba(244, 67, 54, 0.5);
+    }
+
+    /* 选择角色弹窗 */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-overlay.hidden {
+      display: none;
+    }
+
+    .modal {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 30px;
+      width: 400px;
+      max-width: 90%;
+    }
+
+    .modal h3 {
+      color: var(--tethys-blue);
+      margin-bottom: 20px;
+      font-size: 22px;
+      text-align: center;
+    }
+
+    .character-list {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .character-option {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 15px;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: background 0.2s;
+      margin-bottom: 8px;
+    }
+
+    .character-option:hover {
+      background: rgba(0, 119, 182, 0.1);
+    }
+
+    .char-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--tethys-blue);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    .char-info {
+      flex: 1;
+    }
+
+    .char-name {
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .char-desc {
+      font-size: 13px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    /* 情绪指示器 */
+    .emotion-indicator {
+      position: absolute;
+      top: 50%;
+      right: 30px;
+      transform: translateY(-50%);
+      font-size: 40px;
+      opacity: 0.6;
+    }
+  </style>
+</head>
+<body>
+  <!-- 视频背景 -->
+  <video id="bg-video" autoplay muted loop>
+    <source src="/static/bg.mp4" type="video/mp4">
+  </video>
+
+  <!-- 粒子特效层 -->
+  <div id="effects-layer"></div>
+
+  <!-- 选择角色弹窗 -->
+  <div class="modal-overlay" id="select-modal">
+    <div class="modal">
+      <h3>选择陪伴角色</h3>
+      <div class="character-list" id="character-list">
+        <div style="text-align:center;color:#999;padding:20px;">加载中...</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="voice-container">
+    <!-- 顶部状态栏 -->
+    <div class="status-bar">
+      <a href="/" class="back-link">← 返回首页</a>
+      <div class="session-info">
+        <div class="session-timer" id="session-timer">00:00</div>
+      </div>
+      <div style="width:100px;"></div>
+    </div>
+
+    <!-- 角色头像 -->
+    <div class="avatar-section">
+      <div class="avatar-ring" id="avatar-ring"></div>
+      <div class="character-avatar" id="character-avatar">
+        🤖
+      </div>
+    </div>
+
+    <div class="character-name" id="character-name">等待选择角色</div>
+    <div class="status-text" id="status-text">点击下方按钮开始语音陪伴</div>
+
+    <!-- 字幕区域 -->
+    <div class="subtitle-area">
+      <div class="subtitle user" id="subtitle-user"></div>
+      <div class="subtitle assistant" id="subtitle-assistant"></div>
+    </div>
+
+    <!-- 情绪指示器 -->
+    <div class="emotion-indicator" id="emotion-indicator"></div>
+
+    <!-- 底部控制区 -->
+    <div class="controls">
+      <button class="mic-btn" id="mic-btn" onclick="toggleRecording()">
+        🎤
+        <div class="mic-ripple"></div>
+      </button>
+      <div class="control-hint" id="control-hint">点击开始录音</div>
+      <div class="control-buttons">
+        <button class="ctrl-btn" onclick="sendTextMessage()">💬 文字输入</button>
+        <button class="ctrl-btn danger" onclick="endSession()">结束会话</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = '/login.html';
+    }
+
+    let ws = null;
+    let currentSessionId = null;
+    let currentCharacter = null;
+    let isRecording = false;
+    let mediaRecorder = null;
+    let audioChunks = [];
+    let sessionStartTime = null;
+    let timerInterval = null;
+
+    // 加载角色列表
+    async function loadCharacters() {
+      try {
+        const res = await fetch('/api/characters', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const characters = await res.json();
+        renderCharacterList(characters);
+      } catch (err) {
+        console.error('加载角色失败:', err);
+      }
+    }
+
+    // 渲染角色列表
+    function renderCharacterList(characters) {
+      const list = document.getElementById('character-list');
+      if (characters.length === 0) {
+        list.innerHTML = '<div style="text-align:center;color:#999;padding:20px;">暂无角色，请先创建角色</div>';
+        return;
+      }
+
+      list.innerHTML = characters.map(c => `
+        <div class="character-option" onclick="selectCharacter('${c.id}')">
+          <div class="char-avatar">${c.name?.[0] || '?'}</div>
+          <div class="char-info">
+            <div class="char-name">${escapeHtml(c.name)}</div>
+            <div class="char-desc">${escapeHtml(c.description || '暂无描述')}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 选择角色
+    async function selectCharacter(characterId) {
+      try {
+        // 创建语音会话
+        const res = await fetch('/api/voice-chat/start', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ character_id: characterId })
+        });
+
+        if (!res.ok) {
+          const data = await res.json();
+          alert(data.detail || '创建会话失败');
+          return;
+        }
+
+        const session = await res.json();
+        currentSessionId = session.id;
+
+        // 获取角色信息
+        const charRes = await fetch(`/api/characters/${characterId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        currentCharacter = await charRes.json();
+
+        // 更新UI
+        document.getElementById('select-modal').classList.add('hidden');
+        document.getElementById('character-name').textContent = currentCharacter.name;
+        document.getElementById('character-avatar').textContent = currentCharacter.name?.[0] || '🤖';
+        document.getElementById('status-text').textContent = '正在连接...';
+
+        // 连接WebSocket
+        connectWebSocket();
+      } catch (err) {
+        alert('网络错误');
+      }
+    }
+
+    // 连接WebSocket
+    function connectWebSocket() {
+      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      const wsUrl = `${protocol}//${window.location.host}/api/voice-chat/ws/${currentSessionId}`;
+
+      ws = new WebSocket(wsUrl);
+
+      ws.onopen = () => {
+        console.log('WebSocket连接成功');
+        document.getElementById('status-text').textContent = '已连接，点击麦克风开始说话';
+        document.getElementById('control-hint').textContent = '点击开始录音';
+
+        // 开始计时
+        sessionStartTime = Date.now();
+        timerInterval = setInterval(updateTimer, 1000);
+      };
+
+      ws.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        handleMessage(data);
+      };
+
+      ws.onerror = (error) => {
+        console.error('WebSocket错误:', error);
+        document.getElementById('status-text').textContent = '连接错误';
+      };
+
+      ws.onclose = () => {
+        console.log('WebSocket连接关闭');
+        document.getElementById('status-text').textContent = '连接已断开';
+        if (timerInterval) {
+          clearInterval(timerInterval);
+        }
+      };
+    }
+
+    // 处理WebSocket消息
+    function handleMessage(data) {
+      switch (data.type) {
+        case 'connected':
+          console.log('已连接到:', data.character_name);
+          break;
+
+        case 'stt_processing':
+          document.getElementById('status-text').textContent = '正在识别语音...';
+          break;
+
+        case 'stt_final':
+          showSubtitle('user', data.text);
+          document.getElementById('status-text').textContent = '识别完成';
+          break;
+
+        case 'ai_thinking':
+          document.getElementById('status-text').textContent = '正在思考...';
+          document.getElementById('avatar-ring').className = 'avatar-ring speaking';
+          break;
+
+        case 'ai_response':
+          showSubtitle('assistant', data.text);
+          document.getElementById('status-text').textContent = '回复完成';
+          break;
+
+        case 'tts_audio':
+          // 播放音频
+          playAudio(data.audio_url);
+          break;
+
+        case 'turn_complete':
+          document.getElementById('avatar-ring').className = 'avatar-ring';
+          document.getElementById('status-text').textContent = '点击麦克风继续说话';
+          document.getElementById('control-hint').textContent = '点击开始录音';
+          break;
+
+        case 'interrupted':
+          document.getElementById('status-text').textContent = '已打断';
+          break;
+
+        case 'error':
+          alert(data.message);
+          break;
+      }
+    }
+
+    // 显示字幕
+    function showSubtitle(type, text) {
+      const subtitle = document.getElementById(`subtitle-${type}`);
+      subtitle.textContent = text;
+      subtitle.classList.add('show');
+
+      // 3秒后隐藏
+      setTimeout(() => {
+        subtitle.classList.remove('show');
+      }, 5000);
+    }
+
+    // 播放音频
+    function playAudio(url) {
+      const audio = new Audio(url);
+      audio.play().catch(err => {
+        console.error('音频播放失败:', err);
+      });
+    }
+
+    // 切换录音
+    async function toggleRecording() {
+      if (!ws || ws.readyState !== WebSocket.OPEN) {
+        alert('请先连接会话');
+        return;
+      }
+
+      if (isRecording) {
+        stopRecording();
+      } else {
+        startRecording();
+      }
+    }
+
+    // 开始录音
+    async function startRecording() {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: {
+            sampleRate: 16000,
+            channelCount: 1,
+            echoCancellation: true,
+            noiseSuppression: true,
+          }
+        });
+
+        mediaRecorder = new MediaRecorder(stream, {
+          mimeType: 'audio/webm;codecs=opus'
+        });
+
+        audioChunks = [];
+
+        mediaRecorder.ondataavailable = (event) => {
+          if (event.data.size > 0) {
+            audioChunks.push(event.data);
+            // 发送音频块
+            sendAudioChunk(event.data);
+          }
+        };
+
+        mediaRecorder.start(100); // 每100ms发送一次
+
+        isRecording = true;
+        document.getElementById('mic-btn').classList.add('recording');
+        document.getElementById('avatar-ring').className = 'avatar-ring listening';
+        document.getElementById('status-text').textContent = '正在录音...';
+        document.getElementById('control-hint').textContent = '点击停止录音';
+
+        // 通知VAD开始
+        ws.send(JSON.stringify({ type: 'vad_start' }));
+      } catch (err) {
+        alert('无法访问麦克风');
+        console.error('录音错误:', err);
+      }
+    }
+
+    // 停止录音
+    function stopRecording() {
+      if (mediaRecorder && mediaRecorder.state !== 'inactive') {
+        mediaRecorder.stop();
+        mediaRecorder.stream.getTracks().forEach(track => track.stop());
+      }
+
+      isRecording = false;
+      document.getElementById('mic-btn').classList.remove('recording');
+      document.getElementById('avatar-ring').className = 'avatar-ring';
+      document.getElementById('status-text').textContent = '正在处理...';
+      document.getElementById('control-hint').textContent = '点击开始录音';
+
+      // 通知VAD结束
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.send(JSON.stringify({ type: 'vad_end' }));
+      }
+    }
+
+    // 发送音频块
+    function sendAudioChunk(blob) {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const base64 = reader.result.split(',')[1];
+          ws.send(JSON.stringify({
+            type: 'audio_chunk',
+            data: base64,
+          }));
+        };
+        reader.readAsDataURL(blob);
+      }
+    }
+
+    // 发送文本消息
+    function sendTextMessage() {
+      const text = prompt('输入消息：');
+      if (!text || !ws || ws.readyState !== WebSocket.OPEN) return;
+
+      ws.send(JSON.stringify({
+        type: 'text',
+        content: text,
+      }));
+    }
+
+    // 结束会话
+    async function endSession() {
+      if (!confirm('确定要结束语音陪伴吗？')) return;
+
+      // 停止录音
+      if (isRecording) {
+        stopRecording();
+      }
+
+      // 关闭WebSocket
+      if (ws) {
+        ws.close();
+      }
+
+      // 停止计时
+      if (timerInterval) {
+        clearInterval(timerInterval);
+      }
+
+      // 通知后端结束会话
+      if (currentSessionId) {
+        try {
+          await fetch(`/api/voice-chat/${currentSessionId}/stop`, {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+        } catch (err) {
+          console.error('结束会话失败:', err);
+        }
+      }
+
+      // 返回首页
+      window.location.href = '/';
+    }
+
+    // 更新计时器
+    function updateTimer() {
+      if (!sessionStartTime) return;
+
+      const elapsed = Math.floor((Date.now() - sessionStartTime) / 1000);
+      const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+      const seconds = (elapsed % 60).toString().padStart(2, '0');
+
+      document.getElementById('session-timer').textContent = `${minutes}:${seconds}`;
+    }
+
+    // XSS防护
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    // 初始化
+    loadCharacters();
+  </script>
+</body>
+</html>

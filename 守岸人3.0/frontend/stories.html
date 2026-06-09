@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>互动剧情 - 守岸人 2.0</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <style>
+    .page-container {
+      position: relative;
+      z-index: 10;
+      padding: 20px;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    .page-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    .page-title {
+      color: white;
+      font-size: 28px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    .nav-links {
+      display: flex;
+      gap: 15px;
+    }
+    .nav-link {
+      color: white;
+      text-decoration: none;
+      padding: 8px 20px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+      transition: all 0.3s;
+    }
+    .nav-link:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+    .nav-link.active {
+      background: var(--tethys-blue);
+    }
+
+    /* 故事列表 */
+    .stories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 25px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .story-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .story-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    }
+    .story-cover {
+      height: 150px;
+      background: linear-gradient(135deg, var(--tethys-blue), var(--tethys-light));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 48px;
+    }
+    .story-info {
+      padding: 20px;
+    }
+    .story-title {
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: var(--text-color);
+    }
+    .story-desc {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.5;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    .story-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 15px;
+    }
+    .tag {
+      padding: 4px 12px;
+      background: rgba(0, 119, 182, 0.1);
+      color: var(--tethys-blue);
+      border-radius: 12px;
+      font-size: 12px;
+    }
+
+    /* 开始剧情弹窗 */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 30px;
+      width: 500px;
+      max-width: 90%;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .modal h3 {
+      color: var(--tethys-blue);
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text-color);
+      font-weight: 500;
+    }
+    .form-group input, .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.9);
+      font-family: inherit;
+    }
+    .form-group textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+    .form-group input:focus, .form-group textarea:focus {
+      outline: none;
+      border-color: var(--tethys-blue);
+      box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.1);
+    }
+    .form-hint {
+      font-size: 12px;
+      color: #999;
+      margin-top: 5px;
+    }
+    .modal-actions {
+      display: flex;
+      gap: 15px;
+      justify-content: flex-end;
+      margin-top: 25px;
+    }
+    .btn-primary {
+      padding: 12px 30px;
+      background: linear-gradient(135deg, var(--tethys-blue), var(--tethys-light));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 119, 182, 0.4);
+    }
+    .btn-secondary {
+      padding: 12px 30px;
+      background: rgba(0, 0, 0, 0.05);
+      color: var(--text-color);
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-secondary:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    /* 创建故事按钮 */
+    .create-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      background: linear-gradient(135deg, var(--tethys-blue), var(--tethys-light));
+      color: white;
+      border: none;
+      border-radius: 25px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-bottom: 25px;
+    }
+    .create-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(0, 119, 182, 0.4);
+    }
+
+    /* 我的剧情 */
+    .my-sessions {
+      max-width: 1200px;
+      margin: 40px auto 0;
+    }
+    .section-title {
+      color: white;
+      font-size: 22px;
+      margin-bottom: 20px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+    }
+    .sessions-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 15px;
+    }
+    .session-card {
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      border-radius: 15px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .session-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    }
+    .session-title {
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 8px;
+    }
+    .session-meta {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      color: white;
+    }
+    .user-avatar {
+      width: 35px;
+      height: 35px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logout-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      padding: 6px 15px;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <!-- 视频背景 -->
+  <video id="bg-video" autoplay muted loop>
+    <source src="/static/bg.mp4" type="video/mp4">
+  </video>
+
+  <!-- 粒子特效层 -->
+  <div id="effects-layer"></div>
+
+  <div class="page-container">
+    <div class="page-header">
+      <h1 class="page-title">互动剧情</h1>
+      <div class="nav-links">
+        <a href="/" class="nav-link">首页</a>
+        <a href="/characters.html" class="nav-link">角色库</a>
+        <a href="/stories.html" class="nav-link active">互动剧情</a>
+        <a href="/group-chat.html" class="nav-link">群聊</a>
+        <div class="user-info" id="user-info" style="display:none;">
+          <div class="user-avatar">👤</div>
+          <span id="username"></span>
+          <button class="logout-btn" onclick="logout()">退出</button>
+        </div>
+        <a href="/login.html" class="nav-link" id="login-link">登录</a>
+      </div>
+    </div>
+
+    <button class="create-btn" onclick="openCreateModal()">✨ 创建新剧情</button>
+
+    <div class="stories-grid" id="stories-grid">
+      <div style="color:white;text-align:center;padding:50px;">加载中...</div>
+    </div>
+
+    <div class="my-sessions" id="my-sessions" style="display:none;">
+      <h3 class="section-title">📖 我的剧情</h3>
+      <div class="sessions-list" id="sessions-list"></div>
+    </div>
+  </div>
+
+  <!-- 开始剧情弹窗 -->
+  <div class="modal-overlay" id="start-modal">
+    <div class="modal">
+      <h3>开始新剧情</h3>
+      <div id="story-preview" style="margin-bottom:20px;padding:15px;background:rgba(0,119,182,0.05);border-radius:10px;"></div>
+      <div class="form-group">
+        <label>主角名字</label>
+        <input type="text" id="protagonist-name" placeholder="给你的角色起个名字" value="主角">
+      </div>
+      <div class="form-group">
+        <label>主角设定（可选）</label>
+        <textarea id="protagonist-desc" placeholder="描述你的角色特点、能力、背景等..."></textarea>
+        <div class="form-hint">留空则使用默认设定</div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeStartModal()">取消</button>
+        <button class="btn-primary" onclick="startStory()">开始冒险</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 创建故事弹窗 -->
+  <div class="modal-overlay" id="create-modal">
+    <div class="modal">
+      <h3>创建新剧情</h3>
+      <div class="form-group">
+        <label>剧情标题</label>
+        <input type="text" id="story-title" placeholder="给你的剧情起个标题">
+      </div>
+      <div class="form-group">
+        <label>剧情简介</label>
+        <textarea id="story-description" placeholder="简要介绍这个故事..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>世界背景</label>
+        <textarea id="story-background" rows="4" placeholder="描述故事发生的世界、时代、环境等..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>任务目标</label>
+        <textarea id="story-task" rows="3" placeholder="玩家需要完成什么任务？"></textarea>
+      </div>
+      <div class="form-group">
+        <label>默认主角设定</label>
+        <textarea id="story-protagonist" rows="3" placeholder="默认的主角身份、能力等（玩家可自定义覆盖）"></textarea>
+      </div>
+      <div class="form-group">
+        <label>AI系统提示词</label>
+        <textarea id="story-prompt" rows="4" placeholder="指导AI如何讲述这个故事的提示词..."></textarea>
+        <div class="form-hint">这将决定AI的叙事风格和故事走向</div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeCreateModal()">取消</button>
+        <button class="btn-primary" onclick="createStory()">创建</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // XSS 防护
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+    console.log('Token:', token ? token.substring(0, 20) + '...' : 'null');
+    console.log('User:', user);
+
+    if (user) {
+      document.getElementById('user-info').style.display = 'flex';
+      document.getElementById('username').textContent = user.username;
+      document.getElementById('login-link').style.display = 'none';
+    } else {
+      console.log('User not logged in');
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.reload();
+    }
+
+    let stories = [];
+    let selectedStory = null;
+
+    // 加载故事列表
+    async function loadStories() {
+      try {
+        const response = await fetch('/api/stories');
+        stories = await response.json();
+        renderStories();
+      } catch (err) {
+        console.error('加载故事失败:', err);
+      }
+    }
+
+    // 渲染故事列表
+    function renderStories() {
+      const grid = document.getElementById('stories-grid');
+      if (stories.length === 0) {
+        grid.innerHTML = '<div style="color:white;text-align:center;padding:50px;">暂无剧情，快来创建第一个吧！</div>';
+        return;
+      }
+
+      grid.innerHTML = stories.map(story => `
+        <div class="story-card" onclick="openStartModal('${escapeHtml(story.id)}')">
+          <div class="story-cover">📖</div>
+          <div class="story-info">
+            <div class="story-title">${escapeHtml(story.title)}</div>
+            <div class="story-desc">${escapeHtml(story.description || story.background?.substring(0, 100) + '...')}</div>
+            ${story.tags?.length > 0 ? `
+              <div class="story-tags">
+                ${story.tags.slice(0, 3).map(t => `<span class="tag">${escapeHtml(t)}</span>`).join('')}
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // 加载我的剧情会话
+    async function loadMySessions() {
+      if (!token) return;
+      try {
+        const response = await fetch('/api/stories/user/sessions', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const sessions = await response.json();
+
+        if (sessions.length > 0) {
+          document.getElementById('my-sessions').style.display = 'block';
+          document.getElementById('sessions-list').innerHTML = sessions.map(s => `
+            <div class="session-card" style="position:relative;">
+              <div onclick="window.location.href='/story-play.html?session=${escapeHtml(s.id)}'" style="cursor:pointer;">
+                <div class="session-title">${escapeHtml(s.story_title)}</div>
+                <div class="session-meta">
+                  ${s.protagonist_name ? `主角：${escapeHtml(s.protagonist_name)}` : ''}
+                  <br>进度：${s.choices_made?.length || 0} 个选择
+                </div>
+              </div>
+              <button onclick="event.stopPropagation(); deleteSession('${escapeHtml(s.id)}')" style="position:absolute;top:10px;right:10px;background:rgba(244,67,54,0.1);color:#f44336;border:none;border-radius:6px;padding:4px 10px;cursor:pointer;font-size:12px;">删除</button>
+            </div>
+          `).join('');
+        } else {
+          document.getElementById('my-sessions').style.display = 'none';
+        }
+      } catch (err) {
+        console.error('加载会话失败:', err);
+      }
+    }
+
+    // 删除剧情会话
+    async function deleteSession(sessionId) {
+      if (!confirm('确定要删除这个剧情吗？')) return;
+
+      try {
+        const response = await fetch(`/api/stories/sessions/${sessionId}`, {
+          method: 'DELETE',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+          loadMySessions(); // 重新加载列表
+        } else {
+          const data = await response.json();
+          alert(data.detail || '删除失败');
+        }
+      } catch (err) {
+        alert('删除失败');
+      }
+    }
+
+    // 打开开始剧情弹窗
+    function openStartModal(storyId) {
+      selectedStory = stories.find(s => s.id === storyId);
+      if (!selectedStory) return;
+
+      document.getElementById('story-preview').innerHTML = `
+        <strong>${selectedStory.title}</strong>
+        <p style="margin-top:10px;font-size:14px;color:#666;">${selectedStory.description || ''}</p>
+        <p style="margin-top:10px;font-size:13px;color:#999;">
+          <strong>背景：</strong>${selectedStory.background?.substring(0, 150)}...
+        </p>
+      `;
+
+      // 预填主角设定
+      if (selectedStory.protagonist) {
+        document.getElementById('protagonist-desc').value = selectedStory.protagonist;
+      }
+
+      document.getElementById('start-modal').classList.add('active');
+    }
+
+    function closeStartModal() {
+      document.getElementById('start-modal').classList.remove('active');
+    }
+
+    // 开始剧情
+    async function startStory() {
+      console.log('startStory called');
+      console.log('token:', token ? 'exists' : 'null');
+      console.log('selectedStory:', selectedStory);
+
+      if (!token) {
+        alert('请先登录');
+        window.location.href = '/login.html';
+        return;
+      }
+
+      if (!selectedStory) {
+        alert('请选择一个故事');
+        return;
+      }
+
+      const protagonistName = document.getElementById('protagonist-name').value || '主角';
+      const protagonistDesc = document.getElementById('protagonist-desc').value;
+
+      // 显示加载状态
+      const btn = document.querySelector('#start-modal .btn-primary');
+      const originalText = btn.textContent;
+      btn.textContent = '正在生成开场白...';
+      btn.disabled = true;
+
+      try {
+        const response = await fetch('/api/stories/sessions', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            story_id: selectedStory.id,
+            protagonist_name: protagonistName,
+            protagonist_desc: protagonistDesc,
+          })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+          window.location.href = `/story-play.html?session=${data.session.id}`;
+        } else {
+          alert(data.detail || '开始失败');
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }
+      } catch (err) {
+        console.error('Error:', err);
+        alert('请求失败，请稍后重试');
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }
+    }
+
+    // 打开创建故事弹窗
+    function openCreateModal() {
+      if (!token) {
+        window.location.href = '/login.html';
+        return;
+      }
+      document.getElementById('create-modal').classList.add('active');
+    }
+
+    function closeCreateModal() {
+      document.getElementById('create-modal').classList.remove('active');
+    }
+
+    // 创建故事
+    async function createStory() {
+      const title = document.getElementById('story-title').value;
+      const description = document.getElementById('story-description').value;
+      const background = document.getElementById('story-background').value;
+      const task = document.getElementById('story-task').value;
+      const protagonist = document.getElementById('story-protagonist').value;
+      const systemPrompt = document.getElementById('story-prompt').value;
+
+      if (!title || !background || !task) {
+        alert('请填写标题、背景和任务');
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/stories', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            title,
+            description,
+            background,
+            task,
+            protagonist,
+            system_prompt: systemPrompt || `你是一个互动剧情的旁白者。请根据以下设定讲述故事，保持生动有趣的文笔，每段剧情后给出5个有意义的选项。`,
+          })
+        });
+
+        if (response.ok) {
+          closeCreateModal();
+          loadStories();
+          alert('创建成功！');
+        } else {
+          const data = await response.json();
+          alert(data.detail || '创建失败');
+        }
+      } catch (err) {
+        alert('网络错误');
+      }
+    }
+
+    // 初始化
+    loadStories();
+    loadMySessions();
+  </script>
+</body>
+</html>

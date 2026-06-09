@@ -2,6 +2,29 @@ import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react'
 
 // ── 通用文件上传 Hook ──────────────────────────────────────
 
+// ── 文件大小限制 ──────────────────────────────────────────
+
+export const FILE_SIZE_LIMITS = {
+  pdf: 100 * 1024 * 1024,      // 100MB
+  image: 50 * 1024 * 1024,     // 50MB
+  audio: 25 * 1024 * 1024,     // 25MB
+  default: 100 * 1024 * 1024,  // 100MB
+} as const;
+
+export function formatFileSize(bytes: number): string {
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+  if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
+}
+
+export function checkFileSize(file: File, limit: number): string | null {
+  if (file.size > limit) {
+    return `文件 "${file.name}" (${formatFileSize(file.size)}) 超过大小限制 (${formatFileSize(limit)})`;
+  }
+  return null;
+}
+
 export function useFileUpload(accept: string = '*') {
   const [files, setFiles] = useState<File[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -202,3 +225,41 @@ export async function loadImageFromBlob(blob: Blob): Promise<HTMLImageElement> {
 export function revokeUrls(urls: string[]) {
   urls.forEach(u => { if (u) URL.revokeObjectURL(u); });
 }
+
+// ── 进度条组件 ──────────────────────────────────────────
+
+export const ProgressBar: React.FC<{
+  value: number;       // 0-100
+  label?: string;
+  showPercent?: boolean;
+  color?: string;      // tailwind color class
+}> = ({ value, label, showPercent = true, color = 'bg-violet-500' }) => (
+  <div className="space-y-1">
+    {(label || showPercent) && (
+      <div className="flex justify-between text-xs text-slate-400">
+        {label && <span>{label}</span>}
+        {showPercent && <span>{Math.round(value)}%</span>}
+      </div>
+    )}
+    <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+      <div
+        className={`h-full ${color} rounded-full transition-all duration-300`}
+        style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
+      />
+    </div>
+  </div>
+);
+
+export const StatusMessage: React.FC<{
+  status: string;
+  type?: 'info' | 'success' | 'error' | 'warning';
+}> = ({ status, type = 'info' }) => {
+  const colors = {
+    info: 'text-slate-400',
+    success: 'text-emerald-400',
+    error: 'text-red-400',
+    warning: 'text-amber-400',
+  };
+  if (!status) return null;
+  return <p className={`text-sm ${colors[type]} mt-2`}>{status}</p>;
+};

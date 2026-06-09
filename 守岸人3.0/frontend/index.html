@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>守岸人 2.0</title>
+  <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+  <!-- 视频背景 -->
+  <video id="bg-video" autoplay muted loop>
+    <source src="/static/bg.mp4" type="video/mp4">
+  </video>
+
+  <!-- 粒子特效层 -->
+  <div id="effects-layer"></div>
+
+  <!-- 移动端菜单按钮 -->
+  <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+  <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+  <!-- 侧边栏 -->
+  <div id="sidebar">
+    <div class="sidebar-header">
+      <h2>🎭 角色列表</h2>
+      <div style="display:flex;gap:6px;">
+        <button class="sidebar-btn" onclick="openCharacterModal()">+ 新建</button>
+        <button class="sidebar-btn" onclick="importCharacter()" title="导入角色卡（PNG/JSON）">📥</button>
+      </div>
+    </div>
+    <input type="file" id="import-file" accept=".png,.json" style="display:none" onchange="handleImportFile(this)">
+    <div id="character-list"></div>
+    <div class="sidebar-nav" style="padding:10px 16px;border-top:1px solid rgba(0,0,0,0.06);">
+      <a href="/characters.html" style="display:block;padding:8px;color:var(--text-color);text-decoration:none;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.background='rgba(0,119,182,0.1)'" onmouseout="this.style.background='none'">📚 角色库</a>
+      <a href="/stories.html" style="display:block;padding:8px;color:var(--text-color);text-decoration:none;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.background='rgba(0,119,182,0.1)'" onmouseout="this.style.background='none'">📖 互动剧情</a>
+      <a href="/group-chat.html" style="display:block;padding:8px;color:var(--text-color);text-decoration:none;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.background='rgba(0,119,182,0.1)'" onmouseout="this.style.background='none'">💬 多人群聊</a>
+      <a href="/voice-chat.html" style="display:block;padding:8px;color:var(--text-color);text-decoration:none;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.background='rgba(0,119,182,0.1)'" onmouseout="this.style.background='none'">🎙️ 语音陪伴</a>
+      <a href="/admin.html" id="admin-link" style="display:none;padding:8px;color:var(--text-color);text-decoration:none;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.background='rgba(0,119,182,0.1)'" onmouseout="this.style.background='none'">⚙️ 后台管理</a>
+    </div>
+    <div class="sidebar-footer">
+      <div id="user-section" style="display:none;padding:10px 16px;border-top:1px solid rgba(0,0,0,0.06);">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+          <div style="width:32px;height:32px;border-radius:50%;background:rgba(0,119,182,0.1);display:flex;align-items:center;justify-content:center;">👤</div>
+          <span id="sidebar-username" style="font-size:14px;color:var(--text-color);"></span>
+        </div>
+        <button onclick="logout()" style="width:100%;padding:8px;background:rgba(244,67,54,0.1);color:#f44336;border:none;border-radius:8px;cursor:pointer;font-size:13px;">退出登录</button>
+      </div>
+      <div id="login-section">
+        <a href="/login.html" style="display:block;width:100%;padding:10px;background:linear-gradient(135deg,var(--tethys-blue),var(--tethys-light));color:white;border:none;border-radius:10px;cursor:pointer;text-align:center;text-decoration:none;font-size:14px;">登录 / 注册</a>
+      </div>
+      <button onclick="openSettings()">⚙️ 设置</button>
+    </div>
+  </div>
+
+  <!-- 主内容区 -->
+  <div id="main-content">
+    <!-- 顶部栏 -->
+    <div id="top-bar">
+      <div class="char-title">
+        <img id="top-char-avatar" src="/static/守岸人头像.jpg" onerror="this.src='/static/default-avatar.png'">
+        <span id="top-char-name">守岸人</span>
+      </div>
+      <div class="top-actions">
+        <button class="top-btn" onclick="openCharacterModal(state.currentCharacter?.id)">✏️ 编辑</button>
+        <button class="top-btn" onclick="clearChatHistory()">🗑️ 清空</button>
+      </div>
+    </div>
+
+    <!-- 聊天区域（含欢迎屏） -->
+    <div id="chat-container">
+      <div id="welcome-screen">
+        TETHYS SYSTEM ONLINE // 泰提斯系统已连接
+      </div>
+    </div>
+
+    <!-- 输入栏 -->
+    <div id="input-bar">
+      <input type="text" id="text-input" placeholder="写下你的思绪...">
+      <button class="input-btn" id="mic-btn" title="语音输入">🎤</button>
+      <button id="send-btn">发送</button>
+    </div>
+  </div>
+
+  <!-- 设置弹窗 -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal">
+      <h3>⚙️ 设置</h3>
+      <div class="form-group">
+        <label>AI 后端</label>
+        <select id="settings-backend"></select>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeSettings()">取消</button>
+        <button class="btn-primary" onclick="saveSettings()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 角色卡编辑弹窗 -->
+  <div class="modal-overlay" id="char-modal">
+    <div class="modal">
+      <h3 id="char-modal-title">创建角色</h3>
+      <form id="char-form">
+        <input type="hidden" id="char-id" name="id">
+        <div class="form-group">
+          <label>角色名称</label>
+          <input type="text" id="char-name" name="name" placeholder="例：守岸人" required>
+        </div>
+        <div class="form-group">
+          <label>角色描述</label>
+          <input type="text" id="char-description" name="description" placeholder="简短描述">
+        </div>
+        <div class="form-group">
+          <label>性格特点</label>
+          <input type="text" id="char-personality" name="personality" placeholder="温柔、冷静、呆萌...">
+        </div>
+        <div class="form-group">
+          <label>系统提示词（人设）</label>
+          <textarea id="char-system-prompt" name="system_prompt" rows="6" placeholder="详细的角色人设描述..."></textarea>
+        </div>
+        <div class="form-group">
+          <label>首次对话消息</label>
+          <textarea id="char-first-mes" name="first_mes" rows="2" placeholder="角色的第一句话"></textarea>
+        </div>
+        <div class="form-group">
+          <label>TTS 模型</label>
+          <select id="char-tts-model" name="tts_model">
+            <option value="mimo-v2.5-tts-voiceclone">音色克隆 (VoiceClone)</option>
+            <option value="mimo-v2.5-tts">预置音色 (Preset)</option>
+            <option value="mimo-v2.5-tts-voicedesign">音色设计 (VoiceDesign)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>音色 / 预置音色名</label>
+          <input type="text" id="char-tts-voice" name="tts_voice" placeholder="冰糖 / 茉莉 / 苏打...">
+        </div>
+        <div class="form-group">
+          <label>TTS 风格指令</label>
+          <input type="text" id="char-tts-style" name="tts_style_prompt" placeholder="温柔平静的语调...">
+        </div>
+        <div class="form-group">
+          <label>参考音频文件（VoiceClone 模式）</label>
+          <div id="current-voice" style="font-size:12px;color:rgba(0,0,0,0.5);margin-bottom:6px;"></div>
+          <input type="file" id="char-voice-file" accept=".wav,.mp3">
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-danger" onclick="deleteCharacter(document.getElementById('char-id').value)" style="margin-right:auto;">删除</button>
+          <button type="button" class="btn-secondary" onclick="closeCharacterModal()">取消</button>
+          <button type="button" class="btn-primary" onclick="saveCharacter()">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 背景音乐 -->
+  <audio id="bgm" src="/static/漂泊的终点.mp3" loop></audio>
+
+  <!-- Markdown 渲染 -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+
+  <!-- 公共模块 -->
+  <script src="/js/storage.js"></script>
+  <script src="/js/toast.js"></script>
+  <script src="/js/auth.js"></script>
+  <script src="/js/api.js"></script>
+  <script src="/js/app.js"></script>
+
+  <!-- 自动播放背景音乐 -->
+  <script>
+    const bgm = document.getElementById('bgm');
+    bgm.volume = 0.4;
+    let bgmPlaying = false;
+    document.body.addEventListener('click', () => {
+      if (!bgmPlaying) {
+        bgm.play().then(() => { bgmPlaying = true; }).catch(() => {});
+      }
+    }, { once: true });
+
+    // 用户状态检查
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+    if (user) {
+      document.getElementById('user-section').style.display = 'block';
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('sidebar-username').textContent = user.username;
+      if (user.role === 'admin') {
+        document.getElementById('admin-link').style.display = 'block';
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.reload();
+    }
+
+    // 移动端侧边栏切换
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebar-overlay');
+      sidebar.classList.toggle('open');
+      overlay.classList.toggle('show');
+    }
+  </script>
+</body>
+</html>

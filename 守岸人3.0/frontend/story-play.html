@@ -1,0 +1,987 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>剧情进行中 - 守岸人 2.0</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <style>
+    .play-container {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      height: 100vh;
+    }
+
+    /* 左侧剧情面板 */
+    .story-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+    }
+
+    .story-header {
+      padding: 15px 20px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .story-title {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    .back-btn, .action-btn {
+      padding: 8px 16px;
+      background: rgba(0, 0, 0, 0.05);
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--text-color);
+      text-decoration: none;
+      font-size: 14px;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover, .action-btn:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+
+    .action-btn.primary {
+      background: var(--tethys-blue);
+      color: white;
+    }
+
+    .action-btn.primary:hover {
+      background: #0066a0;
+    }
+
+    /* 消息区域 */
+    .messages-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 30px;
+    }
+
+    .message {
+      margin-bottom: 30px;
+      animation: fadeIn 0.5s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .narrator-message {
+      background: rgba(0, 119, 182, 0.05);
+      border-left: 4px solid var(--tethys-blue);
+      padding: 20px;
+      border-radius: 0 15px 15px 0;
+      line-height: 1.8;
+      color: var(--text-color);
+      font-size: 16px;
+    }
+
+    .user-choice {
+      text-align: right;
+      color: #666;
+      font-size: 14px;
+      padding: 10px 0;
+    }
+
+    .user-choice span {
+      background: rgba(0, 119, 182, 0.1);
+      padding: 8px 16px;
+      border-radius: 20px;
+    }
+
+    /* 选项区域 */
+    .options-area {
+      padding: 20px 30px;
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      background: rgba(255, 255, 255, 0.9);
+    }
+
+    .options-title {
+      font-size: 14px;
+      color: #999;
+      margin-bottom: 15px;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .option-btn {
+      padding: 15px 20px;
+      background: rgba(0, 119, 182, 0.05);
+      border: 1px solid rgba(0, 119, 182, 0.2);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s;
+      text-align: left;
+      font-size: 15px;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .option-btn:hover {
+      background: rgba(0, 119, 182, 0.1);
+      border-color: var(--tethys-blue);
+      transform: translateX(5px);
+    }
+
+    .option-btn .option-number {
+      width: 28px;
+      height: 28px;
+      background: var(--tethys-blue);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .custom-input-area {
+      display: flex;
+      gap: 10px;
+      margin-top: 15px;
+      padding-top: 15px;
+      border-top: 1px dashed rgba(0, 0, 0, 0.1);
+    }
+
+    .custom-input {
+      flex: 1;
+      padding: 12px 16px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 10px;
+      font-size: 14px;
+      background: white;
+    }
+
+    .custom-input:focus {
+      outline: none;
+      border-color: var(--tethys-blue);
+    }
+
+    .custom-submit {
+      padding: 12px 20px;
+      background: linear-gradient(135deg, var(--tethys-blue), var(--tethys-light));
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .custom-submit:hover {
+      opacity: 0.9;
+    }
+
+    /* 右侧信息面板 */
+    .info-panel {
+      width: 350px;
+      background: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(20px);
+      color: white;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-tabs {
+      display: flex;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .panel-tab {
+      flex: 1;
+      padding: 15px;
+      text-align: center;
+      cursor: pointer;
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.6);
+      transition: all 0.2s;
+    }
+
+    .panel-tab:hover {
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    .panel-tab.active {
+      color: white;
+      border-bottom: 2px solid var(--tethys-blue);
+    }
+
+    .panel-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .info-section {
+      margin-bottom: 25px;
+    }
+
+    .info-section h4 {
+      font-size: 14px;
+      color: rgba(255, 255, 255, 0.6);
+      margin-bottom: 10px;
+    }
+
+    .info-content {
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    .choices-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .choices-list li {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    .choices-list li:last-child {
+      border-bottom: none;
+    }
+
+    .choices-list li::before {
+      content: '→ ';
+      color: var(--tethys-light);
+    }
+
+    /* 分支图 */
+    .branch-container {
+      width: 100%;
+      min-height: 400px;
+      position: relative;
+    }
+
+    .branch-node {
+      position: absolute;
+      padding: 10px 15px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 8px;
+      font-size: 12px;
+      color: white;
+      cursor: pointer;
+      max-width: 150px;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .branch-node:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.05);
+    }
+
+    .branch-node.current {
+      border-color: var(--tethys-blue);
+      background: rgba(0, 119, 182, 0.3);
+    }
+
+    .branch-line {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.3);
+      height: 2px;
+    }
+
+    /* 评分 */
+    .rating-stars {
+      display: flex;
+      gap: 5px;
+      margin-bottom: 10px;
+    }
+
+    .star {
+      font-size: 24px;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.3);
+      transition: color 0.2s;
+    }
+
+    .star:hover, .star.active {
+      color: #ffd700;
+    }
+
+    .rating-info {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    /* 收藏按钮 */
+    .favorite-btn {
+      background: none;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
+      color: rgba(255, 255, 255, 0.3);
+      transition: color 0.2s;
+    }
+
+    .favorite-btn:hover, .favorite-btn.active {
+      color: #ff4757;
+    }
+
+    /* 加载动画 */
+    .loading-dots {
+      display: inline-flex;
+      gap: 5px;
+    }
+
+    .loading-dots span {
+      width: 8px;
+      height: 8px;
+      background: var(--tethys-blue);
+      border-radius: 50%;
+      animation: bounce 1.4s infinite ease-in-out;
+    }
+
+    .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+    .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+
+    .options-area.disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    /* 分享码显示 */
+    .share-code {
+      display: inline-block;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      font-family: monospace;
+      font-size: 18px;
+      letter-spacing: 3px;
+      margin-top: 10px;
+    }
+
+    .copy-btn {
+      padding: 6px 12px;
+      background: var(--tethys-blue);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      margin-left: 10px;
+    }
+
+    .copy-btn:hover {
+      background: #0066a0;
+    }
+
+    /* 导出菜单 */
+    .export-menu {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+      display: none;
+      z-index: 100;
+    }
+
+    .export-menu.show {
+      display: block;
+    }
+
+    .export-option {
+      padding: 12px 20px;
+      cursor: pointer;
+      color: var(--text-color);
+      font-size: 14px;
+      transition: background 0.2s;
+    }
+
+    .export-option:hover {
+      background: rgba(0, 0, 0, 0.05);
+    }
+  </style>
+</head>
+<body>
+  <!-- 视频背景 -->
+  <video id="bg-video" autoplay muted loop>
+    <source src="/static/bg.mp4" type="video/mp4">
+  </video>
+
+  <!-- 粒子特效层 -->
+  <div id="effects-layer"></div>
+
+  <div class="play-container">
+    <div class="story-panel">
+      <div class="story-header">
+        <a href="/stories.html" class="back-btn">← 返回列表</a>
+        <div class="story-title" id="story-title">加载中...</div>
+        <div class="header-actions">
+          <button class="action-btn" onclick="toggleFavorite()" id="favorite-btn">♡ 收藏</button>
+          <div style="position:relative;">
+            <button class="action-btn" onclick="toggleExportMenu()">📤 导出</button>
+            <div class="export-menu" id="export-menu">
+              <div class="export-option" onclick="exportStory('json')">导出为 JSON</div>
+              <div class="export-option" onclick="exportStory('text')">导出为文本</div>
+            </div>
+          </div>
+          <button class="action-btn primary" onclick="generateShareCode()">🔗 分享</button>
+        </div>
+      </div>
+
+      <div class="messages-area" id="messages-area"></div>
+
+      <div class="options-area" id="options-area">
+        <div class="options-title">选择你的行动：</div>
+        <div class="options-grid" id="options-grid"></div>
+        <div class="custom-input-area">
+          <input type="text" class="custom-input" id="custom-input" placeholder="输入自定义行动...">
+          <button class="custom-submit" onclick="sendCustom()">发送</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="info-panel">
+      <div class="panel-tabs">
+        <div class="panel-tab active" onclick="switchTab('info')">剧情信息</div>
+        <div class="panel-tab" onclick="switchTab('branch')">分支图</div>
+        <div class="panel-tab" onclick="switchTab('rate')">评分</div>
+      </div>
+
+      <div class="panel-content" id="panel-info">
+        <div class="info-section">
+          <h4>故事背景</h4>
+          <div class="info-content" id="info-background">加载中...</div>
+        </div>
+
+        <div class="info-section">
+          <h4>任务目标</h4>
+          <div class="info-content" id="info-task">加载中...</div>
+        </div>
+
+        <div class="info-section">
+          <h4>主角</h4>
+          <div class="info-content" id="info-protagonist">加载中...</div>
+        </div>
+
+        <div class="info-section">
+          <h4>选择记录</h4>
+          <ul class="choices-list" id="choices-list"></ul>
+        </div>
+      </div>
+
+      <div class="panel-content" id="panel-branch" style="display:none;">
+        <div class="branch-container" id="branch-container"></div>
+      </div>
+
+      <div class="panel-content" id="panel-rate" style="display:none;">
+        <div class="info-section">
+          <h4>为这个剧情评分</h4>
+          <div class="rating-stars" id="rating-stars">
+            <span class="star" data-rating="1">★</span>
+            <span class="star" data-rating="2">★</span>
+            <span class="star" data-rating="3">★</span>
+            <span class="star" data-rating="4">★</span>
+            <span class="star" data-rating="5">★</span>
+          </div>
+          <div class="rating-info" id="rating-info">暂无评分</div>
+        </div>
+
+        <div class="info-section" id="share-section" style="display:none;">
+          <h4>分享码</h4>
+          <div>
+            <span class="share-code" id="share-code"></span>
+            <button class="copy-btn" onclick="copyShareCode()">复制</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // XSS 防护
+    function escapeHtml(str) {
+      if (!str) return '';
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = '/login.html';
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session');
+
+    if (!sessionId) {
+      window.location.href = '/stories.html';
+    }
+
+    let sessionData = null;
+    let storyData = null;
+    let currentOptions = [];
+    let isFavorited = false;
+    let userRating = 0;
+    let branches = [];
+
+    // 加载会话和故事数据
+    async function loadData() {
+      try {
+        // 加载会话
+        const sessionRes = await fetch(`/api/stories/sessions/${sessionId}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        sessionData = await sessionRes.json();
+
+        // 加载故事
+        const storyRes = await fetch(`/api/stories/${sessionData.story_id}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        storyData = await storyRes.json();
+
+        // 更新UI
+        document.getElementById('story-title').textContent = storyData.title;
+        document.getElementById('info-background').textContent = storyData.background;
+        document.getElementById('info-task').textContent = storyData.task;
+        document.getElementById('info-protagonist').textContent =
+          `${sessionData.protagonist_name}${sessionData.protagonist_desc ? '：' + sessionData.protagonist_desc : ''}`;
+
+        // 加载收藏状态
+        await checkFavorite();
+        // 加载评分
+        await loadRating();
+        // 加载分支
+        await loadBranches();
+        // 加载消息
+        await loadMessages();
+      } catch (err) {
+        console.error('加载失败:', err);
+      }
+    }
+
+    // 检查收藏状态
+    async function checkFavorite() {
+      try {
+        const res = await fetch(`/api/stories/${sessionData.story_id}/favorite`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        isFavorited = data.favorited;
+        updateFavoriteBtn();
+      } catch (err) {
+        console.error('检查收藏失败:', err);
+      }
+    }
+
+    // 切换收藏
+    async function toggleFavorite() {
+      try {
+        const res = await fetch(`/api/stories/${sessionData.story_id}/favorite`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        isFavorited = data.favorited;
+        updateFavoriteBtn();
+      } catch (err) {
+        alert('操作失败');
+      }
+    }
+
+    function updateFavoriteBtn() {
+      const btn = document.getElementById('favorite-btn');
+      btn.textContent = isFavorited ? '❤️ 已收藏' : '♡ 收藏';
+      btn.classList.toggle('active', isFavorited);
+    }
+
+    // 加载评分
+    async function loadRating() {
+      try {
+        const res = await fetch(`/api/stories/${sessionData.story_id}/rate`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        userRating = data.rating || 0;
+        updateRatingStars();
+        updateRatingInfo();
+      } catch (err) {
+        console.error('加载评分失败:', err);
+      }
+    }
+
+    // 更新评分星星
+    function updateRatingStars() {
+      const stars = document.querySelectorAll('#rating-stars .star');
+      stars.forEach(star => {
+        const rating = parseInt(star.dataset.rating);
+        star.classList.toggle('active', rating <= userRating);
+      });
+    }
+
+    // 更新评分信息
+    function updateRatingInfo() {
+      const info = document.getElementById('rating-info');
+      if (storyData.rating_count > 0) {
+        info.textContent = `平均 ${storyData.rating_avg} 分 (${storyData.rating_count} 人评分)`;
+      } else {
+        info.textContent = '暂无评分';
+      }
+    }
+
+    // 评分点击事件
+    document.querySelectorAll('#rating-stars .star').forEach(star => {
+      star.addEventListener('click', async () => {
+        const rating = parseInt(star.dataset.rating);
+        try {
+          const res = await fetch(`/api/stories/${sessionData.story_id}/rate`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${token}`
+            },
+            body: JSON.stringify({ rating })
+          });
+          const data = await res.json();
+          userRating = data.rating;
+          storyData.rating_avg = data.rating_avg;
+          storyData.rating_count = data.rating_count;
+          updateRatingStars();
+          updateRatingInfo();
+        } catch (err) {
+          alert('评分失败');
+        }
+      });
+    });
+
+    // 生成分享码
+    async function generateShareCode() {
+      try {
+        const res = await fetch(`/api/stories/${sessionData.story_id}/share`, {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        document.getElementById('share-code').textContent = data.share_code;
+        document.getElementById('share-section').style.display = 'block';
+      } catch (err) {
+        alert('生成分享码失败');
+      }
+    }
+
+    // 复制分享码
+    function copyShareCode() {
+      const code = document.getElementById('share-code').textContent;
+      navigator.clipboard.writeText(code).then(() => {
+        alert('分享码已复制到剪贴板');
+      }).catch(() => {
+        alert('复制失败，请手动复制');
+      });
+    }
+
+    // 导出剧情
+    async function exportStory(format) {
+      toggleExportMenu();
+      try {
+        const res = await fetch(`/api/stories/${sessionData.story_id}/export?format=${format}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+
+        if (format === 'text') {
+          // 下载文本文件
+          const blob = new Blob([data.content], { type: 'text/plain;charset=utf-8' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${storyData.title}.txt`;
+          a.click();
+          URL.revokeObjectURL(url);
+        } else {
+          // 下载JSON文件
+          const blob = new Blob([JSON.stringify(data.content, null, 2)], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `${storyData.title}.json`;
+          a.click();
+          URL.revokeObjectURL(url);
+        }
+      } catch (err) {
+        alert('导出失败');
+      }
+    }
+
+    // 切换导出菜单
+    function toggleExportMenu() {
+      document.getElementById('export-menu').classList.toggle('show');
+    }
+
+    // 加载分支
+    async function loadBranches() {
+      try {
+        const res = await fetch(`/api/stories/sessions/${sessionId}/branches`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        branches = await res.json();
+        renderBranches();
+      } catch (err) {
+        console.error('加载分支失败:', err);
+      }
+    }
+
+    // 渲染分支图
+    function renderBranches() {
+      const container = document.getElementById('branch-container');
+      if (branches.length === 0) {
+        container.innerHTML = '<div style="text-align:center;color:rgba(255,255,255,0.5);padding:20px;">暂无分支数据</div>';
+        return;
+      }
+
+      // 计算节点位置
+      const nodeWidth = 120;
+      const nodeHeight = 40;
+      const levelGap = 60;
+      const nodeGap = 20;
+
+      const levels = {};
+      branches.forEach(b => {
+        if (!levels[b.depth]) levels[b.depth] = [];
+        levels[b.depth].push(b);
+      });
+
+      let html = '';
+      const positions = {};
+
+      Object.keys(levels).forEach(depth => {
+        const nodes = levels[depth];
+        const startX = (container.offsetWidth - nodes.length * (nodeWidth + nodeGap)) / 2;
+
+        nodes.forEach((node, i) => {
+          const x = startX + i * (nodeWidth + nodeGap);
+          const y = depth * (nodeHeight + levelGap);
+          positions[node.id] = { x, y };
+
+          const isCurrent = sessionData.current_branch_id === node.id;
+          html += `<div class="branch-node ${isCurrent ? 'current' : ''}"
+                        style="left:${x}px;top:${y}px;width:${nodeWidth}px;"
+                        title="${escapeHtml(node.content || '')}">${escapeHtml(node.choice_text || '开始')}</div>`;
+        });
+      });
+
+      container.innerHTML = html;
+      container.style.height = (Object.keys(levels).length * (nodeHeight + levelGap) + 50) + 'px';
+    }
+
+    // 切换标签
+    function switchTab(tab) {
+      document.querySelectorAll('.panel-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.panel-content').forEach(c => c.style.display = 'none');
+
+      event.target.classList.add('active');
+      document.getElementById(`panel-${tab}`).style.display = 'block';
+
+      if (tab === 'branch') {
+        renderBranches();
+      }
+    }
+
+    // 加载消息
+    async function loadMessages() {
+      try {
+        const response = await fetch(`/api/stories/sessions/${sessionId}/messages`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const messages = await response.json();
+
+        const messagesArea = document.getElementById('messages-area');
+        const choicesList = document.getElementById('choices-list');
+        let html = '';
+        let choicesHtml = '';
+
+        messages.forEach(msg => {
+          if (msg.role === 'narrator') {
+            html += `
+              <div class="message">
+                <div class="narrator-message">${formatContent(msg.content)}</div>
+              </div>
+            `;
+
+            // 显示选项
+            if (msg.options && !msg.chosen_option) {
+              currentOptions = msg.options;
+              renderOptions(msg.options);
+            }
+          } else if (msg.role === 'user') {
+            html += `
+              <div class="message">
+                <div class="user-choice"><span>选择了：${escapeHtml(msg.content)}</span></div>
+              </div>
+            `;
+            choicesHtml += `<li>${escapeHtml(msg.content)}</li>`;
+          }
+        });
+
+        messagesArea.innerHTML = html;
+        choicesList.innerHTML = choicesHtml;
+
+        // 滚动到底部
+        messagesArea.scrollTop = messagesArea.scrollHeight;
+      } catch (err) {
+        console.error('加载消息失败:', err);
+      }
+    }
+
+    // 格式化内容（带XSS防护）
+    function formatContent(text) {
+      return escapeHtml(text).replace(/\n/g, '<br>');
+    }
+
+    // 渲染选项
+    function renderOptions(options) {
+      const grid = document.getElementById('options-grid');
+      grid.innerHTML = options.map((opt, i) => `
+        <button class="option-btn" onclick="selectOption(${i})">
+          <span class="option-number">${i + 1}</span>
+          <span>${escapeHtml(opt)}</span>
+        </button>
+      `).join('');
+
+      document.getElementById('options-area').classList.remove('disabled');
+    }
+
+    // 选择选项
+    async function selectOption(index) {
+      document.getElementById('options-area').classList.add('disabled');
+
+      // 显示加载状态
+      const messagesArea = document.getElementById('messages-area');
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'message';
+      loadingDiv.innerHTML = '<div class="narrator-message" style="opacity:0.6;">正在生成剧情...</div>';
+      messagesArea.appendChild(loadingDiv);
+      messagesArea.scrollTop = messagesArea.scrollHeight;
+
+      try {
+        const response = await fetch('/api/stories/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            session_id: sessionId,
+            option_index: index,
+          })
+        });
+
+        if (response.ok) {
+          await loadMessages();
+          await loadBranches();
+        } else {
+          const data = await response.json();
+          alert(data.detail || '发送失败');
+          document.getElementById('options-area').classList.remove('disabled');
+        }
+      } catch (err) {
+        alert('网络错误');
+        document.getElementById('options-area').classList.remove('disabled');
+      }
+    }
+
+    // 发送自定义内容
+    async function sendCustom() {
+      const input = document.getElementById('custom-input');
+      const content = input.value.trim();
+      if (!content) return;
+
+      document.getElementById('options-area').classList.add('disabled');
+      input.value = '';
+
+      // 显示加载状态
+      const messagesArea = document.getElementById('messages-area');
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'message';
+      loadingDiv.innerHTML = '<div class="narrator-message" style="opacity:0.6;">正在生成剧情...</div>';
+      messagesArea.appendChild(loadingDiv);
+      messagesArea.scrollTop = messagesArea.scrollHeight;
+
+      try {
+        const response = await fetch('/api/stories/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            session_id: sessionId,
+            content: content,
+          })
+        });
+
+        if (response.ok) {
+          await loadMessages();
+          await loadBranches();
+        } else {
+          const data = await response.json();
+          alert(data.detail || '发送失败');
+          document.getElementById('options-area').classList.remove('disabled');
+        }
+      } catch (err) {
+        alert('网络错误');
+        document.getElementById('options-area').classList.remove('disabled');
+      }
+    }
+
+    // 回车发送
+    document.getElementById('custom-input').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') {
+        sendCustom();
+      }
+    });
+
+    // 点击其他地方关闭导出菜单
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.header-actions')) {
+        document.getElementById('export-menu').classList.remove('show');
+      }
+    });
+
+    // 初始化
+    loadData();
+  </script>
+</body>
+</html>

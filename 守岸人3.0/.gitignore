@@ -1,0 +1,15 @@
+# 数据目录（含 API Key 和用户数据）
+data/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+
+# Logs
+logs/
+*.log
+
+# Audio cache
+audio_cache/

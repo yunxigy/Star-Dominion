@@ -3,8 +3,8 @@ import * as pdfjsLib from 'pdfjs-dist';
 import { jsPDF } from 'jspdf';
 import { useFileUpload, UploadZone, Btn, TextInput } from '../shared';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+
 
 const PdfWatermark: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { files, triggerUpload, inputProps, handleFiles } = useFileUpload('.pdf');

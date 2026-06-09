@@ -3,8 +3,8 @@ import { jsPDF } from 'jspdf';
 import * as pdfjsLib from 'pdfjs-dist';
 import { useFileUpload, UploadZone, Btn, TextInput } from '../shared';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+
 
 const PdfEncrypt: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { files, triggerUpload, inputProps, handleFiles } = useFileUpload('.pdf');
@@ -49,9 +49,8 @@ const PdfEncrypt: React.FC<{ onClose: () => void }> = ({ onClose }) => {
         output.save(`encrypted_${file.name}`);
         setStatus('加密完成，已下载。注意: 请在PDF阅读器中验证密码是否生效。');
       } catch (encErr) {
-        // jsPDF encryption may not be fully supported in all versions
-        output.save(`encrypted_${file.name}`);
-        setStatus('文件已保存，但jsPDF加密功能可能有限，建议使用专业PDF工具进行加密。');
+        // jsPDF encryption may not be fully supported - don't save unencrypted file
+        setStatus('加密失败，未生成文件。jsPDF 加密功能不可用，建议使用专业 PDF 工具（如 Adobe Acrobat）进行加密。');
       }
     } catch (err: any) {
       setStatus(`加密失败: ${err.message}`);

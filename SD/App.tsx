@@ -1,28 +1,29 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { PageLayout } from './layouts/PageLayout';
+import { AppLayout } from './layouts/AppLayout';
 import { ToolRunnerProvider } from './components/ToolRunner';
 import { HomePage } from './pages/HomePage';
-import { StarAlliancePage } from './pages/StarAlliancePage';
 import { ToolboxPage } from './pages/ToolboxPage';
 import { TranslationPage } from './pages/TranslationPage';
-import { PoemPage } from './pages/PoemPage';
 import { Stm32Page } from './pages/Stm32Page';
 import { AIAgentPage } from './pages/AIAgentPage';
-import { PlagiarismPage } from './pages/PlagiarismPage';
+import ToolWindow from './components/ToolWindow';
 
 export default function App() {
   return (
     <BrowserRouter>
       <ToolRunnerProvider>
         <Routes>
-          <Route path="/" element={<PageLayout><HomePage /></PageLayout>} />
-          <Route path="/zm" element={<PageLayout><StarAlliancePage /></PageLayout>} />
-          <Route path="/gj" element={<PageLayout><ToolboxPage /></PageLayout>} />
-          <Route path="/fy" element={<PageLayout><TranslationPage /></PageLayout>} />
-          <Route path="/hs" element={<PageLayout><PoemPage /></PageLayout>} />
-          <Route path="/bp" element={<PageLayout fullScreen><Stm32Page /></PageLayout>} />
-          <Route path="/ai" element={<PageLayout fullScreen><AIAgentPage /></PageLayout>} />
-          <Route path="/lwc" element={<PageLayout><PlagiarismPage /></PageLayout>} />
+          {/* 主应用布局 */}
+          <Route element={<AppLayout />}>
+            <Route index element={<HomePage />} />
+            <Route path="/gj" element={<ToolboxPage />} />
+            <Route path="/fy" element={<TranslationPage />} />
+            <Route path="/bp" element={<Stm32Page />} />
+            <Route path="/ai" element={<AIAgentPage />} />
+          </Route>
+
+          {/* 工具窗口（新窗口打开） */}
+          <Route path="/tool/:toolId" element={<ToolWindow />} />
         </Routes>
       </ToolRunnerProvider>
     </BrowserRouter>

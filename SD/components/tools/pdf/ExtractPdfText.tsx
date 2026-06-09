@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import { useFileUpload, UploadZone, Btn, TextArea, copyToClipboard } from '../shared';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc =
-  `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.mjs`;
+pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
+
 
 const ExtractPdfText: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const { files, triggerUpload, inputProps, handleFiles } = useFileUpload('.pdf');
