@@ -27,7 +27,17 @@ desktop.ini
 
 # Logs
 *.log
+*.log.*
 npm-debug.log*
+logs/
+**/logs/
+**/backend_err.log
+**/启动日志.txt
+**/tts_startup_error.log
+**/server.log
+
+# 启动脚本日志
+*.tar.gz
 
 # Env files
 .env.local
