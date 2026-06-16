@@ -1,4 +1,5 @@
 import React, { createContext, useContext } from 'react';
+import { recordToolUse } from '../lib/userTools';
 
 interface ToolRunnerContextType {
   openTool: (id: string) => void;
@@ -14,7 +15,7 @@ export const useToolRunner = () => useContext(ToolRunnerContext);
 
 export const ToolRunnerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const openTool = (id: string) => {
-    // 在新标签页中打开工具
+    recordToolUse(id);
     window.open(`/tool/${id}`, '_blank');
   };
 

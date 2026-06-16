@@ -57,18 +57,18 @@ export const UploadZone: React.FC<{
   sublabel?: string;
 }> = ({ onUpload, onDropFiles, accept, label = '拖拽或点击上传文件', sublabel }) => (
   <div
-    className="border-2 border-dashed border-slate-700 rounded-xl p-10 text-center cursor-pointer hover:border-violet-500/50 transition-colors"
+    className="border-2 border-dashed border-[#c79f72] bg-[#fff4e6]/70 rounded-xl p-10 text-center cursor-pointer hover:border-[#9a5a28] hover:bg-[#f1dcc2]/70 transition-colors"
     onClick={onUpload}
     onDragOver={e => { e.preventDefault(); e.stopPropagation(); }}
     onDrop={e => { e.preventDefault(); e.stopPropagation(); if (e.dataTransfer.files.length && onDropFiles) onDropFiles(e.dataTransfer.files); }}
   >
-    <div className="text-slate-600 mb-2">
+    <div className="text-[#8b735c] mb-2">
       <svg className="w-10 h-10 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
       </svg>
     </div>
-    <p className="text-slate-400">{label}</p>
-    {sublabel && <p className="text-xs text-slate-600 mt-1">{sublabel}</p>}
+    <p className="text-[#6d5a47]">{label}</p>
+    {sublabel && <p className="text-xs text-[#8b735c] mt-1">{sublabel}</p>}
   </div>
 );
 
@@ -82,9 +82,9 @@ export const Btn: React.FC<{
 }> = ({ onClick, disabled, variant = 'primary', children }) => {
   const base = 'px-4 py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-50';
   const styles = {
-    primary: 'bg-violet-600 text-white hover:bg-violet-500',
-    danger: 'bg-red-600/20 border border-red-500/30 text-red-400 hover:bg-red-600/30',
-    ghost: 'bg-slate-800 text-slate-300 hover:bg-slate-700',
+    primary: 'bg-[#7a421b] text-[#fff8ef] hover:bg-[#5f3214]',
+    danger: 'bg-red-600/15 border border-red-500/30 text-red-700 hover:bg-red-600/25',
+    ghost: 'bg-[#f1dcc2] text-[#6f3714] hover:bg-[#ead0ad]',
   };
   return <button onClick={onClick} disabled={disabled} className={`${base} ${styles[variant]}`}>{children}</button>;
 };
@@ -105,7 +105,7 @@ export const TextArea: React.FC<{
     placeholder={placeholder}
     rows={rows}
     readOnly={readOnly}
-    className={`w-full bg-slate-800/50 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 font-mono resize-y focus:outline-none focus:border-violet-500/50 ${className}`}
+    className={`w-full bg-[#fff4e6] border border-[#d8b58e] rounded-lg p-3 text-sm text-[#2f241b] font-mono resize-y focus:outline-none focus:border-[#9a5a28] ${className}`}
   />
 );
 
@@ -121,7 +121,7 @@ export const TextInput: React.FC<{
     value={value}
     onChange={e => onChange(e.target.value)}
     placeholder={placeholder}
-    className={`w-full bg-slate-800/50 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 focus:outline-none focus:border-violet-500/50 ${className}`}
+    className={`w-full bg-[#fff4e6] border border-[#d8b58e] rounded-lg p-3 text-sm text-[#2f241b] focus:outline-none focus:border-[#9a5a28] ${className}`}
   />
 );
 
@@ -132,14 +132,14 @@ export const ResultBox: React.FC<{
   value: string;
   onCopy?: () => void;
 }> = ({ label, value, onCopy }) => (
-  <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-3">
+  <div className="bg-[#fff4e6] border border-[#d8b58e] rounded-lg p-3">
     <div className="flex justify-between items-center mb-1">
-      <span className="text-xs text-slate-500">{label}</span>
+      <span className="text-xs text-[#8b735c]">{label}</span>
       {onCopy && (
-        <button onClick={onCopy} className="text-xs text-violet-400 hover:text-violet-300">复制</button>
+        <button onClick={onCopy} className="text-xs text-[#8a4b1f] hover:text-[#5f3214]">复制</button>
       )}
     </div>
-    <div className="text-sm text-slate-200 font-mono break-all">{value}</div>
+    <div className="text-sm text-[#2f241b] font-mono break-all">{value}</div>
   </div>
 );
 
@@ -236,12 +236,12 @@ export const ProgressBar: React.FC<{
 }> = ({ value, label, showPercent = true, color = 'bg-violet-500' }) => (
   <div className="space-y-1">
     {(label || showPercent) && (
-      <div className="flex justify-between text-xs text-slate-400">
+      <div className="flex justify-between text-xs text-[#6d5a47]">
         {label && <span>{label}</span>}
         {showPercent && <span>{Math.round(value)}%</span>}
       </div>
     )}
-    <div className="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+    <div className="w-full h-2 bg-[#ead0ad] rounded-full overflow-hidden">
       <div
         className={`h-full ${color} rounded-full transition-all duration-300`}
         style={{ width: `${Math.min(100, Math.max(0, value))}%` }}
@@ -255,10 +255,10 @@ export const StatusMessage: React.FC<{
   type?: 'info' | 'success' | 'error' | 'warning';
 }> = ({ status, type = 'info' }) => {
   const colors = {
-    info: 'text-slate-400',
-    success: 'text-emerald-400',
-    error: 'text-red-400',
-    warning: 'text-amber-400',
+    info: 'text-[#6d5a47]',
+    success: 'text-[#5f6f42]',
+    error: 'text-red-700',
+    warning: 'text-[#9a5a28]',
   };
   if (!status) return null;
   return <p className={`text-sm ${colors[type]} mt-2`}>{status}</p>;

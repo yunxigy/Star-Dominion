@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="1152" viewBox="0 0 640 960" role="img" aria-label="The Magician tarot card">
+  <desc>Ornate occult tarot card illustration, mysterious and richly layered. Warm antique palette, deep burgundy, umber, bronze gold, smoky teal, parchment highlights. Complex celestial geometry, astrological circles, sigils, constellation lines, engraved border. Center symbol should be iconic and readable, surrounded by ritual details and subtle texture. No photorealism, no modern UI, no plain flat icon, no empty background.</desc>
+  <defs>
+    <linearGradient id="bg-magician" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#1e1516"/>
+      <stop offset=".24" stop-color="#315b66"/>
+      <stop offset=".52" stop-color="#823b33"/>
+      <stop offset=".78" stop-color="#342019"/>
+      <stop offset="1" stop-color="#111516"/>
+    </linearGradient>
+    <radialGradient id="glow-magician" cx="50%" cy="38%" r="64%">
+      <stop offset="0" stop-color="#e2b75d" stop-opacity=".62"/>
+      <stop offset=".45" stop-color="#e2b75d" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain-magician">
+      <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="59" result="noise"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 .11"/>
+      </feComponentTransfer>
+    </filter>
+    <filter id="shadow-magician" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#130c08" flood-opacity=".52"/>
+    </filter>
+  </defs>
+
+  <rect width="640" height="960" rx="42" fill="#1a1110"/>
+  <rect x="24" y="24" width="592" height="912" rx="34" fill="url(#bg-magician)"/>
+  <rect x="24" y="24" width="592" height="912" rx="34" filter="url(#grain-magician)"/>
+  <circle cx="320" cy="424" r="268" fill="url(#glow-magician)"/>
+  <g fill="none" stroke="#e2b75d" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="34" y="34" width="572" height="892" rx="30" stroke-width="4" opacity=".62"/>
+    <rect x="56" y="56" width="528" height="848" rx="22" stroke-width="1.5" opacity=".56"/>
+    <rect x="78" y="78" width="484" height="804" rx="14" stroke-width="1" opacity=".34"/>
+    <path d="M112 132h118M410 132h118M112 828h118M410 828h118" stroke-width="2" opacity=".55"/>
+    <path d="M112 132c30 28 58 28 88 0M440 132c30 28 58 28 88 0M112 828c30-28 58-28 88 0M440 828c30-28 58-28 88 0" stroke-width="2" opacity=".48"/>
+    <path d="M92 230c40-52 40-100 0-152M548 230c-40-52-40-100 0-152M92 730c40 52 40 100 0 152M548 730c-40 52-40 100 0 152" stroke-width="2.5" opacity=".42"/>
+  </g>
+  <g opacity=".95"><circle cx="320" cy="430" r="88" fill="none" stroke="#fff0ca" stroke-width="1" opacity="0.16"/><circle cx="320" cy="430" r="126" fill="none" stroke="#fff0ca" stroke-width="2" opacity="0.21000000000000002"/><circle cx="320" cy="430" r="176" fill="none" stroke="#fff0ca" stroke-width="1" opacity="0.26"/><circle cx="320" cy="430" r="222" fill="none" stroke="#fff0ca" stroke-width="1" opacity="0.31000000000000005"/><path d="M518.0 430.0 538.0 430.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M515.0 464.4 524.8 466.1" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M506.1 497.7 515.5 501.1" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M491.5 529.0 508.8 539.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M471.7 557.3 479.3 563.7" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M447.3 581.7 453.7 589.3" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M419.0 601.5 429.0 618.8" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M387.7 616.1 391.1 625.5" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M354.4 625.0 356.1 634.8" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M320.0 628.0 320.0 648.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M285.6 625.0 283.9 634.8" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M252.3 616.1 248.9 625.5" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M221.0 601.5 211.0 618.8" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M192.7 581.7 186.3 589.3" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M168.3 557.3 160.7 563.7" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M148.5 529.0 131.2 539.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M133.9 497.7 124.5 501.1" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M125.0 464.4 115.2 466.1" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M122.0 430.0 102.0 430.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M125.0 395.6 115.2 393.9" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M133.9 362.3 124.5 358.9" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M148.5 331.0 131.2 321.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M168.3 302.7 160.7 296.3" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M192.7 278.3 186.3 270.7" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M221.0 258.5 211.0 241.2" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M252.3 243.9 248.9 234.5" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M285.6 235.0 283.9 225.2" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M320.0 232.0 320.0 212.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M354.4 235.0 356.1 225.2" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M387.7 243.9 391.1 234.5" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M419.0 258.5 429.0 241.2" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M447.3 278.3 453.7 270.7" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M471.7 302.7 479.3 296.3" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M491.5 331.0 508.8 321.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M506.1 362.3 515.5 358.9" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M515.0 395.6 524.8 393.9" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M460.0 310.1 200.2 262.4" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M423.4 576.9 470.4 511.4" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M273.5 695.8 269.1 225.4" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M217.2 673.5 379.4 183.4" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M494.0 368.4 341.9 387.9" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M240.2 501.7 159.0 583.2" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M160.5 662.1 121.9 500.2" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M262.3 451.9 266.5 323.0" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M408.9 697.8 263.1 443.0" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M348.0 214.8 248.3 216.3" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M372.7 385.7 402.8 249.3" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M269.0 305.5 384.2 390.0" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M308.8 211.5 218.2 287.7" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M142.6 370.9 357.0 679.8" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M348.7 404.3 308.7 569.0" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M295.5 518.6 146.8 667.7" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M473.5 527.1 502.7 215.0" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M351.4 469.3 350.8 401.8" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><circle cx="443.5" cy="335.3" r="4.8" fill="#fff0ca" opacity="0.40"/><circle cx="440.4" cy="380.3" r="4.1" fill="#fff0ca" opacity="0.40"/><circle cx="204.8" cy="322.1" r="3.3" fill="#fff0ca" opacity="0.60"/><circle cx="310.0" cy="554.5" r="2.9" fill="#fff0ca" opacity="0.29"/><circle cx="427.2" cy="464.4" r="2.6" fill="#fff0ca" opacity="0.36"/><circle cx="229.8" cy="419.6" r="4.3" fill="#fff0ca" opacity="0.41"/><circle cx="537.9" cy="184.5" r="1.6" fill="#fff0ca" opacity="0.26"/><circle cx="146.4" cy="667.9" r="1.9" fill="#fff0ca" opacity="0.28"/><circle cx="167.7" cy="367.4" r="1.9" fill="#fff0ca" opacity="0.44"/><circle cx="110.9" cy="412.1" r="1.7" fill="#fff0ca" opacity="0.40"/><circle cx="389.6" cy="330.2" r="2.2" fill="#fff0ca" opacity="0.32"/><circle cx="100.6" cy="402.2" r="3.5" fill="#fff0ca" opacity="0.19"/><circle cx="144.3" cy="286.2" r="3.4" fill="#fff0ca" opacity="0.36"/><circle cx="309.4" cy="537.1" r="1.7" fill="#fff0ca" opacity="0.47"/><circle cx="174.0" cy="344.2" r="3.7" fill="#fff0ca" opacity="0.60"/><circle cx="144.3" cy="631.4" r="2.2" fill="#fff0ca" opacity="0.23"/><circle cx="382.9" cy="522.6" r="3.7" fill="#fff0ca" opacity="0.34"/><circle cx="329.9" cy="517.1" r="2.6" fill="#fff0ca" opacity="0.36"/><circle cx="305.8" cy="658.6" r="2.2" fill="#fff0ca" opacity="0.30"/><circle cx="201.2" cy="600.4" r="2.3" fill="#fff0ca" opacity="0.29"/><circle cx="483.6" cy="212.6" r="4.7" fill="#fff0ca" opacity="0.24"/><circle cx="302.6" cy="633.1" r="4.2" fill="#fff0ca" opacity="0.53"/><circle cx="347.2" cy="207.3" r="3.0" fill="#fff0ca" opacity="0.49"/><circle cx="175.3" cy="619.8" r="4.9" fill="#fff0ca" opacity="0.60"/><circle cx="528.1" cy="582.0" r="4.6" fill="#fff0ca" opacity="0.25"/><circle cx="131.6" cy="499.3" r="3.0" fill="#fff0ca" opacity="0.40"/><circle cx="356.4" cy="241.7" r="2.2" fill="#fff0ca" opacity="0.45"/><circle cx="417.5" cy="281.4" r="3.8" fill="#fff0ca" opacity="0.39"/><circle cx="227.3" cy="361.3" r="3.7" fill="#fff0ca" opacity="0.48"/><circle cx="401.9" cy="638.5" r="4.3" fill="#fff0ca" opacity="0.39"/></g>
+
+  <g opacity=".28" stroke="#fff0ca" stroke-width="1" fill="none">
+    <path d="M104 156C180 112 260 112 320 156s140 44 216 0"/>
+    <path d="M104 804c76 44 156 44 216 0s140-44 216 0"/>
+    <path d="M150 230c-28 110-28 286 0 396M490 230c28 110 28 286 0 396"/>
+  </g>
+
+  <g filter="url(#shadow-magician)"><path fill="none" stroke="#e2b75d" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" d="M172 386c48-78 108-78 148 0s100 78 148 0-108-78-148 0-100 78-148 0Z"/><path fill="none" stroke="#e2b75d" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".86" d="M320 250v265M230 520h180M260 220h120M244 584h152"/></g>
+
+  <g fill="#e2b75d" opacity=".86">
+    <circle cx="102" cy="102" r="8"/><circle cx="538" cy="102" r="8"/><circle cx="102" cy="858" r="8"/><circle cx="538" cy="858" r="8"/>
+    <path d="m320 94 10 20 22 3-16 16 4 22-20-10-20 10 4-22-16-16 22-3Z"/>
+    <path d="m320 806 10 20 22 3-16 16 4 22-20-10-20 10 4-22-16-16 22-3Z"/>
+  </g>
+
+  <text x="320" y="126" text-anchor="middle" fill="#fff2cf" font-size="36" font-family="Georgia, 'Times New Roman', serif" letter-spacing="5">I</text>
+  <text x="320" y="794" text-anchor="middle" fill="#fff2cf" font-size="39" font-family="Georgia, 'Times New Roman', serif" font-weight="700">The Magician</text>
+  <text x="320" y="842" text-anchor="middle" fill="#f5d59d" opacity=".72" font-size="17" font-family="Georgia, serif" letter-spacing="2.8">ALTAR AND INFINITY</text>
+</svg>

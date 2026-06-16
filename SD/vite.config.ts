@@ -25,6 +25,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path: string) => path.replace(/^\/plagiarism/, ''),
       },
+      '/ow-api': {
+        target: 'http://localhost:8001',
+        changeOrigin: true,
+        rewrite: (path: string) => path.replace(/^\/ow-api/, '/api'),
+      },
       '/wuwa': {
         target: 'http://localhost:8002',
         changeOrigin: true,

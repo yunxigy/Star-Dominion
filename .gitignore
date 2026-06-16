@@ -49,3 +49,21 @@ logs/
 
 # SillyTavern（第三方项目，不提交）
 SillyTavern/
+
+# Openwrite 小说运行时数据（不提交）
+Openwrite-main/data/novels/*/data/manuscript/
+Openwrite-main/data/novels/*/data/snapshots/
+Openwrite-main/data/novels/*/data/history/
+Openwrite-main/data/novels/*/data/trash/
+Openwrite-main/data/novels/*/data/compressed/
+Openwrite-main/data/novels/*/data/characters/cards/
+Openwrite-main/data/novels/*/data/foreshadowing/
+Openwrite-main/data/novels/*/data/workflows/
+Openwrite-main/data/novels/*/data/world/
+Openwrite-main/data/novels/*/data/test_outputs/
+Openwrite-main/data/novels/*/novel_config.yaml
+Openwrite-main/data/trash/
+Openwrite-main/data/novels/test_*/
+Openwrite-main/data/novels/current/
+Openwrite-main/novel_config.yaml
+Openwrite-main/src/story/

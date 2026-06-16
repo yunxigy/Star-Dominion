@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="1152" viewBox="0 0 640 960" role="img" aria-label="Knight of Swords tarot card">
+  <desc>Ornate occult tarot card illustration, mysterious and richly layered. Warm antique palette, deep burgundy, umber, bronze gold, smoky teal, parchment highlights. Complex celestial geometry, astrological circles, sigils, constellation lines, engraved border. Center symbol should be iconic and readable, surrounded by ritual details and subtle texture. No photorealism, no modern UI, no plain flat icon, no empty background.</desc>
+  <defs>
+    <linearGradient id="bg-swords_knight" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#1e1516"/>
+      <stop offset=".24" stop-color="#8b5f54"/>
+      <stop offset=".52" stop-color="#374d68"/>
+      <stop offset=".78" stop-color="#342019"/>
+      <stop offset="1" stop-color="#111516"/>
+    </linearGradient>
+    <radialGradient id="glow-swords_knight" cx="50%" cy="38%" r="64%">
+      <stop offset="0" stop-color="#c9d2d7" stop-opacity=".62"/>
+      <stop offset=".45" stop-color="#c9d2d7" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain-swords_knight">
+      <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="72" result="noise"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 .11"/>
+      </feComponentTransfer>
+    </filter>
+    <filter id="shadow-swords_knight" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#130c08" flood-opacity=".52"/>
+    </filter>
+  </defs>
+
+  <rect width="640" height="960" rx="42" fill="#1a1110"/>
+  <rect x="24" y="24" width="592" height="912" rx="34" fill="url(#bg-swords_knight)"/>
+  <rect x="24" y="24" width="592" height="912" rx="34" filter="url(#grain-swords_knight)"/>
+  <circle cx="320" cy="424" r="268" fill="url(#glow-swords_knight)"/>
+  <g fill="none" stroke="#c9d2d7" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="34" y="34" width="572" height="892" rx="30" stroke-width="4" opacity=".62"/>
+    <rect x="56" y="56" width="528" height="848" rx="22" stroke-width="1.5" opacity=".56"/>
+    <rect x="78" y="78" width="484" height="804" rx="14" stroke-width="1" opacity=".34"/>
+    <path d="M112 132h118M410 132h118M112 828h118M410 828h118" stroke-width="2" opacity=".55"/>
+    <path d="M112 132c30 28 58 28 88 0M440 132c30 28 58 28 88 0M112 828c30-28 58-28 88 0M440 828c30-28 58-28 88 0" stroke-width="2" opacity=".48"/>
+    <path d="M92 230c40-52 40-100 0-152M548 230c-40-52-40-100 0-152M92 730c40 52 40 100 0 152M548 730c-40 52-40 100 0 152" stroke-width="2.5" opacity=".42"/>
+  </g>
+  <g opacity=".95"><circle cx="320" cy="430" r="88" fill="none" stroke="#fff0ca" stroke-width="1" opacity="0.16"/><circle cx="320" cy="430" r="126" fill="none" stroke="#fff0ca" stroke-width="2" opacity="0.21000000000000002"/><circle cx="320" cy="430" r="176" fill="none" stroke="#fff0ca" stroke-width="1" opacity="0.26"/><circle cx="320" cy="430" r="222" fill="none" stroke="#fff0ca" stroke-width="1" opacity="0.31000000000000005"/><path d="M518.0 430.0 538.0 430.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M515.0 464.4 524.8 466.1" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M506.1 497.7 515.5 501.1" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M491.5 529.0 508.8 539.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M471.7 557.3 479.3 563.7" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M447.3 581.7 453.7 589.3" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M419.0 601.5 429.0 618.8" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M387.7 616.1 391.1 625.5" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M354.4 625.0 356.1 634.8" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M320.0 628.0 320.0 648.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M285.6 625.0 283.9 634.8" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M252.3 616.1 248.9 625.5" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M221.0 601.5 211.0 618.8" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M192.7 581.7 186.3 589.3" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M168.3 557.3 160.7 563.7" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M148.5 529.0 131.2 539.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M133.9 497.7 124.5 501.1" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M125.0 464.4 115.2 466.1" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M122.0 430.0 102.0 430.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M125.0 395.6 115.2 393.9" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M133.9 362.3 124.5 358.9" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M148.5 331.0 131.2 321.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M168.3 302.7 160.7 296.3" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M192.7 278.3 186.3 270.7" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M221.0 258.5 211.0 241.2" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M252.3 243.9 248.9 234.5" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M285.6 235.0 283.9 225.2" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M320.0 232.0 320.0 212.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M354.4 235.0 356.1 225.2" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M387.7 243.9 391.1 234.5" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M419.0 258.5 429.0 241.2" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M447.3 278.3 453.7 270.7" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M471.7 302.7 479.3 296.3" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M491.5 331.0 508.8 321.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M506.1 362.3 515.5 358.9" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M515.0 395.6 524.8 393.9" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M406.3 478.6 248.2 295.8" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M327.2 577.7 351.1 188.0" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M182.2 516.9 360.9 572.8" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M196.5 549.3 210.2 651.3" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M516.8 559.0 122.5 518.7" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M404.4 322.1 152.7 400.7" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M231.1 579.6 457.2 526.9" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M456.6 186.6 126.1 351.8" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M272.5 331.5 507.4 639.9" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M290.1 426.9 255.1 623.3" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M156.3 565.7 232.4 250.2" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M477.2 607.1 501.4 513.2" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M131.6 643.0 130.1 692.9" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M154.5 450.0 248.6 328.7" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M273.2 339.3 485.2 331.1" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M276.5 227.6 213.1 387.2" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M497.8 642.5 141.6 334.0" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M194.8 665.1 278.5 310.8" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><circle cx="428.2" cy="317.2" r="3.1" fill="#fff0ca" opacity="0.46"/><circle cx="235.1" cy="587.7" r="3.7" fill="#fff0ca" opacity="0.45"/><circle cx="489.8" cy="542.9" r="3.9" fill="#fff0ca" opacity="0.21"/><circle cx="444.6" cy="205.7" r="2.2" fill="#fff0ca" opacity="0.34"/><circle cx="266.0" cy="602.1" r="2.2" fill="#fff0ca" opacity="0.52"/><circle cx="392.3" cy="253.6" r="1.5" fill="#fff0ca" opacity="0.27"/><circle cx="302.0" cy="683.2" r="4.8" fill="#fff0ca" opacity="0.54"/><circle cx="192.5" cy="433.0" r="4.4" fill="#fff0ca" opacity="0.66"/><circle cx="378.4" cy="351.7" r="3.1" fill="#fff0ca" opacity="0.60"/><circle cx="369.3" cy="492.7" r="1.8" fill="#fff0ca" opacity="0.31"/><circle cx="134.8" cy="458.9" r="2.2" fill="#fff0ca" opacity="0.28"/><circle cx="458.9" cy="614.9" r="4.9" fill="#fff0ca" opacity="0.49"/><circle cx="270.0" cy="605.2" r="4.0" fill="#fff0ca" opacity="0.64"/><circle cx="388.6" cy="715.7" r="4.8" fill="#fff0ca" opacity="0.20"/><circle cx="360.2" cy="559.1" r="3.5" fill="#fff0ca" opacity="0.35"/><circle cx="233.6" cy="341.8" r="3.7" fill="#fff0ca" opacity="0.29"/><circle cx="334.4" cy="590.8" r="5.0" fill="#fff0ca" opacity="0.41"/><circle cx="111.4" cy="281.1" r="4.9" fill="#fff0ca" opacity="0.22"/><circle cx="327.7" cy="720.2" r="3.5" fill="#fff0ca" opacity="0.38"/><circle cx="213.6" cy="289.4" r="3.5" fill="#fff0ca" opacity="0.33"/><circle cx="231.8" cy="561.3" r="3.3" fill="#fff0ca" opacity="0.21"/><circle cx="534.8" cy="210.8" r="3.8" fill="#fff0ca" opacity="0.58"/><circle cx="262.5" cy="320.0" r="4.7" fill="#fff0ca" opacity="0.43"/><circle cx="300.2" cy="574.2" r="5.0" fill="#fff0ca" opacity="0.48"/><circle cx="346.2" cy="708.5" r="3.9" fill="#fff0ca" opacity="0.65"/><circle cx="169.1" cy="424.4" r="3.0" fill="#fff0ca" opacity="0.28"/><circle cx="522.3" cy="653.3" r="2.7" fill="#fff0ca" opacity="0.30"/><circle cx="177.2" cy="228.0" r="3.0" fill="#fff0ca" opacity="0.48"/><circle cx="163.6" cy="638.9" r="4.0" fill="#fff0ca" opacity="0.55"/><circle cx="455.7" cy="334.7" r="2.8" fill="#fff0ca" opacity="0.21"/></g>
+
+  <g opacity=".28" stroke="#fff0ca" stroke-width="1" fill="none">
+    <path d="M104 156C180 112 260 112 320 156s140 44 216 0"/>
+    <path d="M104 804c76 44 156 44 216 0s140-44 216 0"/>
+    <path d="M150 230c-28 110-28 286 0 396M490 230c28 110 28 286 0 396"/>
+  </g>
+
+  <g filter="url(#shadow-swords_knight)"><path fill="none" stroke="#c9d2d7" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" d="M204 602c40-112 110-164 214-158 30 36 26 84-12 146"/><path fill="none" stroke="#c9d2d7" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".86" d="M260 386c42-62 96-88 162-80M202 622h244"/></g>
+
+  <g fill="#c9d2d7" opacity=".86">
+    <circle cx="102" cy="102" r="8"/><circle cx="538" cy="102" r="8"/><circle cx="102" cy="858" r="8"/><circle cx="538" cy="858" r="8"/>
+    <path d="m320 94 10 20 22 3-16 16 4 22-20-10-20 10 4-22-16-16 22-3Z"/>
+    <path d="m320 806 10 20 22 3-16 16 4 22-20-10-20 10 4-22-16-16 22-3Z"/>
+  </g>
+
+  <text x="320" y="126" text-anchor="middle" fill="#fff2cf" font-size="36" font-family="Georgia, 'Times New Roman', serif" letter-spacing="5">N</text>
+  <text x="320" y="794" text-anchor="middle" fill="#fff2cf" font-size="39" font-family="Georgia, 'Times New Roman', serif" font-weight="700">Knight of Swords</text>
+  <text x="320" y="842" text-anchor="middle" fill="#f5d59d" opacity=".72" font-size="17" font-family="Georgia, serif" letter-spacing="2.8">KNIGHT OF SWORDS</text>
+</svg>

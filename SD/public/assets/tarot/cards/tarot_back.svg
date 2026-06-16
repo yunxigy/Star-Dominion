@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="1152" viewBox="0 0 640 960" role="img" aria-label="Tarot card back">
+  <desc>Ornate occult tarot card illustration, mysterious and richly layered. Warm antique palette, deep burgundy, umber, bronze gold, smoky teal, parchment highlights. Complex celestial geometry, astrological circles, sigils, constellation lines, engraved border. Center symbol should be iconic and readable, surrounded by ritual details and subtle texture. No photorealism, no modern UI, no plain flat icon, no empty background.</desc>
+  <defs>
+    <linearGradient id="back-bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#27151b"/><stop offset=".35" stop-color="#814722"/><stop offset=".7" stop-color="#24372e"/><stop offset="1" stop-color="#151516"/>
+    </linearGradient>
+    <radialGradient id="back-glow" cx="50%" cy="48%" r="62%">
+      <stop offset="0" stop-color="#f2d6a0" stop-opacity=".48"/><stop offset=".58" stop-color="#f2d6a0" stop-opacity=".12"/><stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="back-grain">
+      <feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="29"/>
+      <feComponentTransfer><feFuncA type="table" tableValues="0 .12"/></feComponentTransfer>
+    </filter>
+  </defs>
+  <rect width="640" height="960" rx="42" fill="#1a1110"/>
+  <rect x="24" y="24" width="592" height="912" rx="34" fill="url(#back-bg)"/>
+  <rect x="24" y="24" width="592" height="912" rx="34" filter="url(#back-grain)"/>
+  <circle cx="320" cy="480" r="274" fill="url(#back-glow)"/>
+  <g fill="none" stroke="#f1dcc2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="34" y="34" width="572" height="892" rx="30" stroke-width="4" opacity=".62"/>
+    <rect x="56" y="56" width="528" height="848" rx="22" stroke-width="1.5" opacity=".56"/>
+    <rect x="78" y="78" width="484" height="804" rx="14" stroke-width="1" opacity=".34"/>
+    <path d="M112 132h118M410 132h118M112 828h118M410 828h118" stroke-width="2" opacity=".55"/>
+    <path d="M112 132c30 28 58 28 88 0M440 132c30 28 58 28 88 0M112 828c30-28 58-28 88 0M440 828c30-28 58-28 88 0" stroke-width="2" opacity=".48"/>
+    <path d="M92 230c40-52 40-100 0-152M548 230c-40-52-40-100 0-152M92 730c40 52 40 100 0 152M548 730c-40 52-40 100 0 152" stroke-width="2.5" opacity=".42"/>
+  </g>
+  <g fill="none" stroke="#fff0cb" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="320" cy="480" r="188" stroke-width="8" opacity=".78"/>
+    <circle cx="320" cy="480" r="128" stroke-width="3" opacity=".54"/>
+    <circle cx="320" cy="480" r="66" stroke-width="3" opacity=".42"/>
+    <path d="M320 226v508M66 480h508M140 300l360 360M500 300 140 660" stroke-width="2" opacity=".32"/>
+    <path d="m320 312 42 122 130 2-104 78 38 126-106-74-106 74 38-126-104-78 130-2 42-122Z" stroke-width="9" opacity=".9"/>
+    <path d="M214 480c54-72 158-72 212 0-54 72-158 72-212 0Z" stroke-width="5" opacity=".66"/>
+  </g>
+  <text x="320" y="792" text-anchor="middle" fill="#fff2cf" font-size="34" font-family="Georgia, serif" letter-spacing="6">TAROT</text>
+</svg>

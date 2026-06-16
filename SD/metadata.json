@@ -1,5 +1,5 @@
 {
-  "name": "星梦主页",
-  "description": "A personal portfolio featuring the Star Alliance organizational structure, personal projects, and future learning plans.",
+  "name": "逐梦工具箱",
+  "description": "免费在线工具箱，提供 PDF 处理、图片转换、二维码生成与识别、OCR 文字识别、心理测试、塔罗星座等 128+ 实用工具。",
   "requestFramePermissions": []
 }

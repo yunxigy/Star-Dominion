@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /audio/
+
+Sitemap: https://tools.example.com/sitemap.xml

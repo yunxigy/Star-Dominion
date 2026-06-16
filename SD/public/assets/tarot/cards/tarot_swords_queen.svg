@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="1152" viewBox="0 0 640 960" role="img" aria-label="Queen of Swords tarot card">
+  <desc>Ornate occult tarot card illustration, mysterious and richly layered. Warm antique palette, deep burgundy, umber, bronze gold, smoky teal, parchment highlights. Complex celestial geometry, astrological circles, sigils, constellation lines, engraved border. Center symbol should be iconic and readable, surrounded by ritual details and subtle texture. No photorealism, no modern UI, no plain flat icon, no empty background.</desc>
+  <defs>
+    <linearGradient id="bg-swords_queen" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#1e1516"/>
+      <stop offset=".24" stop-color="#8b5f54"/>
+      <stop offset=".52" stop-color="#374d68"/>
+      <stop offset=".78" stop-color="#342019"/>
+      <stop offset="1" stop-color="#111516"/>
+    </linearGradient>
+    <radialGradient id="glow-swords_queen" cx="50%" cy="38%" r="64%">
+      <stop offset="0" stop-color="#c9d2d7" stop-opacity=".62"/>
+      <stop offset=".45" stop-color="#c9d2d7" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain-swords_queen">
+      <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="23" result="noise"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 .11"/>
+      </feComponentTransfer>
+    </filter>
+    <filter id="shadow-swords_queen" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#130c08" flood-opacity=".52"/>
+    </filter>
+  </defs>
+
+  <rect width="640" height="960" rx="42" fill="#1a1110"/>
+  <rect x="24" y="24" width="592" height="912" rx="34" fill="url(#bg-swords_queen)"/>
+  <rect x="24" y="24" width="592" height="912" rx="34" filter="url(#grain-swords_queen)"/>
+  <circle cx="320" cy="424" r="268" fill="url(#glow-swords_queen)"/>
+  <g fill="none" stroke="#c9d2d7" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="34" y="34" width="572" height="892" rx="30" stroke-width="4" opacity=".62"/>
+    <rect x="56" y="56" width="528" height="848" rx="22" stroke-width="1.5" opacity=".56"/>
+    <rect x="78" y="78" width="484" height="804" rx="14" stroke-width="1" opacity=".34"/>
+    <path d="M112 132h118M410 132h118M112 828h118M410 828h118" stroke-width="2" opacity=".55"/>
+    <path d="M112 132c30 28 58 28 88 0M440 132c30 28 58 28 88 0M112 828c30-28 58-28 88 0M440 828c30-28 58-28 88 0" stroke-width="2" opacity=".48"/>
+    <path d="M92 230c40-52 40-100 0-152M548 230c-40-52-40-100 0-152M92 730c40 52 40 100 0 152M548 730c-40 52-40 100 0 152" stroke-width="2.5" opacity=".42"/>
+  </g>
+  <g opacity=".95"><circle cx="320" cy="430" r="88" fill="none" stroke="#fff0ca" stroke-width="1" opacity="0.16"/><circle cx="320" cy="430" r="126" fill="none" stroke="#fff0ca" stroke-width="2" opacity="0.21000000000000002"/><circle cx="320" cy="430" r="176" fill="none" stroke="#fff0ca" stroke-width="1" opacity="0.26"/><circle cx="320" cy="430" r="222" fill="none" stroke="#fff0ca" stroke-width="1" opacity="0.31000000000000005"/><path d="M518.0 430.0 538.0 430.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M515.0 464.4 524.8 466.1" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M506.1 497.7 515.5 501.1" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M491.5 529.0 508.8 539.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M471.7 557.3 479.3 563.7" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M447.3 581.7 453.7 589.3" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M419.0 601.5 429.0 618.8" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M387.7 616.1 391.1 625.5" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M354.4 625.0 356.1 634.8" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M320.0 628.0 320.0 648.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M285.6 625.0 283.9 634.8" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M252.3 616.1 248.9 625.5" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M221.0 601.5 211.0 618.8" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M192.7 581.7 186.3 589.3" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M168.3 557.3 160.7 563.7" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M148.5 529.0 131.2 539.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M133.9 497.7 124.5 501.1" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M125.0 464.4 115.2 466.1" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M122.0 430.0 102.0 430.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M125.0 395.6 115.2 393.9" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M133.9 362.3 124.5 358.9" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M148.5 331.0 131.2 321.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M168.3 302.7 160.7 296.3" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M192.7 278.3 186.3 270.7" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M221.0 258.5 211.0 241.2" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M252.3 243.9 248.9 234.5" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M285.6 235.0 283.9 225.2" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M320.0 232.0 320.0 212.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M354.4 235.0 356.1 225.2" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M387.7 243.9 391.1 234.5" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M419.0 258.5 429.0 241.2" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M447.3 278.3 453.7 270.7" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M471.7 302.7 479.3 296.3" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M491.5 331.0 508.8 321.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M506.1 362.3 515.5 358.9" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M515.0 395.6 524.8 393.9" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M516.6 442.8 180.0 239.1" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M434.2 516.9 412.6 445.8" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M322.5 289.9 368.0 186.9" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M183.2 475.4 225.6 500.8" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M505.1 616.7 483.1 419.5" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M207.1 258.3 164.1 383.5" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M372.7 486.3 505.8 276.0" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M381.5 482.1 186.0 308.0" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M344.9 505.8 243.3 633.6" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M250.3 494.4 147.9 387.8" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M322.6 231.1 179.8 605.8" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M407.3 410.2 168.6 535.4" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M282.2 414.7 353.2 383.1" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M503.8 190.9 217.2 263.9" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M295.2 216.0 455.0 336.2" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M280.4 445.3 126.6 471.7" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M372.8 293.2 356.3 541.5" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M423.7 274.0 431.6 449.1" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><circle cx="529.1" cy="203.7" r="1.6" fill="#fff0ca" opacity="0.28"/><circle cx="415.9" cy="449.9" r="2.7" fill="#fff0ca" opacity="0.51"/><circle cx="252.1" cy="670.0" r="4.7" fill="#fff0ca" opacity="0.43"/><circle cx="239.9" cy="327.9" r="4.3" fill="#fff0ca" opacity="0.36"/><circle cx="149.7" cy="489.4" r="2.4" fill="#fff0ca" opacity="0.35"/><circle cx="331.1" cy="443.9" r="3.2" fill="#fff0ca" opacity="0.21"/><circle cx="198.4" cy="409.2" r="2.2" fill="#fff0ca" opacity="0.49"/><circle cx="355.5" cy="354.9" r="3.5" fill="#fff0ca" opacity="0.35"/><circle cx="120.1" cy="237.0" r="2.1" fill="#fff0ca" opacity="0.65"/><circle cx="350.8" cy="357.2" r="4.4" fill="#fff0ca" opacity="0.22"/><circle cx="476.5" cy="702.0" r="4.3" fill="#fff0ca" opacity="0.25"/><circle cx="293.8" cy="493.9" r="3.9" fill="#fff0ca" opacity="0.60"/><circle cx="489.7" cy="449.6" r="3.1" fill="#fff0ca" opacity="0.35"/><circle cx="355.8" cy="297.9" r="2.0" fill="#fff0ca" opacity="0.50"/><circle cx="512.1" cy="492.4" r="2.6" fill="#fff0ca" opacity="0.35"/><circle cx="525.4" cy="390.4" r="4.8" fill="#fff0ca" opacity="0.57"/><circle cx="342.1" cy="435.5" r="4.7" fill="#fff0ca" opacity="0.33"/><circle cx="478.5" cy="333.1" r="4.0" fill="#fff0ca" opacity="0.34"/><circle cx="428.9" cy="476.9" r="3.2" fill="#fff0ca" opacity="0.44"/><circle cx="136.2" cy="576.7" r="2.2" fill="#fff0ca" opacity="0.45"/><circle cx="243.2" cy="223.3" r="3.4" fill="#fff0ca" opacity="0.20"/><circle cx="470.0" cy="663.7" r="3.1" fill="#fff0ca" opacity="0.20"/><circle cx="416.6" cy="480.0" r="2.9" fill="#fff0ca" opacity="0.54"/><circle cx="154.6" cy="406.4" r="2.9" fill="#fff0ca" opacity="0.58"/><circle cx="288.0" cy="177.0" r="4.0" fill="#fff0ca" opacity="0.60"/><circle cx="387.9" cy="679.8" r="4.9" fill="#fff0ca" opacity="0.66"/><circle cx="537.8" cy="188.8" r="2.8" fill="#fff0ca" opacity="0.47"/><circle cx="279.0" cy="469.6" r="4.1" fill="#fff0ca" opacity="0.44"/><circle cx="349.0" cy="610.5" r="1.7" fill="#fff0ca" opacity="0.25"/><circle cx="403.4" cy="255.2" r="3.3" fill="#fff0ca" opacity="0.41"/></g>
+
+  <g opacity=".28" stroke="#fff0ca" stroke-width="1" fill="none">
+    <path d="M104 156C180 112 260 112 320 156s140 44 216 0"/>
+    <path d="M104 804c76 44 156 44 216 0s140-44 216 0"/>
+    <path d="M150 230c-28 110-28 286 0 396M490 230c28 110 28 286 0 396"/>
+  </g>
+
+  <g filter="url(#shadow-swords_queen)"><path fill="none" stroke="#c9d2d7" stroke-width="9" stroke-linecap="round" stroke-linejoin="round" d="M236 604h168l-34-176H270l-34 176Z"/><path fill="#c9d2d7" opacity=".9" d="M250 280h140l-32 96h-76l-32-96Z"/><circle cx="320" cy="232" r="44" fill="#c9d2d7" opacity=".92"/></g>
+
+  <g fill="#c9d2d7" opacity=".86">
+    <circle cx="102" cy="102" r="8"/><circle cx="538" cy="102" r="8"/><circle cx="102" cy="858" r="8"/><circle cx="538" cy="858" r="8"/>
+    <path d="m320 94 10 20 22 3-16 16 4 22-20-10-20 10 4-22-16-16 22-3Z"/>
+    <path d="m320 806 10 20 22 3-16 16 4 22-20-10-20 10 4-22-16-16 22-3Z"/>
+  </g>
+
+  <text x="320" y="126" text-anchor="middle" fill="#fff2cf" font-size="36" font-family="Georgia, 'Times New Roman', serif" letter-spacing="5">Q</text>
+  <text x="320" y="794" text-anchor="middle" fill="#fff2cf" font-size="39" font-family="Georgia, 'Times New Roman', serif" font-weight="700">Queen of Swords</text>
+  <text x="320" y="842" text-anchor="middle" fill="#f5d59d" opacity=".72" font-size="17" font-family="Georgia, serif" letter-spacing="2.8">QUEEN OF SWORDS</text>
+</svg>

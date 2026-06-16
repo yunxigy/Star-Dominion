@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Search, ArrowRight, Zap, BarChart3, Shield, Clock, Calendar, Thermometer, Globe, Sparkles } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Search, ArrowRight, Zap, BarChart3, Shield, Calendar, Globe, Sparkles, Star, Layers3 } from 'lucide-react';
 import { useToolRunner } from '../components/ToolRunner';
 import { CATEGORIES, TOOLS } from '../tools/registry';
 import { getIcon } from '../lib/iconMap';
+import { AdSlot } from '../components/AdSlot';
 
 const HOT_TOOLS = [
   'merge-pdf', 'compress-image', 'json-format', 'bmi-calculator',
@@ -12,7 +13,6 @@ const HOT_TOOLS = [
   'ocr-recognition', 'text-translate', 'grammar-check', 'word-count'
 ];
 
-// 实时时钟组件
 const RealTimeClock: React.FC = () => {
   const [time, setTime] = useState(new Date());
 
@@ -21,33 +21,24 @@ const RealTimeClock: React.FC = () => {
     return () => clearInterval(timer);
   }, []);
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString('zh-CN', { hour12: false });
-  };
-
-  const formatDate = (date: Date) => {
-    return date.toLocaleDateString('zh-CN', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      weekday: 'long'
-    });
-  };
-
   return (
     <div className="flex flex-col items-center gap-1">
-      <div className="text-4xl md:text-5xl font-mono font-bold text-white/90 tracking-wider">
-        {formatTime(time)}
+      <div className="text-3xl md:text-4xl font-mono font-bold text-[#2f241b]">
+        {time.toLocaleTimeString('zh-CN', { hour12: false })}
       </div>
-      <div className="text-sm text-slate-400 flex items-center gap-2">
+      <div className="text-sm text-[#6d5a47] flex items-center gap-2">
         <Calendar className="w-4 h-4" />
-        {formatDate(time)}
+        {time.toLocaleDateString('zh-CN', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          weekday: 'long'
+        })}
       </div>
     </div>
   );
 };
 
-// 打字机效果组件
 const TypewriterText: React.FC<{ texts: string[] }> = ({ texts }) => {
   const [displayText, setDisplayText] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -76,7 +67,7 @@ const TypewriterText: React.FC<{ texts: string[] }> = ({ texts }) => {
   }, [displayText, currentIndex, isDeleting, texts]);
 
   return (
-    <span className="text-emerald-400">
+    <span className="text-[#8a4b1f]">
       {displayText}
       <span className="animate-pulse">|</span>
     </span>
@@ -98,91 +89,117 @@ export const HomePage: React.FC = () => {
   const hotTools = HOT_TOOLS.map(id => TOOLS.find(t => t.id === id)).filter(Boolean);
 
   return (
-    <div className="space-y-12">
-      {/* Hero Section */}
-      <section className="text-center py-8">
+    <div className="space-y-10 max-w-[1500px] mx-auto">
+      <section className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_420px] items-stretch">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
+          className="glass-card rounded-[2rem] p-6 sm:p-8 lg:p-10 overflow-hidden"
         >
-          {/* 实时时钟 */}
-          <div className="mb-8">
-            <RealTimeClock />
+          <div className="flex flex-wrap items-center gap-3 mb-8">
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#f1dcc2] px-4 py-2 text-sm font-semibold text-[#6f3714] border border-[#d8b58e]">
+              <Sparkles className="w-4 h-4" />
+              {TOOLS.length}+ 免费工具
+            </span>
+            <span className="inline-flex items-center gap-2 rounded-full bg-[#dfe5cf] px-4 py-2 text-sm font-semibold text-[#425129] border border-[#c2cda9]">
+              <Shield className="w-4 h-4" />
+              本地优先
+            </span>
           </div>
 
-          {/* 标题 */}
-          <h1 className="text-5xl md:text-7xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">
+          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-black leading-tight mb-5 text-[#2f241b]">
+            <span className="bg-gradient-to-r from-[#2f241b] via-[#8a4b1f] to-[#5f6f42] bg-clip-text text-transparent">
               逐梦工具箱
             </span>
           </h1>
 
-          {/* 打字机副标题 */}
-          <p className="text-xl md:text-2xl text-slate-300 mb-8 h-10">
+          <p className="text-xl md:text-2xl text-[#5c4937] mb-8 min-h-10 font-semibold">
             <TypewriterText texts={[
               '100+ 免费在线工具，助力高效工作',
-              '纯前端处理，数据安全不上传',
+              '本地优先，隐私分级保护',
               'PDF、图片、开发、计算一应俱全',
               '持续更新，更多功能敬请期待'
             ]} />
           </p>
 
-          {/* 搜索框 */}
-          <form onSubmit={handleSearch} className="max-w-2xl mx-auto mb-10">
-            <div className="relative group">
-              <div className="absolute -inset-1 bg-gradient-to-r from-emerald-600 to-cyan-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200" />
-              <div className="relative flex items-center search-bar-enhanced">
-                <Search className="search-icon absolute left-4 text-slate-400 w-5 h-5" />
-                <input
-                  type="text"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="搜索你需要的工具..."
-                  className="w-full pl-12 pr-24 py-4 bg-slate-900/80 rounded-2xl text-white placeholder-slate-500 focus:outline-none"
-                />
-                <button
-                  type="submit"
-                  className="absolute right-2 px-6 py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:from-emerald-500 hover:to-teal-500 transition-all font-medium"
-                >
-                  搜索
-                </button>
-              </div>
+          <form onSubmit={handleSearch} className="max-w-3xl mb-8">
+            <div className="relative flex items-center search-bar-enhanced">
+              <Search className="search-icon absolute left-4 text-[#8b735c] w-6 h-6" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="搜索你需要的工具..."
+                className="w-full pl-14 pr-28 py-5 rounded-2xl text-[#2f241b] placeholder-[#8b735c] focus:outline-none text-lg"
+              />
+              <button
+                type="submit"
+                className="absolute right-2 px-6 py-3 bg-[#7a421b] text-[#fff8ef] rounded-xl hover:bg-[#5f3214] transition-all font-semibold shadow-sm"
+              >
+                搜索
+              </button>
             </div>
           </form>
 
-          {/* 统计徽章 */}
-          <div className="flex justify-center gap-4 flex-wrap">
+          <div className="flex gap-3 flex-wrap">
             {[
-              { icon: Sparkles, value: '128+', label: '在线工具', color: 'text-emerald-400' },
-              { icon: BarChart3, value: '11', label: '工具分类', color: 'text-teal-400' },
-              { icon: Shield, value: '100%', label: '免费使用', color: 'text-cyan-400' },
-              { icon: Zap, value: '0', label: '数据上传', color: 'text-green-400' },
+              { icon: Sparkles, value: '128+', label: '在线工具', color: 'text-[#9a5a28]' },
+              { icon: BarChart3, value: '11', label: '工具分类', color: 'text-[#5f6f42]' },
+              { icon: Star, value: '常用', label: '快捷访问', color: 'text-[#b77932]' },
+              { icon: Shield, value: '本地优先', label: '隐私保护', color: 'text-[#9f4b5f]' },
             ].map((stat, index) => (
               <motion.div
                 key={stat.label}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 + index * 0.1 }}
-                className="stat-badge px-4 py-2.5"
+                className="stat-badge px-4 py-3"
               >
                 <stat.icon className={`w-4 h-4 ${stat.color}`} />
-                <span className="font-bold text-white">{stat.value}</span>
-                <span className="text-slate-400">{stat.label}</span>
+                <span className="font-bold text-[#2f241b]">{stat.value}</span>
+                <span className="text-[#6d5a47]">{stat.label}</span>
               </motion.div>
             ))}
           </div>
         </motion.div>
+
+        <motion.aside
+          initial={{ opacity: 0, y: 18 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.12, duration: 0.5 }}
+          className="glass-card rounded-[2rem] p-6 sm:p-8 flex flex-col justify-between gap-8"
+        >
+          <RealTimeClock />
+          <div className="grid grid-cols-2 gap-3">
+            {CATEGORIES.slice(0, 6).map((category) => {
+              const IconComponent = getIcon(category.icon);
+              const toolCount = TOOLS.filter(t => t.category === category.id).length;
+              return (
+                <Link
+                  key={category.id}
+                  to={`/gj?category=${category.id}`}
+                    className="rounded-2xl border border-[#d8b58e] bg-[#fff4e6]/80 p-4 hover:border-[#b47a43] hover:bg-[#f1dcc2] transition-all group"
+                >
+                  <div className={`inline-flex p-2 rounded-xl bg-gradient-to-br ${category.gradient} mb-3`}>
+                    <IconComponent className="w-5 h-5 text-white" />
+                  </div>
+                  <div className="text-base font-bold text-[#2f241b] group-hover:text-[#6f3714]">{category.name}</div>
+                  <div className="text-sm text-[#6d5a47] mt-1">{toolCount} 个</div>
+                </Link>
+              );
+            })}
+          </div>
+        </motion.aside>
       </section>
 
-      {/* 热门工具 */}
       <section>
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-emerald-500/10">
-          <div className="p-2.5 rounded-lg bg-gradient-to-br from-amber-600 to-orange-600">
+        <div className="flex flex-wrap items-center gap-3 mb-5">
+          <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-lg shadow-amber-500/20">
             <Zap className="w-6 h-6 text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-white">热门工具</h2>
-          <span className="text-base text-slate-500">快速访问常用功能</span>
+          <h2 className="text-3xl font-black text-[#2f241b]">热门工具</h2>
+          <span className="text-base text-[#6d5a47]">快速访问常用功能</span>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
           {hotTools.map((tool, index) => {
@@ -195,15 +212,15 @@ export const HomePage: React.FC = () => {
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
                 onClick={() => openTool(tool.id)}
-                className="group tool-card-enhanced p-5 rounded-xl bg-white/5 border border-white/10"
+                className="group tool-card-enhanced p-5 rounded-2xl glass-card text-left min-h-[168px]"
               >
                 <div className={`tool-icon inline-flex p-3 rounded-lg bg-gradient-to-br ${tool.gradient} mb-3`}>
                   <IconComponent className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="tool-name text-base font-medium text-white truncate">
+                <h3 className="tool-name text-lg font-bold text-[#2f241b] truncate">
                   {tool.name}
                 </h3>
-                <p className="text-sm text-slate-400 mt-1.5 line-clamp-2">
+                <p className="text-base text-[#6d5a47] mt-1.5 line-clamp-2">
                   {tool.description}
                 </p>
               </motion.button>
@@ -212,14 +229,13 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 工具分类 */}
       <section>
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-emerald-500/10">
-          <div className="p-2.5 rounded-lg bg-gradient-to-br from-violet-600 to-purple-600">
-            <BarChart3 className="w-6 h-6 text-white" />
+        <div className="flex flex-wrap items-center gap-3 mb-5">
+          <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#9a5a28] to-[#5f6f42] shadow-lg shadow-[#9a5a28]/20">
+            <Layers3 className="w-6 h-6 text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-white">工具分类</h2>
-          <span className="text-base text-slate-500">按类别浏览所有工具</span>
+          <h2 className="text-3xl font-black text-[#2f241b]">工具分类</h2>
+          <span className="text-base text-[#6d5a47]">按类别浏览所有工具</span>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {CATEGORIES.map((category, index) => {
@@ -234,7 +250,7 @@ export const HomePage: React.FC = () => {
               >
                 <Link
                   to={`/gj?category=${category.id}`}
-                  className="block tool-card-enhanced p-6 rounded-xl bg-white/5 border border-white/10 group"
+                  className="block tool-card-enhanced p-6 rounded-2xl glass-card group h-full"
                 >
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
@@ -242,15 +258,15 @@ export const HomePage: React.FC = () => {
                         <IconComponent className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-white group-hover:text-emerald-300 transition-colors">
+                        <h3 className="text-xl font-bold text-[#2f241b] group-hover:text-[#6f3714] transition-colors">
                           {category.name}
                         </h3>
-                        <span className="text-sm text-slate-500">{toolCount} 个工具</span>
+                        <span className="text-sm text-[#6d5a47]">{toolCount} 个工具</span>
                       </div>
                     </div>
-                    <ArrowRight className="w-5 h-5 text-slate-600 group-hover:text-emerald-400 group-hover:translate-x-1 transition-all" />
+                    <ArrowRight className="w-5 h-5 text-[#9d8268] group-hover:text-[#8a4b1f] group-hover:translate-x-1 transition-all" />
                   </div>
-                  <p className="text-base text-slate-400 line-clamp-2">
+                  <p className="text-base text-[#6d5a47] line-clamp-2">
                     {category.description}
                   </p>
                 </Link>
@@ -260,19 +276,15 @@ export const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* 广告位 */}
-      <div id="ad-home-banner" className="my-8 text-center">
-        {/* 广告位预留 */}
-      </div>
+      <AdSlot name="home-banner" className="my-8" />
 
-      {/* 项目介绍 */}
       <section>
-        <div className="flex items-center gap-3 mb-6 pb-4 border-b border-emerald-500/10">
-          <div className="p-2.5 rounded-lg bg-gradient-to-br from-blue-600 to-indigo-600">
+        <div className="flex flex-wrap items-center gap-3 mb-5">
+          <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#9f4b5f] to-[#9a5a28] shadow-lg shadow-[#9f4b5f]/18">
             <Globe className="w-6 h-6 text-white" />
           </div>
-          <h2 className="text-2xl font-bold text-white">项目作品</h2>
-          <span className="text-base text-slate-500">探索更多功能</span>
+          <h2 className="text-3xl font-black text-[#2f241b]">项目作品</h2>
+          <span className="text-base text-[#6d5a47]">探索更多功能</span>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[
@@ -280,85 +292,70 @@ export const HomePage: React.FC = () => {
               path: '/fy',
               title: '智创翻译',
               desc: '基于 PaddleOCR + 百度翻译 API 的屏幕实时翻译工具',
-              gradient: 'from-emerald-600/20 to-teal-600/20',
-              border: 'border-emerald-500/30 hover:border-emerald-400/50',
-              textColor: 'group-hover:text-emerald-300',
-              arrowColor: 'text-emerald-400'
+              gradient: 'from-[#fff4e6] to-[#dfe5cf]',
+              border: 'border-[#d8b58e] hover:border-[#b47a43]',
+              textColor: 'group-hover:text-[#6f3714]',
+              arrowColor: 'text-[#8a4b1f]'
             },
             {
               path: '/bp',
               title: '边坡上位机',
               desc: 'STM32 北斗边坡高精度定位监控系统',
-              gradient: 'from-cyan-600/20 to-sky-600/20',
-              border: 'border-cyan-500/30 hover:border-cyan-400/50',
-              textColor: 'group-hover:text-cyan-300',
-              arrowColor: 'text-cyan-400'
+              gradient: 'from-[#f8ead8] to-[#e1e6d5]',
+              border: 'border-[#d5b795] hover:border-[#a9875f]',
+              textColor: 'group-hover:text-[#4d5b33]',
+              arrowColor: 'text-[#5f6f42]'
             },
             {
               path: '/ai',
               title: '网文智能体',
               desc: 'AI 自主长篇小说写作系统',
-              gradient: 'from-violet-600/20 to-purple-600/20',
-              border: 'border-violet-500/30 hover:border-violet-400/50',
-              textColor: 'group-hover:text-violet-300',
-              arrowColor: 'text-violet-400'
+              gradient: 'from-[#f6e5d0] to-[#f0d2d9]',
+              border: 'border-[#d8b58e] hover:border-[#bd8f63]',
+              textColor: 'group-hover:text-[#7a421b]',
+              arrowColor: 'text-[#9a5a28]'
             },
             {
               path: '/wuwa/',
               title: 'AI 伴侣',
               desc: '多角色 AI 语音对话系统，支持语音克隆 TTS',
-              gradient: 'from-pink-600/20 to-rose-600/20',
-              border: 'border-pink-500/30 hover:border-pink-400/50',
-              textColor: 'group-hover:text-pink-300',
-              arrowColor: 'text-pink-400',
+              gradient: 'from-[#f0d2d9] to-[#fff0df]',
+              border: 'border-[#d8a7b2] hover:border-[#b76b7b]',
+              textColor: 'group-hover:text-[#7c3141]',
+              arrowColor: 'text-[#9f4b5f]',
               external: true
             }
-          ].map((project) => (
-            project.external ? (
-              <a
-                key={project.path}
-                href={project.path}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`block p-7 rounded-xl bg-gradient-to-br ${project.gradient} border ${project.border} transition-all group`}
-              >
-                <h3 className={`text-xl font-bold text-white ${project.textColor} transition-colors mb-3`}>
+          ].map((project) => {
+            const className = `block p-7 rounded-2xl bg-gradient-to-br ${project.gradient} border ${project.border} transition-all group tool-card-enhanced h-full`;
+            const content = (
+              <>
+                <h3 className={`text-xl font-black text-[#2f241b] ${project.textColor} transition-colors mb-3`}>
                   {project.title}
                 </h3>
-                <p className="text-base text-slate-300 mb-5">
+                <p className="text-base text-[#5c4937] mb-5">
                   {project.desc}
                 </p>
-                <div className={`flex items-center gap-2 text-base ${project.arrowColor}`}>
+                <div className={`flex items-center gap-2 text-base font-semibold ${project.arrowColor}`}>
                   了解详情
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </div>
+              </>
+            );
+
+            return project.external ? (
+              <a key={project.path} href={project.path} target="_blank" rel="noopener noreferrer" className={className}>
+                {content}
               </a>
             ) : (
-              <Link
-                key={project.path}
-                to={project.path}
-                className={`block p-7 rounded-xl bg-gradient-to-br ${project.gradient} border ${project.border} transition-all group`}
-              >
-                <h3 className={`text-xl font-bold text-white ${project.textColor} transition-colors mb-3`}>
-                  {project.title}
-                </h3>
-                <p className="text-base text-slate-300 mb-5">
-                  {project.desc}
-                </p>
-                <div className={`flex items-center gap-2 text-base ${project.arrowColor}`}>
-                  了解详情
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </div>
+              <Link key={project.path} to={project.path} className={className}>
+                {content}
               </Link>
-            )
-          ))}
+            );
+          })}
         </div>
       </section>
 
-      {/* 广告位 */}
-      <div id="ad-home-mid" className="my-8 text-center">
-        {/* 广告位预留 */}
-      </div>
+      <AdSlot name="home-mid" className="my-8" />
     </div>
   );
 };

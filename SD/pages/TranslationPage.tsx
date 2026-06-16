@@ -5,6 +5,18 @@ import {
   Download, ChevronRight, Zap, Shield, Globe, Cpu
 } from 'lucide-react';
 
+const colorClasses: Record<string, { bg: string; border: string; text: string }> = {
+  emerald: { bg: 'bg-emerald-500/10', border: 'border-emerald-500/20', text: 'text-emerald-400' },
+  cyan: { bg: 'bg-cyan-500/10', border: 'border-cyan-500/20', text: 'text-cyan-400' },
+  violet: { bg: 'bg-violet-500/10', border: 'border-violet-500/20', text: 'text-violet-400' },
+  blue: { bg: 'bg-blue-500/10', border: 'border-blue-500/20', text: 'text-blue-400' },
+  amber: { bg: 'bg-amber-500/10', border: 'border-amber-500/20', text: 'text-amber-400' },
+  pink: { bg: 'bg-pink-500/10', border: 'border-pink-500/20', text: 'text-pink-400' },
+  red: { bg: 'bg-red-500/10', border: 'border-red-500/20', text: 'text-red-400' },
+  lime: { bg: 'bg-lime-500/10', border: 'border-lime-500/20', text: 'text-lime-400' },
+  indigo: { bg: 'bg-indigo-500/10', border: 'border-indigo-500/20', text: 'text-indigo-400' },
+};
+
 const features = [
   {
     icon: Monitor,
@@ -155,8 +167,8 @@ export const TranslationPage: React.FC = () => {
                   variants={itemVariants}
                   className="p-6 rounded-xl bg-slate-900/40 border border-slate-700/50 hover:border-slate-600/50 transition-all group hover:-translate-y-1 hover:shadow-lg hover:shadow-slate-900/50"
                 >
-                  <div className={`inline-flex p-3 rounded-xl bg-${f.color}-500/10 border border-${f.color}-500/20 mb-4 group-hover:scale-110 transition-transform`}>
-                    <Icon className={`w-6 h-6 text-${f.color}-400`} />
+                  <div className={`inline-flex p-3 rounded-xl ${colorClasses[f.color]?.bg || 'bg-slate-500/10'} border ${colorClasses[f.color]?.border || 'border-slate-500/20'} mb-4 group-hover:scale-110 transition-transform`}>
+                    <Icon className={`w-6 h-6 ${colorClasses[f.color]?.text || 'text-slate-400'}`} />
                   </div>
                   <h3 className="text-lg font-bold text-slate-100 mb-2">{f.title}</h3>
                   <p className="text-sm text-slate-400 leading-relaxed">{f.desc}</p>

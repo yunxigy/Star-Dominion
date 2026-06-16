@@ -71,7 +71,7 @@ const YesNoTarot: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="tarot-reading-surface space-y-6 text-base">
       <div className="text-center">
         <p className="text-slate-400 text-sm mb-4">
           心中想一个问题，塔罗牌会给你指引

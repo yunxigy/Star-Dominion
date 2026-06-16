@@ -1,10 +1,53 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const ROMAN: Record<number, string> = {
-  0: '0', 1: 'I', 2: 'II', 3: 'III', 4: 'IV', 5: 'V', 6: 'VI',
-  7: 'VII', 8: 'VIII', 9: 'IX', 10: 'X', 11: 'XI', 12: 'XII',
-  13: 'XIII', 14: 'XIV', 15: 'XV', 16: 'XVI', 17: 'XVII',
-  18: 'XVIII', 19: 'XIX', 20: 'XX', 21: 'XXI',
+  0: '0',
+  1: 'I',
+  2: 'II',
+  3: 'III',
+  4: 'IV',
+  5: 'V',
+  6: 'VI',
+  7: 'VII',
+  8: 'VIII',
+  9: 'IX',
+  10: 'X',
+  11: 'XI',
+  12: 'XII',
+  13: 'XIII',
+  14: 'XIV',
+  15: 'XV',
+  16: 'XVI',
+  17: 'XVII',
+  18: 'XVIII',
+  19: 'XIX',
+  20: 'XX',
+  21: 'XXI',
+};
+
+const CARD_IMAGE_SLUGS: Record<number, string> = {
+  0: 'fool',
+  1: 'magician',
+  2: 'high_priestess',
+  3: 'empress',
+  4: 'emperor',
+  5: 'hierophant',
+  6: 'lovers',
+  7: 'chariot',
+  8: 'strength',
+  9: 'hermit',
+  10: 'wheel_of_fortune',
+  11: 'justice',
+  12: 'hanged_man',
+  13: 'death',
+  14: 'temperance',
+  15: 'devil',
+  16: 'tower',
+  17: 'star',
+  18: 'moon',
+  19: 'sun',
+  20: 'judgement',
+  21: 'world',
 };
 
 interface TarotCardVisualProps {
@@ -18,154 +61,138 @@ interface TarotCardVisualProps {
   onClick?: () => void;
 }
 
+const getCardImage = (number: number) => {
+  const slug = CARD_IMAGE_SLUGS[number];
+  return slug ? `/assets/tarot/cards/tarot_${String(number).padStart(2, '0')}_${slug}.svg` : null;
+};
+
+const sizeClasses = {
+  sm: 'w-32 h-48',
+  md: 'w-44 h-64',
+  lg: 'w-64 h-96',
+};
+
+const emojiSizes = {
+  sm: 'text-2xl',
+  md: 'text-4xl',
+  lg: 'text-5xl',
+};
+
 export const TarotCardVisual: React.FC<TarotCardVisualProps> = ({
-  number, name, emoji, reversed = false, faceDown = false, size = 'md', keywords, onClick,
+  number,
+  name,
+  emoji,
+  reversed = false,
+  faceDown = false,
+  size = 'md',
+  keywords,
+  onClick,
 }) => {
-  const sizeClasses = {
-    sm: 'w-24 h-36',
-    md: 'w-36 h-52',
-    lg: 'w-48 h-72',
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const imageSrc = faceDown ? '/assets/tarot/cards/tarot_back.svg' : getCardImage(number);
+  const previewTitle = faceDown ? '塔罗牌背面' : `${name || ROMAN[number] || number}${reversed ? ' · 逆位' : ''}`;
+  const openPreview = () => {
+    if (imageSrc) setIsPreviewOpen(true);
+    onClick?.();
   };
 
-  const emojiSizes = {
-    sm: 'text-2xl',
-    md: 'text-4xl',
-    lg: 'text-5xl',
-  };
-
-  if (faceDown) {
+  if (imageSrc) {
     return (
-      <div
-        onClick={onClick}
-        className={`${sizeClasses[size]} rounded-xl relative overflow-hidden cursor-pointer transition-transform hover:scale-105 shrink-0`}
-        style={{
-          background: 'linear-gradient(135deg, #1a1a3e 0%, #0d0d2b 50%, #1a1a3e 100%)',
-          border: '2px solid rgba(100, 100, 200, 0.4)',
-          boxShadow: '0 4px 20px rgba(80, 60, 180, 0.3), inset 0 0 30px rgba(80, 60, 180, 0.1)',
-        }}
-      >
-        {/* Card back pattern */}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="relative">
-            {/* Outer circle */}
-            <div className="w-16 h-16 rounded-full border-2 border-indigo-500/40 flex items-center justify-center">
-              {/* Inner circle */}
-              <div className="w-10 h-10 rounded-full border border-indigo-400/30 flex items-center justify-center">
-                <span className="text-xl opacity-60">✦</span>
-              </div>
-            </div>
-            {/* Cross lines */}
-            <div className="absolute top-0 left-1/2 -translate-x-px w-0.5 h-full bg-indigo-500/20" />
-            <div className="absolute top-1/2 left-0 -translate-y-px w-full h-0.5 bg-indigo-500/20" />
+      <>
+        <button
+          type="button"
+          onClick={openPreview}
+          className={`${sizeClasses[size]} group relative shrink-0 cursor-zoom-in overflow-hidden rounded-xl bg-[#211713] p-0 text-left transition-all hover:scale-[1.035] hover:shadow-lg focus:outline-none focus:ring-4 focus:ring-[#9a5a28]/25`}
+          style={{ boxShadow: '0 18px 42px rgba(58, 34, 18, 0.28)' }}
+          aria-label={`放大查看${previewTitle}`}
+        >
+          <img
+            src={imageSrc}
+            alt={faceDown ? 'Tarot card back' : `${name || ROMAN[number] || number} tarot card`}
+            className="h-full w-full object-cover"
+            draggable={false}
+          />
+          <div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-[#f1dcc2]/20 transition group-hover:ring-[#f1dcc2]/55" />
+          <div className="pointer-events-none absolute bottom-2 right-2 rounded-full border border-[#f1dcc2]/45 bg-[#2f241b]/75 px-2 py-0.5 text-[10px] font-medium tracking-wider text-[#fff4e6] opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+            放大
           </div>
-        </div>
-        {/* Corner decorations */}
-        <div className="absolute top-1.5 left-1.5 text-indigo-400/30 text-xs">✦</div>
-        <div className="absolute top-1.5 right-1.5 text-indigo-400/30 text-xs">✦</div>
-        <div className="absolute bottom-1.5 left-1.5 text-indigo-400/30 text-xs">✦</div>
-        <div className="absolute bottom-1.5 right-1.5 text-indigo-400/30 text-xs">✦</div>
-        {/* Border glow */}
-        <div className="absolute inset-0 rounded-xl border border-indigo-400/10" />
-      </div>
+          {reversed && !faceDown && (
+            <div className="absolute left-2 top-2 rounded-full border border-red-300/60 bg-red-950/70 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-red-100 shadow-lg">
+              逆位
+            </div>
+          )}
+        </button>
+
+        {isPreviewOpen && (
+          <div
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#241811]/80 p-4 backdrop-blur-sm"
+            role="dialog"
+            aria-modal="true"
+            aria-label={previewTitle}
+            onClick={() => setIsPreviewOpen(false)}
+          >
+            <div className="relative max-h-[92vh] w-full max-w-[min(78vw,520px)]" onClick={e => e.stopPropagation()}>
+              <button
+                type="button"
+                onClick={() => setIsPreviewOpen(false)}
+                className="absolute -right-2 -top-3 z-10 rounded-full border border-[#d8b58e] bg-[#fff4e6] px-3 py-1 text-sm font-semibold text-[#6f3714] shadow-lg hover:bg-[#f1dcc2]"
+                aria-label="关闭放大卡牌"
+              >
+                关闭
+              </button>
+              <img
+                src={imageSrc}
+                alt={previewTitle}
+                className="mx-auto max-h-[92vh] w-auto rounded-2xl border border-[#d8b58e]/70 object-contain shadow-2xl"
+                draggable={false}
+              />
+            </div>
+          </div>
+        )}
+      </>
     );
   }
 
   return (
     <div
       onClick={onClick}
-      className={`${sizeClasses[size]} rounded-xl relative overflow-hidden cursor-pointer transition-all hover:scale-105 hover:shadow-lg shrink-0 flex flex-col`}
-      style={{
-        transform: reversed ? 'rotate(180deg)' : 'none',
-        background: 'linear-gradient(180deg, #1e1b4b 0%, #0f0e2a 40%, #1a1145 100%)',
-        border: '2px solid rgba(139, 92, 246, 0.5)',
-        boxShadow: '0 4px 24px rgba(139, 92, 246, 0.2), inset 0 0 40px rgba(139, 92, 246, 0.05)',
-      }}
+      className={`${sizeClasses[size]} relative flex shrink-0 cursor-pointer flex-col overflow-hidden rounded-xl border-2 border-[#c79f72] bg-[#2f241b] transition-all hover:scale-105 hover:shadow-lg`}
+      style={{ boxShadow: '0 18px 42px rgba(58, 34, 18, 0.28)' }}
     >
-      {/* Top number */}
-      <div className="text-center pt-2 pb-1">
-        <span className="text-violet-400/70 text-xs font-serif tracking-widest">
+      <div className="pb-1 pt-2 text-center">
+        <span className="font-serif text-xs tracking-widest text-[#d8b58e]/80">
           {ROMAN[number] || number}
         </span>
       </div>
-
-      {/* Decorative line */}
-      <div className="mx-3 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
-
-      {/* Card name */}
-      <div className="text-center py-1 px-2">
-        <span className="text-violet-200 text-xs font-medium tracking-wider"
-          style={{ transform: reversed ? 'rotate(180deg)' : 'none', display: 'inline-block' }}>
-          {name}
-        </span>
+      <div className="mx-3 h-px bg-gradient-to-r from-transparent via-[#d8b58e]/50 to-transparent" />
+      <div className="px-2 py-1 text-center">
+        <span className="text-xs font-medium tracking-wider text-[#fff4e6]">{name}</span>
       </div>
-
-      {/* Main symbol area */}
-      <div className="flex-1 flex items-center justify-center relative">
-        {/* Background glow */}
+      <div className="relative flex flex-1 items-center justify-center">
         <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-20 h-20 rounded-full opacity-20"
-            style={{ background: 'radial-gradient(circle, rgba(139,92,246,0.6) 0%, transparent 70%)' }} />
+          <div className="h-20 w-20 rounded-full bg-[#d8b58e]/20" />
         </div>
-        {/* Symbol */}
-        <span className={`${emojiSizes[size]} relative z-10 drop-shadow-lg`}
-          style={{ transform: reversed ? 'rotate(180deg)' : 'none' }}>
-          {emoji}
-        </span>
+        <span className={`${emojiSizes[size]} relative z-10 drop-shadow-lg`}>{emoji}</span>
       </div>
-
-      {/* Decorative line */}
-      <div className="mx-3 h-px bg-gradient-to-r from-transparent via-violet-500/40 to-transparent" />
-
-      {/* Bottom keywords */}
       {size !== 'sm' && keywords && keywords.length > 0 && (
-        <div className="text-center py-1.5 px-2"
-          style={{ transform: reversed ? 'rotate(180deg)' : 'none' }}>
+        <div className="px-2 py-1.5 text-center">
           <div className="flex flex-wrap justify-center gap-1">
             {keywords.slice(0, 3).map(k => (
-              <span key={k} className="text-[9px] text-violet-400/60 px-1 py-0.5 bg-violet-500/10 rounded">
+              <span key={k} className="rounded bg-[#9a5a28]/30 px-1 py-0.5 text-[9px] text-[#f1dcc2]">
                 {k}
               </span>
             ))}
           </div>
         </div>
       )}
-
-      {/* Bottom number */}
-      <div className="text-center pb-2 pt-1">
-        <span className="text-violet-400/70 text-xs font-serif tracking-widest"
-          style={{ transform: reversed ? 'rotate(180deg)' : 'none', display: 'inline-block' }}>
-          {ROMAN[number] || number}
-        </span>
-      </div>
-
-      {/* Corner decorations */}
-      <div className="absolute top-1 left-1 text-violet-500/20 text-[8px]"
-        style={{ transform: reversed ? 'rotate(180deg)' : 'none' }}>✦</div>
-      <div className="absolute top-1 right-1 text-violet-500/20 text-[8px]"
-        style={{ transform: reversed ? 'rotate(180deg)' : 'none' }}>✦</div>
-      <div className="absolute bottom-1 left-1 text-violet-500/20 text-[8px]"
-        style={{ transform: reversed ? 'rotate(180deg)' : 'none' }}>✦</div>
-      <div className="absolute bottom-1 right-1 text-violet-500/20 text-[8px]"
-        style={{ transform: reversed ? 'rotate(180deg)' : 'none' }}>✦</div>
-
-      {/* Reversed indicator */}
-      {reversed && (
-        <div className="absolute top-0 left-0 right-0 h-0.5 bg-red-500/40"
-          style={{ transform: 'rotate(180deg)' }} />
-      )}
+      {reversed && <div className="absolute left-2 top-2 rounded-full bg-red-950/70 px-2 py-0.5 text-[10px] text-red-100">逆位</div>}
     </div>
   );
 };
 
-// Card back component for face-down cards
 export const TarotCardBack: React.FC<{
   size?: 'sm' | 'md' | 'lg';
   onClick?: () => void;
-}> = ({ size = 'md', onClick }) => {
-  return (
-    <TarotCardVisual
-      number={0} name="" emoji=""
-      faceDown size={size} onClick={onClick}
-    />
-  );
-};
+}> = ({ size = 'md', onClick }) => (
+  <TarotCardVisual number={0} name="" emoji="" faceDown size={size} onClick={onClick} />
+);

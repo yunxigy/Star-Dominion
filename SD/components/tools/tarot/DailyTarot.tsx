@@ -62,7 +62,7 @@ const DailyTarot: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   }, []);
 
   return (
-    <div className="space-y-4">
+    <div className="tarot-reading-surface space-y-6 text-base">
       <div className="text-center">
         <p className="text-slate-400 text-sm mb-4">
           每天抽取一张塔罗牌，获取今日的指引与启示

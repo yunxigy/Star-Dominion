@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="768" height="1152" viewBox="0 0 640 960" role="img" aria-label="The Empress tarot card">
+  <desc>Ornate occult tarot card illustration, mysterious and richly layered. Warm antique palette, deep burgundy, umber, bronze gold, smoky teal, parchment highlights. Complex celestial geometry, astrological circles, sigils, constellation lines, engraved border. Center symbol should be iconic and readable, surrounded by ritual details and subtle texture. No photorealism, no modern UI, no plain flat icon, no empty background.</desc>
+  <defs>
+    <linearGradient id="bg-empress" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#1e1516"/>
+      <stop offset=".24" stop-color="#58774e"/>
+      <stop offset=".52" stop-color="#8b5339"/>
+      <stop offset=".78" stop-color="#342019"/>
+      <stop offset="1" stop-color="#111516"/>
+    </linearGradient>
+    <radialGradient id="glow-empress" cx="50%" cy="38%" r="64%">
+      <stop offset="0" stop-color="#d9b66f" stop-opacity=".62"/>
+      <stop offset=".45" stop-color="#d9b66f" stop-opacity=".16"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="grain-empress">
+      <feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" seed="57" result="noise"/>
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncA type="table" tableValues="0 .11"/>
+      </feComponentTransfer>
+    </filter>
+    <filter id="shadow-empress" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="14" stdDeviation="16" flood-color="#130c08" flood-opacity=".52"/>
+    </filter>
+  </defs>
+
+  <rect width="640" height="960" rx="42" fill="#1a1110"/>
+  <rect x="24" y="24" width="592" height="912" rx="34" fill="url(#bg-empress)"/>
+  <rect x="24" y="24" width="592" height="912" rx="34" filter="url(#grain-empress)"/>
+  <circle cx="320" cy="424" r="268" fill="url(#glow-empress)"/>
+  <g fill="none" stroke="#d9b66f" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="34" y="34" width="572" height="892" rx="30" stroke-width="4" opacity=".62"/>
+    <rect x="56" y="56" width="528" height="848" rx="22" stroke-width="1.5" opacity=".56"/>
+    <rect x="78" y="78" width="484" height="804" rx="14" stroke-width="1" opacity=".34"/>
+    <path d="M112 132h118M410 132h118M112 828h118M410 828h118" stroke-width="2" opacity=".55"/>
+    <path d="M112 132c30 28 58 28 88 0M440 132c30 28 58 28 88 0M112 828c30-28 58-28 88 0M440 828c30-28 58-28 88 0" stroke-width="2" opacity=".48"/>
+    <path d="M92 230c40-52 40-100 0-152M548 230c-40-52-40-100 0-152M92 730c40 52 40 100 0 152M548 730c-40 52-40 100 0 152" stroke-width="2.5" opacity=".42"/>
+  </g>
+  <g opacity=".95"><circle cx="320" cy="430" r="88" fill="none" stroke="#fff0ca" stroke-width="1" opacity="0.16"/><circle cx="320" cy="430" r="126" fill="none" stroke="#fff0ca" stroke-width="2" opacity="0.21000000000000002"/><circle cx="320" cy="430" r="176" fill="none" stroke="#fff0ca" stroke-width="1" opacity="0.26"/><circle cx="320" cy="430" r="222" fill="none" stroke="#fff0ca" stroke-width="1" opacity="0.31000000000000005"/><path d="M518.0 430.0 538.0 430.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M515.0 464.4 524.8 466.1" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M506.1 497.7 515.5 501.1" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M491.5 529.0 508.8 539.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M471.7 557.3 479.3 563.7" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M447.3 581.7 453.7 589.3" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M419.0 601.5 429.0 618.8" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M387.7 616.1 391.1 625.5" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M354.4 625.0 356.1 634.8" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M320.0 628.0 320.0 648.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M285.6 625.0 283.9 634.8" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M252.3 616.1 248.9 625.5" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M221.0 601.5 211.0 618.8" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M192.7 581.7 186.3 589.3" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M168.3 557.3 160.7 563.7" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M148.5 529.0 131.2 539.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M133.9 497.7 124.5 501.1" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M125.0 464.4 115.2 466.1" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M122.0 430.0 102.0 430.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M125.0 395.6 115.2 393.9" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M133.9 362.3 124.5 358.9" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M148.5 331.0 131.2 321.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M168.3 302.7 160.7 296.3" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M192.7 278.3 186.3 270.7" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M221.0 258.5 211.0 241.2" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M252.3 243.9 248.9 234.5" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M285.6 235.0 283.9 225.2" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M320.0 232.0 320.0 212.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M354.4 235.0 356.1 225.2" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M387.7 243.9 391.1 234.5" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M419.0 258.5 429.0 241.2" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M447.3 278.3 453.7 270.7" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M471.7 302.7 479.3 296.3" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M491.5 331.0 508.8 321.0" stroke="#fff0ca" stroke-width="2" opacity=".32"/><path d="M506.1 362.3 515.5 358.9" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M515.0 395.6 524.8 393.9" stroke="#fff0ca" stroke-width="1" opacity=".32"/><path d="M519.1 456.6 444.5 363.1" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M515.0 697.3 435.3 697.5" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M257.3 399.1 121.4 692.1" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M156.1 223.9 442.0 507.2" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M321.9 589.7 511.6 603.7" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M446.8 493.2 130.3 666.4" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M432.9 380.7 182.2 534.0" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M474.6 204.0 277.7 574.1" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M200.3 565.4 296.1 635.5" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M180.1 429.2 185.6 477.5" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M406.2 604.0 475.0 546.8" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M451.4 492.6 455.6 543.1" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M512.1 693.0 287.9 624.2" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M243.4 249.5 190.1 349.8" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M390.3 355.9 364.6 476.8" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M322.8 449.1 218.2 364.5" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M281.4 317.5 333.5 522.6" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><path d="M437.3 659.6 346.1 200.4" stroke="#fff0ca" stroke-width=".8" opacity=".16"/><circle cx="343.9" cy="220.2" r="2.1" fill="#fff0ca" opacity="0.32"/><circle cx="532.9" cy="528.7" r="3.6" fill="#fff0ca" opacity="0.24"/><circle cx="251.0" cy="435.9" r="2.7" fill="#fff0ca" opacity="0.57"/><circle cx="275.0" cy="411.3" r="3.3" fill="#fff0ca" opacity="0.24"/><circle cx="216.2" cy="660.3" r="3.0" fill="#fff0ca" opacity="0.31"/><circle cx="137.0" cy="202.4" r="2.1" fill="#fff0ca" opacity="0.38"/><circle cx="473.3" cy="677.5" r="4.9" fill="#fff0ca" opacity="0.66"/><circle cx="379.4" cy="573.3" r="1.8" fill="#fff0ca" opacity="0.38"/><circle cx="442.1" cy="428.5" r="3.9" fill="#fff0ca" opacity="0.61"/><circle cx="421.7" cy="504.4" r="3.4" fill="#fff0ca" opacity="0.42"/><circle cx="385.6" cy="559.6" r="1.7" fill="#fff0ca" opacity="0.59"/><circle cx="512.9" cy="300.9" r="3.0" fill="#fff0ca" opacity="0.63"/><circle cx="235.1" cy="344.9" r="2.3" fill="#fff0ca" opacity="0.62"/><circle cx="131.1" cy="303.1" r="3.4" fill="#fff0ca" opacity="0.61"/><circle cx="423.3" cy="264.8" r="4.3" fill="#fff0ca" opacity="0.32"/><circle cx="150.1" cy="331.9" r="3.3" fill="#fff0ca" opacity="0.63"/><circle cx="324.5" cy="278.5" r="4.1" fill="#fff0ca" opacity="0.24"/><circle cx="412.7" cy="429.5" r="1.9" fill="#fff0ca" opacity="0.43"/><circle cx="462.0" cy="512.3" r="2.8" fill="#fff0ca" opacity="0.26"/><circle cx="192.9" cy="654.5" r="3.0" fill="#fff0ca" opacity="0.35"/><circle cx="123.8" cy="442.4" r="3.0" fill="#fff0ca" opacity="0.25"/><circle cx="224.4" cy="492.7" r="2.4" fill="#fff0ca" opacity="0.37"/><circle cx="504.9" cy="492.8" r="1.6" fill="#fff0ca" opacity="0.19"/><circle cx="137.5" cy="682.1" r="2.9" fill="#fff0ca" opacity="0.53"/><circle cx="177.8" cy="448.6" r="1.6" fill="#fff0ca" opacity="0.25"/><circle cx="102.6" cy="174.2" r="2.2" fill="#fff0ca" opacity="0.39"/><circle cx="490.2" cy="283.5" r="1.6" fill="#fff0ca" opacity="0.63"/><circle cx="522.1" cy="548.4" r="4.8" fill="#fff0ca" opacity="0.63"/><circle cx="210.2" cy="603.1" r="4.6" fill="#fff0ca" opacity="0.56"/><circle cx="209.2" cy="523.3" r="3.1" fill="#fff0ca" opacity="0.38"/></g>
+
+  <g opacity=".28" stroke="#fff0ca" stroke-width="1" fill="none">
+    <path d="M104 156C180 112 260 112 320 156s140 44 216 0"/>
+    <path d="M104 804c76 44 156 44 216 0s140-44 216 0"/>
+    <path d="M150 230c-28 110-28 286 0 396M490 230c28 110 28 286 0 396"/>
+  </g>
+
+  <g filter="url(#shadow-empress)"><circle cx="320" cy="386" r="52" fill="#d9b66f" opacity=".95"/><g fill="#8b5339" opacity=".84"><ellipse cx="320" cy="276" rx="38" ry="86"/><ellipse cx="320" cy="496" rx="38" ry="86"/><ellipse cx="210" cy="386" rx="86" ry="38"/><ellipse cx="430" cy="386" rx="86" ry="38"/><ellipse cx="242" cy="308" rx="34" ry="72" transform="rotate(-45 242 308)"/><ellipse cx="398" cy="308" rx="34" ry="72" transform="rotate(45 398 308)"/><ellipse cx="242" cy="464" rx="34" ry="72" transform="rotate(45 242 464)"/><ellipse cx="398" cy="464" rx="34" ry="72" transform="rotate(-45 398 464)"/></g><path fill="none" stroke="#d9b66f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" opacity=".86" d="M320 438c-16 92-62 144-144 158M322 438c26 84 78 130 160 148"/></g>
+
+  <g fill="#d9b66f" opacity=".86">
+    <circle cx="102" cy="102" r="8"/><circle cx="538" cy="102" r="8"/><circle cx="102" cy="858" r="8"/><circle cx="538" cy="858" r="8"/>
+    <path d="m320 94 10 20 22 3-16 16 4 22-20-10-20 10 4-22-16-16 22-3Z"/>
+    <path d="m320 806 10 20 22 3-16 16 4 22-20-10-20 10 4-22-16-16 22-3Z"/>
+  </g>
+
+  <text x="320" y="126" text-anchor="middle" fill="#fff2cf" font-size="36" font-family="Georgia, 'Times New Roman', serif" letter-spacing="5">III</text>
+  <text x="320" y="794" text-anchor="middle" fill="#fff2cf" font-size="39" font-family="Georgia, 'Times New Roman', serif" font-weight="700">The Empress</text>
+  <text x="320" y="842" text-anchor="middle" fill="#f5d59d" opacity=".72" font-size="17" font-family="Georgia, serif" letter-spacing="2.8">GARDEN CROWN</text>
+</svg>

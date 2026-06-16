@@ -5,16 +5,35 @@ import { Search, SearchX, Filter } from 'lucide-react';
 import { getIcon } from '../lib/iconMap';
 import { CATEGORIES, TOOLS, getToolsByCategory } from '../tools/registry';
 import { useToolRunner } from '../components/ToolRunner';
+import { AdSlot } from '../components/AdSlot';
+import { getRecentTools, getFavoriteTools, toggleFavorite, isFavorite } from '../lib/userTools';
 
 export const ToolboxPage: React.FC = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
   const [search, setSearch] = useState('');
+  const [favRefresh, setFavRefresh] = useState(0);
   const { openTool } = useToolRunner();
+
+  const recentTools = useMemo(() => {
+    const ids = getRecentTools();
+    return ids.map(id => TOOLS.find(t => t.id === id)).filter(Boolean);
+  }, []);
+
+  const favoriteTools = useMemo(() => {
+    const ids = getFavoriteTools();
+    return ids.map(id => TOOLS.find(t => t.id === id)).filter(Boolean);
+  }, [favRefresh]);
+
+  const handleToggleFav = (e: React.MouseEvent, toolId: string) => {
+    e.stopPropagation();
+    toggleFavorite(toolId);
+    setFavRefresh(prev => prev + 1);
+  };
 
   // Handle URL params for search and category
   useEffect(() => {
-    const searchQuery = searchParams.get('search');
+    const searchQuery = searchParams.get('q') || searchParams.get('search');
     const categoryQuery = searchParams.get('category');
     if (searchQuery) {
       setSearch(searchQuery);
@@ -44,13 +63,13 @@ export const ToolboxPage: React.FC = () => {
     : '全部工具';
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-7 max-w-[1500px] mx-auto">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-white">
+        <h1 className="text-4xl font-black text-[#2f241b]">
           {search.trim() ? `搜索: ${search}` : activeCatName}
         </h1>
-        <p className="text-slate-400 text-base mt-2">
+        <p className="text-[#6d5a47] text-lg mt-2">
           {search.trim()
             ? `找到 ${displayTools.length} 个工具`
             : `共 ${displayTools.length} 个工具 · 大部分工具纯前端处理`
@@ -62,18 +81,29 @@ export const ToolboxPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row gap-4">
         {/* Search */}
         <div className="relative flex-1 search-bar-enhanced">
-          <Search className="search-icon absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+            <Search className="search-icon absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8b735c]" />
           <input
             type="text"
             placeholder="搜索工具..."
             value={search}
-            onChange={e => setSearch(e.target.value)}
-            className="w-full pl-12 pr-4 py-3 rounded-xl text-white placeholder-slate-500 focus:outline-none"
+            onChange={e => {
+              const val = e.target.value;
+              setSearch(val);
+              setSearchParams(prev => {
+                if (val) prev.set('q', val);
+                else prev.delete('q');
+                return prev;
+              }, { replace: true });
+            }}
+            className="w-full pl-12 pr-4 py-4 rounded-xl text-[#2f241b] placeholder-[#8b735c] focus:outline-none text-lg"
           />
           {search && (
             <button
-              onClick={() => setSearch('')}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
+              onClick={() => {
+                setSearch('');
+                setSearchParams(prev => { prev.delete('q'); return prev; }, { replace: true });
+              }}
+              className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8b735c] hover:text-[#2f241b]"
             >
               ✕
             </button>
@@ -82,11 +112,11 @@ export const ToolboxPage: React.FC = () => {
 
         {/* Category Filter */}
         <div className="flex items-center gap-2">
-          <Filter className="w-4 h-4 text-slate-500" />
+          <Filter className="w-5 h-5 text-[#8b735c]" />
           <select
             value={activeCategory || ''}
             onChange={(e) => setActiveCategory(e.target.value || null)}
-            className="px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white focus:outline-none focus:border-white/20 appearance-none cursor-pointer"
+            className="px-4 py-4 bg-[#fff4e6] border border-[#d8b58e] rounded-xl text-[#2f241b] focus:outline-none focus:border-[#9a5a28] appearance-none cursor-pointer text-base shadow-sm"
           >
             <option value="">全部分类</option>
             {CATEGORIES.map(cat => (
@@ -101,10 +131,10 @@ export const ToolboxPage: React.FC = () => {
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setActiveCategory(null)}
-            className={`px-4 py-2 rounded-xl text-sm transition-all ${
+            className={`px-4 py-2.5 rounded-xl text-base transition-all ${
               !activeCategory
-                ? 'bg-white/10 text-white border border-white/20'
-                : 'bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10'
+                ? 'bg-[#7a421b] text-[#fff8ef] border border-[#7a421b]'
+                : 'bg-[#fff4e6] text-[#6d5a47] border border-[#d8b58e] hover:bg-[#f1dcc2] hover:border-[#b47a43] hover:text-[#6f3714]'
             }`}
           >
             全部
@@ -115,10 +145,10 @@ export const ToolboxPage: React.FC = () => {
               <button
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm transition-all ${
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-base transition-all ${
                   activeCategory === cat.id
-                    ? 'bg-white/10 text-white border border-white/20'
-                    : 'bg-white/5 text-slate-400 border border-white/10 hover:bg-white/10'
+                    ? 'bg-[#7a421b] text-[#fff8ef] border border-[#7a421b]'
+                    : 'bg-[#fff4e6] text-[#6d5a47] border border-[#d8b58e] hover:bg-[#f1dcc2] hover:border-[#b47a43] hover:text-[#6f3714]'
                 }`}
               >
                 <CatIcon className="w-4 h-4" />
@@ -126,6 +156,46 @@ export const ToolboxPage: React.FC = () => {
               </button>
             );
           })}
+        </div>
+      )}
+
+      {/* 最近使用 */}
+      {!search.trim() && !activeCategory && recentTools.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-2xl font-black text-[#2f241b] mb-3">最近使用</h2>
+          <div className="flex flex-wrap gap-2">
+            {recentTools.map(tool => {
+              if (!tool) return null;
+              const ToolIcon = getIcon(tool.icon);
+              return (
+                <button key={tool.id} onClick={() => openTool(tool.id)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#fff4e6] border border-[#d8b58e] hover:bg-[#f1dcc2] hover:border-[#b47a43] transition-all text-base">
+                  <ToolIcon className="w-4 h-4 text-[#8b735c]" />
+                  <span className="text-[#2f241b]">{tool.name}</span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* 收藏工具 */}
+      {!search.trim() && !activeCategory && favoriteTools.length > 0 && (
+        <div className="mb-6">
+          <h2 className="text-2xl font-black text-[#2f241b] mb-3">收藏工具</h2>
+          <div className="flex flex-wrap gap-2">
+            {favoriteTools.map(tool => {
+              if (!tool) return null;
+              const ToolIcon = getIcon(tool.icon);
+              return (
+                <button key={tool.id} onClick={() => openTool(tool.id)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#f1dcc2] border border-[#d8b58e] hover:bg-[#ead0ad] transition-all text-base">
+                  <ToolIcon className="w-4 h-4 text-[#9a5a28]" />
+                  <span className="text-[#6f3714]">{tool.name}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       )}
 
@@ -157,7 +227,7 @@ export const ToolboxPage: React.FC = () => {
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2">
-                      <h3 className="tool-name text-lg font-semibold text-white group-hover:text-emerald-300 transition-colors truncate">
+                      <h3 className="tool-name text-xl font-bold text-[#2f241b] group-hover:text-[#6f3714] transition-colors truncate">
                         {tool.name}
                       </h3>
                       {tool.privacy === 'third-party-api' && (
@@ -170,10 +240,21 @@ export const ToolboxPage: React.FC = () => {
                         <span className="shrink-0 px-1.5 py-0.5 text-[10px] rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">Beta</span>
                       )}
                     </div>
-                    <p className="text-base text-slate-400 mt-2 line-clamp-2">
+                    <p className="text-base text-[#6d5a47] mt-2 line-clamp-2">
                       {tool.description}
                     </p>
                   </div>
+                  <button
+                    onClick={(e) => handleToggleFav(e, tool.id)}
+                    className={`shrink-0 p-1.5 rounded-lg transition-all ${
+                      isFavorite(tool.id)
+                        ? 'text-[#9a5a28] bg-[#f1dcc2]'
+                        : 'text-[#9d8268] hover:text-[#8a4b1f] hover:bg-[#f1dcc2]'
+                    }`}
+                    title={isFavorite(tool.id) ? '取消收藏' : '收藏'}
+                  >
+                    {isFavorite(tool.id) ? '★' : '☆'}
+                  </button>
                 </div>
               </motion.button>
             );
@@ -181,10 +262,7 @@ export const ToolboxPage: React.FC = () => {
         </div>
       )}
 
-      {/* Ad placeholder */}
-      <div id="ad-tools-inline" className="mt-8 text-center">
-        {/* 广告位 */}
-      </div>
+      <AdSlot name="tools-inline" className="mt-8" />
     </div>
   );
 };

@@ -61,7 +61,7 @@ const CareerTarot: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   }, []);
 
   return (
-    <div className="space-y-4">
+    <div className="tarot-reading-surface space-y-6 text-base">
       <div className="text-center">
         <p className="text-blue-400 text-sm mb-1">💼 事业专属占卜</p>
         <p className="text-slate-400 text-xs mb-4">
@@ -78,7 +78,7 @@ const CareerTarot: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       {cards && (
         <>
           {/* Card visuals */}
-          <div className="grid grid-cols-3 gap-3 justify-items-center">
+          <div className="grid grid-cols-1 gap-5 justify-items-center sm:grid-cols-3">
             {cards.map((item, idx) => (
               <div key={idx} className="flex flex-col items-center gap-2">
                 <div className="text-xs text-blue-400 font-medium">

@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import { X, Loader2, Shield, HelpCircle, ArrowRight, BookOpen, Lightbulb } from 'lucide-react';
 import { getToolById, getToolsByCategory, CATEGORIES } from '../tools/registry';
 import { getIcon } from '../lib/iconMap';
+import { AdSlot } from './AdSlot';
 
 class ToolErrorBoundary extends Component<
   { children: ReactNode; toolName: string },
@@ -33,22 +34,22 @@ class ToolErrorBoundary extends Component<
         <div className="flex items-center justify-center h-full">
           <div className="text-center p-8">
             <div className="text-red-400 text-5xl mb-4">⚠️</div>
-            <h2 className="text-xl font-bold text-white mb-2">{this.props.toolName} 加载失败</h2>
-            <p className="text-slate-400 mb-2 text-sm max-w-md mx-auto">{this.getErrorHint(this.state.error)}</p>
-            <p className="text-slate-600 text-xs mb-6 font-mono max-w-md mx-auto break-all">{this.state.error.message}</p>
+            <h2 className="text-xl font-bold text-[#2f241b] mb-2">{this.props.toolName} 加载失败</h2>
+            <p className="text-[#6d5a47] mb-2 text-sm max-w-md mx-auto">{this.getErrorHint(this.state.error)}</p>
+            <p className="text-[#8b735c] text-xs mb-6 font-mono max-w-md mx-auto break-all">{this.state.error.message}</p>
             <div className="flex gap-3 justify-center">
               <button
                 onClick={() => {
                   this.setState({ error: null });
                   if (isChunkError) window.location.reload();
                 }}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition-colors"
+                className="px-6 py-2 bg-[#7a421b] text-[#fff8ef] rounded-lg hover:bg-[#5f3214] transition-colors"
               >
                 {isChunkError ? '刷新页面' : '重试'}
               </button>
               <button
                 onClick={() => window.close()}
-                className="px-6 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600 transition-colors"
+                className="px-6 py-2 bg-[#f1dcc2] text-[#6f3714] rounded-lg hover:bg-[#ead0ad] transition-colors"
               >
                 关闭窗口
               </button>
@@ -60,6 +61,30 @@ class ToolErrorBoundary extends Component<
     return this.props.children;
   }
 }
+
+// 工具 FAQ 映射
+const TOOL_FAQ: Record<string, { q: string; a: string }[]> = {
+  'merge-pdf': [
+    { q: '合并 PDF 会降低质量吗？', a: '不会，合并操作保留原始 PDF 的所有内容和质量。' },
+    { q: '最多能合并几个 PDF？', a: '没有硬性限制，但文件过多可能导致浏览器内存不足，建议单次不超过 20 个。' },
+  ],
+  'compress-pdf': [
+    { q: '压缩后的 PDF 还能编辑吗？', a: '可以，压缩不影响 PDF 的编辑功能，只是减小文件体积。' },
+    { q: '为什么有些 PDF 压缩效果不明显？', a: '如果 PDF 已经是压缩过的（如扫描件），进一步压缩的空间有限。' },
+  ],
+  'qr-code-generator': [
+    { q: '二维码有大小限制吗？', a: '建议内容不超过 300 个字符，过长的文本会导致二维码过于密集，不易扫描。' },
+    { q: '生成的二维码能商用吗？', a: '可以，生成的二维码无版权限制，可自由使用。' },
+  ],
+  'ocr-recognition': [
+    { q: '支持哪些语言？', a: '支持中文简体、中文繁体和英文识别。' },
+    { q: '识别准确率如何？', a: '清晰图片准确率可达 95% 以上，手写体或模糊图片效果会降低。' },
+  ],
+  'mbti-test': [
+    { q: 'MBTI 测试准确吗？', a: 'MBTI 是性格参考工具，不是精确诊断。结果仅供参考，帮助了解自己的性格倾向。' },
+    { q: '测试结果会保存吗？', a: '所有数据在浏览器本地处理，不会上传服务器。' },
+  ],
+};
 
 // 工具使用说明映射
 const TOOL_USAGE: Record<string, { steps: string[]; tips: string[] }> = {
@@ -159,12 +184,12 @@ export default function ToolWindow() {
     return (
       <div className="min-h-screen mesh-bg flex items-center justify-center">
         <div className="text-center">
-          <div className="text-slate-400 text-5xl mb-4">🔍</div>
-          <h2 className="text-xl font-bold text-white mb-2">工具未找到</h2>
-          <p className="text-slate-400 mb-4">ID: {toolId}</p>
+          <div className="text-[#8b735c] text-5xl mb-4">🔍</div>
+          <h2 className="text-xl font-bold text-[#2f241b] mb-2">工具未找到</h2>
+          <p className="text-[#6d5a47] mb-4">ID: {toolId}</p>
           <button
             onClick={() => window.close()}
-            className="px-6 py-2 bg-slate-700 text-slate-300 rounded-lg hover:bg-slate-600"
+            className="px-6 py-2 bg-[#7a421b] text-[#fff8ef] rounded-lg hover:bg-[#5f3214]"
           >
             关闭窗口
           </button>
@@ -175,41 +200,50 @@ export default function ToolWindow() {
 
   const IconComponent = getIcon(tool.icon);
 
-  const COLOR_MAP: Record<string, { text: string; bg: string; gradient: string }> = {
-    red: { text: 'text-red-400', bg: 'bg-red-500/10', gradient: 'from-red-600 to-rose-600' },
-    emerald: { text: 'text-emerald-400', bg: 'bg-emerald-500/10', gradient: 'from-emerald-600 to-teal-600' },
-    violet: { text: 'text-violet-400', bg: 'bg-violet-500/10', gradient: 'from-violet-600 to-purple-600' },
-    amber: { text: 'text-amber-400', bg: 'bg-amber-500/10', gradient: 'from-amber-600 to-orange-600' },
-    cyan: { text: 'text-cyan-400', bg: 'bg-cyan-500/10', gradient: 'from-cyan-600 to-sky-600' },
-    pink: { text: 'text-pink-400', bg: 'bg-pink-500/10', gradient: 'from-pink-600 to-rose-600' },
-    blue: { text: 'text-blue-400', bg: 'bg-blue-500/10', gradient: 'from-blue-600 to-indigo-600' },
-    lime: { text: 'text-lime-400', bg: 'bg-lime-500/10', gradient: 'from-lime-600 to-green-600' },
-    indigo: { text: 'text-indigo-400', bg: 'bg-indigo-500/10', gradient: 'from-indigo-600 to-blue-600' },
+  const faq = TOOL_FAQ[tool.id];
+
+  // JSON-LD 结构化数据
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'WebApplication',
+    name: tool.name,
+    description: tool.description,
+    url: `https://tools.example.com/tool/${tool.id}`,
+    applicationCategory: 'UtilitiesApplication',
+    operatingSystem: 'Web Browser',
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'CNY' },
+    ...(faq && {
+      mainEntity: faq.map(f => ({
+        '@type': 'Question',
+        name: f.q,
+        acceptedAnswer: { '@type': 'Answer', text: f.a },
+      })),
+    }),
   };
 
-  const colors = COLOR_MAP[tool.color] || COLOR_MAP.violet;
-
   return (
-    <div className="min-h-screen mesh-bg flex flex-col">
+    <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <div className="min-h-screen tool-window-bg flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-10 glass-sidebar border-b border-white/5">
+      <header className="sticky top-0 z-10 glass-sidebar border-b border-[#dcc2a3]">
         <div className="flex items-center justify-between px-6 py-4">
           <div className="flex items-center gap-4">
             <div className={`p-2.5 rounded-xl bg-gradient-to-br ${tool.gradient} shadow-lg`}>
               <IconComponent className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className={`text-xl font-bold ${colors.text}`}>
+              <h1 className="text-xl font-bold text-[#6f3714]">
                 {tool.name}
               </h1>
-              <p className="text-sm text-slate-400">
+              <p className="text-sm text-[#6d5a47]">
                 {tool.description}
               </p>
             </div>
           </div>
           <button
             onClick={() => window.close()}
-            className="p-2 rounded-lg bg-white/5 text-slate-400 hover:text-white hover:bg-white/10 transition-all"
+            className="p-2 rounded-lg bg-[#f1dcc2] text-[#6d5a47] hover:text-[#2f241b] hover:bg-[#ead0ad] transition-all"
             title="关闭窗口"
           >
             <X className="w-5 h-5" />
@@ -227,8 +261,8 @@ export default function ToolWindow() {
                 fallback={
                   <div className="flex items-center justify-center h-64">
                     <div className="text-center">
-                      <Loader2 className="w-10 h-10 text-blue-400 animate-spin mx-auto mb-4" />
-                      <p className="text-slate-400">加载中...</p>
+                      <Loader2 className="w-10 h-10 text-[#9a5a28] animate-spin mx-auto mb-4" />
+                      <p className="text-[#6d5a47]">加载中...</p>
                     </div>
                   </div>
                 }
@@ -241,22 +275,22 @@ export default function ToolWindow() {
           {/* Usage Guide */}
           {usage && (
             <div className="glass-card rounded-2xl p-6 mb-6">
-              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-blue-400" />
+              <h2 className="text-lg font-bold text-[#2f241b] mb-4 flex items-center gap-2">
+                <BookOpen className="w-5 h-5 text-[#9a5a28]" />
                 使用说明
               </h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {/* Steps */}
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-[#5c4937] mb-3 flex items-center gap-2">
                     <HelpCircle className="w-4 h-4" />
                     使用步骤
                   </h3>
                   <ol className="space-y-2">
                     {usage.steps.map((step, index) => (
-                      <li key={index} className="flex items-start gap-3 text-sm text-slate-400">
-                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center text-xs font-bold">
+                      <li key={index} className="flex items-start gap-3 text-sm text-[#6d5a47]">
+                        <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#f1dcc2] text-[#6f3714] flex items-center justify-center text-xs font-bold">
                           {index + 1}
                         </span>
                         <span>{step}</span>
@@ -267,14 +301,14 @@ export default function ToolWindow() {
 
                 {/* Tips */}
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-300 mb-3 flex items-center gap-2">
+                  <h3 className="text-sm font-semibold text-[#5c4937] mb-3 flex items-center gap-2">
                     <Lightbulb className="w-4 h-4" />
                     使用技巧
                   </h3>
                   <ul className="space-y-2">
                     {usage.tips.map((tip, index) => (
-                      <li key={index} className="flex items-start gap-2 text-sm text-slate-400">
-                        <span className="text-yellow-400 mt-1">•</span>
+                      <li key={index} className="flex items-start gap-2 text-sm text-[#6d5a47]">
+                        <span className="text-[#9a5a28] mt-1">•</span>
                         <span>{tip}</span>
                       </li>
                     ))}
@@ -284,14 +318,32 @@ export default function ToolWindow() {
             </div>
           )}
 
+          {/* FAQ */}
+          {TOOL_FAQ[tool.id] && (
+            <div className="glass-card rounded-2xl p-6 mb-6">
+              <h2 className="text-lg font-bold text-[#2f241b] mb-4 flex items-center gap-2">
+                <HelpCircle className="w-5 h-5 text-[#9a5a28]" />
+                常见问题
+              </h2>
+              <div className="space-y-4">
+                {TOOL_FAQ[tool.id].map((faq, index) => (
+                  <div key={index} className="border-b border-[#dcc2a3] pb-4 last:border-0 last:pb-0">
+                    <h3 className="text-sm font-semibold text-[#2f241b] mb-1">{faq.q}</h3>
+                    <p className="text-sm text-[#6d5a47]">{faq.a}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {/* Related Tools */}
           {relatedTools.length > 0 && (
             <div className="glass-card rounded-2xl p-6">
-              <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <ArrowRight className="w-5 h-5 text-purple-400" />
+              <h2 className="text-lg font-bold text-[#2f241b] mb-4 flex items-center gap-2">
+                <ArrowRight className="w-5 h-5 text-[#9a5a28]" />
                 相关工具
                 {category && (
-                  <span className="text-sm font-normal text-slate-400">
+                  <span className="text-sm font-normal text-[#6d5a47]">
                     ({category.name})
                   </span>
                 )}
@@ -306,20 +358,20 @@ export default function ToolWindow() {
                       href={`/tool/${relatedTool.id}`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 transition-all group"
+                      className="flex items-center gap-3 p-3 rounded-xl bg-[#fff4e6] hover:bg-[#f1dcc2] border border-[#d8b58e] hover:border-[#b47a43] transition-all group"
                     >
                       <div className={`p-2 rounded-lg bg-gradient-to-br ${relatedTool.gradient} shadow-lg shrink-0`}>
                         <RelatedIcon className="w-4 h-4 text-white" />
                       </div>
                       <div className="min-w-0 flex-1">
-                        <h3 className="text-sm font-semibold text-white group-hover:text-blue-300 transition-colors truncate">
+                        <h3 className="text-sm font-semibold text-[#2f241b] group-hover:text-[#6f3714] transition-colors truncate">
                           {relatedTool.name}
                         </h3>
-                        <p className="text-xs text-slate-500 truncate">
+                        <p className="text-xs text-[#6d5a47] truncate">
                           {relatedTool.description}
                         </p>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-slate-600 group-hover:text-slate-400 shrink-0" />
+                      <ArrowRight className="w-4 h-4 text-[#9d8268] group-hover:text-[#8a4b1f] shrink-0" />
                     </a>
                   );
                 })}
@@ -327,20 +379,26 @@ export default function ToolWindow() {
             </div>
           )}
         </div>
+
+        {/* 结果页广告位 */}
+        <div className="max-w-5xl mx-auto px-6 pb-4">
+          <AdSlot name="tool-result" />
+        </div>
       </main>
 
       {/* Footer */}
-      <footer className="sticky bottom-0 glass-sidebar border-t border-white/5 px-6 py-3">
-        <div className="flex items-center justify-between text-xs text-slate-500">
+      <footer className="sticky bottom-0 glass-sidebar border-t border-[#dcc2a3] px-6 py-3">
+        <div className="flex items-center justify-between text-xs text-[#6d5a47]">
           <div className="flex items-center gap-2">
             <Shield className="w-3 h-3" />
-            <span>纯前端处理 - 数据不会上传到服务器</span>
+            <span>大部分工具本地处理 · 少数工具调用 API 或上传后端</span>
           </div>
-          <a href="/" target="_blank" rel="noopener noreferrer" className="hover:text-slate-300 transition-colors">
+          <a href="/" target="_blank" rel="noopener noreferrer" className="hover:text-[#6f3714] transition-colors">
             逐梦工具箱
           </a>
         </div>
       </footer>
     </div>
+    </>
   );
 }
