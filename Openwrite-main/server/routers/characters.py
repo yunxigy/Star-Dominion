@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -12,6 +13,15 @@ from server.models.responses import CharacterDetailResponse, CharacterListRespon
 from server.services.tool_executor_service import ToolExecutorService
 
 router = APIRouter(tags=["characters"])
+
+_char_locks: dict[str, asyncio.Lock] = {}
+
+
+def _get_char_lock(novel_id: str, name: str) -> asyncio.Lock:
+    key = f"{novel_id}:{name}"
+    if key not in _char_locks:
+        _char_locks[key] = asyncio.Lock()
+    return _char_locks[key]
 
 
 def _get_characters_dir(project_root: Path, novel_id: str) -> Path:
@@ -69,7 +79,12 @@ async def create_character(
     req: CreateCharacterRequest,
     service: ToolExecutorService = Depends(get_tool_executor_service),
 ):
-    result = await service.execute("create_character", {"name": req.name, "tier": req.tier, "summary": req.summary})
+    result = await service.execute("create_character", {
+        "novel_id": novel_id,
+        "name": req.name,
+        "description": req.summary or "",
+        "content": req.content or "",
+    })
     if "error" in result:
         raise HTTPException(500, result["error"])
     return CharacterDetailResponse(name=req.name, content=req.content or "", tier=req.tier, summary=req.summary)
@@ -83,10 +98,20 @@ async def update_character(
     project_root: Path = Depends(get_project_root),
 ):
     chars_dir = _get_characters_dir(project_root, novel_id)
-    target = chars_dir / f"{name}.md"
+    safe_name = Path(name).name
+    target = chars_dir / f"{safe_name}.md"
     if not target.exists():
         raise HTTPException(404, f"Character {name} not found")
-    target.write_text(req.content, encoding="utf-8")
+    # Verify path is within characters directory
+    try:
+        target.resolve().relative_to(chars_dir.resolve())
+    except ValueError:
+        raise HTTPException(400, "Invalid character name")
+    if not req.content or not req.content.strip():
+        raise HTTPException(400, "Character content cannot be empty")
+    lock = _get_char_lock(novel_id, safe_name)
+    async with lock:
+        target.write_text(req.content, encoding="utf-8")
     info = _parse_character_file(target)
     return CharacterDetailResponse(name=info["name"], content=req.content, tier=info["tier"], summary=info["summary"])
 
@@ -96,8 +121,15 @@ async def delete_character(
     novel_id: str, name: str, project_root: Path = Depends(get_project_root)
 ):
     chars_dir = _get_characters_dir(project_root, novel_id)
-    target = chars_dir / f"{name}.md"
+    safe_name = Path(name).name
+    target = chars_dir / f"{safe_name}.md"
     if not target.exists():
         raise HTTPException(404, f"Character {name} not found")
-    target.unlink()
+    try:
+        target.resolve().relative_to(chars_dir.resolve())
+    except ValueError:
+        raise HTTPException(400, "Invalid character name")
+    lock = _get_char_lock(novel_id, safe_name)
+    async with lock:
+        target.unlink()
     return {"ok": True}

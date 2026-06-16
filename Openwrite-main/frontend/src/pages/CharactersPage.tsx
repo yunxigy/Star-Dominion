@@ -30,7 +30,7 @@ export default function CharactersPage() {
   const handleSelect = async (ch: Character) => {
     if (!currentNovelId) return
     try {
-      const { data } = await api.get(`/novels/${currentNovelId}/characters/${ch.name}`)
+      const { data } = await api.get(`/novels/${currentNovelId}/characters/${encodeURIComponent(ch.name)}`)
       setSelected({ name: data.name, content: data.content })
     } catch {
       setSelected(null)

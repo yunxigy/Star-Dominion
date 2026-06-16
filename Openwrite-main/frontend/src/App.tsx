@@ -14,6 +14,12 @@ import StylePage from './pages/StylePage'
 import WorkflowPage from './pages/WorkflowPage'
 import SettingsPage from './pages/SettingsPage'
 import AutoWritePage from './pages/AutoWritePage'
+import ExportPage from './pages/ExportPage'
+import StatsPage from './pages/StatsPage'
+import SearchPage from './pages/SearchPage'
+import GraphPage from './pages/GraphPage'
+import HistoryPage from './pages/HistoryPage'
+import ToolsPage from './pages/ToolsPage'
 
 export default function App() {
   const loadNovels = useNovelStore((s) => s.loadNovels)
@@ -38,6 +44,12 @@ export default function App() {
         <Route path="workflow" element={<WorkflowPage />} />
         <Route path="settings" element={<SettingsPage />} />
         <Route path="auto-write" element={<AutoWritePage />} />
+        <Route path="export" element={<ExportPage />} />
+        <Route path="tools" element={<ToolsPage />} />
+        <Route path="stats" element={<StatsPage />} />
+        <Route path="search" element={<SearchPage />} />
+        <Route path="graph" element={<GraphPage />} />
+        <Route path="history" element={<HistoryPage />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Route>
     </Routes>

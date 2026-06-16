@@ -45,7 +45,15 @@ export const useChatStore = create<ChatStore>()(persist((set) => ({
   turnsProcessed: 0,
   isConnected: false,
 
-  setAgent: (agent) => set({ activeAgent: agent }),
+  setAgent: (agent) => {
+    const switchMsg: ChatMessage = {
+      id: makeId(),
+      role: 'system',
+      content: `已切换到 ${agent === 'dante' ? 'Dante（写作）' : 'Goethe（规划）'}，历史消息已清空。`,
+      timestamp: Date.now(),
+    }
+    set({ activeAgent: agent, messages: [switchMsg], streamingContent: '', isStreaming: false })
+  },
 
   addMessage: (msg) => set((s) => ({ messages: [...s.messages, msg] })),
 

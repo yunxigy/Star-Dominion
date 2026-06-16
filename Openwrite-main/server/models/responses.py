@@ -62,6 +62,7 @@ class WriteChapterResponse(BaseModel):
     word_count: int = 0
     draft_path: str | None = None
     truth_updates: dict[str, Any] = {}
+    review: dict[str, Any] | None = None
 
 
 class ReviewChapterResponse(BaseModel):

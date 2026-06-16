@@ -1,5 +1,7 @@
 import { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { useNovelStore } from '../store/novelStore'
+import { stageLabels } from '../lib/constants'
 
 export default function DashboardPage() {
   const { currentNovelId, status, config, loading, refreshStatus } = useNovelStore()
@@ -19,21 +21,10 @@ export default function DashboardPage() {
     )
   }
 
-  const stage = (status?.book_stage as string) || '未知'
+  const stage = (status?.book_stage as string) || ''
   const chaptersWritten = (status?.chapters_written as number) || 0
   const currentArc = config?.current_arc || '-'
   const currentChapter = config?.current_chapter || '-'
-
-  const stageLabels: Record<string, string> = {
-    DISCOVERY: '探索期',
-    FOUNDATION: '奠基期',
-    ROLLING_OUTLINE: '滚动大纲',
-    CHAPTER_PREFLIGHT: '章节预检',
-    DRAFTING: '写作中',
-    REVIEW_AND_REVISE: '审查修订',
-    SETTLEMENT: '状态结算',
-    MILESTONE_REVIEW: '里程碑审查',
-  }
 
   return (
     <div className="page dashboard-page">
@@ -46,7 +37,7 @@ export default function DashboardPage() {
       <div className="dashboard-grid">
         <div className="dash-card">
           <h3>写作阶段</h3>
-          <p className="dash-value">{stageLabels[stage] || stage}</p>
+          <p className="dash-value">{stage ? (stageLabels[stage] || stage) : '-'}</p>
         </div>
         <div className="dash-card">
           <h3>已写章节</h3>
@@ -65,10 +56,10 @@ export default function DashboardPage() {
       <div className="dash-section">
         <h2>快捷操作</h2>
         <div className="dash-actions">
-          <a href="chat" className="dash-action-btn">打开 Dante 对话</a>
-          <a href="chapters" className="dash-action-btn">查看章节列表</a>
-          <a href="outline" className="dash-action-btn">编辑大纲</a>
-          <a href="workflow" className="dash-action-btn">查看工作流</a>
+          <Link to="/chat" className="dash-action-btn">打开对话</Link>
+          <Link to="/chapters" className="dash-action-btn">查看章节列表</Link>
+          <Link to="/outline" className="dash-action-btn">编辑大纲</Link>
+          <Link to="/workflow" className="dash-action-btn">查看工作流</Link>
         </div>
       </div>
 

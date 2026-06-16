@@ -32,17 +32,12 @@ async def _send_ws(websocket: WebSocket, msg: dict) -> None:
 
 def _build_agent(agent_type: str, project_root: Path, novel_id: str):
     """Build a DanteChatAgent or GoetheChatAgent with proper tool layers."""
-    from tools.cli import build_dante_tool_layers, build_goethe_tool_layers
-
     if agent_type == "dante":
-        layers = build_dante_tool_layers(project_root)
         from tools.agent.dante import DanteChatAgent
 
         agent = DanteChatAgent(
             project_root=project_root,
             novel_id=novel_id,
-            tool_executors=layers.get("direct_tool_executors"),
-            action_executors=layers.get("action_tool_executors"),
         )
     elif agent_type == "goethe":
         from tools.goethe import GoetheChatAgent
@@ -56,7 +51,7 @@ def _build_agent(agent_type: str, project_root: Path, novel_id: str):
     return agent
 
 
-def _build_react_agent(agent_type: str, project_root: Path):
+def _build_react_agent(agent_type: str, project_root: Path, novel_id: str = ""):
     """Build a ReActAgent with the appropriate tools and system prompt."""
     from tools.llm.client import LLMClient, LLMConfig
 
@@ -78,6 +73,9 @@ def _build_react_agent(agent_type: str, project_root: Path):
 
     executors = build_cli_tool_executors(project_root)
     agent._register_tool_executors(executors)
+
+    # Store novel_id for tool context
+    agent._novel_id = novel_id
 
     return agent
 
@@ -134,7 +132,7 @@ async def chat_websocket(websocket: WebSocket, agent_type: str):
             })
 
         # Build ReAct agent
-        react_agent = _build_react_agent(agent_type, project_root)
+        react_agent = _build_react_agent(agent_type, project_root, novel_id)
 
         # Send current book state info
         book_state = getattr(startup, "book_state", None)
@@ -316,8 +314,20 @@ async def auto_write_websocket(websocket: WebSocket):
     await websocket.accept()
 
     project_root = get_config().project_root
+
+    # Resolve novel_id from query params or config
+    novel_id = websocket.query_params.get("novel_id", "")
+    if not novel_id:
+        config_path = project_root / "novel_config.yaml"
+        if config_path.exists():
+            import yaml
+            cfg = yaml.safe_load(config_path.read_text(encoding="utf-8")) or {}
+            novel_id = cfg.get("novel_id", "current")
+        else:
+            novel_id = "current"
+
     writer = None
-    run_task: Optional[asyncio.Task] = None
+    run_task: asyncio.Task | None = None
 
     try:
         while True:
@@ -329,7 +339,7 @@ async def auto_write_websocket(websocket: WebSocket):
             msg_type = data.get("type", "")
 
             if msg_type == "start":
-                if writer is not None and not writer.cancelled:
+                if run_task is not None and not run_task.done():
                     await _send_ws(websocket, {"type": "error", "message": "自动写作已在运行中"})
                     continue
 
@@ -355,7 +365,7 @@ async def auto_write_websocket(websocket: WebSocket):
                         lambda e=event: asyncio.ensure_future(_send_ws(websocket, e))
                     )
 
-                writer = AutoWriter(project_root, config, on_progress)
+                writer = AutoWriter(project_root, config, on_progress, novel_id=novel_id)
 
                 async def _run():
                     try:
@@ -388,9 +398,9 @@ async def auto_write_websocket(websocket: WebSocket):
             elif msg_type == "cancel":
                 if writer:
                     writer.cancel()
-                    await _send_ws(websocket, {"type": "cancelled"})
-                else:
-                    await _send_ws(websocket, {"type": "error", "message": "没有正在运行的自动写作任务"})
+                if run_task and not run_task.done():
+                    run_task.cancel()
+                await _send_ws(websocket, {"type": "cancelled"})
 
             elif msg_type == "pause":
                 if writer:
@@ -406,6 +416,8 @@ async def auto_write_websocket(websocket: WebSocket):
         logger.info("Auto-write WebSocket disconnected")
         if writer:
             writer.cancel()
+        if run_task and not run_task.done():
+            run_task.cancel()
     except Exception as e:
         logger.exception("Auto-write WebSocket error")
         await _send_ws(websocket, {"type": "error", "message": str(e)})

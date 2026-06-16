@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 
 from server.dependencies import get_project_root, get_tool_executor_service
 from server.services.tool_executor_service import ToolExecutorService
@@ -15,9 +15,9 @@ async def list_world_entities(
     novel_id: str,
     service: ToolExecutorService = Depends(get_tool_executor_service),
 ):
-    result = await service.execute("query_world", {})
+    result = await service.execute("query_world", {"novel_id": novel_id})
     if "error" in result:
-        return {"entities": []}
+        raise HTTPException(500, result["error"])
     return {"entities": result.get("entities", result.get("results", []))}
 
 
@@ -27,9 +27,9 @@ async def get_world_entity(
     entity_id: str,
     service: ToolExecutorService = Depends(get_tool_executor_service),
 ):
-    result = await service.execute("query_world", {"query": entity_id})
+    result = await service.execute("query_world", {"novel_id": novel_id, "entity_id": entity_id})
     if "error" in result:
-        return {"entity": None}
+        raise HTTPException(404, result["error"])
     return {"entity": result}
 
 
@@ -38,7 +38,7 @@ async def get_world_relations(
     novel_id: str,
     service: ToolExecutorService = Depends(get_tool_executor_service),
 ):
-    result = await service.execute("get_world_relations", {})
+    result = await service.execute("get_world_relations", {"novel_id": novel_id})
     if "error" in result:
-        return {"relations": []}
+        raise HTTPException(500, result["error"])
     return {"relations": result.get("relations", [])}

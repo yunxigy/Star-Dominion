@@ -46,7 +46,14 @@ async def extract_style(
     req: StyleExtractRequest,
     service: ToolExecutorService = Depends(get_tool_executor_service),
 ):
-    result = await service.execute("extract_dialogue_fingerprint", {"source_name": req.source_name})
+    if not req.source_name:
+        raise HTTPException(400, "source_name is required")
+    result = await service.execute("extract_style_source", {
+        "novel_id": novel_id,
+        "source_name": req.source_name,
+        "source_text": req.source_text or "",
+        "source_path": req.source_path or "",
+    })
     if "error" in result:
         raise HTTPException(500, result["error"])
     return result
@@ -58,7 +65,7 @@ async def synthesize_style(
     req: StyleSynthesizeRequest,
     service: ToolExecutorService = Depends(get_tool_executor_service),
 ):
-    result = await service.execute("chunk_text", {})
+    result = await service.execute("synthesize_style", {"novel_id": novel_id})
     if "error" in result:
         raise HTTPException(500, result["error"])
     return result

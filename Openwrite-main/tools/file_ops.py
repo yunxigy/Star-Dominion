@@ -17,9 +17,12 @@ class FileOps:
 
     def _resolve_path(self, path: str) -> Path:
         """解析并验证路径（防止路径穿越）"""
-        full_path = (self.data_dir / path).resolve()
-        if not str(full_path).startswith(str(self.data_dir)):
-            raise ValueError(f"Path traversal detected: {path}")
+        data_dir = self.data_dir.resolve()
+        full_path = (data_dir / path).resolve(strict=False)
+        try:
+            full_path.relative_to(data_dir)
+        except ValueError as exc:
+            raise ValueError(f"Path traversal detected: {path}") from exc
         return full_path
 
     def read_file(self, path: str) -> Dict[str, Any]:

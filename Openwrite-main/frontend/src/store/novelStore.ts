@@ -10,6 +10,7 @@ interface NovelStore {
   status: Record<string, unknown> | null
   loading: boolean
   error: string | null
+  _requestId: string | null
 
   loadNovels: () => Promise<void>
   selectNovel: (id: string) => Promise<void>
@@ -24,6 +25,7 @@ export const useNovelStore = create<NovelStore>()(persist((set, get) => ({
   status: null,
   loading: false,
   error: null,
+  _requestId: null,
 
   loadNovels: async () => {
     set({ loading: true, error: null })
@@ -31,8 +33,13 @@ export const useNovelStore = create<NovelStore>()(persist((set, get) => ({
       const novels = await novelApi.listNovels()
       set({ novels, loading: false })
       const current = get().currentNovelId
-      if (!current && novels.length > 0) {
+      // Auto-select if: no current, or current doesn't exist in list
+      const exists = current && novels.some(n => n.novel_id === current)
+      if (!exists && novels.length > 0) {
         await get().selectNovel(novels[0].novel_id)
+      } else if (exists) {
+        // Re-fetch config/status for persisted novel
+        await get().selectNovel(current!)
       }
     } catch (e: unknown) {
       set({ error: (e as Error).message, loading: false })
@@ -40,14 +47,18 @@ export const useNovelStore = create<NovelStore>()(persist((set, get) => ({
   },
 
   selectNovel: async (id: string) => {
-    set({ currentNovelId: id, loading: true, error: null })
+    const requestId = crypto.randomUUID()
+    set({ currentNovelId: id, loading: true, error: null, _requestId: requestId })
     try {
       const [config, status] = await Promise.all([
-        novelApi.getNovelConfig(id).catch(() => null),
-        novelApi.getStatus(id).catch(() => null),
+        novelApi.getNovelConfig(id),
+        novelApi.getStatus(id),
       ])
+      // Discard stale responses
+      if (get()._requestId !== requestId) return
       set({ config, status, loading: false })
     } catch (e: unknown) {
+      if (get()._requestId !== requestId) return
       set({ error: (e as Error).message, loading: false })
     }
   },

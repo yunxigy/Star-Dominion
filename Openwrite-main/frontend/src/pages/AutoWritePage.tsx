@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
+import { useNovelStore } from '../store/novelStore'
 
 interface AutoWriteConfig {
   max_retries: number
@@ -9,6 +10,7 @@ interface AutoWriteConfig {
   max_chapters: number
   auto_outline: boolean
   outline_batch: number
+  continue_on_review_error: boolean
 }
 
 interface ChapterResult {
@@ -38,6 +40,7 @@ const DEFAULT_CONFIG: AutoWriteConfig = {
   max_chapters: 0,
   auto_outline: true,
   outline_batch: 5,
+  continue_on_review_error: false,
 }
 
 const STORAGE_KEYS = {
@@ -57,6 +60,7 @@ function loadFromStorage<T>(key: string, fallback: T): T {
 }
 
 export default function AutoWritePage() {
+  const { currentNovelId } = useNovelStore()
   const [config, setConfig] = useState<AutoWriteConfig>(() => loadFromStorage(STORAGE_KEYS.config, DEFAULT_CONFIG))
   const [status, setStatus] = useState<WsStatus>('disconnected')
   const [logs, setLogs] = useState<LogEntry[]>(() => loadFromStorage(STORAGE_KEYS.logs, []))
@@ -101,10 +105,14 @@ export default function AutoWritePage() {
 
   const connect = useCallback(() => {
     if (wsRef.current?.readyState === WebSocket.OPEN) return
+    if (!currentNovelId) {
+      addLog('请先选择一本小说', 'error')
+      return
+    }
 
     const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
     const host = window.location.host
-    const url = `${protocol}//${host}/ws/auto-write`
+    const url = `${protocol}//${host}/ws/auto-write?novel_id=${encodeURIComponent(currentNovelId)}`
 
     setStatus('connecting')
     addLog('正在连接服务器...', 'info')
@@ -137,7 +145,7 @@ export default function AutoWritePage() {
     ws.onerror = () => {
       addLog('WebSocket 连接错误', 'error')
     }
-  }, [config, status, addLog])
+  }, [config, status, addLog, currentNovelId])
 
   const handleMessage = useCallback((msg: Record<string, unknown>) => {
     switch (msg.type) {
@@ -378,6 +386,17 @@ export default function AutoWritePage() {
                 />
               </div>
             )}
+            <div style={{ gridColumn: '1 / -1' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13, color: '#666', cursor: 'pointer' }}>
+                <input
+                  type="checkbox"
+                  checked={config.continue_on_review_error}
+                  onChange={e => updateConfig('continue_on_review_error', e.target.checked)}
+                  style={{ accentColor: '#7c8aff' }}
+                />
+                审查API失败时继续写作（不推荐）
+              </label>
+            </div>
             <div style={{ gridColumn: '1 / -1' }}>
               <label style={{ display: 'block', fontSize: 13, color: '#666', marginBottom: 4 }}>
                 起始章节 (留空=从下一章开始)

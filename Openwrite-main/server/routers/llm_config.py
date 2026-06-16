@@ -5,7 +5,7 @@ from __future__ import annotations
 import os
 from pathlib import Path
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 
 from server.dependencies import get_project_root
@@ -57,18 +57,37 @@ def _read_env_file(project_root: Path) -> dict[str, str]:
 
 
 def _write_env_file(project_root: Path, updates: dict[str, str]) -> None:
+    """Write updates to .env file, preserving comments and formatting."""
     env_path = project_root / ".env"
-    existing = _read_env_file(project_root)
-    existing.update(updates)
-    lines = []
-    for key in _ENV_KEYS:
-        if key in existing:
-            lines.append(f"{key}={existing[key]}")
-    # preserve any extra keys not in our known list
-    for key, value in existing.items():
-        if key not in _ENV_KEYS:
-            lines.append(f"{key}={value}")
-    env_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    if not env_path.exists():
+        # Create new file with just the updates
+        lines = [f"{key}={value}" for key, value in updates.items()]
+        env_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+        return
+
+    # Read existing lines, update known keys in-place, append new ones
+    existing_lines = env_path.read_text(encoding="utf-8").splitlines()
+    updated_keys: set[str] = set()
+    new_lines: list[str] = []
+
+    for line in existing_lines:
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#") or "=" not in stripped:
+            new_lines.append(line)
+            continue
+        key = stripped.split("=", 1)[0].strip()
+        if key in updates:
+            new_lines.append(f"{key}={updates[key]}")
+            updated_keys.add(key)
+        else:
+            new_lines.append(line)
+
+    # Append keys that weren't in the file
+    for key, value in updates.items():
+        if key not in updated_keys:
+            new_lines.append(f"{key}={value}")
+
+    env_path.write_text("\n".join(new_lines) + "\n", encoding="utf-8")
 
 
 class LLMConfigResponse(BaseModel):
@@ -96,6 +115,17 @@ class LLMConfigUpdate(BaseModel):
     api_format: str | None = None
     timeout_seconds: float | None = None
     max_retries: int | None = None
+
+    def validate_values(self) -> None:
+        """Validate numeric ranges."""
+        if self.temperature is not None and not (0 <= self.temperature <= 2):
+            raise ValueError("temperature must be between 0 and 2")
+        if self.max_tokens is not None and self.max_tokens < 1:
+            raise ValueError("max_tokens must be a positive integer")
+        if self.timeout_seconds is not None and self.timeout_seconds < 1:
+            raise ValueError("timeout_seconds must be at least 1")
+        if self.max_retries is not None and self.max_retries < 0:
+            raise ValueError("max_retries must be non-negative")
 
 
 def _mask_key(key: str) -> str:
@@ -132,6 +162,11 @@ async def update_llm_config(
     update: LLMConfigUpdate,
     project_root: Path = Depends(get_project_root),
 ):
+    try:
+        update.validate_values()
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
     updates: dict[str, str] = {}
     field_map = {
         "provider": "LLM_PROVIDER",

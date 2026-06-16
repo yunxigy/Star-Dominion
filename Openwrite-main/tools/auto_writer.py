@@ -27,6 +27,7 @@ class AutoWriterConfig:
     max_chapters: int = 0         # 最多写几章（0=写到大纲结束）
     auto_outline: bool = True     # 大纲用完时自动生成新大纲
     outline_batch: int = 5        # 每次自动生成的章节数
+    continue_on_review_error: bool = False  # 审查API失败时是否继续（默认不继续）
 
 
 @dataclass
@@ -58,12 +59,14 @@ class AutoWriter:
         project_root: Path,
         config: AutoWriterConfig,
         on_progress: Optional[Callable[[dict], None]] = None,
+        novel_id: str = "",
     ):
         self.project_root = project_root
         self.config = config
         self.on_progress = on_progress or (lambda _: None)
         self.cancelled = False
         self.paused = False
+        self._novel_id = novel_id
 
     # ── 公开方法 ──
 
@@ -75,7 +78,7 @@ class AutoWriter:
         if not cfg:
             return AutoWriteResult(stopped_reason="error")
 
-        novel_id = cfg.get("novel_id", "")
+        novel_id = self._novel_id or cfg.get("novel_id", "")
         total_generated = 0  # 自动生成的大纲批次计数
 
         self._emit("started", total=0, chapters=[])
@@ -177,12 +180,21 @@ class AutoWriter:
             self._emit("phase", chapter=chapter_id, phase="reviewing", attempt=attempt)
             review_result = await self._exec_review(chapter_id)
             if not review_result.get("ok"):
-                # 审查失败不算章节失败，跳过审查继续
+                # 审查API调用失败
+                if self.config.continue_on_review_error:
+                    return ChapterResult(
+                        chapter_id=chapter_id,
+                        word_count=word_count,
+                        score=0,
+                        passed=True,
+                        retries=attempt,
+                        error="review_error(continued): " + review_result.get("error", ""),
+                    )
                 return ChapterResult(
                     chapter_id=chapter_id,
                     word_count=word_count,
                     score=0,
-                    passed=True,  # 审查失败默认通过
+                    passed=False,
                     retries=attempt,
                     error="review_error: " + review_result.get("error", ""),
                 )
@@ -307,10 +319,15 @@ sections:
 只输出 YAML，不要其他内容。"""
 
         try:
-            response = await client.chat(
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.8,
-                max_tokens=2000,
+            from tools.llm.client import Message as LLMMessage
+            loop = asyncio.get_event_loop()
+            response = await loop.run_in_executor(
+                None,
+                lambda: client.chat(
+                    messages=[LLMMessage(role="user", content=prompt)],
+                    temperature=0.8,
+                    max_tokens=2000,
+                ),
             )
             content = response.get("content", "")
 

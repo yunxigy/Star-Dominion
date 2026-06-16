@@ -4,10 +4,15 @@ import { listChapters, getChapter } from '../api/chapters'
 import api from '../api/client'
 import type { ChapterInfo, ChapterContent } from '../types/chapter'
 
+interface ReviewIssue {
+  description: string
+  severity: string
+}
+
 interface ReviewResult {
   passed: boolean
   score?: number
-  issues?: string[]
+  issues?: (string | ReviewIssue)[]
 }
 
 export default function ChaptersPage() {
@@ -21,7 +26,11 @@ export default function ChaptersPage() {
   const [writeChapterId, setWriteChapterId] = useState('')
   const [writeGuidance, setWriteGuidance] = useState('')
   const [writeLoading, setWriteLoading] = useState(false)
-  const [writeResult, setWriteResult] = useState<{ ok: boolean; word_count?: number } | null>(null)
+  const [writeResult, setWriteResult] = useState<{
+    ok: boolean
+    word_count?: number
+    review?: { ok?: boolean; passed?: boolean; score?: number; issues?: (string | { description: string; severity: string })[] }
+  } | null>(null)
 
   // Review state
   const [reviewLoading, setReviewLoading] = useState(false)
@@ -47,12 +56,25 @@ export default function ChaptersPage() {
     }
   }
 
+  const handleDelete = async (chapterId: string) => {
+    if (!currentNovelId) return
+    if (!confirm(`确定删除章节「${chapterId}」？文件会移到回收站。`)) return
+    try {
+      await api.delete(`/novels/${currentNovelId}/chapters/${chapterId}`)
+      if (selected?.chapter_id === chapterId) setSelected(null)
+      listChapters(currentNovelId).then(setChapters)
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : '删除失败'
+      alert(msg)
+    }
+  }
+
   const handleWrite = async () => {
     if (!currentNovelId || !writeChapterId.trim()) return
     setWriteLoading(true)
     setWriteResult(null)
     try {
-      const { data } = await api.post(`/novels/${currentNovelId}/chapters/${writeChapterId}/write`, {
+      const { data } = await api.post(`/novels/${currentNovelId}/chapters/${encodeURIComponent(writeChapterId)}/write`, {
         guidance: writeGuidance || undefined,
       })
       setWriteResult(data)
@@ -71,7 +93,7 @@ export default function ChaptersPage() {
     setReviewLoading(true)
     setReviewResult(null)
     try {
-      const { data } = await api.post(`/novels/${currentNovelId}/chapters/${selected.chapter_id}/review`)
+      const { data } = await api.post(`/novels/${currentNovelId}/chapters/${encodeURIComponent(selected.chapter_id)}/review`)
       setReviewResult(data)
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : '审查失败'
@@ -106,8 +128,17 @@ export default function ChaptersPage() {
               className={`chapter-item ${selected?.chapter_id === ch.chapter_id ? 'active' : ''}`}
               onClick={() => handleSelect(ch)}
             >
-              <span className="chapter-id">{ch.chapter_id}</span>
-              <span className="chapter-title">{ch.title || '(无标题)'}</span>
+              <div className="chapter-item-main">
+                <span className="chapter-id">{ch.chapter_id}</span>
+                <span className="chapter-title">{ch.title || '(无标题)'}</span>
+              </div>
+              <button
+                className="chapter-delete-btn"
+                title="删除章节"
+                onClick={(e) => { e.stopPropagation(); handleDelete(ch.chapter_id) }}
+              >
+                ✕
+              </button>
             </div>
           ))}
           {chapters.length === 0 && !loading && <p className="empty-hint">暂无章节。</p>}
@@ -145,7 +176,12 @@ export default function ChaptersPage() {
                       <h4>发现的问题：</h4>
                       <ul>
                         {reviewResult.issues.map((issue, idx) => (
-                          <li key={idx}>{issue}</li>
+                          <li key={idx}>
+                            {typeof issue === 'string'
+                              ? issue
+                              : `${(issue as Record<string, string>).severity === 'critical' ? '🔴' : '🟡'} ${(issue as Record<string, string>).description || JSON.stringify(issue)}`
+                            }
+                          </li>
                         ))}
                       </ul>
                     </div>
@@ -188,6 +224,29 @@ export default function ChaptersPage() {
             {writeResult && (
               <div className="write-result">
                 <p>✅ 写作完成！字数: {writeResult.word_count}</p>
+                {writeResult.review?.ok && (
+                  <div className="write-review">
+                    <p>
+                      {writeResult.review.passed ? '✅ 自动审查通过' : '⚠️ 自动审查未通过'}
+                      {writeResult.review.score !== undefined && ` — 评分: ${writeResult.review.score}`}
+                    </p>
+                    {writeResult.review.issues && writeResult.review.issues.length > 0 && (
+                      <ul>
+                        {writeResult.review.issues.slice(0, 3).map((issue, idx) => (
+                          <li key={idx}>
+                            {typeof issue === 'string'
+                              ? issue
+                              : `${(issue as { severity: string }).severity === 'critical' ? '🔴' : '🟡'} ${(issue as { description: string }).description}`
+                            }
+                          </li>
+                        ))}
+                        {writeResult.review.issues.length > 3 && (
+                          <li>...还有 {writeResult.review.issues.length - 3} 条问题</li>
+                        )}
+                      </ul>
+                    )}
+                  </div>
+                )}
               </div>
             )}
 
@@ -255,11 +314,19 @@ export default function ChaptersPage() {
           cursor: pointer;
           border-bottom: 1px solid #f0f0f0;
           display: flex;
-          flex-direction: column;
-          gap: 2px;
+          justify-content: space-between;
+          align-items: center;
         }
         .chapter-item:hover { background: #f5f5ff; }
         .chapter-item.active { background: #e8eaff; border-left: 3px solid #7c8aff; }
+        .chapter-item-main {
+          display: flex; flex-direction: column; gap: 2px; flex: 1;
+        }
+        .chapter-delete-btn {
+          background: none; border: none; cursor: pointer; color: #ccc;
+          font-size: 14px; padding: 2px 6px; border-radius: 4px; line-height: 1;
+        }
+        .chapter-delete-btn:hover { color: #ef4444; background: #fef2f2; }
         .chapter-id { font-size: 12px; color: #888; }
         .chapter-title { font-size: 14px; }
         .chapter-detail {
@@ -406,6 +473,12 @@ export default function ChaptersPage() {
           font-size: 14px;
           color: #065f46;
         }
+        .write-review {
+          margin-top: 8px; padding-top: 8px; border-top: 1px solid #a7f3d0;
+        }
+        .write-review p { margin: 0 0 4px; font-size: 13px; }
+        .write-review ul { margin: 4px 0 0; padding-left: 18px; font-size: 12px; color: #555; }
+        .write-review li { margin: 2px 0; }
         .dialog-actions {
           display: flex;
           justify-content: flex-end;

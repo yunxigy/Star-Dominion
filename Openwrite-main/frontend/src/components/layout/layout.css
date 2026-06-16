@@ -49,7 +49,7 @@
 .sidebar-link.active {
   background: #2a2a5a;
   color: #7c8aff;
-  border-left: 3px solid #7c8aff;
+  box-shadow: inset 3px 0 0 #7c8aff;
 }
 
 .sidebar-icon {
@@ -73,6 +73,7 @@
   border-bottom: 1px solid #e0e0e0;
   display: flex;
   align-items: center;
+  justify-content: space-between;
   padding: 0 16px;
   gap: 12px;
 }
@@ -94,6 +95,38 @@
 .topbar-info {
   font-size: 13px;
   color: #666;
+}
+
+.novel-delete-btn {
+  padding: 4px 8px;
+  background: none;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.novel-delete-btn:hover {
+  background: #fef2f2;
+  border-color: #ef4444;
+}
+
+.novel-delete-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.topbar-version {
+  font-size: 11px;
+  color: #aaa;
 }
 
 .content {
@@ -120,4 +153,26 @@
 
 .statusbar-item.error {
   color: #ff6b6b;
+}
+
+/* Responsive: hide sidebar labels on narrow screens */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 56px;
+    min-width: 56px;
+  }
+  .sidebar-header h2 {
+    font-size: 14px;
+    text-align: center;
+  }
+  .sidebar-label {
+    display: none;
+  }
+  .sidebar-link {
+    justify-content: center;
+    padding: 10px 8px;
+  }
+  .content {
+    padding: 12px;
+  }
 }

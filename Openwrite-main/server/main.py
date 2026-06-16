@@ -68,13 +68,19 @@ def create_app() -> FastAPI:
         agents,
         chapters,
         characters,
+        export,
         foreshadowing,
+        graph,
+        history,
+        search,
+        stats,
         llm_config,
         novels,
         outline,
         status,
         style,
         sync,
+        tools,
         truth_files,
         websocket,
         workflow,
@@ -87,12 +93,18 @@ def create_app() -> FastAPI:
     app.include_router(outline.router, prefix="/api")
     app.include_router(characters.router, prefix="/api")
     app.include_router(world.router, prefix="/api")
+    app.include_router(tools.router, prefix="/api")
     app.include_router(truth_files.router, prefix="/api")
     app.include_router(foreshadowing.router, prefix="/api")
     app.include_router(style.router, prefix="/api")
     app.include_router(workflow.router, prefix="/api")
     app.include_router(agents.router, prefix="/api")
     app.include_router(sync.router, prefix="/api")
+    app.include_router(export.router, prefix="/api")
+    app.include_router(graph.router, prefix="/api")
+    app.include_router(history.router, prefix="/api")
+    app.include_router(search.router, prefix="/api")
+    app.include_router(stats.router, prefix="/api")
     app.include_router(llm_config.router, prefix="/api")
     app.include_router(websocket.router)
 

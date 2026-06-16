@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, HTTPException
@@ -12,6 +13,14 @@ from server.models.responses import OutlineResponse
 from server.services.tool_executor_service import ToolExecutorService
 
 router = APIRouter(tags=["outline"])
+
+_outline_locks: dict[str, asyncio.Lock] = {}
+
+
+def _get_outline_lock(novel_id: str) -> asyncio.Lock:
+    if novel_id not in _outline_locks:
+        _outline_locks[novel_id] = asyncio.Lock()
+    return _outline_locks[novel_id]
 
 
 def _get_novel_dir(project_root: Path, novel_id: str) -> Path:
@@ -43,9 +52,10 @@ async def update_outline(
     req: CreateOutlineRequest,
     service: ToolExecutorService = Depends(get_tool_executor_service),
 ):
-    result = await service.execute("create_outline", {"content": req.content})
-    if "error" in result:
-        raise HTTPException(500, result["error"])
+    async with _get_outline_lock(novel_id):
+        result = await service.execute("create_outline", {"novel_id": novel_id, "outline_content": req.content})
+        if "error" in result:
+            raise HTTPException(500, result["error"])
     return OutlineResponse(content=req.content)
 
 

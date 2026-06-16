@@ -4,17 +4,7 @@ import { useChatStore } from '../store/chatStore'
 import { useChatWebSocket } from '../hooks/useChatWebSocket'
 import ToolCallCard from '../components/chat/ToolCallCard'
 import type { AgentType } from '../types/agent'
-
-const stageLabels: Record<string, string> = {
-  DISCOVERY: '探索期',
-  FOUNDATION: '奠基期',
-  ROLLING_OUTLINE: '滚动大纲',
-  CHAPTER_PREFLIGHT: '章节预检',
-  DRAFTING: '写作中',
-  REVIEW_AND_REVISE: '审查修订',
-  SETTLEMENT: '状态结算',
-  MILESTONE_REVIEW: '里程碑审查',
-}
+import { stageLabels } from '../lib/constants'
 
 export default function ChatPage() {
   const {

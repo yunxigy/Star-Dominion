@@ -1136,18 +1136,38 @@ def _cmd_agent(args) -> int:
     return 1
 
 
+def _resolve_novel_id(config: dict, args: dict) -> str:
+    """从 args 优先取 novel_id，回退到 config。"""
+    return args.get("novel_id") or config.get("novel_id", "")
+
+
+def _load_config_for_novel(project_root: Path, config: dict, args: dict) -> tuple[dict, str]:
+    """解析 novel_id 并加载对应小说配置。
+
+    Returns:
+        (config, novel_id) — config 已合并小说独立配置
+    """
+    novel_id = _resolve_novel_id(config, args)
+    if novel_id and novel_id != config.get("novel_id"):
+        # 重新加载小说独立配置
+        novel_cfg = _load_config(project_root, novel_id)
+        if novel_cfg:
+            return novel_cfg, novel_id
+    return config, novel_id
+
+
 def build_cli_tool_executors(project_root: Path) -> dict[str, Callable[[dict], dict]]:
     """构建 CLI 工具执行器映射（公开 API）。"""
     return {
         # 写作相关
         "write_chapter": lambda a: _exec_write_chapter(project_root, a),
         "review_chapter": lambda a: _exec_review_chapter(project_root, a),
-        "get_status": lambda a: _exec_get_status(project_root),
+        "get_status": lambda a: _exec_get_status(project_root, a),
         "get_context": lambda a: _exec_get_context(project_root, a),
-        "list_chapters": lambda a: _exec_list_chapters(project_root),
+        "list_chapters": lambda a: _exec_list_chapters(project_root, a),
         "create_outline": lambda a: _exec_create_outline(project_root, a),
         "create_character": lambda a: _exec_create_character(project_root, a),
-        "get_truth_files": lambda a: _exec_get_truth_files(project_root),
+        "get_truth_files": lambda a: _exec_get_truth_files(project_root, a),
         "update_truth_file": lambda a: _exec_update_truth_file(project_root, a),
         # 伏笔管理
         "create_foreshadowing": lambda a: _exec_create_foreshadowing(project_root, a),
@@ -1173,6 +1193,12 @@ def build_cli_tool_executors(project_root: Path) -> dict[str, Callable[[dict], d
         # 文本处理
         "chunk_text": lambda a: _exec_chunk_text(project_root, a),
         "compress_section": lambda a: _exec_compress_section(project_root, a),
+        # 风格合成
+        "synthesize_style": lambda a: _exec_synthesize_style(project_root, a),
+        # 风格提取
+        "extract_style_source": lambda a: _exec_extract_style_source(project_root, a),
+        # 章节组装
+        "assemble_chapter": lambda a: _exec_assemble_chapter(project_root, a),
     }
 
 
@@ -1745,7 +1771,7 @@ def _exec_write_chapter(project_root: Path, args: dict) -> dict:
     from tools.agent import WriterAgent, AgentContext
     from tools.llm import LLMClient, LLMConfig
 
-    novel_id = config.get("novel_id", "")
+    config, novel_id = _load_config_for_novel(project_root, config, args)
     chapter_id = args.get("chapter_id", "next")
     if chapter_id == "next":
         chapter_id = _get_next_chapter(project_root, novel_id)
@@ -1809,7 +1835,7 @@ def _exec_review_chapter(project_root: Path, args: dict) -> dict:
     if not config:
         return {"error": "未找到项目配置"}
 
-    novel_id = config.get("novel_id", "")
+    config, novel_id = _load_config_for_novel(project_root, config, args)
     chapter_id = args.get("chapter_id", "")
     if not chapter_id or chapter_id == "latest":
         chapter_id = _get_latest_chapter(project_root, novel_id)
@@ -1842,20 +1868,23 @@ def _exec_review_chapter(project_root: Path, args: dict) -> dict:
             "chapter_id": chapter_id,
             "passed": result.passed,
             "score": result.score,
-            "issues": len(result.issues),
+            "issues": [
+                {"description": getattr(i, "description", str(i)), "severity": getattr(i, "severity", "info")}
+                for i in (result.issues or [])
+            ],
             "summary": getattr(result, "summary", ""),
         }
     except Exception as e:
         return {"ok": False, "error": str(e)}
 
 
-def _exec_get_status(project_root: Path) -> dict:
+def _exec_get_status(project_root: Path, args: dict | None = None) -> dict:
     """执行 get_status"""
     config = _load_config(project_root)
     if not config:
         return {"error": "未找到项目配置"}
 
-    novel_id = config.get("novel_id", "")
+    config, novel_id = _load_config_for_novel(project_root, config, args or {})
 
     from tools.truth_manager import TruthFilesManager
 
@@ -1880,7 +1909,7 @@ def _exec_get_context(project_root: Path, args: dict) -> dict:
 
     from tools.context_builder import ContextBuilder
 
-    novel_id = config.get("novel_id", "")
+    config, novel_id = _load_config_for_novel(project_root, config, args)
     chapter_id = args.get("chapter_id", "next")
     window_size = args.get("window_size", 5)
 
@@ -1895,13 +1924,13 @@ def _exec_get_context(project_root: Path, args: dict) -> dict:
     }
 
 
-def _exec_list_chapters(project_root: Path) -> dict:
+def _exec_list_chapters(project_root: Path, args: dict | None = None) -> dict:
     """执行 list_chapters"""
     config = _load_config(project_root)
     if not config:
         return {"error": "未找到项目配置"}
 
-    novel_id = config.get("novel_id", "")
+    config, novel_id = _load_config_for_novel(project_root, config, args or {})
     manuscript_root = project_root / "data" / "novels" / novel_id / "data" / "manuscript"
 
     chapters = []
@@ -1925,7 +1954,7 @@ def _exec_create_outline(project_root: Path, args: dict) -> dict:
     if not config:
         return {"error": "未找到项目配置"}
 
-    novel_id = config.get("novel_id", "")
+    config, novel_id = _load_config_for_novel(project_root, config, args)
     content = args.get("outline_content", "")
 
     outline_dir = project_root / "data" / "novels" / novel_id / "src"
@@ -1943,7 +1972,7 @@ def _exec_create_character(project_root: Path, args: dict) -> dict:
     if not config:
         return {"error": "未找到项目配置"}
 
-    novel_id = config.get("novel_id", "")
+    config, novel_id = _load_config_for_novel(project_root, config, args)
     name = args.get("name", "")
     description = args.get("description", "")
     content = args.get("content", "")
@@ -1967,15 +1996,15 @@ def _exec_create_character(project_root: Path, args: dict) -> dict:
     return {"ok": True, "file": str(char_file), "name": name, "safe_name": safe_name}
 
 
-def _exec_get_truth_files(project_root: Path) -> dict:
+def _exec_get_truth_files(project_root: Path, args: dict | None = None) -> dict:
     """执行 get_truth_files"""
     config = _load_config(project_root)
     if not config:
         return {"error": "未找到项目配置"}
 
-    from tools.truth_manager import TruthFilesManager
+    config, novel_id = _load_config_for_novel(project_root, config, args or {})
 
-    novel_id = config.get("novel_id", "")
+    from tools.truth_manager import TruthFilesManager
     truth_manager = TruthFilesManager(project_root, novel_id)
     truth = truth_manager.load_truth_files()
 
@@ -1996,9 +2025,11 @@ def _exec_update_truth_file(project_root: Path, args: dict) -> dict:
     if not config:
         return {"error": "未找到项目配置"}
 
+    config, novel_id = _load_config_for_novel(project_root, config, args)
+
     from tools.truth_manager import TruthFilesManager
 
-    novel_id = config.get("novel_id", "")
+    novel_id = _resolve_novel_id(config, args)
     file_name = args.get("file_name", "")
     content = args.get("content", "")
 
@@ -2216,14 +2247,14 @@ def _source_root(project_root: Path, novel_id: str, source_id: str) -> Path:
     return project_root / "data" / "novels" / novel_id / "data" / "sources" / source_id
 
 
-def _resolve_novel_id(project_root: Path, requested: str) -> str:
+def _cli_resolve_novel_id(project_root: Path, requested: str) -> str:
     if requested and requested != "current":
         return requested
     config = _load_config(project_root) or {}
     return str(config.get("novel_id", "")).strip()
 
 
-def _save_config(project_root: Path, config: dict) -> None:
+def _cli_save_config(project_root: Path, config: dict) -> None:
     config_path = project_root / "novel_config.yaml"
     config_path.write_text(
         yaml.safe_dump(config, allow_unicode=True, sort_keys=False),
@@ -2589,7 +2620,7 @@ def _promote_source_entities(project_root: Path, novel_id: str, source_id: str, 
 
 def _cmd_source_review(args) -> int:
     project_root = Path.cwd()
-    novel_id = _resolve_novel_id(project_root, getattr(args, "novel_id", "current"))
+    novel_id = _cli_resolve_novel_id(project_root, getattr(args, "novel_id", "current"))
     if not novel_id:
         logger.error("未找到 novel_config.yaml，请指定 --novel-id")
         return 1
@@ -2609,7 +2640,7 @@ def _promote_source_style(project_root: Path, novel_id: str, source_id: str) -> 
     if not config:
         raise RuntimeError("未找到 novel_config.yaml，请先运行 openwrite init")
     config["style_id"] = source_id
-    _save_config(project_root, config)
+    _cli_save_config(project_root, config)
 
     style_dir = project_root / "data" / "novels" / novel_id / "data" / "style"
     style_dir.mkdir(parents=True, exist_ok=True)
@@ -2716,7 +2747,7 @@ def _promote_source_world(project_root: Path, novel_id: str, source_id: str) -> 
 
 def _cmd_source_promote(args) -> int:
     project_root = Path.cwd()
-    novel_id = _resolve_novel_id(project_root, getattr(args, "novel_id", "current"))
+    novel_id = _cli_resolve_novel_id(project_root, getattr(args, "novel_id", "current"))
     if not novel_id:
         logger.error("未找到 novel_config.yaml，请指定 --novel-id")
         return 1
@@ -2833,10 +2864,15 @@ def _exec_create_foreshadowing(project_root: Path, args: dict) -> dict:
     if not config:
         return {"error": "未找到项目配置"}
 
+    config, _ = _load_config_for_novel(project_root, config, args)
+
     from tools.foreshadowing_manager import ForeshadowingDAGManager
 
-    novel_id = config.get("novel_id", "")
+    novel_id = _resolve_novel_id(config, args)
     node_id = args.get("node_id", "")
+    if not node_id:
+        import uuid
+        node_id = f"fs_{uuid.uuid4().hex[:8]}"
     content = args.get("content", "")
     weight = args.get("weight", 5)
     layer = args.get("layer", "支线")
@@ -2865,9 +2901,11 @@ def _exec_list_foreshadowing(project_root: Path, args: dict) -> dict:
     if not config:
         return {"error": "未找到项目配置"}
 
+    config, _ = _load_config_for_novel(project_root, config, args)
+
     from tools.foreshadowing_manager import ForeshadowingDAGManager
 
-    novel_id = config.get("novel_id", "")
+    novel_id = _resolve_novel_id(config, args)
     status_filter = args.get("status")
     min_weight = args.get("min_weight", 1)
     layer = args.get("layer")
@@ -2909,8 +2947,16 @@ def _exec_list_foreshadowing(project_root: Path, args: dict) -> dict:
 
     stats = manager.get_statistics()
 
+    # Build edges from DAG dependencies
+    edges = []
+    dag = manager._load_dag()
+    for node_id_key, node in dag.nodes.items():
+        for dep_id in getattr(node, "depends_on", []):
+            edges.append({"source": dep_id, "target": node_id_key})
+
     return {
         "nodes": nodes,
+        "edges": edges,
         "total": stats["total"],
         "by_status": stats["by_status"],
         "by_layer": stats["by_layer"],
@@ -2923,19 +2969,40 @@ def _exec_update_foreshadowing(project_root: Path, args: dict) -> dict:
     if not config:
         return {"error": "未找到项目配置"}
 
+    config, _ = _load_config_for_novel(project_root, config, args)
+
     from tools.foreshadowing_manager import ForeshadowingDAGManager
 
-    novel_id = config.get("novel_id", "")
+    novel_id = _resolve_novel_id(config, args)
     node_id = args.get("node_id", "")
     new_status = args.get("status", "")
+    content = args.get("content")
+    weight = args.get("weight")
+    layer = args.get("layer")
 
     manager = ForeshadowingDAGManager(project_root, novel_id)
-    success = manager.update_node_status(node_id, new_status)
 
-    if success:
-        return {"node_id": node_id, "status": new_status}
-    else:
-        return {"error": f"伏笔节点不存在: {node_id}"}
+    # Update content/weight/layer via direct DAG manipulation
+    if content is not None or weight is not None or layer is not None:
+        dag = manager._load_dag()
+        node = dag.nodes.get(node_id)
+        if not node:
+            return {"error": f"伏笔节点不存在: {node_id}"}
+        if content is not None:
+            node.content = content
+        if weight is not None:
+            node.weight = weight
+        if layer is not None:
+            node.layer = layer
+        manager._save_dag(dag)
+
+    # Update status if provided
+    if new_status:
+        success = manager.update_node_status(node_id, new_status)
+        if not success:
+            return {"error": f"伏笔节点不存在: {node_id}"}
+
+    return {"node_id": node_id, "status": new_status, "updated": True}
 
 
 def _exec_delete_foreshadowing(project_root: Path, args: dict) -> dict:
@@ -2944,9 +3011,11 @@ def _exec_delete_foreshadowing(project_root: Path, args: dict) -> dict:
     if not config:
         return {"error": "未找到项目配置"}
 
+    config, _ = _load_config_for_novel(project_root, config, args)
+
     from tools.foreshadowing_manager import ForeshadowingDAGManager
 
-    novel_id = config.get("novel_id", "")
+    novel_id = _resolve_novel_id(config, args)
     node_id = args.get("node_id", "")
 
     if not node_id:
@@ -2967,9 +3036,11 @@ def _exec_validate_foreshadowing(project_root: Path, args: dict) -> dict:
     if not config:
         return {"error": "未找到项目配置"}
 
+    config, _ = _load_config_for_novel(project_root, config, args)
+
     from tools.foreshadowing_manager import ForeshadowingDAGManager
 
-    novel_id = config.get("novel_id", "")
+    novel_id = _resolve_novel_id(config, args)
     manager = ForeshadowingDAGManager(project_root, novel_id)
 
     is_valid, errors = manager.validate_dag()
@@ -2980,13 +3051,23 @@ def _exec_validate_foreshadowing(project_root: Path, args: dict) -> dict:
     }
 
 
-def _load_config(project_root: Path) -> Optional[dict]:
-    """加载项目配置"""
+def _load_config(project_root: Path, novel_id: str = "") -> Optional[dict]:
+    """加载项目配置：优先读小说目录，回退全局配置。"""
+    import yaml
+
+    # 优先读小说独立配置
+    if novel_id:
+        novel_config = project_root / "data" / "novels" / novel_id / "novel_config.yaml"
+        if novel_config.exists():
+            with open(novel_config, "r", encoding="utf-8") as f:
+                cfg = yaml.safe_load(f) or {}
+            cfg.setdefault("novel_id", novel_id)
+            return cfg
+
+    # 回退全局配置
     config_path = project_root / "novel_config.yaml"
     if not config_path.exists():
         return None
-
-    import yaml
 
     with open(config_path, "r", encoding="utf-8") as f:
         return yaml.safe_load(f)
@@ -3123,9 +3204,11 @@ def _exec_query_world(project_root: Path, args: dict) -> dict:
     if not config:
         return {"error": "未找到项目配置"}
 
+    config, _ = _load_config_for_novel(project_root, config, args)
+
     from tools.world_query import list_entities, get_entity
 
-    novel_id = config.get("novel_id", "")
+    novel_id = _resolve_novel_id(config, args)
     entity_id = args.get("entity_id")
     entity_type = args.get("type")
 
@@ -3159,9 +3242,11 @@ def _exec_get_world_relations(project_root: Path, args: dict) -> dict:
     if not config:
         return {"error": "未找到项目配置"}
 
+    config, _ = _load_config_for_novel(project_root, config, args)
+
     from tools.world_query import get_relations_graph
 
-    novel_id = config.get("novel_id", "")
+    novel_id = _resolve_novel_id(config, args)
     graph = get_relations_graph(novel_id, project_root)
 
     return {
@@ -3181,10 +3266,12 @@ def _exec_validate_truth(project_root: Path, args: dict) -> dict:
     if not config:
         return {"error": "未找到项目配置"}
 
+    config, _ = _load_config_for_novel(project_root, config, args)
+
     from tools.truth_manager import TruthFilesManager
     from tools.state_validator import StateValidator
 
-    novel_id = config.get("novel_id", "")
+    novel_id = _resolve_novel_id(config, args)
     chapter_id = args.get("chapter_id", "latest")
 
     truth_manager = TruthFilesManager(project_root, novel_id)
@@ -3230,9 +3317,11 @@ def _exec_extract_dialogue_fingerprint(project_root: Path, args: dict) -> dict:
     if not config:
         return {"error": "未找到项目配置"}
 
+    config, _ = _load_config_for_novel(project_root, config, args)
+
     from tools.dialogue_fingerprint import DialogueFingerprintExtractor
 
-    novel_id = config.get("novel_id", "")
+    novel_id = _resolve_novel_id(config, args)
     chapter_id = args.get("chapter_id", "latest")
     character_names = args.get("character_names", [])
 
@@ -3270,9 +3359,11 @@ def _exec_validate_post_write(project_root: Path, args: dict) -> dict:
     if not config:
         return {"error": "未找到项目配置"}
 
+    config, _ = _load_config_for_novel(project_root, config, args)
+
     from tools.post_validator import PostWriteValidator
 
-    novel_id = config.get("novel_id", "")
+    novel_id = _resolve_novel_id(config, args)
     chapter_id = args.get("chapter_id", "latest")
 
     content = _load_chapter(project_root, novel_id, chapter_id)
@@ -3312,9 +3403,11 @@ def _exec_get_workflow_status(project_root: Path, args: dict) -> dict:
     if not config:
         return {"error": "未找到项目配置"}
 
+    config, _ = _load_config_for_novel(project_root, config, args)
+
     from tools.workflow_scheduler import WorkflowScheduler
 
-    novel_id = config.get("novel_id", "")
+    novel_id = _resolve_novel_id(config, args)
     chapter_id = args.get("chapter_id")
 
     scheduler = WorkflowScheduler(project_root, novel_id)
@@ -3330,8 +3423,8 @@ def _exec_get_workflow_status(project_root: Path, args: dict) -> dict:
             }
         return {"error": f"未找到工作流: {chapter_id}"}
 
-    active = scheduler.list_active()
-    complete = scheduler.list_complete()
+    active = scheduler.list_active_workflows()
+    complete = []  # list_complete not available
 
     return {
         "active": active,
@@ -3346,9 +3439,11 @@ def _exec_start_workflow(project_root: Path, args: dict) -> dict:
     if not config:
         return {"error": "未找到项目配置"}
 
+    config, _ = _load_config_for_novel(project_root, config, args)
+
     from tools.workflow_scheduler import WorkflowScheduler
 
-    novel_id = config.get("novel_id", "")
+    novel_id = _resolve_novel_id(config, args)
     chapter_id = args.get("chapter_id", "")
 
     scheduler = WorkflowScheduler(project_root, novel_id)
@@ -3367,9 +3462,11 @@ def _exec_advance_workflow(project_root: Path, args: dict) -> dict:
     if not config:
         return {"error": "未找到项目配置"}
 
+    config, _ = _load_config_for_novel(project_root, config, args)
+
     from tools.workflow_scheduler import WorkflowScheduler
 
-    novel_id = config.get("novel_id", "")
+    novel_id = _resolve_novel_id(config, args)
     chapter_id = args.get("chapter_id", "")
     stage_name = args.get("stage_name", "")
 
@@ -3444,15 +3541,119 @@ def _exec_compress_section(project_root: Path, args: dict) -> dict:
         return {
             "arc_id": arc_id,
             "section_id": section_id,
-            "compressed": result.compressed_text[:500] if result.compressed_text else "",
-            "compression_ratio": result.compression_ratio,
+            "compressed": (getattr(result, 'compressed_text', None) or getattr(result, 'merged_summary', ''))[:500],
+            "compression_ratio": getattr(result, 'compression_ratio', 0),
         }
 
     arc_result = compressor.compress_arc(arc_id)
     return {
         "arc_id": arc_id,
-        "compressed": arc_result.compressed_text[:500] if arc_result.compressed_text else "",
-        "compression_ratio": arc_result.compression_ratio,
+        "compressed": (getattr(arc_result, 'merged_summary', '') or '')[:500],
+        "total_word_count": getattr(arc_result, 'total_word_count', 0),
+    }
+
+
+def _exec_synthesize_style(project_root: Path, args: dict) -> dict:
+    """执行 synthesize_style — 合成风格文档。"""
+    config = _load_config(project_root)
+    if not config:
+        return {"error": "未找到项目配置"}
+
+    config, novel_id = _load_config_for_novel(project_root, config, args)
+    style_id = args.get("style_id") or config.get("style_id", novel_id)
+
+    try:
+        from tools.style_synthesizer import StyleSynthesizer
+
+        synthesizer = StyleSynthesizer(project_root, novel_id)
+        result = synthesizer.synthesize(style_id)
+        return {
+            "ok": True,
+            "style_id": style_id,
+            "composed_path": str(result) if result else None,
+        }
+    except ImportError:
+        # Fallback: check if composed.md already exists
+        style_dir = project_root / "data" / "novels" / novel_id / "data" / "style"
+        style_dir.mkdir(parents=True, exist_ok=True)
+        composed_path = style_dir / "composed.md"
+        if composed_path.exists():
+            return {"ok": True, "style_id": style_id, "composed_path": str(composed_path)}
+        return {"error": "风格合成器不可用，且无已有 composed.md"}
+    except Exception as e:
+        return {"error": str(e)}
+
+
+def _exec_extract_style_source(project_root: Path, args: dict) -> dict:
+    """执行 extract_style_source — 从用户文本提取风格 source pack。"""
+    config = _load_config(project_root)
+    if not config:
+        return {"error": "未找到项目配置"}
+
+    config, novel_id = _load_config_for_novel(project_root, config, args)
+    source_name = args.get("source_name", "")
+    source_text = args.get("source_text", "")
+    source_path = args.get("source_path", "")
+    focus = args.get("focus", "style")
+
+    if not source_name:
+        return {"error": "缺少 source_name 参数"}
+
+    # Determine source file
+    if source_path:
+        src_file = Path(source_path)
+        if not src_file.exists():
+            return {"error": f"源文件不存在: {source_path}"}
+    elif source_text:
+        # Save text to temp file
+        import tempfile
+        tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".md", delete=False, encoding="utf-8")
+        tmp.write(source_text)
+        tmp.close()
+        src_file = Path(tmp.name)
+    else:
+        return {"error": "需要提供 source_text 或 source_path"}
+
+    try:
+        result = _extract_source_pack(
+            project_root,
+            novel_id,
+            source_name,
+            src_file,
+            focus=focus,
+        )
+        return result if isinstance(result, dict) else {"ok": True, "source_name": source_name}
+    except Exception as e:
+        return {"error": str(e)}
+    finally:
+        # Clean up temp file
+        if source_text and not source_path:
+            try:
+                src_file.unlink()
+            except OSError:
+                pass
+
+
+def _exec_assemble_chapter(project_root: Path, args: dict) -> dict:
+    """执行 assemble_chapter — 组装章节上下文。"""
+    config = _load_config(project_root)
+    if not config:
+        return {"error": "未找到项目配置"}
+
+    config, novel_id = _load_config_for_novel(project_root, config, args)
+
+    from tools.context_builder import ContextBuilder
+    chapter_id = args.get("chapter_id", "next")
+
+    builder = ContextBuilder(project_root, novel_id)
+    context = builder.build_generation_context(chapter_id)
+
+    return {
+        "chapter_id": chapter_id,
+        "target_words": context.target_words,
+        "chapter_goals": context.chapter_goals,
+        "sections": list(context.to_prompt_sections().keys()),
+        "assembled": True,
     }
 
 

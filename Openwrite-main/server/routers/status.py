@@ -18,7 +18,7 @@ async def get_status(
     novel_id: str,
     service: ToolExecutorService = Depends(get_tool_executor_service),
 ):
-    result = await service.execute("get_status", {})
+    result = await service.execute("get_status", {"novel_id": novel_id})
     if "error" in result:
         return StatusResponse(novel_id=novel_id)
     snapshots = result.get("snapshots", [])

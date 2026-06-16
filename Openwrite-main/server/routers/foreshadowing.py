@@ -17,7 +17,7 @@ async def list_foreshadowing(
     novel_id: str,
     service: ToolExecutorService = Depends(get_tool_executor_service),
 ):
-    result = await service.execute("list_foreshadowing", {})
+    result = await service.execute("list_foreshadowing", {"novel_id": novel_id})
     if "error" in result:
         return ForeshadowingListResponse(nodes=[], edges=[])
     return ForeshadowingListResponse(
@@ -33,6 +33,7 @@ async def create_foreshadowing(
     service: ToolExecutorService = Depends(get_tool_executor_service),
 ):
     result = await service.execute("create_foreshadowing", {
+        "novel_id": novel_id,
         "content": req.content,
         "weight": req.weight,
         "layer": req.layer,
@@ -52,7 +53,7 @@ async def update_foreshadowing(
     req: UpdateForeshadowingRequest,
     service: ToolExecutorService = Depends(get_tool_executor_service),
 ):
-    args: dict = {"node_id": node_id}
+    args: dict = {"novel_id": novel_id, "node_id": node_id}
     if req.content is not None:
         args["content"] = req.content
     if req.weight is not None:
@@ -73,7 +74,7 @@ async def delete_foreshadowing(
     node_id: str,
     service: ToolExecutorService = Depends(get_tool_executor_service),
 ):
-    result = await service.execute("delete_foreshadowing", {"node_id": node_id})
+    result = await service.execute("delete_foreshadowing", {"novel_id": novel_id, "node_id": node_id})
     if "error" in result:
         raise HTTPException(404, result["error"])
     return result
@@ -84,7 +85,7 @@ async def validate_foreshadowing(
     novel_id: str,
     service: ToolExecutorService = Depends(get_tool_executor_service),
 ):
-    result = await service.execute("validate_foreshadowing", {})
+    result = await service.execute("validate_foreshadowing", {"novel_id": novel_id})
     if "error" in result:
         raise HTTPException(500, result["error"])
     return result
