@@ -1,91 +1,69 @@
-<p align="center">
-  <h1 align="center">OpenWrite</h1>
-  <p align="center">AI 驱动的长篇小说创作平台 | Web 端 + CLI 双模式</p>
-</p>
+# OpenWrite
+
+AI 驱动的长篇小说创作平台 — Web 端 + CLI 双模式。
 
 <p align="center">
   <img src="https://img.shields.io/badge/version-5.4.0-2563eb" alt="Version">
-  <img src="https://img.shields.io/badge/python-%3E%3D3.10-22c55e?logo=python" alt="Python >= 3.10">
+  <img src="https://img.shields.io/badge/python-%3E%3D3.11-22c55e?logo=python" alt="Python >= 3.11">
   <img src="https://img.shields.io/badge/FastAPI-0.115+-009688?logo=fastapi" alt="FastAPI">
-  <img src="https://img.shields.io/badge/license-MIT-green" alt="MIT License">
+  <img src="https://img.shields.io/badge/React-19-61DAFB?logo=react" alt="React 19">
 </p>
 
 ---
 
 ## 简介
 
-OpenWrite 是一个 AI 驱动的长篇小说创作平台，提供 **Web 端可视化界面** 和 **CLI 命令行** 双模式。它不是一个简单的 AI 对话包装器，而是一套完整的长篇小说生产线——从灵感整理、人物设定、大纲规划，到章节写作、审查校对、风格合成，全部在同一条工作流里完成。
+OpenWrite 是一个面向长篇小说创作的 AI 平台。从灵感整理、人物设定、大纲规划，到章节写作、审查校对、风格合成，全部在同一条工作流里完成。
 
 核心理念：**长篇小说不是一次性 prompt，而是一场持续数月的协作。**
 
-## 两种使用方式
-
-### Web 端（推荐）
-
-基于 FastAPI + WebSocket 的 Web 界面，提供：
-
-- 可视化的项目管理和进度追踪
-- 实时流式输出的 AI 写作对话
-- 自动写作模块（AutoWriter）：设定目标字数后 AI 自动推进，无需逐章手动指挥
-- 人物卡片、大纲树、设定文档的图形化编辑
-- 一键导出完整小说
-
-### CLI 命令行
-
-适合高级用户和脚本化场景：
-
-- `openwrite goethe` — 长会话规划入口，整理灵感、建立设定
-- `openwrite dante` — 正文创作主入口，持续写章、审查、推进
-- `openwrite write` / `openwrite review` — 精确控制写作和审查
-
-## 核心功能
+## 功能一览
 
 | 功能 | 说明 |
 |------|------|
-| **Goethe 规划 Agent** | 长会话规划，汇总灵感、建立人物、设定、大纲，成熟后交接给 Dante |
-| **Dante 创作 Agent** | 正文推进主 Agent，自动决定何时写章、审查、回修资产 |
-| **AutoWriter 自动写作** | 设定目标字数后自动推进多个章节，支持暂停/恢复 |
-| **风格合成** | 提供参考文章，AI 拆解学习后生成风格说明书，指导全书写作 |
-| **上下文组装** | 写章前自动组装 canonical packet（大纲、设定、人物、前章、风格规则） |
-| **章节审查** | 独立审查流程，检查设定冲突、人物一致性、情节合理性 |
-| **WebSocket 流式输出** | Web 端实时显示 AI 生成过程，支持中途打断和调整 |
-
-## 工作流
-
-```
-灵感 → Goethe（规划）→ 人物/设定/大纲 → Dante（创作）→ 章节正文 → 审查 → 修订 → 下一章
-                                                    ↑               |
-                                                    └───────────────┘
-                                                      持续迭代推进
-```
-
-### 推荐流程
-
-1. **新书启动**：`openwrite goethe`，和 AI 聊清楚题材、主角、核心冲突
-2. **资产沉淀**：让 Goethe 汇总成基础设定、人物草案、可写范围大纲
-3. **正式交接**：Goethe 显式 handoff 给 Dante
-4. **日常创作**：`openwrite dante`，告诉 Dante "写第六章，3500 字，冲突更直接"
-5. **审查修订**：Dante 自审后提示设定冲突，你确认后继续推进
+| **AI 对话** | Dante（写作）和 Goethe（规划）双 Agent |
+| **自动写作** | 设定目标字数后 AI 自动推进多章节 |
+| **章节管理** | 写入、审查、删除、版本历史、Diff 对比 |
+| **大纲管理** | 可视化编辑，AI 自动生成新章节大纲 |
+| **角色管理** | 角色卡片、关系图可视化 |
+| **世界设定** | 世界观实体、关系、真相文件 |
+| **伏笔管理** | DAG 图结构，状态追踪 |
+| **风格系统** | 从参考文本提取风格，合成风格文档 |
+| **工作流** | 章节级阶段推进（写→审→改→定） |
+| **导出** | EPUB / PDF 一键导出 |
+| **统计** | 字数趋势、写作速度、连续天数 |
+| **搜索** | 全文搜索（章节/角色/大纲/真相） |
+| **工具箱** | 真相验证、来源管理、市场分析、创建小说 |
 
 ## 技术架构
 
 ```
-OpenWrite/
-├── src/openwrite/          # 核心 Python 包
-│   ├── agents/             # Goethe & Dante Agent
-│   ├── auto_writer.py      # 自动写作模块
-│   ├── web/                # FastAPI Web 服务
-│   │   ├── app.py          # FastAPI 应用
-│   │   ├── api/            # REST API 路由
-│   │   ├── websocket/      # WebSocket 实时通信
-│   │   └── static/         # 前端静态资源
-│   ├── cli/                # CLI 入口
-│   ├── core/               # 核心引擎（上下文组装、写章、审查）
-│   └── style/              # 风格合成模块
-├── data/novels/{novel_id}/
-│   ├── src/                # 确认版真源（大纲、人物、设定）
-│   └── data/               # 运行态（手稿、工作流、缓存）
-└── pyproject.toml
+Openwrite-main/
+├── server/                     # FastAPI 后端
+│   ├── main.py                 # 入口
+│   ├── config.py               # 配置
+│   ├── routers/                # 15 个路由模块
+│   ├── services/               # 工具执行器服务
+│   └── models/                 # 请求/响应模型
+├── tools/                      # Python 工具层
+│   ├── cli.py                  # CLI 入口 + 27 个工具 executor
+│   ├── export.py               # EPUB/PDF 导出
+│   ├── writing_stats.py        # 写作统计
+│   ├── search.py               # 全局搜索
+│   ├── character_graph.py      # 角色关系图
+│   ├── chapter_history.py      # 版本历史
+│   ├── auto_writer.py          # 自动写作引擎
+│   ├── agent/                  # Dante/Goethe Agent
+│   └── llm/                    # LLM 客户端
+├── frontend/                   # React 前端
+│   ├── src/pages/              # 18 个页面
+│   ├── src/components/         # 布局 + 通用组件
+│   ├── src/store/              # Zustand 状态管理
+│   └── src/api/                # API 封装
+├── data/novels/{novel_id}/     # 小说数据
+│   ├── src/                    # 真源（大纲、角色、设定）
+│   └── data/                   # 运行态（手稿、工作流、缓存）
+└── start.py                    # 启动脚本
 ```
 
 ## 快速开始
@@ -93,11 +71,8 @@ OpenWrite/
 ### 安装
 
 ```bash
-git clone https://github.com/yunxigy/Star-Dominion.git
-cd Star-Dominion/Openwrite-main
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\Scripts\activate
-pip install -e .
+pip install -r requirements.txt
+cd frontend && npm install
 ```
 
 ### 配置
@@ -112,27 +87,25 @@ LLM_MODEL=gpt-4o-mini
 
 支持任何兼容 OpenAI API 格式的模型服务。
 
-### Web 端启动
+### 启动
 
 ```bash
-python -m openwrite.web.app
-# 或
-uvicorn openwrite.web.app:app --host 0.0.0.0 --port 8000
+# 后端（端口 8001）
+python start.py
+
+# 前端（端口 5174）
+cd frontend && npm run dev
 ```
 
-访问 `http://localhost:8000` 开始使用。
+访问 `http://localhost:5174/openwrite/`
 
 ### CLI 使用
 
 ```bash
-# 新书规划
-openwrite goethe
-
-# 正文创作
-openwrite dante
-
-# 查看状态
-openwrite status
+python -m tools.cli goethe    # 规划入口
+python -m tools.cli dante     # 创作入口
+python -m tools.cli status    # 查看状态
+python -m tools.cli write ch_005  # 写指定章节
 ```
 
 ## 环境变量
@@ -142,9 +115,11 @@ openwrite status
 | `LLM_API_KEY` | 模型 API Key | 无 |
 | `LLM_PROVIDER` | 提供商 | `openai` |
 | `LLM_MODEL` | 模型名 | `gpt-4o-mini` |
-| `LLM_BASE_URL` | 自定义兼容网关 | `https://api.openai.com/v1` |
-| `LLM_TEMPERATURE` | 默认温度 | `0.7` |
-| `LLM_MAX_TOKENS` | 最大输出 token | `24000` |
+| `LLM_BASE_URL` | API 地址 | `https://api.openai.com/v1` |
+| `LLM_TEMPERATURE` | 温度 | `0.7` |
+| `LLM_MAX_TOKENS` | 最大输出 | `24000` |
+| `LLM_TIMEOUT_SECONDS` | 超时秒数 | `300` |
+| `OPENWRITE_PORT` | 后端端口 | `8001` |
 
 ## 许可证
 
