@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Bot, ExternalLink, RefreshCw, AlertCircle } from 'lucide-react';
+import { Heart, ExternalLink, RefreshCw, AlertCircle } from 'lucide-react';
 
-const OPENWRITE_URL = '/openwrite/';
+const SHOUANREN_URL = '/wuwa/';
 
-export const AIAgentPage: React.FC = () => {
+export const ShouAnRenPage: React.FC = () => {
   const [loadError, setLoadError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -13,7 +13,7 @@ export const AIAgentPage: React.FC = () => {
     setLoadError(false);
     setIsLoading(true);
     if (iframeRef.current) {
-      iframeRef.current.src = OPENWRITE_URL;
+      iframeRef.current.src = SHOUANREN_URL;
     }
   };
 
@@ -33,15 +33,15 @@ export const AIAgentPage: React.FC = () => {
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="flex items-center justify-between px-4 py-3 bg-slate-900/60 backdrop-blur-sm border-b border-violet-500/20 shrink-0"
+        className="flex items-center justify-between px-4 py-3 bg-slate-900/60 backdrop-blur-sm border-b border-pink-500/20 shrink-0"
       >
         <div className="flex items-center gap-3">
-          <div className="p-2 rounded-lg bg-gradient-to-br from-violet-600 to-purple-600 shadow-lg">
-            <Bot className="w-5 h-5 text-white" />
+          <div className="p-2 rounded-lg bg-gradient-to-br from-pink-600 to-rose-600 shadow-lg">
+            <Heart className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h1 className="text-lg font-bold text-slate-100">网文智能体</h1>
-            <p className="text-xs text-slate-400">OpenWrite - AI 自主长篇小说写作系统</p>
+            <h1 className="text-lg font-bold text-slate-100">AI 伴侣</h1>
+            <p className="text-xs text-slate-400">守岸人 3.0 — AI 角色对话与互动剧情</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -53,7 +53,7 @@ export const AIAgentPage: React.FC = () => {
             <RefreshCw className="w-4 h-4" />
           </button>
           <a
-            href={OPENWRITE_URL}
+            href="http://localhost:8000"
             target="_blank"
             rel="noopener noreferrer"
             className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all"
@@ -76,19 +76,18 @@ export const AIAgentPage: React.FC = () => {
               <div className="inline-flex p-4 rounded-full bg-red-500/10 border border-red-500/20 mb-6">
                 <AlertCircle className="w-12 h-12 text-red-400" />
               </div>
-              <h3 className="text-xl font-bold text-slate-200 mb-3">无法连接到 OpenWrite</h3>
+              <h3 className="text-xl font-bold text-slate-200 mb-3">无法连接到守岸人</h3>
               <p className="text-slate-400 mb-6 leading-relaxed">
-                请确保 OpenWrite 服务已启动。需要同时运行前端 (端口 5174) 和后端 (端口 8001)。
+                请确保守岸人服务已启动（端口 8000）。
               </p>
               <div className="bg-slate-800/50 rounded-lg p-4 text-left mb-6 border border-slate-700/50">
                 <p className="text-xs text-slate-500 mb-2 font-mono">启动命令：</p>
-                <p className="text-sm text-cyan-400 font-mono">cd Openwrite-main</p>
-                <p className="text-sm text-cyan-400 font-mono">python start.py  (默认端口 8001)</p>
-                <p className="text-sm text-cyan-400 font-mono mt-1">cd frontend && npm run dev</p>
+                <p className="text-sm text-cyan-400 font-mono">cd 守岸人3.0</p>
+                <p className="text-sm text-cyan-400 font-mono">python -m server.main</p>
               </div>
               <button
                 onClick={handleRefresh}
-                className="px-6 py-2.5 bg-violet-600 hover:bg-violet-500 text-white rounded-lg transition-colors font-medium"
+                className="px-6 py-2.5 bg-pink-600 hover:bg-pink-500 text-white rounded-lg transition-colors font-medium"
               >
                 重新连接
               </button>
@@ -99,19 +98,19 @@ export const AIAgentPage: React.FC = () => {
         {isLoading && !loadError && (
           <div className="absolute inset-0 flex items-center justify-center bg-slate-950/50 z-10">
             <div className="flex flex-col items-center gap-3">
-              <div className="w-8 h-8 border-2 border-violet-500 border-t-transparent rounded-full animate-spin" />
-              <p className="text-sm text-slate-400">正在连接 OpenWrite...</p>
+              <div className="w-8 h-8 border-2 border-pink-500 border-t-transparent rounded-full animate-spin" />
+              <p className="text-sm text-slate-400">正在连接守岸人...</p>
             </div>
           </div>
         )}
 
         <iframe
           ref={iframeRef}
-          src={OPENWRITE_URL}
+          src={SHOUANREN_URL}
           className="w-full h-full border-0 bg-slate-950"
           onLoad={() => setIsLoading(false)}
           onError={() => { setLoadError(true); setIsLoading(false); }}
-          title="OpenWrite AI Agent"
+          title="守岸人 3.0"
         />
       </div>
     </div>

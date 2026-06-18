@@ -31,7 +31,7 @@ export default defineConfig({
         rewrite: (path: string) => path.replace(/^\/ow-api/, '/api'),
       },
       '/wuwa': {
-        target: 'http://localhost:8002',
+        target: 'http://localhost:8000',
         changeOrigin: true,
         rewrite: (path: string) => path.replace(/^\/wuwa/, ''),
       },

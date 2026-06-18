@@ -6,6 +6,7 @@ import { ToolboxPage } from './pages/ToolboxPage';
 import { TranslationPage } from './pages/TranslationPage';
 import { Stm32Page } from './pages/Stm32Page';
 import { AIAgentPage } from './pages/AIAgentPage';
+import { ShouAnRenPage } from './pages/ShouAnRenPage';
 import { CategoryPage } from './pages/CategoryPage';
 import ToolWindow from './components/ToolWindow';
 
@@ -21,6 +22,7 @@ export default function App() {
             <Route path="/fy" element={<TranslationPage />} />
             <Route path="/bp" element={<Stm32Page />} />
             <Route path="/ai" element={<AIAgentPage />} />
+            <Route path="/wuwa" element={<ShouAnRenPage />} />
           </Route>
 
           {/* 分类专题页 */}
