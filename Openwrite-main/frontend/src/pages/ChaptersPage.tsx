@@ -1,8 +1,12 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, lazy, Suspense } from 'react'
 import { useNovelStore } from '../store/novelStore'
 import { listChapters, getChapter } from '../api/chapters'
 import api from '../api/client'
 import type { ChapterInfo, ChapterContent } from '../types/chapter'
+import NoNovelGuard from '../components/NoNovelGuard'
+
+const OutlinePage = lazy(() => import('./OutlinePage'))
+const HistoryPage = lazy(() => import('./HistoryPage'))
 
 interface ReviewIssue {
   description: string
@@ -15,8 +19,11 @@ interface ReviewResult {
   issues?: (string | ReviewIssue)[]
 }
 
+type SubTab = 'chapters' | 'outline' | 'history'
+
 export default function ChaptersPage() {
   const { currentNovelId } = useNovelStore()
+  const [subTab, setSubTab] = useState<SubTab>('chapters')
   const [chapters, setChapters] = useState<ChapterInfo[]>([])
   const [selected, setSelected] = useState<ChapterContent | null>(null)
   const [loading, setLoading] = useState(false)
@@ -104,8 +111,38 @@ export default function ChaptersPage() {
   }
 
   return (
+    <NoNovelGuard>
     <div className="page chapters-page">
-      <h1>章节管理</h1>
+      <div className="sub-tab-bar">
+        {([
+          { key: 'chapters', label: '📖 章节', icon: '' },
+          { key: 'outline', label: '📋 大纲', icon: '' },
+          { key: 'history', label: '🕐 版本历史', icon: '' },
+        ] as { key: SubTab; label: string; icon: string }[]).map((tab) => (
+          <button
+            key={tab.key}
+            className={`sub-tab ${subTab === tab.key ? 'active' : ''}`}
+            onClick={() => setSubTab(tab.key)}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {subTab === 'outline' && (
+        <Suspense fallback={<p>加载中...</p>}>
+          <OutlinePage />
+        </Suspense>
+      )}
+
+      {subTab === 'history' && (
+        <Suspense fallback={<p>加载中...</p>}>
+          <HistoryPage />
+        </Suspense>
+      )}
+
+      {subTab === 'chapters' && (
+      <>
       <div className="help-box">
         <p>查看和管理已写章节。左侧列表点击章节可预览正文内容。点击"写新章节"按钮可以生成新章节，点击"审查"按钮可以对当前章节进行质量检查。</p>
       </div>
@@ -506,7 +543,20 @@ export default function ChaptersPage() {
         }
         .dialog-confirm:hover { background: #5a6ae0; }
         .dialog-confirm:disabled { opacity: 0.5; cursor: not-allowed; }
+        .sub-tab-bar {
+          display: flex; gap: 4px; padding: 8px 0; margin-bottom: 12px;
+        }
+        .sub-tab {
+          padding: 6px 14px; border: none; background: none;
+          border-radius: 6px; font-size: 13px; cursor: pointer;
+          color: #666; transition: all 0.1s;
+        }
+        .sub-tab:hover { background: #f0f0f0; }
+        .sub-tab.active { background: #7c8aff; color: #fff; }
       `}</style>
+      </>
+      )}
     </div>
+    </NoNovelGuard>
   )
 }

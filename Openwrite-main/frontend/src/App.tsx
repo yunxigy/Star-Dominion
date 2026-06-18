@@ -3,23 +3,13 @@ import { Routes, Route, Navigate } from 'react-router-dom'
 import { useNovelStore } from './store/novelStore'
 import AppLayout from './components/layout/AppLayout'
 import DashboardPage from './pages/DashboardPage'
-import ChatPage from './pages/ChatPage'
 import ChaptersPage from './pages/ChaptersPage'
-import OutlinePage from './pages/OutlinePage'
-import CharactersPage from './pages/CharactersPage'
-import WorldPage from './pages/WorldPage'
-import TruthFilesPage from './pages/TruthFilesPage'
+import WorldviewPage from './pages/WorldviewPage'
 import ForeshadowingPage from './pages/ForeshadowingPage'
-import StylePage from './pages/StylePage'
+import AIPage from './pages/AIPage'
 import WorkflowPage from './pages/WorkflowPage'
-import SettingsPage from './pages/SettingsPage'
-import AutoWritePage from './pages/AutoWritePage'
-import ExportPage from './pages/ExportPage'
-import StatsPage from './pages/StatsPage'
-import SearchPage from './pages/SearchPage'
-import GraphPage from './pages/GraphPage'
-import HistoryPage from './pages/HistoryPage'
 import ToolsPage from './pages/ToolsPage'
+import SettingsPage from './pages/SettingsPage'
 
 export default function App() {
   const loadNovels = useNovelStore((s) => s.loadNovels)
@@ -33,23 +23,28 @@ export default function App() {
       <Route element={<AppLayout />}>
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard" element={<DashboardPage />} />
-        <Route path="chat" element={<ChatPage />} />
         <Route path="chapters" element={<ChaptersPage />} />
-        <Route path="outline" element={<OutlinePage />} />
-        <Route path="characters" element={<CharactersPage />} />
-        <Route path="world" element={<WorldPage />} />
-        <Route path="truth" element={<TruthFilesPage />} />
+        <Route path="worldview" element={<WorldviewPage />} />
         <Route path="foreshadowing" element={<ForeshadowingPage />} />
-        <Route path="style" element={<StylePage />} />
+        <Route path="ai" element={<AIPage />} />
         <Route path="workflow" element={<WorkflowPage />} />
-        <Route path="settings" element={<SettingsPage />} />
-        <Route path="auto-write" element={<AutoWritePage />} />
-        <Route path="export" element={<ExportPage />} />
         <Route path="tools" element={<ToolsPage />} />
-        <Route path="stats" element={<StatsPage />} />
-        <Route path="search" element={<SearchPage />} />
-        <Route path="graph" element={<GraphPage />} />
-        <Route path="history" element={<HistoryPage />} />
+        <Route path="settings" element={<SettingsPage />} />
+
+        {/* 旧路由兼容重定向 */}
+        <Route path="chat" element={<Navigate to="/ai" replace />} />
+        <Route path="auto-write" element={<Navigate to="/ai" replace />} />
+        <Route path="style" element={<Navigate to="/ai" replace />} />
+        <Route path="outline" element={<Navigate to="/chapters" replace />} />
+        <Route path="characters" element={<Navigate to="/worldview" replace />} />
+        <Route path="graph" element={<Navigate to="/worldview" replace />} />
+        <Route path="world" element={<Navigate to="/worldview" replace />} />
+        <Route path="truth" element={<Navigate to="/worldview" replace />} />
+        <Route path="stats" element={<Navigate to="/dashboard" replace />} />
+        <Route path="search" element={<Navigate to="/tools" replace />} />
+        <Route path="export" element={<Navigate to="/tools" replace />} />
+        <Route path="history" element={<Navigate to="/chapters" replace />} />
+
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Route>
     </Routes>

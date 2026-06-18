@@ -1,13 +1,27 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useNovelStore } from '../store/novelStore'
 import { stageLabels } from '../lib/constants'
+import api from '../api/client'
+
+interface WritingStats {
+  total_chapters: number
+  total_words: number
+  avg_chapter_words: number
+  streak: number
+}
 
 export default function DashboardPage() {
   const { currentNovelId, status, config, loading, refreshStatus } = useNovelStore()
+  const [stats, setStats] = useState<WritingStats | null>(null)
 
   useEffect(() => {
-    if (currentNovelId) refreshStatus()
+    if (currentNovelId) {
+      refreshStatus()
+      api.get(`/novels/${currentNovelId}/stats`)
+        .then(({ data }) => setStats(data))
+        .catch(() => setStats(null))
+    }
   }, [currentNovelId, refreshStatus])
 
   if (!currentNovelId) {
@@ -29,9 +43,6 @@ export default function DashboardPage() {
   return (
     <div className="page dashboard-page">
       <h1>仪表盘</h1>
-      <div className="help-box">
-        <p>这里是项目的总览页面。你可以查看当前写作阶段、已写章节数、卷/章进度，并快速跳转到常用功能。</p>
-      </div>
       {loading && <p>加载中...</p>}
 
       <div className="dashboard-grid">
@@ -44,22 +55,23 @@ export default function DashboardPage() {
           <p className="dash-value">{chaptersWritten}</p>
         </div>
         <div className="dash-card">
-          <h3>当前卷</h3>
-          <p className="dash-value">{currentArc}</p>
+          <h3>总字数</h3>
+          <p className="dash-value">{stats?.total_words?.toLocaleString() || '-'}</p>
         </div>
         <div className="dash-card">
-          <h3>当前章节</h3>
-          <p className="dash-value">{currentChapter}</p>
+          <h3>连续写作</h3>
+          <p className="dash-value">{stats?.streak || 0} 天</p>
         </div>
       </div>
 
       <div className="dash-section">
         <h2>快捷操作</h2>
         <div className="dash-actions">
-          <Link to="/chat" className="dash-action-btn">打开对话</Link>
-          <Link to="/chapters" className="dash-action-btn">查看章节列表</Link>
-          <Link to="/outline" className="dash-action-btn">编辑大纲</Link>
-          <Link to="/workflow" className="dash-action-btn">查看工作流</Link>
+          <Link to="/ai" className="dash-action-btn">💬 AI 助手</Link>
+          <Link to="/chapters" className="dash-action-btn">📖 章节管理</Link>
+          <Link to="/worldview" className="dash-action-btn">🌍 世界观</Link>
+          <Link to="/workflow" className="dash-action-btn">⚙️ 工作流</Link>
+          <Link to="/tools" className="dash-action-btn">🧰 工具箱</Link>
         </div>
       </div>
 
