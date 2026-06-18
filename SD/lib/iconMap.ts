@@ -5,6 +5,8 @@
 import {
   Activity,
   AlignLeft,
+  AudioLines,
+  Headphones,
   ArrowLeft,
   ArrowLeftRight,
   ArrowRight,
@@ -137,6 +139,7 @@ type IconComponent = ComponentType<SVGProps<SVGSVGElement>>
 export const ICON_MAP: Record<string, IconComponent> = {
   Activity,
   AlignLeft,
+  AudioLines,
   ArrowLeft,
   ArrowLeftRight,
   ArrowRight,
@@ -192,6 +195,7 @@ export const ICON_MAP: Record<string, IconComponent> = {
   Grid3x3,
   Hammer,
   Hash,
+  Headphones,
   Heart,
   HeartHandshake,
   HelpCircle,

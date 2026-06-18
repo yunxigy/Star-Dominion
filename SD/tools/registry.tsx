@@ -5,7 +5,7 @@ export interface ToolDef {
   name: string;
   description: string;
   icon: string;
-  category: 'pdf' | 'image' | 'converter' | 'dev' | 'calc' | 'fun' | 'image-enhance' | 'test' | 'tarot' | 'mouse' | 'document';
+  category: 'pdf' | 'image' | 'converter' | 'dev' | 'calc' | 'fun' | 'image-enhance' | 'test' | 'tarot' | 'mouse' | 'document' | 'audio';
   color: 'red' | 'emerald' | 'violet' | 'amber' | 'cyan' | 'pink' | 'blue' | 'lime' | 'indigo';
   gradient: string;
   glow: string;
@@ -168,6 +168,11 @@ const CaseConverter = React.lazy(() => import('../components/tools/document/Case
 const WordCount = React.lazy(() => import('../components/tools/document/WordCount'));
 const TextDiff = React.lazy(() => import('../components/tools/document/TextDiff'));
 
+// ── 音频处理 ───────────────────────────────────────────────
+const AudioConverter = React.lazy(() => import('../components/tools/audio/AudioConverter'));
+const NcmConverter = React.lazy(() => import('../components/tools/audio/NcmConverter'));
+const VoiceChanger = React.lazy(() => import('../components/tools/audio/VoiceChanger'));
+
 // ── 注册表 ───────────────────────────────────────────────
 
 export const TOOLS: ToolDef[] = [
@@ -320,6 +325,11 @@ export const TOOLS: ToolDef[] = [
   { id: 'case-converter', name: '大小写转换', description: '英文文本大小写批量转换', icon: 'CaseSensitive', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: CaseConverter },
   { id: 'word-count', name: '字数统计', description: '统计文本字数、词数、行数', icon: 'FileText', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: WordCount },
   { id: 'text-diff', name: '文本对比', description: '对比两段文本的差异之处', icon: 'GitCompare', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: TextDiff },
+
+  // ── 音频处理 ───────────────────────────────────────────
+  { id: 'audio-converter', name: '音频格式转换', description: 'MP3/WAV/OGG/WebM 格式互转', icon: 'AudioLines', category: 'audio', color: 'pink', gradient: 'from-pink-600 to-rose-600', glow: 'rgba(236,72,153,0.3)', component: AudioConverter, privacy: 'local', status: 'stable', tags: ['yinpin', 'mp3', 'wav', 'ogg', 'webm', 'geishi', '音频', '格式'] },
+  { id: 'ncm-converter', name: 'NCM 转换器', description: '网易云音乐 NCM 解密为 MP3/FLAC', icon: 'Headphones', category: 'audio', color: 'pink', gradient: 'from-pink-600 to-rose-600', glow: 'rgba(236,72,153,0.3)', component: NcmConverter, privacy: 'local', status: 'stable', tags: ['ncm', 'wangyiyun', 'netease', 'jiami', 'jiemi', '网易云', '解密', '音乐'] },
+  { id: 'voice-changer', name: '音频变声器', description: '调节音调速度实现变声效果', icon: 'Music', category: 'audio', color: 'pink', gradient: 'from-pink-600 to-rose-600', glow: 'rgba(236,72,153,0.3)', component: VoiceChanger, privacy: 'local', status: 'stable', tags: ['biansheng', 'yin调', 'sudi', '变声', '音调', '速度'] },
 ];
 
 export const CATEGORIES = [
@@ -334,6 +344,7 @@ export const CATEGORIES = [
   { id: 'tarot', name: '塔罗星座', description: '塔罗占卜、星座运势', icon: 'Sparkles', color: 'blue', gradient: 'from-blue-600 to-indigo-600' },
   { id: 'mouse', name: '鼠标测试', description: 'CPS、DPI、反应速度、抖动', icon: 'MousePointerClick', color: 'lime', gradient: 'from-lime-600 to-green-600' },
   { id: 'document', name: '文档处理', description: 'OCR、翻译、查重、语法检查', icon: 'FileEdit', color: 'indigo', gradient: 'from-indigo-600 to-blue-600' },
+  { id: 'audio', name: '音频处理', description: '格式转换、NCM解密、变声', icon: 'AudioLines', color: 'pink', gradient: 'from-pink-600 to-rose-600' },
 ] as const;
 
 export function getToolsByCategory(category: string): ToolDef[] {
