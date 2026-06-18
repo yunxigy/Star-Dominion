@@ -171,6 +171,25 @@ async def review_chapter(
     )
 
 
+@router.post("/novels/{novel_id}/chapters/write-and-review")
+async def write_and_review(
+    novel_id: str,
+    req: WriteChapterRequest,
+    service: ToolExecutorService = Depends(get_tool_executor_service),
+    project_root: Path = Depends(get_project_root),
+):
+    """写章节 + 自动审查 + 低分自动修改。"""
+    result = await service.execute("write_and_review", {
+        "novel_id": novel_id,
+        "guidance": req.guidance or "",
+        "score_threshold": 70,
+        "max_revisions": 2,
+    })
+    if "error" in result:
+        raise HTTPException(500, result["error"])
+    return result
+
+
 @router.get("/novels/{novel_id}/chapters/{chapter_id}/context")
 async def get_chapter_context(
     novel_id: str,

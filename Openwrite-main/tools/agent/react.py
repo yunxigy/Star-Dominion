@@ -284,6 +284,20 @@ OPENWRITE_TOOLS = [
         },
     ),
     ToolDefinition(
+        name="write_and_review",
+        description="写章节并自动审查。如果分数低于阈值会自动修改后重新审查。推荐用于写作新章节。",
+        parameters={
+            "type": "object",
+            "properties": {
+                "chapter_id": {"type": "string", "description": "章节 ID（不传则自动创建下一章）"},
+                "guidance": {"type": "string", "description": "创作指导"},
+                "score_threshold": {"type": "integer", "description": "及格分数（默认70）"},
+                "max_revisions": {"type": "integer", "description": "最大修改次数（默认2）"},
+            },
+            "required": [],
+        },
+    ),
+    ToolDefinition(
         name="get_status",
         description="获取项目状态概览。",
         parameters={
@@ -549,6 +563,7 @@ OPENWRITE_SYSTEM_PROMPT = """你是 OpenWrite 小说创作引擎的 Agent。
 |------|------|
 | write_chapter | 写一章草稿 |
 | review_chapter | 审查章节 |
+| write_and_review | **推荐** 写章节+自动审查+低分自动修改 |
 | get_status | 查看项目状态 |
 | get_context | 获取写作上下文 |
 | list_chapters | 列出章节 |
@@ -580,8 +595,10 @@ OPENWRITE_SYSTEM_PROMPT = """你是 OpenWrite 小说创作引擎的 Agent。
 
 ## 写新章节
 
-用户说"写新章节"/"写下一章"时，直接调用 write_chapter（不传 chapter_id），系统会自动创建下一章。
+用户说"写新章节"/"写下一章"时，直接调用 write_and_review（不传 chapter_id），系统会自动创建下一章并审查。
+如果分数低于70分会自动修改后重新审查，最多修改2轮。
 不要询问用户章节 ID，直接写即可。
+写完后向用户报告：章节标题、字数、最终评分、通过/未通过。
 
 ## 规则
 

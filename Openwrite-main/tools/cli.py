@@ -1199,6 +1199,8 @@ def build_cli_tool_executors(project_root: Path) -> dict[str, Callable[[dict], d
         "extract_style_source": lambda a: _exec_extract_style_source(project_root, a),
         # 章节组装
         "assemble_chapter": lambda a: _exec_assemble_chapter(project_root, a),
+        # 写+审+改
+        "write_and_review": lambda a: _exec_write_and_review(project_root, a),
     }
 
 
@@ -3654,6 +3656,110 @@ def _exec_assemble_chapter(project_root: Path, args: dict) -> dict:
         "chapter_goals": context.chapter_goals,
         "sections": list(context.to_prompt_sections().keys()),
         "assembled": True,
+    }
+
+
+def _exec_write_and_review(project_root: Path, args: dict) -> dict:
+    """写章节 → 审查 → 低分自动修改，返回最终结果。"""
+    config = _load_config(project_root)
+    if not config:
+        return {"error": "未找到项目配置"}
+
+    config, novel_id = _load_config_for_novel(project_root, config, args)
+    chapter_id = args.get("chapter_id", "next")
+    guidance = str(args.get("guidance", "") or "").strip()
+    score_threshold = int(args.get("score_threshold", 70) or 70)
+    max_revisions = int(args.get("max_revisions", 2) or 2)
+
+    if chapter_id == "next":
+        chapter_id = _get_next_chapter(project_root, novel_id)
+
+    revisions = []
+
+    # Step 1: Write
+    write_result = _exec_write_chapter(project_root, {
+        "novel_id": novel_id,
+        "chapter_id": chapter_id,
+        "guidance": guidance,
+    })
+    if "error" in write_result:
+        return {"ok": False, "chapter_id": chapter_id, "error": write_result["error"], "revisions": []}
+
+    revisions.append({
+        "action": "write",
+        "word_count": write_result.get("word_count", 0),
+        "title": write_result.get("title", ""),
+    })
+
+    # Step 2: Review + Revise loop
+    for attempt in range(max_revisions + 1):
+        review_result = _exec_review_chapter(project_root, {
+            "novel_id": novel_id,
+            "chapter_id": chapter_id,
+        })
+
+        if "error" in review_result:
+            revisions.append({"action": "review_error", "error": review_result["error"]})
+            break
+
+        score = review_result.get("score", 0)
+        passed = review_result.get("passed", False)
+        issues = review_result.get("issues", [])
+
+        revisions.append({
+            "action": "review",
+            "attempt": attempt + 1,
+            "score": score,
+            "passed": passed,
+            "issues": issues[:5],
+        })
+
+        # Score is good enough, stop
+        if passed or score >= score_threshold:
+            break
+
+        # Last attempt, don't revise
+        if attempt >= max_revisions:
+            break
+
+        # Step 3: Revise based on issues
+        issue_summary = "\n".join(
+            f"- {i.get('description', str(i))}" if isinstance(i, dict) else f"- {i}"
+            for i in issues[:5]
+        )
+        revise_guidance = f"请根据以下审查意见修改章节：\n{issue_summary}"
+
+        revise_result = _exec_write_chapter(project_root, {
+            "novel_id": novel_id,
+            "chapter_id": chapter_id,
+            "guidance": revise_guidance,
+        })
+
+        if "error" in revise_result:
+            revisions.append({"action": "revise_error", "error": revise_result["error"]})
+            break
+
+        revisions.append({
+            "action": "revise",
+            "attempt": attempt + 1,
+            "word_count": revise_result.get("word_count", 0),
+        })
+
+    # Final review
+    final_review = _exec_review_chapter(project_root, {
+        "novel_id": novel_id,
+        "chapter_id": chapter_id,
+    })
+
+    return {
+        "ok": True,
+        "chapter_id": chapter_id,
+        "title": write_result.get("title", ""),
+        "final_score": final_review.get("score", 0),
+        "final_passed": final_review.get("passed", False),
+        "final_issues": final_review.get("issues", []),
+        "total_revisions": sum(1 for r in revisions if r["action"] == "revise"),
+        "revisions": revisions,
     }
 
 
