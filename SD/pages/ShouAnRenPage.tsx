@@ -1,31 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Heart, ExternalLink, RefreshCw, AlertCircle } from 'lucide-react';
+import { Heart, ExternalLink, AlertCircle } from 'lucide-react';
 
-const SHOUANREN_URL = '/wuwa/';
+const SHOUANREN_URL = 'http://localhost:8000';
 
 export const ShouAnRenPage: React.FC = () => {
-  const [loadError, setLoadError] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
-  const iframeRef = useRef<HTMLIFrameElement>(null);
-
-  const handleRefresh = () => {
-    setLoadError(false);
-    setIsLoading(true);
-    if (iframeRef.current) {
-      iframeRef.current.src = SHOUANREN_URL;
-    }
-  };
-
+  // Auto-open in new tab, show info page
   useEffect(() => {
-    const timer = setTimeout(() => {
-      if (isLoading) {
-        setLoadError(true);
-        setIsLoading(false);
-      }
-    }, 8000);
-    return () => clearTimeout(timer);
-  }, [isLoading]);
+    window.open(SHOUANREN_URL, '_blank');
+  }, []);
 
   return (
     <div className="flex flex-col h-screen">
@@ -44,74 +27,40 @@ export const ShouAnRenPage: React.FC = () => {
             <p className="text-xs text-slate-400">守岸人 3.0 — AI 角色对话与互动剧情</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleRefresh}
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all"
-            title="刷新"
-          >
-            <RefreshCw className="w-4 h-4" />
-          </button>
-          <a
-            href="http://localhost:8000"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-slate-700/50 transition-all"
-            title="在新窗口打开"
-          >
-            <ExternalLink className="w-4 h-4" />
-          </a>
-        </div>
       </motion.div>
 
-      {/* Content Area */}
-      <div className="flex-1 relative">
-        {loadError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-950/90 z-10">
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="text-center max-w-md p-8"
-            >
-              <div className="inline-flex p-4 rounded-full bg-red-500/10 border border-red-500/20 mb-6">
-                <AlertCircle className="w-12 h-12 text-red-400" />
-              </div>
-              <h3 className="text-xl font-bold text-slate-200 mb-3">无法连接到守岸人</h3>
-              <p className="text-slate-400 mb-6 leading-relaxed">
-                请确保守岸人服务已启动（端口 8000）。
-              </p>
-              <div className="bg-slate-800/50 rounded-lg p-4 text-left mb-6 border border-slate-700/50">
-                <p className="text-xs text-slate-500 mb-2 font-mono">启动命令：</p>
-                <p className="text-sm text-cyan-400 font-mono">cd 守岸人3.0</p>
-                <p className="text-sm text-cyan-400 font-mono">python -m server.main</p>
-              </div>
-              <button
-                onClick={handleRefresh}
-                className="px-6 py-2.5 bg-pink-600 hover:bg-pink-500 text-white rounded-lg transition-colors font-medium"
-              >
-                重新连接
-              </button>
-            </motion.div>
+      {/* Info Card */}
+      <div className="flex-1 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center max-w-md p-8"
+        >
+          <div className="inline-flex p-4 rounded-full bg-pink-500/10 border border-pink-500/20 mb-6">
+            <Heart className="w-12 h-12 text-pink-400" />
           </div>
-        )}
+          <h2 className="text-xl font-bold text-slate-200 mb-3">守岸人已在新窗口打开</h2>
+          <p className="text-slate-400 mb-6 leading-relaxed">
+            守岸人使用独立前端，已自动在新标签页打开。
+          </p>
 
-        {isLoading && !loadError && (
-          <div className="absolute inset-0 flex items-center justify-center bg-slate-950/50 z-10">
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-8 h-8 border-2 border-pink-500 border-t-transparent rounded-full animate-spin" />
-              <p className="text-sm text-slate-400">正在连接守岸人...</p>
-            </div>
+          <a
+            href={SHOUANREN_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-6 py-2.5 bg-pink-600 hover:bg-pink-500 text-white rounded-lg transition-colors font-medium"
+          >
+            <ExternalLink className="w-4 h-4" />
+            再次打开守岸人
+          </a>
+
+          <div className="mt-8 p-4 bg-slate-800/50 rounded-lg border border-slate-700/50 text-left">
+            <p className="text-xs text-slate-500 mb-2">服务地址</p>
+            <p className="text-sm text-cyan-400 font-mono">{SHOUANREN_URL}</p>
+            <p className="text-xs text-slate-500 mt-3 mb-2">启动命令</p>
+            <p className="text-sm text-cyan-400 font-mono">cd 守岸人3.0 && python -m server.main</p>
           </div>
-        )}
-
-        <iframe
-          ref={iframeRef}
-          src={SHOUANREN_URL}
-          className="w-full h-full border-0 bg-slate-950"
-          onLoad={() => setIsLoading(false)}
-          onError={() => { setLoadError(true); setIsLoading(false); }}
-          title="守岸人 3.0"
-        />
+        </motion.div>
       </div>
     </div>
   );
