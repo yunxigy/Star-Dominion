@@ -31,9 +31,8 @@ interface ChatStore {
   clearMessages: () => void
 }
 
-let _nextId = 1
 function makeId(): string {
-  return `msg_${_nextId++}_${Date.now()}`
+  return `msg_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`
 }
 
 export const useChatStore = create<ChatStore>()(persist((set) => ({

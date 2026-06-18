@@ -35,6 +35,7 @@ class StatusResponse(BaseModel):
     current_chapter: str | None = None
     chapters_written: int = 0
     snapshots: list[str] = []
+    snapshot_count: int = 0
     book_stage: str | None = None
 
 

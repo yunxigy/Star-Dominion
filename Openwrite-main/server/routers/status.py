@@ -21,15 +21,15 @@ async def get_status(
     result = await service.execute("get_status", {"novel_id": novel_id})
     if "error" in result:
         return StatusResponse(novel_id=novel_id)
-    snapshots = result.get("snapshots", [])
-    if isinstance(snapshots, int):
-        snapshots = []
+    snapshots_raw = result.get("snapshots", [])
+    snapshot_count = snapshots_raw if isinstance(snapshots_raw, int) else len(snapshots_raw)
     return StatusResponse(
         novel_id=result.get("novel_id", novel_id),
         current_arc=result.get("current_arc"),
         current_chapter=result.get("current_chapter"),
         chapters_written=result.get("chapters_written", 0),
-        snapshots=snapshots,
+        snapshots=[],
+        snapshot_count=snapshot_count,
         book_stage=result.get("book_stage"),
     )
 

@@ -7,9 +7,6 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-import markdown
-from ebooklib import epub
-
 
 # ── 章节加载 ──────────────────────────────────────────────────
 
@@ -63,6 +60,7 @@ def _load_novel_meta(project_root: Path, novel_id: str) -> dict[str, Any]:
 
 def _md_to_html(md_text: str) -> str:
     """将 Markdown 转换为 HTML。"""
+    import markdown
     # Remove the first # title line (we handle it separately)
     lines = md_text.split("\n")
     body_lines = []
@@ -110,6 +108,8 @@ def export_epub(
     Returns:
         生成的 EPUB 文件路径
     """
+    from ebooklib import epub
+
     meta = _load_novel_meta(project_root, novel_id)
     if chapter_ids is None:
         chapter_ids = _list_chapter_ids(project_root, novel_id)

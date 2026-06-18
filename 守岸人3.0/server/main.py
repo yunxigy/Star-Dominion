@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""守岸人 2.0 - 主入口"""
+"""守岸人 3.0 - 主入口"""
 import logging
 import sys
 from pathlib import Path
@@ -178,7 +178,7 @@ from .services.stt_service import STTService
 from .routers import characters, chat, settings, auth, admin, story, group_chat, voice_chat, lorebook, memory, affinity, slash_commands
 
 # 初始化 FastAPI
-app = FastAPI(title="守岸人 2.0", version="2.0.0")
+app = FastAPI(title="守岸人 3.0", version="3.0.0")
 
 # CORS配置
 app.add_middleware(
@@ -260,7 +260,7 @@ async def health():
     """健康检查"""
     return {
         "status": "ok",
-        "version": "2.0.0",
+        "version": "3.0.0",
         "backends": llm_service.get_available_backends(),
         "tts_enabled": tts_service.enabled,
         "stt_enabled": stt_service.enabled,
@@ -281,5 +281,5 @@ if __name__ == "__main__":
     import uvicorn
     host = CONFIG.get("server", {}).get("host", "0.0.0.0")
     port = CONFIG.get("server", {}).get("port", 8000)
-    logger.info(f"🚀 守岸人 2.0 启动中... http://{host}:{port}")
+    logger.info(f"🚀 守岸人 3.0 启动中... http://{host}:{port}")
     uvicorn.run(app, host=host, port=port)

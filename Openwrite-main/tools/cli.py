@@ -3392,10 +3392,6 @@ def _exec_validate_post_write(project_root: Path, args: dict) -> dict:
     }
 
 
-if __name__ == "__main__":
-    sys.exit(main())
-
-
 # ── 工作流调度 ────────────────────────────────────────────────
 
 

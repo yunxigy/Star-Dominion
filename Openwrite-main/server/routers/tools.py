@@ -135,18 +135,18 @@ async def run_radar(
     """市场趋势分析。"""
     from tools.radar import RadarAgent
     from tools.llm import LLMClient, LLMConfig
+    from tools.agent import AgentContext
 
     try:
         llm_config = LLMConfig.from_env()
         client = LLMClient(llm_config)
-        agent = RadarAgent(client, llm_config.model, str(project_root))
+        agent_ctx = AgentContext(client, llm_config.model, str(project_root))
+        radar = RadarAgent(agent_ctx)
 
-        import asyncio
-        result = asyncio.run(agent.analyze(
-            query=req.query or "当前网文市场热门题材和趋势",
-            genre=req.genre,
-        ))
-        return {"ok": True, "analysis": result}
+        result = await radar.scan_market(
+            top_n=5,
+        )
+        return {"ok": True, "analysis": str(result)}
     except Exception as e:
         raise HTTPException(500, f"Radar failed: {e}")
 
