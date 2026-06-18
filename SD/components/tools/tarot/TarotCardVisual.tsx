@@ -50,10 +50,17 @@ const CARD_IMAGE_SLUGS: Record<number, string> = {
   21: 'world',
 };
 
+const MINOR_RANK_SLUGS: Record<number, string> = {
+  1: 'ace', 2: 'two', 3: 'three', 4: 'four', 5: 'five',
+  6: 'six', 7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten',
+  11: 'page', 12: 'knight', 13: 'queen', 14: 'king',
+};
+
 interface TarotCardVisualProps {
   number: number;
   name: string;
   emoji: string;
+  suit?: string;
   reversed?: boolean;
   faceDown?: boolean;
   size?: 'sm' | 'md' | 'lg';
@@ -61,9 +68,26 @@ interface TarotCardVisualProps {
   onClick?: () => void;
 }
 
-const getCardImage = (number: number) => {
+const SUIT_NAMES: Record<string, string> = {
+  cups: 'cups',
+  pentacles: 'pentacles',
+  swords: 'swords',
+  wands: 'wands',
+};
+
+const getCardImage = (number: number, suit?: string) => {
+  // Major Arcana (0-21)
   const slug = CARD_IMAGE_SLUGS[number];
-  return slug ? `/assets/tarot/cards/tarot_${String(number).padStart(2, '0')}_${slug}.svg` : null;
+  if (slug) return `/assets/tarot/cards/tarot_${String(number).padStart(2, '0')}_${slug}.svg`;
+
+  // Minor Arcana (22-77)
+  if (suit && SUIT_NAMES[suit]) {
+    const rankNum = ((number - 22) % 14) + 1;
+    const rankSlug = MINOR_RANK_SLUGS[rankNum];
+    if (rankSlug) return `/assets/tarot/cards/tarot_${suit}_${rankSlug}.svg`;
+  }
+
+  return null;
 };
 
 const sizeClasses = {
@@ -82,6 +106,7 @@ export const TarotCardVisual: React.FC<TarotCardVisualProps> = ({
   number,
   name,
   emoji,
+  suit,
   reversed = false,
   faceDown = false,
   size = 'md',
@@ -89,7 +114,7 @@ export const TarotCardVisual: React.FC<TarotCardVisualProps> = ({
   onClick,
 }) => {
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const imageSrc = faceDown ? '/assets/tarot/cards/tarot_back.svg' : getCardImage(number);
+  const imageSrc = faceDown ? '/assets/tarot/cards/tarot_back.svg' : getCardImage(number, suit);
   const previewTitle = faceDown ? '塔罗牌背面' : `${name || ROMAN[number] || number}${reversed ? ' · 逆位' : ''}`;
   const openPreview = () => {
     if (imageSrc) setIsPreviewOpen(true);

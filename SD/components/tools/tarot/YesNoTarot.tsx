@@ -1,10 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import { TarotCardVisual } from './TarotCardVisual';
+import { ALL_CARDS } from './tarot-data';
 
 interface YesNoCard {
   number: number;
   name: string;
   emoji: string;
+  suit?: string;
   keywords: string[];
   answer: 'yes' | 'no' | 'maybe';
   uprightYes: string;
@@ -45,11 +47,32 @@ const YesNoTarot: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [card, setCard] = useState<{ data: YesNoCard; reversed: boolean } | null>(null);
   const [revealed, setRevealed] = useState(false);
 
+  const getYesNoCard = (idx: number): YesNoCard => {
+    if (idx < YES_NO_CARDS.length) return YES_NO_CARDS[idx];
+    const base = ALL_CARDS[idx];
+    const answers: ('yes' | 'no' | 'maybe')[] = ['yes', 'no', 'maybe'];
+    const answer = answers[idx % 3];
+    return {
+      number: base.number,
+      name: base.name,
+      emoji: base.emoji,
+      suit: base.suit,
+      keywords: base.keywords,
+      answer,
+      uprightYes: `这张牌的能量倾向于肯定。${base.keywords[0] || ''}的力量在支持你。`,
+      uprightNo: `现在可能不是最佳时机。关注${base.keywords[0] || '内心'}的指引。`,
+      uprightMaybe: `答案还不确定。${base.keywords[0] || ''}的能量需要更多时间显现。`,
+      reversedYes: `可能实现，但需要注意${base.keywords[0] || '相关'}方面的问题。`,
+      reversedNo: `目前的阻碍较多，建议先调整再行动。`,
+      reversedMaybe: `答案模糊，需要更深入的思考和准备。`,
+    };
+  };
+
   const drawCard = useCallback(() => {
     if (!question.trim()) return;
-    const idx = Math.floor(Math.random() * 22);
+    const idx = Math.floor(Math.random() * ALL_CARDS.length);
     const isReversed = Math.random() > 0.5;
-    setCard({ data: YES_NO_CARDS[idx], reversed: isReversed });
+    setCard({ data: getYesNoCard(idx), reversed: isReversed });
     setRevealed(false);
     setTimeout(() => setRevealed(true), 600);
   }, [question]);

@@ -1,10 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import { TarotCardVisual } from './TarotCardVisual';
+import { ALL_CARDS } from './tarot-data';
 
 interface CareerCard {
   number: number;
   name: string;
   emoji: string;
+  suit?: string;
   keywords: string[];
   careerUpright: string;
   careerReversed: string;
@@ -41,14 +43,28 @@ const POSITIONS = [
   { label: '行动建议', desc: '宇宙给予的事业指引' },
 ];
 
+function getCareerCard(idx: number): CareerCard {
+  if (idx < CAREER_CARDS.length) return CAREER_CARDS[idx];
+  const base = ALL_CARDS[idx];
+  return {
+    number: base.number,
+    name: base.name,
+    emoji: base.emoji,
+    suit: base.suit,
+    keywords: base.keywords,
+    careerUpright: `这张牌暗示事业上需要关注${base.keywords[0] || '自身'}的能量。保持专注和耐心。`,
+    careerReversed: `事业上可能遇到${base.keywords[0] || '相关'}方面的阻碍。需要调整策略。`,
+  };
+}
+
 function shuffleAndDraw(): { card: CareerCard; reversed: boolean }[] {
-  const indices = Array.from({ length: 22 }, (_, i) => i);
+  const indices = Array.from({ length: ALL_CARDS.length }, (_, i) => i);
   for (let i = indices.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [indices[i], indices[j]] = [indices[j], indices[i]];
   }
   return indices.slice(0, 3).map(idx => ({
-    card: CAREER_CARDS[idx],
+    card: getCareerCard(idx),
     reversed: Math.random() > 0.5,
   }));
 }

@@ -1,10 +1,12 @@
 import React, { useState, useCallback } from 'react';
 import { TarotCardVisual } from './TarotCardVisual';
+import { ALL_CARDS } from './tarot-data';
 
 interface LoveCard {
   number: number;
   name: string;
   emoji: string;
+  suit?: string;
   keywords: string[];
   loveUpright: string;
   loveReversed: string;
@@ -41,14 +43,29 @@ const POSITIONS = [
   { label: '关系建议', desc: '宇宙给予这段关系的指引与建议' },
 ];
 
+function getLoveCard(idx: number): LoveCard {
+  if (idx < LOVE_CARDS.length) return LOVE_CARDS[idx];
+  // Minor Arcana — generate generic love messages
+  const base = ALL_CARDS[idx];
+  return {
+    number: base.number,
+    name: base.name,
+    emoji: base.emoji,
+    suit: base.suit,
+    keywords: base.keywords,
+    loveUpright: `这张牌暗示在感情中需要关注${base.keywords[0] || '内心'}的能量。保持开放的心态。`,
+    loveReversed: `在感情中可能遇到${base.keywords[0] || '相关'}方面的阻碍。需要耐心面对。`,
+  };
+}
+
 function shuffleAndDraw(): { card: LoveCard; reversed: boolean }[] {
-  const indices = Array.from({ length: 22 }, (_, i) => i);
+  const indices = Array.from({ length: ALL_CARDS.length }, (_, i) => i);
   for (let i = indices.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [indices[i], indices[j]] = [indices[j], indices[i]];
   }
   return indices.slice(0, 3).map(idx => ({
-    card: LOVE_CARDS[idx],
+    card: getLoveCard(idx),
     reversed: Math.random() > 0.5,
   }));
 }
