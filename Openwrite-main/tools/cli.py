@@ -3455,7 +3455,7 @@ def _exec_start_workflow(project_root: Path, args: dict) -> dict:
 
 
 def _exec_advance_workflow(project_root: Path, args: dict) -> dict:
-    """执行 advance_workflow"""
+    """执行 advance_workflow — 完成当前阶段并进入下一阶段。"""
     config = _load_config(project_root)
     if not config:
         return {"error": "未找到项目配置"}
@@ -3466,7 +3466,6 @@ def _exec_advance_workflow(project_root: Path, args: dict) -> dict:
 
     novel_id = _resolve_novel_id(config, args)
     chapter_id = args.get("chapter_id", "")
-    stage_name = args.get("stage_name", "")
 
     scheduler = WorkflowScheduler(project_root, novel_id)
     state = scheduler.load_workflow(chapter_id)
@@ -3474,17 +3473,17 @@ def _exec_advance_workflow(project_root: Path, args: dict) -> dict:
     if not state:
         return {"error": f"未找到工作流: {chapter_id}"}
 
-    if stage_name:
-        scheduler.advance_to(state, stage_name)
-    else:
-        scheduler.advance(state)
-
-    scheduler.save_workflow(state)
+    current = state.current_stage
+    # Complete current stage
+    scheduler.complete_stage(state, current, message="手动推进")
+    # Save after completing
+    scheduler._save_state(state)
 
     return {
         "chapter_id": state.chapter_id,
         "current_stage": state.current_stage,
-        "message": f"已推进到: {state.current_stage}",
+        "previous_stage": current,
+        "message": f"已从 {current} 推进到 {state.current_stage}",
     }
 
 

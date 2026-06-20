@@ -60,38 +60,98 @@ function OutlineTreeNode({ node, depth = 0 }: { node: OutlineNode; depth?: numbe
 export default function OutlinePage() {
   const { currentNovelId } = useNovelStore()
   const [content, setContent] = useState('')
+  const [editContent, setEditContent] = useState('')
   const [hierarchy, setHierarchy] = useState<OutlineNode[] | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [editing, setEditing] = useState(false)
+  const [saving, setSaving] = useState(false)
 
-  useEffect(() => {
+  const loadOutline = () => {
     if (!currentNovelId) return
     setLoading(true)
     setError('')
     api.get(`/novels/${currentNovelId}/outline`)
       .then(({ data }) => {
         setContent(data.content || '')
+        setEditContent(data.content || '')
         setHierarchy(data.hierarchy)
       })
       .catch((e) => {
         setError(`加载大纲失败: ${e.response?.data?.detail || e.message}`)
       })
       .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    loadOutline()
   }, [currentNovelId])
+
+  const handleSave = async () => {
+    if (!currentNovelId) return
+    setSaving(true)
+    setError('')
+    try {
+      await api.put(`/novels/${currentNovelId}/outline`, { content: editContent })
+      setContent(editContent)
+      setEditing(false)
+      // Reload to get updated hierarchy
+      loadOutline()
+    } catch (e: unknown) {
+      setError(`保存失败: ${(e as Error).message}`)
+    } finally {
+      setSaving(false)
+    }
+  }
+
+  const handleCancel = () => {
+    setEditContent(content)
+    setEditing(false)
+    setError('')
+  }
 
   return (
     <div className="page outline-page">
-      <h1>大纲</h1>
-      <div className="help-box">
-        <p>查看当前小说的大纲。左侧是大纲原文（Markdown 格式），右侧是系统解析后的大纲层级结构（卷→节→章）。大纲是写作的核心指引，修改大纲请在<strong>对话</strong>页面让 Goethe 帮你操作，或直接编辑 <code>src/outline.md</code> 文件后运行 <code>openwrite sync</code>。</p>
+      <div className="outline-header">
+        <h1>大纲</h1>
+        <div className="outline-actions">
+          {editing ? (
+            <>
+              <button className="btn-cancel" onClick={handleCancel} disabled={saving}>
+                取消
+              </button>
+              <button className="btn-save" onClick={handleSave} disabled={saving}>
+                {saving ? '保存中...' : '💾 保存大纲'}
+              </button>
+            </>
+          ) : (
+            <button className="btn-edit" onClick={() => setEditing(true)}>
+              ✏️ 编辑大纲
+            </button>
+          )}
+        </div>
       </div>
+
+      <div className="help-box">
+        <p>大纲是写作的核心指引。点击"编辑大纲"可直接修改 Markdown 内容，保存后自动同步层级结构。</p>
+      </div>
+
       {loading && <p>加载中...</p>}
       {error && <p style={{ color: '#ef4444', fontSize: 13 }}>{error}</p>}
 
       <div className="outline-layout">
         <div className="outline-raw">
           <h3>大纲原文</h3>
-          <pre className="outline-content">{content || '(空)'}</pre>
+          {editing ? (
+            <textarea
+              className="outline-editor"
+              value={editContent}
+              onChange={(e) => setEditContent(e.target.value)}
+              placeholder="输入大纲内容（Markdown 格式）&#10;&#10;# 小说标题&#10;&#10;## 第一卷&#10;### 第一章&#10;章节内容概要..."
+            />
+          ) : (
+            <pre className="outline-content">{content || '(空)'}</pre>
+          )}
         </div>
         <div className="outline-hierarchy">
           <h3>层级结构</h3>
@@ -108,6 +168,28 @@ export default function OutlinePage() {
       </div>
 
       <style>{`
+        .outline-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 8px;
+        }
+        .outline-header h1 { margin: 0; }
+        .outline-actions {
+          display: flex; gap: 8px;
+        }
+        .btn-edit, .btn-save, .btn-cancel {
+          padding: 8px 16px; border: none; border-radius: 6px;
+          font-size: 13px; cursor: pointer; font-weight: 500;
+        }
+        .btn-edit { background: #7c8aff; color: #fff; }
+        .btn-edit:hover { background: #5a6ae0; }
+        .btn-save { background: #10b981; color: #fff; }
+        .btn-save:hover { background: #059669; }
+        .btn-save:disabled { background: #a7f3d0; cursor: not-allowed; }
+        .btn-cancel { background: #f3f4f6; color: #666; border: 1px solid #d0d0d0; }
+        .btn-cancel:hover { background: #e5e7eb; }
+
         .outline-layout {
           display: flex;
           gap: 24px;
@@ -129,12 +211,26 @@ export default function OutlinePage() {
           font-size: 13px;
           line-height: 1.6;
         }
+        .outline-editor {
+          width: 100%;
+          min-height: 400px;
+          padding: 12px;
+          border: 1px solid #d0d0d0;
+          border-radius: 6px;
+          font-family: inherit;
+          font-size: 13px;
+          line-height: 1.6;
+          resize: vertical;
+          outline: none;
+        }
+        .outline-editor:focus {
+          border-color: #7c8aff;
+          box-shadow: 0 0 0 2px rgba(124,138,255,0.15);
+        }
         .outline-tree {
           font-size: 13px;
         }
-        .tree-node {
-          margin: 2px 0;
-        }
+        .tree-node { margin: 2px 0; }
         .tree-node-header {
           display: flex;
           align-items: center;
@@ -144,47 +240,24 @@ export default function OutlinePage() {
           cursor: default;
           transition: background 0.15s;
         }
-        .tree-node-header.has-children {
-          cursor: pointer;
-        }
-        .tree-node-header:hover {
-          background: #f5f5ff;
-        }
+        .tree-node-header.has-children { cursor: pointer; }
+        .tree-node-header:hover { background: #f5f5ff; }
         .tree-expand {
-          font-size: 10px;
-          color: #888;
-          transition: transform 0.2s;
-          width: 12px;
-          text-align: center;
+          font-size: 10px; color: #888;
+          transition: transform 0.2s; width: 12px; text-align: center;
         }
-        .tree-expand.expanded {
-          transform: rotate(90deg);
-        }
-        .tree-expand-placeholder {
-          width: 12px;
-        }
-        .tree-icon {
-          font-size: 14px;
-        }
-        .tree-title {
-          flex: 1;
-          font-weight: 500;
-        }
+        .tree-expand.expanded { transform: rotate(90deg); }
+        .tree-expand-placeholder { width: 12px; }
+        .tree-icon { font-size: 14px; }
+        .tree-title { flex: 1; font-weight: 500; }
         .tree-type-badge {
-          font-size: 11px;
-          padding: 1px 6px;
-          background: #f0f0f0;
-          border-radius: 10px;
-          color: #666;
+          font-size: 11px; padding: 1px 6px;
+          background: #f0f0f0; border-radius: 10px; color: #666;
         }
-        .tree-word-count {
-          font-size: 11px;
-          color: #888;
-        }
+        .tree-word-count { font-size: 11px; color: #888; }
         .tree-children {
           border-left: 1px solid #e0e0e0;
-          margin-left: 6px;
-          padding-left: 4px;
+          margin-left: 6px; padding-left: 4px;
         }
         .empty-hint { color: #aaa; text-align: center; padding: 20px; }
       `}</style>
