@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-"""设置路由"""
-from fastapi import APIRouter, Depends
+"""设置路由 — 拆分用户设置和系统设置"""
+from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 
@@ -11,6 +11,24 @@ from ..models.user import User
 
 router = APIRouter(prefix="/api/settings", tags=["settings"])
 
+# 用户可修改的设置项（白名单）
+_USER_WRITABLE_KEYS = {
+    "llm.default_backend",    # 选择哪个 LLM 后端
+    "ui.theme",               # 主题
+    "ui.language",            # 语言
+    "chat.temperature",       # 温度
+    "chat.max_tokens",        # 最大 token
+    "tts.default_model",      # TTS 模型
+}
+
+# 系统设置（仅管理员）
+_SYSTEM_KEYS = {
+    "llm.backends",           # API Key 等
+    "server",                 # 端口、host
+    "cors",                   # CORS 配置
+    "database",               # 数据库配置
+}
+
 
 @router.get("")
 async def get_settings(current_user: User = Depends(get_current_user)):
@@ -20,11 +38,26 @@ async def get_settings(current_user: User = Depends(get_current_user)):
 
 
 @router.put("")
-async def update_settings(
+async def update_user_settings(
+    body: dict,
+    current_user: User = Depends(get_current_user),
+):
+    """普通用户更新自己的设置（白名单范围内）"""
+    # 只允许修改白名单内的设置
+    filtered = _filter_user_writable(body)
+    if not filtered:
+        raise HTTPException(status_code=400, detail="没有可修改的设置项")
+    _deep_update(CONFIG, filtered)
+    save_config(CONFIG)
+    return {"status": "ok", "updated": list(filtered.keys())}
+
+
+@router.put("/system")
+async def update_system_settings(
     body: dict,
     current_admin: User = Depends(get_current_admin),
 ):
-    """更新设置"""
+    """管理员更新系统设置"""
     _deep_update(CONFIG, body)
     save_config(CONFIG)
     return {"status": "ok"}
@@ -43,6 +76,20 @@ async def list_backends(current_user: User = Depends(get_current_user)):
             "has_key": bool(cfg.get("api_key")),
         })
     return JSONResponse(content=result)
+
+
+def _filter_user_writable(body: dict, prefix: str = "") -> dict:
+    """过滤出用户可写的设置项"""
+    result = {}
+    for key, value in body.items():
+        full_path = f"{prefix}.{key}" if prefix else key
+        if isinstance(value, dict):
+            nested = _filter_user_writable(value, full_path)
+            if nested:
+                result[key] = nested
+        elif full_path in _USER_WRITABLE_KEYS:
+            result[key] = value
+    return result
 
 
 def _mask_secrets(obj, path=""):
