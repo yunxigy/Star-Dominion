@@ -409,14 +409,23 @@ async def chat(
     if msg_count > 0 and msg_count % 10 == 0:
         try:
             from .memory import extract_memories, create_summary
+            from ..database import SessionLocal
             recent_history = _load_db_history(db, session.id, limit=20)
-            asyncio.create_task(
-                extract_memories(current_user.id, character.id, recent_history, db)
-            )
+            user_id_str = str(current_user.id)
+            char_id_str = str(character.id)
+            session_id_str = str(session.id)
+
+            async def _extract_task():
+                with SessionLocal() as task_db:
+                    await extract_memories(user_id_str, char_id_str, recent_history, task_db)
+
+            async def _summary_task():
+                with SessionLocal() as task_db:
+                    await create_summary(user_id_str, char_id_str, session_id_str, recent_history, task_db)
+
+            asyncio.create_task(_extract_task())
             if msg_count % 20 == 0:
-                asyncio.create_task(
-                    create_summary(current_user.id, character.id, session.id, recent_history, db)
-                )
+                asyncio.create_task(_summary_task())
         except Exception as e:
             logger.warning(f"记忆提取失败: {e}")
 

@@ -322,6 +322,7 @@ async def upload_voice(
     character.tts_ref_audio_path = str(voices_dir / voice_name)
     character.tts_ref_audio_filename = file.filename
     db.commit()
+    return {"voice": voice_name}
 
 
 # ========== 导入导出 ==========
@@ -429,7 +430,9 @@ async def export_character_png(
     # 查找头像作为源 PNG
     avatar_path = None
     if character.avatar_url:
-        candidate = characters_dir / "avatars" / character.avatar_url
+        # 去掉开头的 /avatars/ 前缀避免重复拼接
+        avatar_name = character.avatar_url.lstrip("/").replace("avatars/", "").replace("avatars\\", "")
+        candidate = characters_dir / "avatars" / avatar_name
         if candidate.exists():
             avatar_path = str(candidate)
 
@@ -465,5 +468,3 @@ async def export_character_png(
         media_type="image/png",
         filename=f"{character.name or char_id}.png",
     )
-    db.refresh(character)
-    return {"voice": voice_name}

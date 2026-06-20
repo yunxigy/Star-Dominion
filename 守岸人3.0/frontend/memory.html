@@ -446,10 +446,18 @@
 
     async function loadMemories() {
       try {
-        const res = await fetch(`/api/affinity/preferences?character_id=${currentCharId}`, {
+        const res = await fetch(`/api/memories/${currentCharId}`, {
           headers: { 'Authorization': `Bearer ${token}` }
         });
-        currentMemories = await res.json();
+        if (res.ok) {
+          currentMemories = await res.json();
+        } else {
+          // fallback: 尝试旧接口
+          const res2 = await fetch(`/api/affinity/preferences?character_id=${currentCharId}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+          });
+          currentMemories = await res2.json();
+        }
       } catch (err) {
         console.error('加载记忆失败:', err);
       }

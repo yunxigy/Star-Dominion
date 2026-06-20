@@ -518,11 +518,26 @@
     }
 
     // 连接WebSocket
-    function connectWebSocket() {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const wsUrl = `${protocol}//${window.location.host}/api/voice-chat/ws/${currentSessionId}`;
+    async function connectWebSocket() {
+      try {
+        // 先获取一次性 ticket
+        const ticketRes = await fetch(`/api/voice-chat/${currentSessionId}/ws-ticket`, {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
+        if (!ticketRes.ok) {
+          alert('获取连接凭证失败，请重试');
+          return;
+        }
+        const { ticket } = await ticketRes.json();
 
-      ws = new WebSocket(wsUrl);
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const wsUrl = `${protocol}//${window.location.host}/api/voice-chat/ws/${currentSessionId}?ticket=${encodeURIComponent(ticket)}`;
+
+        ws = new WebSocket(wsUrl);
+      } catch (err) {
+        alert('连接失败: ' + err.message);
+        return;
+      }
 
       ws.onopen = () => {
         console.log('WebSocket连接成功');
