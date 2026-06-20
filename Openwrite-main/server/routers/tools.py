@@ -138,15 +138,19 @@ async def run_radar(
     from tools.agent import AgentContext
 
     try:
+        from dataclasses import asdict
+
         llm_config = LLMConfig.from_env()
         client = LLMClient(llm_config)
         agent_ctx = AgentContext(client, llm_config.model, str(project_root))
         radar = RadarAgent(agent_ctx)
 
-        result = await radar.scan_market(
-            top_n=5,
-        )
-        return {"ok": True, "analysis": str(result)}
+        result = await radar.scan_market(top_n=5)
+
+        # Convert dataclass to dict for JSON serialization
+        result_dict = asdict(result) if hasattr(result, '__dataclass_fields__') else str(result)
+
+        return {"ok": True, "analysis": result_dict}
     except Exception as e:
         raise HTTPException(500, f"Radar failed: {e}")
 
