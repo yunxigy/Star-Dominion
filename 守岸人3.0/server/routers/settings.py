@@ -17,7 +17,6 @@ _USER_WRITABLE_KEYS = {
     "ui.theme",               # 主题
     "ui.language",            # 语言
     "chat.temperature",       # 温度
-    "chat.max_tokens",        # 最大 token
     "tts.default_model",      # TTS 模型
 }
 
