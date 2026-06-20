@@ -156,11 +156,14 @@ cd SD && npm run build
 ## 生产部署（Nginx 反向代理）
 
 ```nginx
-# /etc/nginx/sites-available/star-dominion
-
 server {
     listen 80;
+    listen 443 ssl;
     server_name your-domain.com;
+
+    # SSL 配置（按你的证书路径填写）
+    ssl_certificate    /path/to/fullchain.pem;
+    ssl_certificate_key /path/to/privkey.pem;
 
     # SD 工具箱（静态文件）
     location / {
@@ -174,7 +177,7 @@ server {
         try_files $uri $uri/ /openwrite/index.html;
     }
 
-    # Openwrite API
+    # Openwrite API（端口 8001）
     location /ow-api/ {
         rewrite ^/ow-api/(.*) /api/$1 break;
         proxy_pass http://127.0.0.1:8001;
@@ -183,7 +186,7 @@ server {
         proxy_read_timeout 600s;
     }
 
-    # Openwrite WebSocket
+    # Openwrite WebSocket（端口 8001）
     location /ws/ {
         proxy_pass http://127.0.0.1:8001;
         proxy_http_version 1.1;
@@ -192,7 +195,7 @@ server {
         proxy_read_timeout 86400;
     }
 
-    # 守岸人 API
+    # 守岸人 API（端口 8000）
     location /api/ {
         proxy_pass http://127.0.0.1:8000;
         proxy_set_header Host $host;
@@ -200,8 +203,9 @@ server {
         proxy_read_timeout 600s;
     }
 
-    # 守岸人 WebSocket
-    location /ws {
+    # 守岸人 WebSocket（端口 8000，用独立前缀避免和 Openwrite 冲突）
+    location /ws-shouren/ {
+        rewrite ^/ws-shouren/(.*) /ws/$1 break;
         proxy_pass http://127.0.0.1:8000;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
