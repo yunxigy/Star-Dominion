@@ -43,6 +43,16 @@ export default function ChaptersPage() {
   const [reviewLoading, setReviewLoading] = useState(false)
   const [reviewResult, setReviewResult] = useState<ReviewResult | null>(null)
 
+  // Auto-generate next chapter ID
+  const getNextChapterId = (): string => {
+    if (chapters.length === 0) return 'ch_001'
+    const maxNum = chapters.reduce((max, ch) => {
+      const match = ch.chapter_id.match(/^ch_(\d+)$/)
+      return match ? Math.max(max, parseInt(match[1], 10)) : max
+    }, 0)
+    return `ch_${String(maxNum + 1).padStart(3, '0')}`
+  }
+
   useEffect(() => {
     if (!currentNovelId) return
     setLoading(true)
@@ -154,7 +164,10 @@ export default function ChaptersPage() {
             <span>章节列表 ({chapters.length})</span>
             <button
               className="write-btn"
-              onClick={() => setShowWriteDialog(true)}
+              onClick={() => {
+                setWriteChapterId(getNextChapterId())
+                setShowWriteDialog(true)
+              }}
             >
               写新章节
             </button>
@@ -247,6 +260,7 @@ export default function ChaptersPage() {
                 onChange={(e) => setWriteChapterId(e.target.value)}
                 placeholder="例如: ch_001"
               />
+              <span className="field-hint">已自动填入下一章编号，可修改</span>
             </div>
             <div className="dialog-field">
               <label>写作指导（可选）</label>
@@ -481,6 +495,12 @@ export default function ChaptersPage() {
           font-weight: 600;
           color: #666;
           margin-bottom: 6px;
+        }
+        .field-hint {
+          display: block;
+          font-size: 11px;
+          color: #aaa;
+          margin-top: 4px;
         }
         .dialog-field input, .dialog-field textarea {
           width: 100%;
