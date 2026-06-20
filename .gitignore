@@ -66,3 +66,14 @@ Openwrite-main/data/novels/test_*/
 Openwrite-main/data/novels/current/
 Openwrite-main/novel_config.yaml
 Openwrite-main/src/story/
+
+# 大文件排除
+*.txt
+!README.md
+!*.md
+*.ttf
+*.ttc
+*.otf
+*.zip
+*.tar.gz
+风格参考小说/
