@@ -232,6 +232,16 @@ app.mount("/static/stories/covers", StaticFiles(directory=str(STORIES_COVERS_DIR
 @app.on_event("startup")
 async def startup_event():
     """应用启动时执行"""
+    # 迁移 JSON 角色到数据库
+    try:
+        from .migrate_characters import migrate_json_characters
+        data_dir = Path(__file__).parent.parent / "data"
+        count = migrate_json_characters(data_dir)
+        if count > 0:
+            logger.info(f"已迁移 {count} 个 JSON 角色到数据库")
+    except Exception as e:
+        logger.warning(f"角色迁移跳过: {e}")
+
     # 启动 TTS 音频清理任务
     chat._schedule_cleanup()
     logger.info("定时清理任务已启动")
