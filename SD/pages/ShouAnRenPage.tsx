@@ -2,13 +2,24 @@ import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, ExternalLink, AlertCircle } from 'lucide-react';
 
-const SHOUANREN_URL = 'http://localhost:8000';
+// 根据环境自动选择 URL
+const getShouAnRenUrl = () => {
+  const host = window.location.hostname;
+  // 云端部署：通过 /api/ 路由访问守岸人
+  if (host !== 'localhost' && host !== '127.0.0.1') {
+    return `${window.location.protocol}//${host}`;
+  }
+  // 本地开发：直接访问端口 8000
+  return 'http://localhost:8000';
+};
 
 export const ShouAnRenPage: React.FC = () => {
+  const shouanrenUrl = getShouAnRenUrl();
+
   // Auto-open in new tab, show info page
   useEffect(() => {
-    window.open(SHOUANREN_URL, '_blank');
-  }, []);
+    window.open(shouanrenUrl, '_blank');
+  }, [shouanrenUrl]);
 
   return (
     <div className="flex flex-col h-screen">
@@ -45,7 +56,7 @@ export const ShouAnRenPage: React.FC = () => {
           </p>
 
           <a
-            href={SHOUANREN_URL}
+            href={shouanrenUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-6 py-2.5 bg-pink-600 hover:bg-pink-500 text-white rounded-lg transition-colors font-medium"
@@ -56,7 +67,7 @@ export const ShouAnRenPage: React.FC = () => {
 
           <div className="mt-8 p-4 bg-slate-800/50 rounded-lg border border-slate-700/50 text-left">
             <p className="text-xs text-slate-500 mb-2">服务地址</p>
-            <p className="text-sm text-cyan-400 font-mono">{SHOUANREN_URL}</p>
+            <p className="text-sm text-cyan-400 font-mono">{shouanrenUrl}</p>
             <p className="text-xs text-slate-500 mt-3 mb-2">启动命令</p>
             <p className="text-sm text-cyan-400 font-mono">cd 守岸人3.0 && python -m server.main</p>
           </div>
