@@ -5,9 +5,9 @@ import { Heart, ExternalLink, AlertCircle } from 'lucide-react';
 // 根据环境自动选择 URL
 const getShouAnRenUrl = () => {
   const host = window.location.hostname;
-  // 云端部署：通过 /api/ 路由访问守岸人
+  // 云端部署：通过 /wuwa/ 路由访问守岸人
   if (host !== 'localhost' && host !== '127.0.0.1') {
-    return `${window.location.protocol}//${host}`;
+    return `${window.location.protocol}//${host}/wuwa/`;
   }
   // 本地开发：直接访问端口 8000
   return 'http://localhost:8000';
