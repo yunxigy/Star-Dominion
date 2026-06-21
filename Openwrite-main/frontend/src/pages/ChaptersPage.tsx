@@ -229,7 +229,7 @@ export default function ChaptersPage() {
                           <li key={idx}>
                             {typeof issue === 'string'
                               ? issue
-                              : `${(issue as Record<string, string>).severity === 'critical' ? '🔴' : '🟡'} ${(issue as Record<string, string>).description || JSON.stringify(issue)}`
+                              : `${(issue as unknown as { severity: string }).severity === 'critical' ? '🔴' : '🟡'} ${(issue as unknown as { description: string }).description || JSON.stringify(issue)}`
                             }
                           </li>
                         ))}

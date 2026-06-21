@@ -11,7 +11,6 @@ interface Source {
 }
 
 export default function ToolsPage() {
-  const { currentNovelId } = useNovelStore()
   const [tab, setTab] = useState<'validate' | 'source' | 'radar' | 'init'>('validate')
 
   return (

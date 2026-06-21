@@ -31,8 +31,8 @@ export default function WorldviewPage() {
       </div>
 
       <div className="tab-content">
-        {activeTab === 'characters' && <CharactersPage embedded />}
-        {activeTab === 'graph' && <GraphPage embedded />}
+        {activeTab === 'characters' && <CharactersPage />}
+        {activeTab === 'graph' && <GraphPage />}
         {activeTab === 'world' && <WorldPage />}
         {activeTab === 'truth' && <TruthFilesPage />}
       </div>
