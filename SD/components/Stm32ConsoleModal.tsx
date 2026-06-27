@@ -302,10 +302,10 @@ export const Stm32ConsoleModal: React.FC<Stm32ConsoleModalProps> = ({ isOpen, on
           initial={{ scale: 0.95, opacity: 0, y: 10 }}
           animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.95, opacity: 0, y: 10 }}
-          className="relative w-screen h-screen bg-[#f8f9fa] shadow-2xl overflow-hidden flex flex-col rounded-xl"
+          className="relative w-screen h-screen bg-[#eef0f4] shadow-2xl overflow-hidden flex flex-col rounded-xl"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-3 bg-white border-b border-gray-200 shrink-0">
+          <div className="flex items-center justify-between px-6 py-3 bg-gray-50 border-b border-gray-200 shrink-0">
             <div className="flex items-center gap-3">
               <div className="p-2 bg-blue-50 rounded-lg">
                 <Cpu className="w-5 h-5 text-blue-600" />
@@ -340,7 +340,7 @@ export const Stm32ConsoleModal: React.FC<Stm32ConsoleModalProps> = ({ isOpen, on
 
           {/* Settings Panel */}
           {showSettings && (
-            <div className="px-6 py-3 bg-white border-b border-gray-200">
+            <div className="px-6 py-3 bg-gray-50 border-b border-gray-200">
               <div className="flex items-center gap-4">
                 <label className="text-xs text-gray-500 font-medium">数据源地址:</label>
                 <input
@@ -361,7 +361,7 @@ export const Stm32ConsoleModal: React.FC<Stm32ConsoleModalProps> = ({ isOpen, on
             <div className="w-[280px] flex flex-col gap-3 overflow-y-auto shrink-0 pr-1">
 
               {/* GPS Data */}
-              <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+              <div className="bg-gray-50 rounded-xl border border-gray-200 p-4 shadow-sm">
                 <div className="flex items-center gap-2 mb-3">
                   <Satellite className="w-4 h-4 text-blue-500" />
                   <span className="text-xs font-bold text-gray-600 uppercase tracking-wider">UM980 定位数据</span>
@@ -416,7 +416,7 @@ export const Stm32ConsoleModal: React.FC<Stm32ConsoleModalProps> = ({ isOpen, on
               </div>
 
               {/* IMU Data */}
-              <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+              <div className="bg-gray-50 rounded-xl border border-gray-200 p-4 shadow-sm">
                 <div className="flex items-center gap-2 mb-3">
                   <Activity className="w-4 h-4 text-purple-500" />
                   <span className="text-xs font-bold text-gray-600 uppercase tracking-wider">IMU 惯性数据</span>
@@ -432,7 +432,7 @@ export const Stm32ConsoleModal: React.FC<Stm32ConsoleModalProps> = ({ isOpen, on
               </div>
 
               {/* Command Input */}
-              <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+              <div className="bg-gray-50 rounded-xl border border-gray-200 p-4 shadow-sm">
                 <div className="flex items-center gap-2 mb-3">
                   <Send className="w-4 h-4 text-blue-500" />
                   <span className="text-xs font-bold text-gray-600 uppercase tracking-wider">指令下发</span>
@@ -455,7 +455,7 @@ export const Stm32ConsoleModal: React.FC<Stm32ConsoleModalProps> = ({ isOpen, on
               </div>
 
               {/* Notifications */}
-              <div className="bg-white rounded-xl border border-gray-200 shadow-sm flex-1 min-h-0 flex flex-col">
+              <div className="bg-gray-50 rounded-xl border border-gray-200 shadow-sm flex-1 min-h-0 flex flex-col">
                 <div className="px-4 py-2 border-b border-gray-100 flex items-center justify-between">
                   <span className="text-xs font-bold text-gray-600 uppercase tracking-wider">系统通知</span>
                   <button
@@ -488,8 +488,8 @@ export const Stm32ConsoleModal: React.FC<Stm32ConsoleModalProps> = ({ isOpen, on
             </div>
 
             {/* Center: NMEA Monitor */}
-            <div className="w-[280px] flex flex-col bg-white rounded-xl border border-gray-200 overflow-hidden shrink-0 shadow-sm">
-              <div className="px-3 py-2 bg-gray-50 border-b border-gray-200 flex justify-between items-center">
+            <div className="w-[280px] flex flex-col bg-gray-50 rounded-xl border border-gray-200 overflow-hidden shrink-0 shadow-sm">
+              <div className="px-3 py-2 bg-gray-100 border-b border-gray-200 flex justify-between items-center">
                 <div className="flex items-center gap-2 text-xs font-bold text-gray-600 uppercase tracking-wider">
                   <Terminal className="w-3 h-3" />
                   NMEA 原始数据
@@ -519,9 +519,9 @@ export const Stm32ConsoleModal: React.FC<Stm32ConsoleModalProps> = ({ isOpen, on
             <div className="flex-1 flex flex-col gap-3 overflow-hidden">
 
               {/* Map */}
-              <div className="flex-[3] bg-white rounded-xl border border-gray-200 overflow-hidden relative min-h-[300px] shadow-sm">
+              <div className="flex-[3] bg-gray-50 rounded-xl border border-gray-200 overflow-hidden relative min-h-[300px] shadow-sm">
                 <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
-                  <div className="px-3 py-1.5 bg-white/90 border border-gray-200 rounded-lg backdrop-blur-sm flex items-center gap-2 shadow-sm">
+                  <div className="px-3 py-1.5 bg-white/80 border border-gray-200 rounded-lg backdrop-blur-sm flex items-center gap-2 shadow-sm">
                     <Maximize2 className="w-3 h-3 text-blue-500" />
                     <span className="text-xs font-bold text-gray-600">实时轨迹地图</span>
                   </div>
@@ -532,7 +532,7 @@ export const Stm32ConsoleModal: React.FC<Stm32ConsoleModalProps> = ({ isOpen, on
                       className={`px-3 py-1.5 rounded-lg border backdrop-blur-sm text-xs font-medium transition-all flex items-center gap-2 shadow-sm ${
                         isLocked
                           ? 'bg-blue-50 border-blue-300 text-blue-600'
-                          : 'bg-white/90 border-gray-200 text-gray-500 hover:text-gray-700'
+                          : 'bg-white/80 border-gray-200 text-gray-500 hover:text-gray-700'
                       }`}
                     >
                       <div className={`w-1.5 h-1.5 rounded-full ${isLocked ? 'bg-blue-500' : 'bg-gray-400'}`} />
@@ -541,7 +541,7 @@ export const Stm32ConsoleModal: React.FC<Stm32ConsoleModalProps> = ({ isOpen, on
 
                     <button
                       onClick={clearPath}
-                      className="px-3 py-1.5 bg-white/90 border border-gray-200 rounded-lg backdrop-blur-sm text-xs font-medium text-gray-500 hover:text-red-500 hover:border-red-300 transition-all flex items-center gap-2 shadow-sm"
+                      className="px-3 py-1.5 bg-white/80 border border-gray-200 rounded-lg backdrop-blur-sm text-xs font-medium text-gray-500 hover:text-red-500 hover:border-red-300 transition-all flex items-center gap-2 shadow-sm"
                     >
                       <Trash2 className="w-3 h-3" />
                       清除
@@ -549,7 +549,7 @@ export const Stm32ConsoleModal: React.FC<Stm32ConsoleModalProps> = ({ isOpen, on
 
                     <button
                       onClick={exportTrajectory}
-                      className="px-3 py-1.5 bg-white/90 border border-gray-200 rounded-lg backdrop-blur-sm text-xs font-medium text-gray-500 hover:text-green-500 hover:border-green-300 transition-all flex items-center gap-2 shadow-sm"
+                      className="px-3 py-1.5 bg-white/80 border border-gray-200 rounded-lg backdrop-blur-sm text-xs font-medium text-gray-500 hover:text-green-500 hover:border-green-300 transition-all flex items-center gap-2 shadow-sm"
                     >
                       <Download className="w-3 h-3" />
                       导出
@@ -557,7 +557,7 @@ export const Stm32ConsoleModal: React.FC<Stm32ConsoleModalProps> = ({ isOpen, on
                   </div>
                 </div>
 
-                <div className="absolute top-3 right-3 z-10 flex gap-1 p-1 bg-white/90 border border-gray-200 rounded-lg backdrop-blur-sm shadow-sm">
+                <div className="absolute top-3 right-3 z-10 flex gap-1 p-1 bg-white/80 border border-gray-200 rounded-lg backdrop-blur-sm shadow-sm">
                   {(['normal', 'dark', 'satellite'] as const).map((t) => (
                     <button
                       key={t}
@@ -575,7 +575,7 @@ export const Stm32ConsoleModal: React.FC<Stm32ConsoleModalProps> = ({ isOpen, on
 
                 <div ref={mapContainerRef} className="w-full h-full" />
 
-                <div className="absolute bottom-3 left-3 z-10 px-3 py-1.5 bg-white/90 border border-gray-200 rounded-lg backdrop-blur-sm flex items-center gap-4 shadow-sm">
+                <div className="absolute bottom-3 left-3 z-10 px-3 py-1.5 bg-white/80 border border-gray-200 rounded-lg backdrop-blur-sm flex items-center gap-4 shadow-sm">
                   <div className="flex items-center gap-2">
                     <div className="w-2 h-2 rounded-full bg-blue-500" />
                     <span className="text-[10px] text-gray-500">当前位置</span>
@@ -591,7 +591,7 @@ export const Stm32ConsoleModal: React.FC<Stm32ConsoleModalProps> = ({ isOpen, on
               </div>
 
               {/* Displacement Charts */}
-              <div className="flex-[2] bg-white rounded-xl border border-gray-200 p-4 flex flex-col gap-3 min-h-[250px] shadow-sm">
+              <div className="flex-[2] bg-gray-50 rounded-xl border border-gray-200 p-4 flex flex-col gap-3 min-h-[250px] shadow-sm">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
                     <BarChart3 className="w-4 h-4 text-emerald-500" />
@@ -606,7 +606,7 @@ export const Stm32ConsoleModal: React.FC<Stm32ConsoleModalProps> = ({ isOpen, on
                     { key: 'y', label: 'Y (南/北)', color: '#10b981' },
                     { key: 'z', label: 'Z (高度)', color: '#f59e0b' },
                   ].map(({ key, label, color }) => (
-                    <div key={key} className="bg-gray-50 rounded-lg border border-gray-100 p-2 h-[80px] shrink-0">
+                    <div key={key} className="bg-gray-100 rounded-lg border border-gray-200 p-2 h-[80px] shrink-0">
                       <div className="flex items-center justify-between mb-1 px-1">
                         <div className="flex items-center gap-2">
                           <div className="w-2 h-2 rounded-full" style={{ background: color }} />
@@ -639,7 +639,7 @@ export const Stm32ConsoleModal: React.FC<Stm32ConsoleModalProps> = ({ isOpen, on
           </div>
 
           {/* Bottom Bar */}
-          <div className="px-6 py-2 bg-white border-t border-gray-200 flex justify-between items-center shrink-0">
+          <div className="px-6 py-2 bg-gray-50 border-t border-gray-200 flex justify-between items-center shrink-0">
             <div className="flex items-center gap-6">
               <div className="flex items-center gap-2 text-[11px] font-mono text-gray-400">
                 <Radio className="w-3 h-3" />
@@ -710,7 +710,7 @@ function ImuCard({ label, value, unit, color, max }: {
 }) {
   const pct = Math.min(Math.abs(value) / max * 100, 100);
   return (
-    <div className="bg-gray-50 rounded-lg border border-gray-100 p-2">
+    <div className="bg-gray-100 rounded-lg border border-gray-200 p-2">
       <span className="text-[9px] text-gray-400 font-medium uppercase">{label}</span>
       <div className="text-sm font-mono font-bold" style={{ color }}>{value.toFixed(3)} <span className="text-[10px] text-gray-400">{unit}</span></div>
       <div className="h-1 bg-gray-200 rounded-full overflow-hidden mt-1">
