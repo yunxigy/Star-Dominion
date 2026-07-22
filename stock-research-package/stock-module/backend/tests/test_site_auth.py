@@ -1,9 +1,11 @@
 import asyncio
+from datetime import UTC, datetime
 
 import httpx
 import pytest
 
 from app.main import create_app
+from app.repositories.refresh_tasks import RefreshTask
 from app.security.site_auth import SiteAuthClient, SiteAuthRejected, SiteIdentity
 
 
@@ -25,6 +27,21 @@ class EmptyProfiles:
 
 
 class EmptyAnalyses:
+    def shutdown(self) -> None:
+        return None
+
+
+class EmptyRefreshCoordinator:
+    def start(self) -> RefreshTask:
+        return RefreshTask(
+            task_id="auth-test-refresh",
+            status="queued",
+            created_at=datetime.now(UTC),
+        )
+
+    def get(self, _: str) -> RefreshTask | None:
+        return None
+
     def shutdown(self) -> None:
         return None
 
@@ -112,6 +129,7 @@ def test_public_browsing_and_protected_stock_actions() -> None:
 
 def test_refresh_requires_admin_role() -> None:
     application = create_app(
+        refresh_coordinator=EmptyRefreshCoordinator(),  # type: ignore[arg-type]
         model_profile_service=EmptyProfiles(),  # type: ignore[arg-type]
         analysis_coordinator=EmptyAnalyses(),  # type: ignore[arg-type]
         site_auth_client=FakeSiteAuthClient(),  # type: ignore[arg-type]

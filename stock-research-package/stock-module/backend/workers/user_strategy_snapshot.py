@@ -98,13 +98,19 @@ def write_snapshot_atomic(payload: dict[str, object], output_path: Path) -> None
 
 
 def collect_hot_stock_pool(akshare: Any, *, top_concepts: int, max_stocks: int) -> dict[str, StockSeed]:
-    board_frame = akshare.stock_board_concept_name_em()
+    try:
+        board_frame = akshare.stock_board_concept_name_em()
+    except Exception:
+        return _collect_market_fallback(akshare, max_stocks=max_stocks)
     if board_frame is None or board_frame.empty:
-        raise RuntimeError("热门概念数据为空")
+        return _collect_market_fallback(akshare, max_stocks=max_stocks)
     ranked = board_frame.sort_values(by=["涨跌幅", "换手率"], ascending=[False, False]).head(top_concepts)
     pool: dict[str, StockSeed] = {}
     for concept in ranked["板块名称"].astype(str).tolist():
-        members = akshare.stock_board_concept_cons_em(symbol=concept)
+        try:
+            members = akshare.stock_board_concept_cons_em(symbol=concept)
+        except Exception:
+            continue
         if members is None or members.empty:
             continue
         for row in members.to_dict(orient="records"):
@@ -116,7 +122,64 @@ def collect_hot_stock_pool(akshare: Any, *, top_concepts: int, max_stocks: int) 
                 pool[symbol] = StockSeed(symbol=symbol, name=name, concepts=[concept])
             if len(pool) >= max_stocks:
                 return pool
-    return pool
+    return pool or _collect_market_fallback(akshare, max_stocks=max_stocks)
+
+
+def _collect_market_fallback(akshare: Any, *, max_stocks: int) -> dict[str, StockSeed]:
+    """Use Sina's full-market quote table when Eastmoney concept APIs are unavailable."""
+    try:
+        frame = akshare.stock_zh_a_spot()
+    except Exception as exc:
+        raise RuntimeError("热门概念和全市场备用数据均不可用") from exc
+    if frame is None or frame.empty:
+        raise RuntimeError("热门概念和全市场备用数据均为空")
+
+    ranked: list[tuple[float, float, str, str]] = []
+    for row in frame.to_dict(orient="records"):
+        raw_symbol = str(row.get("代码", row.get("code", ""))).strip()
+        symbol = raw_symbol[-6:]
+        try:
+            symbol = normalize_symbol(symbol)
+        except InvalidMainBoardSymbol:
+            continue
+        name = str(row.get("名称", row.get("name", symbol))).strip()
+        if "ST" in name.upper() or "退" in name:
+            continue
+        pct = _number(row.get("涨跌幅", row.get("changepercent"))) or 0.0
+        volume = _number(row.get("成交量", row.get("volume"))) or 0.0
+        ranked.append((pct, volume, symbol, name))
+
+    ranked.sort(key=lambda item: (-item[0], -item[1], item[2]))
+    return {
+        symbol: StockSeed(symbol=symbol, name=name, concepts=["全市场强势"])
+        for _, _, symbol, name in ranked[:max_stocks]
+    }
+
+
+def load_history_with_fallback(
+    akshare: Any,
+    symbol: str,
+    start_date: str,
+    end_date: str,
+) -> Any:
+    try:
+        frame = akshare.stock_zh_a_hist(
+            symbol=symbol,
+            period="daily",
+            start_date=start_date,
+            adjust="qfq",
+        )
+        if frame is not None and not frame.empty:
+            return frame
+    except Exception:
+        pass
+    exchange_symbol = f"{'sh' if symbol.startswith('6') else 'sz'}{symbol}"
+    return akshare.stock_zh_a_daily(
+        symbol=exchange_symbol,
+        start_date=start_date,
+        end_date=end_date,
+        adjust="qfq",
+    )
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -129,6 +192,11 @@ def main(argv: list[str] | None = None) -> int:
     if args.lookback_days < 180:
         parser.error("--lookback-days 不能少于 180")
 
+    # The original strategy scripts deliberately bypass system proxies because
+    # Eastmoney commonly closes proxied connections while the direct route works.
+    for variable in ("http_proxy", "https_proxy", "all_proxy", "HTTP_PROXY", "HTTPS_PROXY", "ALL_PROXY"):
+        os.environ.pop(variable, None)
+
     try:
         import akshare as ak
     except ImportError as exc:
@@ -136,9 +204,10 @@ def main(argv: list[str] | None = None) -> int:
 
     pool = collect_hot_stock_pool(ak, top_concepts=args.top_concepts, max_stocks=args.max_stocks)
     start_date = (datetime.now() - timedelta(days=args.lookback_days)).strftime("%Y%m%d")
+    end_date = datetime.now().strftime("%Y%m%d")
 
     def load_history(symbol: str) -> Any:
-        return ak.stock_zh_a_hist(symbol=symbol, period="daily", start_date=start_date, adjust="qfq")
+        return load_history_with_fallback(ak, symbol, start_date, end_date)
 
     payload = build_snapshot(pool, load_history, datetime.now(ZoneInfo("Asia/Shanghai")))
     write_snapshot_atomic(payload, Path(args.output))

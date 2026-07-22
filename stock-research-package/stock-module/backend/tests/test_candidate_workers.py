@@ -16,10 +16,46 @@ def test_settings_parse_worker_commands_as_argument_arrays(monkeypatch: pytest.M
 
     settings = Settings.from_env()
 
-    assert len(settings.worker_commands) == 1
-    assert settings.worker_commands[0].source_id == "catalyst"
-    assert settings.worker_commands[0].args == ["python", "-m", "worker"]
-    assert settings.worker_commands[0].cwd == tmp_path
+    catalyst = next(command for command in settings.worker_commands if command.source_id == "catalyst")
+    assert catalyst.args == ["python", "-m", "worker"]
+    assert catalyst.cwd == tmp_path
+
+
+def test_development_registers_bundled_candidate_workers(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("STOCK_ENV", "development")
+    monkeypatch.setenv("STOCK_DATA_DIR", str(tmp_path))
+    monkeypatch.delenv("CATALYST_WORKER_COMMAND_JSON", raising=False)
+    monkeypatch.delenv("USER_STRATEGY_WORKER_COMMAND_JSON", raising=False)
+    monkeypatch.delenv("CATALYST_REPORT_PATH", raising=False)
+    monkeypatch.delenv("USER_STRATEGY_SNAPSHOT_PATH", raising=False)
+
+    settings = Settings.from_env()
+    commands = {command.source_id: command for command in settings.worker_commands}
+
+    assert set(commands) == {"catalyst", "user_strategy"}
+    assert commands["catalyst"].args[1:3] == ["-m", "ashare_us_catalyst.cli"]
+    assert commands["catalyst"].env["PYTHONPATH"] == "src"
+    assert commands["catalyst"].args[-2:] == ["--top", "5"]
+    assert settings.catalyst_report_path.name == "data"
+    assert commands["user_strategy"].args[1:3] == ["-m", "workers.user_strategy_snapshot"]
+    assert commands["user_strategy"].args[-1] == str(settings.user_strategy_snapshot_path.resolve())
+
+
+def test_production_registers_bundled_workers_without_extra_command_configuration(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    monkeypatch.setenv("STOCK_ENV", "production")
+    monkeypatch.setenv("STOCK_DATA_DIR", str(tmp_path))
+    monkeypatch.setenv("STOCK_MODEL_MASTER_KEY", "model-key")
+    monkeypatch.setenv("STOCK_GATEWAY_SERVICE_TOKEN", "gateway-token")
+    monkeypatch.setenv("STOCK_ROUTE_SIGNING_KEY", "route-key")
+    monkeypatch.setenv("SITE_AUTH_INTERNAL_KEY", "site-auth-key")
+    monkeypatch.delenv("CATALYST_WORKER_COMMAND_JSON", raising=False)
+    monkeypatch.delenv("USER_STRATEGY_WORKER_COMMAND_JSON", raising=False)
+
+    settings = Settings.from_env()
+
+    assert {command.source_id for command in settings.worker_commands} == {"catalyst", "user_strategy"}
 
 
 def test_settings_reject_string_commands(monkeypatch: pytest.MonkeyPatch) -> None:

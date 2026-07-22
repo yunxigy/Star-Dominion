@@ -7,6 +7,8 @@ import pytest
 from workers.user_strategy_snapshot import (
     StockSeed,
     build_snapshot,
+    collect_hot_stock_pool,
+    load_history_with_fallback,
     normalize_history,
     write_snapshot_atomic,
 )
@@ -19,6 +21,10 @@ class FakeFrame:
     def to_dict(self, orient: str) -> list[dict[str, object]]:
         assert orient == "records"
         return self._rows
+
+    @property
+    def empty(self) -> bool:
+        return not self._rows
 
 
 def test_normalize_history_maps_akshare_columns_and_computes_missing_pct() -> None:
@@ -72,3 +78,37 @@ def test_atomic_writer_writes_complete_snapshot(tmp_path: Path) -> None:
 
     assert json.loads(output.read_text(encoding="utf-8")) == payload
     assert list(tmp_path.glob("*.tmp")) == []
+
+
+def test_hot_pool_falls_back_to_sina_market_when_concept_api_fails() -> None:
+    class FakeAkshare:
+        def stock_board_concept_name_em(self) -> object:
+            raise ConnectionError("concept endpoint unavailable")
+
+        def stock_zh_a_spot(self) -> FakeFrame:
+            return FakeFrame(
+                [
+                    {"代码": "sh600001", "名称": "主板甲", "涨跌幅": 3.2, "成交量": 500},
+                    {"代码": "sz000001", "名称": "主板乙", "涨跌幅": 4.1, "成交量": 400},
+                    {"代码": "sz300001", "名称": "创业板", "涨跌幅": 9.0, "成交量": 900},
+                ]
+            )
+
+    pool = collect_hot_stock_pool(FakeAkshare(), top_concepts=10, max_stocks=2)
+
+    assert list(pool) == ["000001", "600001"]
+    assert pool["000001"].concepts == ["全市场强势"]
+
+
+def test_history_loader_uses_sina_when_eastmoney_fails() -> None:
+    fallback = FakeFrame([{"open": 10, "high": 11, "low": 9, "close": 10.5, "volume": 100}])
+
+    class FakeAkshare:
+        def stock_zh_a_hist(self, **_: object) -> object:
+            raise ConnectionError("eastmoney unavailable")
+
+        def stock_zh_a_daily(self, **kwargs: object) -> FakeFrame:
+            assert kwargs["symbol"] == "sh600001"
+            return fallback
+
+    assert load_history_with_fallback(FakeAkshare(), "600001", "20250101", "20260722") is fallback

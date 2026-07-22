@@ -96,13 +96,7 @@ npm.cmd install
 
 分析适配器固定使用有 Windows wheel 的 `litellm==1.80.10`，避免最新版源码包在 Windows 本地触发 Rust 编译。AlphaSift、机器人、桌面端等上游可选依赖不进入本模块运行环境。
 
-九点猫研需要单独安装自己的依赖：
-
-```powershell
-cd E:\AI\gp\stock-research-package\upstreams\a-share-us-catalyst
-python -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -r requirements.txt
-```
+`.[workers]` 已包含九点猫研和个人策略需要的行情、表格与网络依赖。两个 Worker 都使用股票主服务当前的 Python 解释器，不需要再为九点猫研创建第二个虚拟环境。
 
 ## 本地配置
 
@@ -128,14 +122,21 @@ $env:DSA_SOURCE_ROOT="E:\AI\gp\stock-research-package\upstreams\daily_stock_anal
 
 ### 候选 Worker
 
-Worker 命令只能由服务端环境变量预配置为 JSON 参数数组，浏览器不能提交命令。
+股票主服务会在开发和生产环境自动注册两个内置 Worker：
+
+- 九点猫研执行上游 `ashare_us_catalyst.cli`，默认把报告写入 `upstreams/a-share-us-catalyst/dist/data/`。
+- 个人策略生成最多 120 只热门主板股票的 K 线快照，再执行 2B 法则、首板沿 5 日线和龙头识别。
+
+个人策略优先读取东方财富热门概念；概念接口断开时自动切换新浪全市场行情，个股历史行情也保留东方财富到新浪的降级。科创板、创业板、北交所、ST 和退市股票会在生成与导入阶段各过滤一次。
+
+通常不需要设置 Worker 环境变量。需要调整解释器、参数、工作目录或超时时间时，可以用以下服务端变量覆盖内置命令；浏览器不能提交命令。
 
 ```powershell
 $catWorker = @{
   args = @(
-    "E:\AI\gp\stock-research-package\upstreams\a-share-us-catalyst\.venv\Scripts\python.exe",
+    "E:\AI\gp\stock-research-package\stock-module\backend\.venv\Scripts\python.exe",
     "-m", "ashare_us_catalyst.cli",
-    "--output", "reports",
+    "--output", "dist/data",
     "--top", "5"
   )
   cwd = "E:\AI\gp\stock-research-package\upstreams\a-share-us-catalyst"
@@ -159,14 +160,14 @@ $strategyWorker = @{
 $env:USER_STRATEGY_WORKER_COMMAND_JSON=$strategyWorker
 ```
 
-命令以 `shell=False` 执行，不经过 PowerShell、CMD 或 Shell 二次解析。
+命令以 `shell=False` 执行，不经过 PowerShell、CMD 或 Shell 二次解析。页面上的刷新操作只会触发这些服务端已注册命令。
 
 ### 九点猫研完整晨报路径
 
-`CATALYST_REPORT_PATH` 可以指向单个结构化晨报 JSON，也可以指向一个目录；指向目录时，适配器读取名称排序最后的 `*-morning.json`。适配器保留主题信号、候选维度分、历史统计、新闻催化、风险和无效条件，并在进入公开 API 前再次过滤为 A 股主板。
+`CATALYST_REPORT_PATH` 默认是 `upstreams/a-share-us-catalyst/dist/data/`。它也可以指向其他结构化晨报目录或单个 JSON；指向目录时，适配器读取名称排序最后的 `*-morning.json`。适配器保留主题信号、候选维度分、历史统计、新闻催化、风险和无效条件，并在进入公开 API 前再次过滤为 A 股主板。
 
 ```powershell
-$env:CATALYST_REPORT_PATH="E:\AI\gp\stock-research-package\upstreams\a-share-us-catalyst\reports"
+$env:CATALYST_REPORT_PATH="E:\AI\gp\stock-research-package\upstreams\a-share-us-catalyst\dist\data"
 ```
 
 重要消息时间窗使用 `Asia/Shanghai`：从上一实际交易日 `15:00` 开始，到当前时刻与本交易日 `09:30` 中较早者结束。09:30 之后刷新仍固定截止到 09:30。系统按标题去重并确定性排序；不足 5 条时按真实数量展示，不生成占位消息。

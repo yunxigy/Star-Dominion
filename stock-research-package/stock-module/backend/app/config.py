@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import secrets
+import sys
 
 from app.domain.model_profiles import PlatformModelProfileConfig
 from app.integrations.candidate_workers import WorkerCommand
@@ -31,8 +32,18 @@ class Settings:
     @classmethod
     def from_env(cls) -> "Settings":
         module_root = Path(__file__).resolve().parents[2]
+        catalyst_root = module_root.parent / "upstreams" / "a-share-us-catalyst"
         data_dir = Path(os.environ.get("STOCK_DATA_DIR", module_root / "data"))
         environment = os.environ.get("STOCK_ENV", "development").strip().lower() or "development"
+        catalyst_report_path = Path(
+            os.environ.get("CATALYST_REPORT_PATH", catalyst_root / "dist" / "data")
+        )
+        user_strategy_snapshot_path = Path(
+            os.environ.get(
+                "USER_STRATEGY_SNAPSHOT_PATH",
+                data_dir / "user-strategy" / "latest.json",
+            )
+        )
         model_master_key = os.environ.get("STOCK_MODEL_MASTER_KEY", "").strip()
         gateway_service_token = os.environ.get("STOCK_GATEWAY_SERVICE_TOKEN", "").strip()
         route_signing_key = os.environ.get("STOCK_ROUTE_SIGNING_KEY", "").strip()
@@ -59,38 +70,51 @@ class Settings:
                 secret_dir / "route-signing.key"
             )
         platform_model_profiles = _platform_profiles_from_env()
-        commands = tuple(
-            command
-            for command in (
-                _worker_command_from_env(
-                    "CATALYST_WORKER_COMMAND_JSON",
-                    "catalyst",
-                    "九点猫研",
-                    module_root.parent / "upstreams" / "a-share-us-catalyst",
-                ),
-                _worker_command_from_env(
-                    "USER_STRATEGY_WORKER_COMMAND_JSON",
-                    "user_strategy",
-                    "用户策略",
-                    module_root / "backend",
-                ),
-            )
-            if command is not None
+        catalyst_command = _worker_command_from_env(
+            "CATALYST_WORKER_COMMAND_JSON",
+            "catalyst",
+            "九点猫研",
+            catalyst_root,
         )
+        strategy_command = _worker_command_from_env(
+            "USER_STRATEGY_WORKER_COMMAND_JSON",
+            "user_strategy",
+            "用户策略",
+            module_root / "backend",
+        )
+        catalyst_command = catalyst_command or WorkerCommand(
+            source_id="catalyst",
+            source_name="九点猫研",
+            args=[
+                sys.executable,
+                "-m",
+                "ashare_us_catalyst.cli",
+                "--output",
+                str(catalyst_report_path.resolve()),
+                "--top",
+                "5",
+            ],
+            cwd=catalyst_root,
+            env={"PYTHONPATH": "src"},
+        )
+        strategy_command = strategy_command or WorkerCommand(
+            source_id="user_strategy",
+            source_name="用户策略",
+            args=[
+                sys.executable,
+                "-m",
+                "workers.user_strategy_snapshot",
+                "--output",
+                str(user_strategy_snapshot_path.resolve()),
+            ],
+            cwd=module_root / "backend",
+            timeout_seconds=1800,
+        )
+        commands = tuple(command for command in (catalyst_command, strategy_command) if command is not None)
         return cls(
             data_dir=data_dir,
-            catalyst_report_path=Path(
-                os.environ.get(
-                    "CATALYST_REPORT_PATH",
-                    module_root.parent / "upstreams" / "a-share-us-catalyst" / "dist" / "data" / "report.json",
-                )
-            ),
-            user_strategy_snapshot_path=Path(
-                os.environ.get(
-                    "USER_STRATEGY_SNAPSHOT_PATH",
-                    data_dir / "user-strategy" / "latest.json",
-                )
-            ),
+            catalyst_report_path=catalyst_report_path,
+            user_strategy_snapshot_path=user_strategy_snapshot_path,
             worker_commands=commands,
             environment=environment,
             model_master_key=model_master_key,
