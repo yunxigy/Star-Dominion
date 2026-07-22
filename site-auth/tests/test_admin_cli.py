@@ -1,4 +1,5 @@
 from pathlib import Path
+from io import StringIO
 
 from sqlalchemy import select
 
@@ -88,3 +89,28 @@ def test_cli_requires_explicit_reset_for_existing_admin(
 def test_cli_has_no_default_identity_or_password(tmp_path: Path) -> None:
     assert run(["create-admin"], environment=_environment(tmp_path)) == 2
 
+
+def test_cli_can_read_password_twice_from_stdin_for_local_automation(
+    tmp_path: Path,
+    monkeypatch,
+    capsys,
+) -> None:
+    monkeypatch.setattr(
+        "site_auth.cli.sys.stdin",
+        StringIO("stdin private password\nstdin private password\n"),
+    )
+
+    result = run(
+        [
+            "create-admin",
+            "--email",
+            "owner@example.com",
+            "--username",
+            "owner",
+            "--password-stdin",
+        ],
+        environment=_environment(tmp_path),
+    )
+
+    assert result == 0
+    assert "stdin private password" not in capsys.readouterr().out

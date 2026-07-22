@@ -15,6 +15,7 @@ __pycache__/
 *_venv/
 venv/
 .env
+.runtime/
 
 # IDE
 .vscode/
@@ -47,6 +48,7 @@ logs/
 
 # 守岸人数据目录（含 API Key）
 守岸人3.0/data/
+site-auth/data/
 
 # SillyTavern（第三方项目，不提交）
 SillyTavern/
@@ -71,6 +73,7 @@ Openwrite-main/src/story/
 
 # 大文件排除
 *.txt
+!**/requirements.txt
 !README.md
 !*.md
 *.ttf
