@@ -7,6 +7,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from .admin_routes import router as admin_router
 from .config import Settings
 from .database import create_database
 from .internal import router as internal_router
@@ -39,6 +40,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_headers=["Content-Type", "X-CSRF-Token"],
     )
     app.include_router(session_router)
+    app.include_router(admin_router)
     app.include_router(internal_router)
 
     @app.get("/health")
@@ -46,4 +48,3 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return {"status": "ok", "service": "site-auth"}
 
     return app
-
