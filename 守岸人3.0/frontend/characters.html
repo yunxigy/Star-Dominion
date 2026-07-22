@@ -221,6 +221,7 @@
     </div>
   </div>
 
+  <script src="/js/auth.js"></script>
   <script>
     // XSS 防护
     function escapeHtml(str) {
@@ -234,8 +235,19 @@
     let characters = [];
 
     // 检查登录状态
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    const token = 'site-cookie-session';
+    let user = null;
+
+    Auth.loadUser().then((current) => {
+      user = current;
+      if (!current) {
+        window.location.href = Auth.loginUrl('/characters.html');
+        return;
+      }
+      document.getElementById('user-info').style.display = 'flex';
+      document.getElementById('username').textContent = current.username;
+      document.getElementById('login-link').style.display = 'none';
+    });
 
     if (user) {
       document.getElementById('user-info').style.display = 'flex';

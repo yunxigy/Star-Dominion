@@ -1,144 +1,74 @@
-/**
- * API 模块 - 统一管理 API 调用
- */
+/** 守岸人 API 客户端：统一使用全站 HttpOnly Cookie 和 CSRF。 */
 const API = {
   baseUrl: '',
-  _refreshPromise: null,  // 防止并发刷新
 
-  /**
-   * 发起 API 请求
-   */
+  readCsrfCookie() {
+    const item = document.cookie
+      .split(';')
+      .map((part) => part.trim())
+      .find((part) => part.startsWith('sd_csrf='));
+    return item ? decodeURIComponent(item.slice('sd_csrf='.length)) : null;
+  },
+
   async request(endpoint, options = {}) {
     const url = `${this.baseUrl}${endpoint}`;
-    const token = Auth.getToken();
-
+    const method = (options.method || 'GET').toUpperCase();
     const headers = { ...options.headers };
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    // 如果 body 不是 FormData，设置 Content-Type
     if (options.body && !(options.body instanceof FormData)) {
       headers['Content-Type'] = 'application/json';
       options.body = JSON.stringify(options.body);
     }
-
-    const method = options.method || 'GET';
+    if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) {
+      const csrf = this.readCsrfCookie();
+      if (csrf) headers['X-CSRF-Token'] = csrf;
+    }
 
     try {
-      const res = await fetch(url, { ...options, method, headers });
-
-      // Token 过期，尝试刷新
-      if (res.status === 401 && Auth.getRefreshToken()) {
-        try {
-          // 防止并发刷新
-          if (!this._refreshPromise) {
-            this._refreshPromise = Auth.refreshToken();
-          }
-          await this._refreshPromise;
-          this._refreshPromise = null;
-
-          // 重试请求（只重试一次）
-          headers['Authorization'] = `Bearer ${Auth.getToken()}`;
-          return await fetch(url, { ...options, method, headers });
-        } catch {
-          this._refreshPromise = null;
-          Auth.logout();
-          throw new Error('认证失败，请重新登录');
-        }
+      const response = await fetch(url, {
+        ...options,
+        method,
+        headers,
+        credentials: 'include',
+      });
+      if (response.status === 401) {
+        window.location.href = Auth.loginUrl(
+          `${window.location.pathname}${window.location.search}${window.location.hash}`,
+        );
       }
-
-      return res;
-    } catch (e) {
-      Toast.error('网络请求失败，请检查网络连接');
-      throw e;
+      return response;
+    } catch (error) {
+      if (window.Toast) Toast.error('网络请求失败，请检查网络连接');
+      throw error;
     }
   },
 
-  /**
-   * GET 请求
-   */
+  async parse(response) {
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}));
+      throw new Error(data.detail || '请求失败');
+    }
+    if (response.status === 204) return null;
+    return response.json();
+  },
+
   async get(endpoint) {
-    const res = await this.request(endpoint, { method: 'GET' });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.detail || '请求失败');
-    }
-    return res.json();
+    return this.parse(await this.request(endpoint, { method: 'GET' }));
   },
-
-  /**
-   * POST 请求
-   */
   async post(endpoint, body) {
-    const res = await this.request(endpoint, {
-      method: 'POST',
-      body,
-    });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.detail || '请求失败');
-    }
-    return res.json();
+    return this.parse(await this.request(endpoint, { method: 'POST', body }));
   },
-
-  /**
-   * PUT 请求
-   */
   async put(endpoint, body) {
-    const res = await this.request(endpoint, {
-      method: 'PUT',
-      body,
-    });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.detail || '请求失败');
-    }
-    return res.json();
+    return this.parse(await this.request(endpoint, { method: 'PUT', body }));
   },
-
-  /**
-   * DELETE 请求
-   */
   async del(endpoint) {
-    const res = await this.request(endpoint, { method: 'DELETE' });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.detail || '请求失败');
-    }
-    return res.json();
+    return this.parse(await this.request(endpoint, { method: 'DELETE' }));
   },
-
-  /**
-   * POST FormData
-   */
-  async postForm(endpoint, formData) {
-    const res = await this.request(endpoint, {
-      method: 'POST',
-      body: formData,
-    });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.detail || '请求失败');
-    }
-    return res.json();
+  async postForm(endpoint, body) {
+    return this.parse(await this.request(endpoint, { method: 'POST', body }));
   },
-
-  /**
-   * PUT FormData
-   */
-  async putForm(endpoint, formData) {
-    const res = await this.request(endpoint, {
-      method: 'PUT',
-      body: formData,
-    });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.detail || '请求失败');
-    }
-    return res.json();
+  async putForm(endpoint, body) {
+    return this.parse(await this.request(endpoint, { method: 'PUT', body }));
   },
 };
 
-// 导出
 window.API = API;

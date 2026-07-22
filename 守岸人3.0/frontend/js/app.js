@@ -187,7 +187,7 @@ async function swipeMessage(messageId, direction) {
   if (prevBtn) prevBtn.disabled = newId <= 0;
 
   // 同步到后端
-  const token = localStorage.getItem('token');
+  const token = 'site-cookie-session';
   const formData = new FormData();
   formData.append('message_id', messageId);
   formData.append('swipe_id', newId);
@@ -202,7 +202,7 @@ async function regenerateMessage(messageId) {
   const row = document.querySelector(`[data-message-id="${messageId}"]`);
   if (!row) return;
 
-  const token = localStorage.getItem('token');
+  const token = 'site-cookie-session';
   const formData = new FormData();
   formData.append('message_id', messageId);
 
@@ -297,7 +297,7 @@ async function handleSlashCommand(text) {
   // 其他命令发送到后端
   addMessage('user', text);
   try {
-    const token = localStorage.getItem('token');
+    const token = 'site-cookie-session';
     const formData = new FormData();
     formData.append('command', text);
     formData.append('session_id', state.currentSessionId || '');
@@ -804,7 +804,7 @@ async function handleImportFile(input) {
   const file = input.files[0];
   if (!file) return;
 
-  const token = localStorage.getItem('token');
+  const token = 'site-cookie-session';
   const formData = new FormData();
   formData.append('file', file);
 
@@ -829,7 +829,7 @@ async function handleImportFile(input) {
 }
 
 function exportCharacter(charId, format) {
-  const token = localStorage.getItem('token');
+  const token = 'site-cookie-session';
   const url = `/api/characters/${charId}/export/${format}`;
   const a = document.createElement('a');
   a.href = url;

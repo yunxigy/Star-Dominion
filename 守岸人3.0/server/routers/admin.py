@@ -4,7 +4,7 @@ import os
 import shutil
 import psutil
 from pathlib import Path
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from fastapi.responses import FileResponse
 from sqlalchemy.orm import Session
 from sqlalchemy import func
@@ -33,6 +33,38 @@ class UserRoleUpdate(BaseModel):
 
 class UserPasswordReset(BaseModel):
     new_password: str
+
+
+async def _site_auth_admin_request(
+    request: Request,
+    *,
+    path: str,
+    method: str = "GET",
+    payload: dict | None = None,
+):
+    client = request.app.state.site_auth_client
+    try:
+        response = await client.admin_request(
+            path=path,
+            method=method,
+            session_token=request.cookies.get("sd_session"),
+            csrf_cookie=request.cookies.get("sd_csrf"),
+            csrf_header=request.headers.get("x-csrf-token"),
+            origin=request.headers.get("origin"),
+            payload=payload,
+        )
+    except ConnectionError as exc:
+        raise HTTPException(status_code=503, detail="统一认证服务暂时不可用") from exc
+    if not response.is_success:
+        detail = "用户管理操作失败"
+        try:
+            detail = response.json().get("detail", detail)
+        except ValueError:
+            pass
+        raise HTTPException(status_code=response.status_code, detail=detail)
+    if response.status_code == 204:
+        return None
+    return response.json()
 
 # ========== 系统配置 ==========
 
@@ -63,18 +95,22 @@ async def update_system_config(
 
 @router.get("/users")
 async def get_users(
+    request: Request,
     admin: User = Depends(get_current_admin),
     db: Session = Depends(get_db),
 ):
     """获取用户列表（含统计）"""
-    users = db.query(User).all()
+    remote = await _site_auth_admin_request(
+        request,
+        path="/api/v1/admin/users",
+    )
     result = []
-    for u in users:
-        data = u.to_dict()
+    for data in remote["items"]:
+        data = dict(data)
         # 统计用户数据
-        data["chat_count"] = db.query(ChatSession).filter(ChatSession.user_id == u.id).count()
-        data["character_count"] = db.query(CharacterDB).filter(CharacterDB.creator_id == u.id).count()
-        data["story_count"] = db.query(Story).filter(Story.creator_id == u.id).count()
+        data["chat_count"] = db.query(ChatSession).filter(ChatSession.user_id == data["id"]).count()
+        data["character_count"] = db.query(CharacterDB).filter(CharacterDB.creator_id == data["id"]).count()
+        data["story_count"] = db.query(Story).filter(Story.creator_id == data["id"]).count()
         result.append(data)
     return result
 
@@ -82,55 +118,59 @@ async def get_users(
 async def update_user_role(
     user_id: str,
     req: UserRoleUpdate,
+    request: Request,
     admin: User = Depends(get_current_admin),
-    db: Session = Depends(get_db),
 ):
     """更新用户角色"""
     if req.role not in ["user", "admin"]:
         raise HTTPException(status_code=400, detail="无效的角色")
 
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="用户不存在")
-
-    user.role = req.role
-    db.commit()
+    await _site_auth_admin_request(
+        request,
+        path=f"/api/v1/admin/users/{user_id}",
+        method="PATCH",
+        payload={"role": req.role},
+    )
     return {"message": "角色已更新"}
 
 @router.put("/users/{user_id}/status")
 async def toggle_user_status(
     user_id: str,
+    request: Request,
     admin: User = Depends(get_current_admin),
-    db: Session = Depends(get_db),
 ):
     """切换用户状态（启用/禁用）"""
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
+    remote = await _site_auth_admin_request(
+        request,
+        path="/api/v1/admin/users",
+    )
+    user = next((item for item in remote["items"] if item["id"] == user_id), None)
+    if user is None:
         raise HTTPException(status_code=404, detail="用户不存在")
-
-    user.is_active = not user.is_active
-    db.commit()
-    return {"message": "状态已更新", "is_active": user.is_active}
+    updated = await _site_auth_admin_request(
+        request,
+        path=f"/api/v1/admin/users/{user_id}",
+        method="PATCH",
+        payload={"is_active": not user["is_active"]},
+    )
+    return {"message": "状态已更新", "is_active": updated["is_active"]}
 
 @router.post("/users/{user_id}/reset-password")
 async def reset_user_password(
     user_id: str,
     req: UserPasswordReset,
+    request: Request,
     admin: User = Depends(get_current_admin),
-    db: Session = Depends(get_db),
 ):
     """重置用户密码"""
-    from ..middleware.auth import get_password_hash
-
-    user = db.query(User).filter(User.id == user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="用户不存在")
-
-    if len(req.new_password) < 8:
-        raise HTTPException(status_code=400, detail="密码至少8位")
-
-    user.password_hash = get_password_hash(req.new_password)
-    db.commit()
+    if len(req.new_password) < 12:
+        raise HTTPException(status_code=400, detail="密码至少12位")
+    await _site_auth_admin_request(
+        request,
+        path=f"/api/v1/admin/users/{user_id}/reset-password",
+        method="POST",
+        payload={"password": req.new_password},
+    )
     return {"message": "密码已重置"}
 
 # ========== 内容审核 ==========

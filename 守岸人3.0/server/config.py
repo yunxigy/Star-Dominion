@@ -14,7 +14,7 @@ CONFIG_FILE = DATA_DIR / "config.yaml"
 DEFAULT_CONFIG = {
     "server": {
         "host": "0.0.0.0",
-        "port": 8000,
+        "port": 8006,
     },
     "llm": {
         "default_backend": "openai",

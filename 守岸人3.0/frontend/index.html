@@ -178,8 +178,20 @@
     }, { once: true });
 
     // 用户状态检查
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    const token = 'site-cookie-session';
+    let user = null;
+
+    Auth.loadUser().then((current) => {
+      user = current;
+      if (!current) {
+        window.location.href = Auth.loginUrl('/wuwa/');
+        return;
+      }
+      document.getElementById('user-section').style.display = 'block';
+      document.getElementById('login-section').style.display = 'none';
+      document.getElementById('sidebar-username').textContent = current.username;
+      if (current.role === 'admin') document.getElementById('admin-link').style.display = 'block';
+    });
 
     if (user) {
       document.getElementById('user-section').style.display = 'block';
@@ -191,9 +203,7 @@
     }
 
     function logout() {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.reload();
+      void Auth.logout();
     }
 
     // 移动端侧边栏切换

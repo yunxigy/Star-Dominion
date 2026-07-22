@@ -690,6 +690,7 @@
     </div>
   </div>
 
+  <script src="/js/auth.js"></script>
   <script>
     function escapeHtml(str) {
       if (!str) return '';
@@ -698,8 +699,18 @@
       return div.innerHTML;
     }
 
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    const token = 'site-cookie-session';
+    let user = null;
+
+    Auth.loadUser().then((current) => {
+      user = current;
+      if (!current) {
+        window.location.href = Auth.loginUrl('/group-chat.html');
+        return;
+      }
+      document.getElementById('user-name').textContent = current.username;
+      document.getElementById('user-role').textContent = current.role === 'admin' ? '管理员' : '用户';
+    });
 
     if (!token) {
       window.location.href = '/login.html';

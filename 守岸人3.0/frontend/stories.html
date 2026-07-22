@@ -384,6 +384,7 @@
     </div>
   </div>
 
+  <script src="/js/auth.js"></script>
   <script>
     // XSS 防护
     function escapeHtml(str) {
@@ -393,8 +394,15 @@
       return div.innerHTML;
     }
 
-    const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') || 'null');
+    const token = 'site-cookie-session';
+    let user = null;
+
+    Auth.loadUser().then((current) => {
+      user = current;
+      if (!current) {
+        window.location.href = Auth.loginUrl('/stories.html');
+      }
+    });
 
     console.log('Token:', token ? token.substring(0, 20) + '...' : 'null');
     console.log('User:', user);

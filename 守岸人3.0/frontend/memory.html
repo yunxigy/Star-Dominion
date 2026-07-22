@@ -388,8 +388,12 @@
     </div>
   </div>
 
+  <script src="/js/auth.js"></script>
   <script>
-    const token = localStorage.getItem('token');
+    const token = 'site-cookie-session';
+    Auth.loadUser().then((current) => {
+      if (!current) window.location.href = Auth.loginUrl('/memory.html');
+    });
     if (!token) window.location.href = '/login.html';
 
     let characters = [];

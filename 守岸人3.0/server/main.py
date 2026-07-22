@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """守岸人 3.0 - 主入口"""
 import logging
+import os
 import sys
 from pathlib import Path
 
@@ -33,38 +34,8 @@ for d in [CHARACTERS_DIR, CHATS_DIR, GROUPS_DIR, WORLDS_DIR, AUDIO_CACHE_DIR, VO
     d.mkdir(parents=True, exist_ok=True)
 
 # 初始化数据库
-from .database import init_db, SessionLocal
+from .database import init_db
 init_db()
-
-# 创建默认管理员
-from .config import CONFIG
-from .models.user import User
-from .middleware.auth import get_password_hash
-
-db = SessionLocal()
-admin_config = CONFIG.get("admin", {})
-admin_username = admin_config.get("username", "admin")
-admin_password = admin_config.get("password", "admin123")
-admin_email = admin_config.get("email", "admin@shouanren.com")
-
-existing_admin = db.query(User).filter(User.role == "admin").first()
-if not existing_admin:
-    # 检查用户名是否已存在
-    existing_user = db.query(User).filter(User.username == admin_username).first()
-    if existing_user:
-        existing_user.role = "admin"
-        logger.info(f"✅ 用户 {admin_username} 已设为管理员")
-    else:
-        admin_user = User(
-            username=admin_username,
-            email=admin_email,
-            password_hash=get_password_hash(admin_password),
-            role="admin",
-        )
-        db.add(admin_user)
-        db.commit()
-        logger.info(f"✅ 创建默认管理员: {admin_username}")
-db.close()
 
 # 创建默认角色卡（守岸人）
 _default_char = CHARACTERS_DIR / "default.json"
@@ -175,15 +146,23 @@ from .config import CONFIG
 from .services.llm_service import LLMService
 from .services.tts_service import TTSService
 from .services.stt_service import STTService
-from .routers import characters, chat, settings, auth, admin, story, group_chat, voice_chat, lorebook, memory, affinity, slash_commands
+from .routers import characters, chat, settings, admin, story, group_chat, voice_chat, lorebook, memory, affinity, slash_commands
 
 # 初始化 FastAPI
 app = FastAPI(title="守岸人 3.0", version="3.0.0")
 
 # CORS配置
+allowed_origins = [
+    origin.strip()
+    for origin in os.getenv(
+        "SITE_ALLOWED_ORIGINS",
+        "http://127.0.0.1:5173,http://localhost:5173,https://zhumenggy.top",
+    ).split(",")
+    if origin.strip()
+]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # 允许所有来源
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -203,7 +182,6 @@ voice_chat.init_router(llm_service, tts_service, stt_service)
 memory.init_router(llm_service)
 
 # 注册路由
-app.include_router(auth.router)
 app.include_router(admin.router)
 app.include_router(characters.router)
 app.include_router(chat.router)

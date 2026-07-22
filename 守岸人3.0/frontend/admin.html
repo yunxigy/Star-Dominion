@@ -432,8 +432,14 @@
     </div>
   </div>
 
+  <script src="/js/auth.js"></script>
   <script>
-    const token = localStorage.getItem('token');
+    const token = 'site-cookie-session';
+    Auth.loadUser().then((current) => {
+      if (!current || current.role !== 'admin') {
+        window.location.href = Auth.loginUrl('/admin.html');
+      }
+    });
     if (!token) window.location.href = '/login.html';
 
     let users = [];

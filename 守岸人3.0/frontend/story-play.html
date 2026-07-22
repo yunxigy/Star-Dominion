@@ -530,6 +530,7 @@
     </div>
   </div>
 
+  <script src="/js/auth.js"></script>
   <script>
     // XSS 防护
     function escapeHtml(str) {
@@ -539,7 +540,10 @@
       return div.innerHTML;
     }
 
-    const token = localStorage.getItem('token');
+    const token = 'site-cookie-session';
+    Auth.loadUser().then((current) => {
+      if (!current) window.location.href = Auth.loginUrl(window.location.pathname + window.location.search);
+    });
     if (!token) {
       window.location.href = '/login.html';
     }

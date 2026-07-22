@@ -429,8 +429,12 @@
     </div>
   </div>
 
+  <script src="/js/auth.js"></script>
   <script>
-    const token = localStorage.getItem('token');
+    const token = 'site-cookie-session';
+    Auth.loadUser().then((current) => {
+      if (!current) window.location.href = Auth.loginUrl(window.location.pathname + window.location.search);
+    });
     if (!token) {
       window.location.href = '/login.html';
     }
@@ -522,7 +526,7 @@
       try {
         // 先获取一次性 ticket
         const ticketRes = await fetch(`/api/voice-chat/${currentSessionId}/ws-ticket`, {
-          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+          headers: { 'Authorization': `Bearer ${token}` }
         });
         if (!ticketRes.ok) {
           alert('获取连接凭证失败，请重试');
