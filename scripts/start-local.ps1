@@ -125,9 +125,9 @@ $services = @(
 
 if (-not $WithoutFrontends) {
     $services += @(
-        [pscustomobject]@{ Name='sd-frontend'; WorkingDirectory='SD'; Executable='npm.cmd'; Arguments=@('run','dev','--','--host','127.0.0.1','--port','5173'); Ports=@(5173) },
-        [pscustomobject]@{ Name='openwrite-frontend'; WorkingDirectory='Openwrite-main/frontend'; Executable='npm.cmd'; Arguments=@('run','dev','--','--host','127.0.0.1','--port','5174'); Ports=@(5174) },
-        [pscustomobject]@{ Name='stock-frontend'; WorkingDirectory='stock-research-package/stock-module/frontend'; Executable='npm.cmd'; Arguments=@('run','dev','--','--host','127.0.0.1','--port','5175'); Ports=@(5175) }
+        [pscustomobject]@{ Name='sd-frontend'; WorkingDirectory='SD'; Executable='node'; Arguments=@('node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','5173'); Ports=@(5173) },
+        [pscustomobject]@{ Name='openwrite-frontend'; WorkingDirectory='Openwrite-main/frontend'; Executable='node'; Arguments=@('node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','5174'); Ports=@(5174) },
+        [pscustomobject]@{ Name='stock-frontend'; WorkingDirectory='stock-research-package/stock-module/frontend'; Executable='node'; Arguments=@('node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','5175'); Ports=@(5175) }
     )
 }
 
