@@ -4,6 +4,7 @@ import { Menu, X, Search, Wrench, Home, ArrowRight, Clock, Sparkles, ChevronUp }
 import { CATEGORIES, TOOLS, getToolsByCategory } from '../tools/registry';
 import { getIcon } from '../lib/iconMap';
 import { MouseParticles } from '../components/MouseParticles';
+import { AccountMenu } from '../components/AccountMenu';
 
 const PROJECT_LINKS = [
   { path: '/fy', name: '智创翻译', icon: 'Languages', color: 'emerald' },
@@ -207,6 +208,10 @@ export const AppLayout: React.FC = () => {
               </Link>
             );
           })}
+        </div>
+
+        <div className="px-3 pb-4">
+          <AccountMenu />
         </div>
 
         {/* Footer */}

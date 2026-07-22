@@ -7,17 +7,22 @@ export default defineConfig({
   server: {
     host: true,
     proxy: {
+      '/auth-api': {
+        target: 'http://127.0.0.1:8000',
+        changeOrigin: true,
+        rewrite: (path: string) => path.replace(/^\/auth-api/, ''),
+      },
       '/openwrite': {
         target: 'http://localhost:5174',
         changeOrigin: true,
       },
       '/api': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:8006',
         changeOrigin: true,
         timeout: 600000,
       },
       '/ws': {
-        target: 'ws://localhost:8000',
+        target: 'ws://localhost:8006',
         ws: true,
       },
       '/plagiarism': {
@@ -31,7 +36,7 @@ export default defineConfig({
         rewrite: (path: string) => path.replace(/^\/ow-api/, '/api'),
       },
       '/wuwa': {
-        target: 'http://localhost:8000',
+        target: 'http://localhost:8006',
         changeOrigin: true,
         rewrite: (path: string) => path.replace(/^\/wuwa/, ''),
       },
