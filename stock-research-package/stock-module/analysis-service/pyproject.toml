@@ -1,0 +1,46 @@
+[project]
+name = "star-dominion-analysis-adapter"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+  "akshare>=1.12,<2",
+  "baostock>=0.8,<1",
+  "efinance>=0.5,<1",
+  "exchange-calendars>=4.13,<5",
+  "fastapi>=0.115,<1",
+  "fake-useragent>=1.4,<3",
+  "google-search-results>=2.4,<3",
+  "imgkit>=1.2,<2",
+  "jinja2>=3.1,<4",
+  "json-repair>=0.55,<1",
+  "litellm==1.80.10",
+  "lxml-html-clean>=0.4,<1",
+  "markdown2>=2.4,<3",
+  "newspaper3k>=0.2,<1",
+  "numpy>=1.24,<3",
+  "openai>=2.8,<3",
+  "openpyxl>=3.1,<4",
+  "orjson>=3.10,<4",
+  "pandas>=2,<3",
+  "pypinyin>=0.50,<1",
+  "python-dotenv>=1,<2",
+  "pytdx>=1.72,<2",
+  "pyyaml>=6,<7",
+  "pydantic>=2.8,<3",
+  "requests>=2.31,<3",
+  "schedule>=1.2,<2",
+  "sqlalchemy>=2,<3",
+  "tavily-python>=0.3,<1",
+  "tenacity>=8.2,<10",
+  "tiktoken>=0.8,<0.12",
+  "tushare>=1.4,<2",
+  "uvicorn>=0.30,<1",
+  "yfinance>=0.2,<2",
+]
+
+[tool.setuptools.packages.find]
+include = ["analysis_service*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

@@ -1,0 +1,25 @@
+[project]
+name = "star-dominion-stock-hub"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+  "cryptography>=45,<47",
+  "fastapi>=0.115,<1",
+  "httpx>=0.27,<1",
+  "pydantic>=2.8,<3",
+  "uvicorn>=0.30,<1",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<9", "pytest-asyncio>=0.23,<1"]
+workers = ["akshare>=1.18,<2", "pandas>=2,<3"]
+
+[project.scripts]
+sd-user-strategy-worker = "workers.user_strategy_snapshot:main"
+
+[tool.setuptools.packages.find]
+include = ["app*", "workers*"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
