@@ -8,7 +8,7 @@ from getpass import getpass
 import os
 import sys
 
-from sqlalchemy import func, or_, select, update
+from sqlalchemy import delete, func, or_, select, update
 
 from .config import Settings
 from .database import create_database
@@ -23,6 +23,11 @@ def _parser() -> argparse.ArgumentParser:
     create.add_argument("--email", required=True)
     create.add_argument("--username", required=True)
     create.add_argument("--password-stdin", action="store_true")
+    recreate = commands.add_parser("recreate-admin")
+    recreate.add_argument("--email", required=True)
+    recreate.add_argument("--username", required=True)
+    recreate.add_argument("--password-stdin", action="store_true")
+    recreate.add_argument("--confirm-delete-all-users", action="store_true")
     reset = commands.add_parser("reset-admin")
     reset.add_argument("--username", required=True)
     reset.add_argument("--password-stdin", action="store_true")
@@ -59,6 +64,27 @@ def run(
         settings = Settings.from_env(os.environ if environment is None else environment)
         database = create_database(settings.database_path)
         with database.sessions() as db:
+            if args.command == "recreate-admin":
+                if not args.confirm_delete_all_users:
+                    print("必须显式传入 --confirm-delete-all-users 才能清空账号")
+                    return 2
+                email = args.email.strip().lower()
+                username = args.username.strip()
+                password = _read_password(from_stdin=args.password_stdin)
+                db.execute(delete(Session))
+                db.execute(delete(User))
+                db.add(
+                    User(
+                        email=email,
+                        username=username,
+                        password_hash=hash_password(password),
+                        role="admin",
+                    )
+                )
+                db.commit()
+                print(f"全部旧账号已清空，唯一管理员 {username} 创建成功")
+                return 0
+
             if args.command == "create-admin":
                 email = args.email.strip().lower()
                 username = args.username.strip()
