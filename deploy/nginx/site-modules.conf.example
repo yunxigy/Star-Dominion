@@ -1,0 +1,55 @@
+# Merge this fragment inside the existing zhumenggy.top `server {}` block.
+# Do not replace the BaoTa-generated vhost and do not remove the live
+# /stock/ or /stock-api/ locations.
+
+location ^~ /auth-api/ {
+    proxy_pass http://127.0.0.1:8000/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_read_timeout 60s;
+}
+
+location ^~ /plagiarism-api/ {
+    proxy_pass http://127.0.0.1:8005/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    client_max_body_size 22m;
+    proxy_read_timeout 600s;
+}
+
+location ^~ /stm32/api/ {
+    proxy_pass http://127.0.0.1:8007/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_read_timeout 86400;
+    proxy_send_timeout 86400;
+}
+
+# ShouAnRen API and pages. Keep a more-specific /stock-api/ block above this.
+location ^~ /api/ {
+    proxy_pass http://127.0.0.1:8006;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_read_timeout 600s;
+}
+
+location = /wuwa { return 301 /wuwa/; }
+location ^~ /wuwa/ {
+    proxy_pass http://127.0.0.1:8006/;
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_read_timeout 600s;
+}

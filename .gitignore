@@ -15,6 +15,7 @@ __pycache__/
 *_venv/
 venv/
 .env
+.env.production
 .runtime/
 
 # IDE
