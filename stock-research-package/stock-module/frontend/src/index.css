@@ -80,7 +80,9 @@ button { border: 0; border-radius: 8px; font-weight: 600; }
 .panel-heading h2, .panel h2 { font-size: 23px; }
 .refresh-action { flex: 0 0 auto; padding: 9px 13px; color: white; background: var(--green); }
 .refresh-action.warm { color: #70441f; background: #f0d7ad; }
-.market-summary { margin: 0; padding: 19px 24px; font-size: 17px; line-height: 1.75; border-bottom: 1px solid var(--green-line); }
+.market-summary { margin: 0; padding: 14px 24px; list-style: none; font-size: 19px; line-height: 1.7; border-bottom: 1px solid var(--green-line); }
+.market-summary li { padding: 7px 0; }
+.market-summary li + li { border-top: 1px solid rgba(191, 215, 202, .55); }
 .theme-strip { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--green-line); }
 .theme-strip article { min-width: 0; padding: 15px 17px; border-right: 1px solid var(--green-line); }
 .theme-strip span, .theme-strip small { display: block; }
@@ -198,7 +200,8 @@ button { border: 0; border-radius: 8px; font-weight: 600; }
 .newspaper-lead { display: grid; grid-template-columns: 52px 1fr; gap: 18px; padding: 34px 46px; border-bottom: 1px solid var(--line); }
 .newspaper-number { color: var(--orange); font-family: "Noto Serif SC", serif; font-size: 25px; }
 .newspaper-lead h2, .newspaper-section h2 { margin: 0; font-family: "Noto Serif SC", serif; font-size: 26px; }
-.newspaper-lead p { margin: 12px 0 0; font-size: 18px; line-height: 1.9; }
+.newspaper-market-summary { margin: 12px 0 0; padding: 0; list-style: none; font-size: 20px; line-height: 1.8; }
+.newspaper-market-summary li { padding: 6px 0; }
 .newspaper-section { padding: 32px 46px; border-bottom: 1px solid var(--line); }
 .newspaper-section-heading { display: grid; grid-template-columns: 52px 1fr; gap: 18px; align-items: center; margin-bottom: 20px; }
 .newspaper-news-list > article { display: grid; grid-template-columns: 42px 1fr; gap: 14px; padding: 19px 0; border-top: 1px solid #e7e8e2; }
@@ -291,7 +294,8 @@ button { border: 0; border-radius: 8px; font-weight: 600; }
   .lookup-controls { flex-basis: auto; }
   .panel-heading { align-items: stretch; flex-direction: column; }
   .morning-panel > .panel-heading, .strategy-panel, .news-panel { padding: 18px; }
-  .market-summary { padding: 16px 18px; font-size: 16px; }
+  .market-summary { padding: 12px 18px; font-size: 18px; }
+  .newspaper-market-summary { font-size: 18px; }
   .theme-strip { grid-template-columns: 1fr 1fr; }
   .candidate-table, .candidate-table tbody, .candidate-table tr, .candidate-table td { display: block; width: 100%; }
   .candidate-table thead { display: none; }

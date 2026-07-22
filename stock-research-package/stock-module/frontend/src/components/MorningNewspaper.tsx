@@ -1,4 +1,5 @@
 import type { MorningReport } from "../types";
+import { MarketSummary } from "./MarketSummary";
 
 type Props = {
   report: MorningReport | null;
@@ -24,7 +25,7 @@ export function MorningNewspaper({ report, loading, error, onBack, onOpenDetail 
 
           <section className="newspaper-lead" aria-labelledby="market-overview-title">
             <span className="newspaper-number">01</span>
-            <div><h2 id="market-overview-title">昨夜市场概览</h2><p>{report.market_summary}</p></div>
+            <div><h2 id="market-overview-title">昨夜市场概览</h2><MarketSummary className="newspaper-market-summary" text={report.market_summary} /></div>
           </section>
 
           <section className="newspaper-section" aria-labelledby="newspaper-news-title">

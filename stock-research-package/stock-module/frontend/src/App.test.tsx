@@ -61,7 +61,7 @@ const currentReport = {
   previous_trade_date: "2026-07-21",
   freshness: "current" as const,
   previous_success_date: null,
-  market_summary: "昨夜美股电力设备方向走强，映射今日 A 股主板电网设备。",
+  market_summary: "AI 算力与半导体走强（信号 100.0）；有色、能源与黄金跟涨（信号 93.2）",
   themes: [
     { id: "grid", name: "电网设备", logic: "海外资本开支扩张", average_change_pct: 1.8, signal_score: 91, breadth: 0.72, summary: "景气与订单共振" },
     { id: "consumer", name: "消费电子", logic: "新品周期", average_change_pct: 0.9, signal_score: 82, breadth: 0.61, summary: "供应链预期改善" },
@@ -153,6 +153,14 @@ test("shows 九点猫研 as the primary workspace and removes anchor navigation"
   expect(screen.getByText("昨夜美股 → 今日 A 股")).toBeInTheDocument();
   expect(screen.getByRole("heading", { name: "我的选股策略" })).toBeInTheDocument();
   expect(screen.queryByRole("link", { name: "候选雷达" })).not.toBeInTheDocument();
+});
+
+test("renders every market theme summary on its own row", async () => {
+  render(<App />);
+
+  expect(await screen.findAllByTestId("market-summary-line")).toHaveLength(2);
+  expect(screen.getByText("AI 算力与半导体走强（信号 100.0）")).toBeInTheDocument();
+  expect(screen.getByText("有色、能源与黄金跟涨（信号 93.2）")).toBeInTheDocument();
 });
 
 test("shows no more than eight important news summaries", async () => {

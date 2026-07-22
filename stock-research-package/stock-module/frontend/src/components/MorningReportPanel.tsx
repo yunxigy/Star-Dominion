@@ -1,4 +1,5 @@
 import type { MorningReport } from "../types";
+import { MarketSummary } from "./MarketSummary";
 
 type Props = {
   report: MorningReport | null;
@@ -30,7 +31,7 @@ export function MorningReportPanel({ report, error, refreshing, onOpenDetail, on
           {report.freshness === "stale" && (
             <p className="stale-banner">当前展示最近成功晨报</p>
           )}
-          <p className="market-summary">{report.market_summary}</p>
+          <MarketSummary text={report.market_summary} />
           <div className="theme-strip" aria-label="主题强度">
             {report.themes.slice(0, 4).map((theme) => (
               <article key={theme.id}>
