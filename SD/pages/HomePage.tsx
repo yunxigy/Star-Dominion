@@ -6,6 +6,7 @@ import { useToolRunner } from '../components/ToolRunner';
 import { CATEGORIES, TOOLS } from '../tools/registry';
 import { getIcon } from '../lib/iconMap';
 import { AdSlot } from '../components/AdSlot';
+import { PROJECT_LINKS } from '../lib/projectLinks';
 
 const HOT_TOOLS = [
   'merge-pdf', 'compress-image', 'json-format', 'bmi-calculator',
@@ -286,54 +287,16 @@ export const HomePage: React.FC = () => {
           <h2 className="text-3xl font-black text-[#2f241b]">项目作品</h2>
           <span className="text-base text-[#6d5a47]">探索更多功能</span>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[
-            {
-              path: '/fy',
-              title: '智创翻译',
-              desc: '基于 PaddleOCR + 百度翻译 API 的屏幕实时翻译工具',
-              gradient: 'from-[#fff4e6] to-[#dfe5cf]',
-              border: 'border-[#d8b58e] hover:border-[#b47a43]',
-              textColor: 'group-hover:text-[#6f3714]',
-              arrowColor: 'text-[#8a4b1f]'
-            },
-            {
-              path: '/bp',
-              title: '边坡上位机',
-              desc: 'STM32 北斗边坡高精度定位监控系统',
-              gradient: 'from-[#f8ead8] to-[#e1e6d5]',
-              border: 'border-[#d5b795] hover:border-[#a9875f]',
-              textColor: 'group-hover:text-[#4d5b33]',
-              arrowColor: 'text-[#5f6f42]'
-            },
-            {
-              path: '/ai',
-              title: '网文智能体',
-              desc: 'AI 自主长篇小说写作系统',
-              gradient: 'from-[#f6e5d0] to-[#f0d2d9]',
-              border: 'border-[#d8b58e] hover:border-[#bd8f63]',
-              textColor: 'group-hover:text-[#7a421b]',
-              arrowColor: 'text-[#9a5a28]'
-            },
-            {
-              path: '/wuwa/',
-              title: 'AI 伴侣',
-              desc: '多角色 AI 语音对话系统，支持语音克隆 TTS',
-              gradient: 'from-[#f0d2d9] to-[#fff0df]',
-              border: 'border-[#d8a7b2] hover:border-[#b76b7b]',
-              textColor: 'group-hover:text-[#7c3141]',
-              arrowColor: 'text-[#9f4b5f]',
-              external: true
-            }
-          ].map((project) => {
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+          {PROJECT_LINKS.map((project) => {
             const className = `block p-7 rounded-2xl bg-gradient-to-br ${project.gradient} border ${project.border} transition-all group tool-card-enhanced h-full`;
             const content = (
               <>
                 <h3 className={`text-xl font-black text-[#2f241b] ${project.textColor} transition-colors mb-3`}>
-                  {project.title}
+                  {project.name}
                 </h3>
                 <p className="text-base text-[#5c4937] mb-5">
-                  {project.desc}
+                  {project.description}
                 </p>
                 <div className={`flex items-center gap-2 text-base font-semibold ${project.arrowColor}`}>
                   了解详情

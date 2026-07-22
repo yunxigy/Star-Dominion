@@ -5,13 +5,7 @@ import { CATEGORIES, TOOLS, getToolsByCategory } from '../tools/registry';
 import { getIcon } from '../lib/iconMap';
 import { MouseParticles } from '../components/MouseParticles';
 import { AccountMenu } from '../components/AccountMenu';
-
-const PROJECT_LINKS = [
-  { path: '/fy', name: '智创翻译', icon: 'Languages', color: 'emerald' },
-  { path: '/bp', name: '边坡上位机', icon: 'Satellite', color: 'cyan' },
-  { path: '/ai', name: '网文智能体', icon: 'Bot', color: 'violet' },
-  { path: '/wuwa', name: 'AI 伴侣', icon: 'Heart', color: 'pink' },
-];
+import { PROJECT_LINKS } from '../lib/projectLinks';
 
 // 侧边栏时钟组件
 const SidebarClock: React.FC = () => {
@@ -195,16 +189,33 @@ export const AppLayout: React.FC = () => {
           {PROJECT_LINKS.map(project => {
             const ProjectIcon = getIcon(project.icon);
             const isActive = location.pathname === project.path;
-            return (
+            const content = (
+              <>
+                <ProjectIcon className="w-4 h-4" />
+                <span className="flex-1 font-medium">{project.name}</span>
+                <ArrowRight className="w-3 h-3 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+              </>
+            );
+            const className = `sidebar-item ${isActive ? 'active' : ''}`;
+            return project.external ? (
+              <a
+                key={project.path}
+                href={project.path}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setSidebarOpen(false)}
+                className={className}
+              >
+                {content}
+              </a>
+            ) : (
               <Link
                 key={project.path}
                 to={project.path}
                 onClick={() => setSidebarOpen(false)}
-                className={`sidebar-item ${isActive ? 'active' : ''}`}
+                className={className}
               >
-                <ProjectIcon className="w-4 h-4" />
-                <span className="flex-1 font-medium">{project.name}</span>
-                <ArrowRight className="w-3 h-3 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
+                {content}
               </Link>
             );
           })}
