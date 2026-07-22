@@ -12,6 +12,7 @@ from .config import Settings
 from .database import create_database
 from .internal import router as internal_router
 from .routes import router as session_router
+from .rate_limit import LoginRateLimiter
 from .session_service import SessionService
 
 
@@ -32,6 +33,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     app.state.settings = configured
     app.state.database = database
     app.state.session_service = SessionService()
+    app.state.login_rate_limiter = LoginRateLimiter()
     app.add_middleware(
         CORSMiddleware,
         allow_origins=list(configured.allowed_origins),

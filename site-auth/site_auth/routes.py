@@ -63,6 +63,10 @@ def login(
         raise HTTPException(status_code=403, detail="请求来源不受信任")
 
     identity = payload.identity.strip().lower()
+    client_ip = request.client.host if request.client is not None else "unknown"
+    limiter = request.app.state.login_rate_limiter
+    if not limiter.can_attempt(client_ip, identity):
+        raise HTTPException(status_code=429, detail="登录尝试过多，请稍后再试")
     user = db.scalar(
         select(User).where(
             or_(
@@ -78,7 +82,11 @@ def login(
         else verify_password(password, _DUMMY_PASSWORD_HASH)
     )
     if user is None or not valid_password or not user.is_active:
+        if not limiter.record_failure(client_ip, identity):
+            raise HTTPException(status_code=429, detail="登录尝试过多，请稍后再试")
         raise HTTPException(status_code=401, detail="用户名或密码错误")
+
+    limiter.record_success(client_ip, identity)
 
     if password_needs_rehash(user.password_hash):
         user.password_hash = hash_password(password)
@@ -137,4 +145,3 @@ def logout(
     response.delete_cookie(SESSION_COOKIE, path="/")
     response.delete_cookie(CSRF_COOKIE, path="/")
     return response
-
