@@ -15,6 +15,15 @@ interface PlagiarismResult {
   };
 }
 
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+
+function acceptedFile(file: File): string | null {
+  const extension = file.name.slice(file.name.lastIndexOf('.')).toLowerCase();
+  if (!['.txt', '.docx', '.pdf'].includes(extension)) return '仅支持 txt、docx、pdf 文件';
+  if (file.size > MAX_FILE_BYTES) return '单个文件不能超过 10 MB';
+  return null;
+}
+
 export default function PlagiarismCheck({ onClose }: { onClose: () => void }) {
   const [file1, setFile1] = useState<File | null>(null);
   const [file2, setFile2] = useState<File | null>(null);
@@ -24,12 +33,28 @@ export default function PlagiarismCheck({ onClose }: { onClose: () => void }) {
 
   const handleFile1Change = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) setFile1(file);
+    if (!file) return;
+    const reason = acceptedFile(file);
+    if (reason) {
+      setError(reason);
+      e.target.value = '';
+      return;
+    }
+    setError(null);
+    setFile1(file);
   }, []);
 
   const handleFile2Change = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) setFile2(file);
+    if (!file) return;
+    const reason = acceptedFile(file);
+    if (reason) {
+      setError(reason);
+      e.target.value = '';
+      return;
+    }
+    setError(null);
+    setFile2(file);
   }, []);
 
   const handleSubmit = useCallback(async () => {
@@ -53,7 +78,8 @@ export default function PlagiarismCheck({ onClose }: { onClose: () => void }) {
       });
 
       if (!response.ok) {
-        throw new Error('查重失败，请重试');
+        const body = await response.json().catch(() => null) as { detail?: unknown } | null;
+        throw new Error(typeof body?.detail === 'string' ? body.detail : '查重失败，请重试');
       }
 
       const data = await response.json();

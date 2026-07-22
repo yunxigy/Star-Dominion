@@ -26,7 +26,7 @@ export default defineConfig({
         ws: true,
       },
       '/plagiarism': {
-        target: 'http://localhost:8001',
+        target: 'http://127.0.0.1:8005',
         changeOrigin: true,
         rewrite: (path: string) => path.replace(/^\/plagiarism/, ''),
       },
