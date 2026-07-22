@@ -33,7 +33,9 @@ _STOP_WORDS = set("的了是在我他她它们这那个有不人也大为上中�
 
 def _tokenize(text: str) -> list[str]:
     """中文分词 + 去停用词"""
-    words = jieba.lcut(text)
+    # `cut` is available in every supported jieba build; some distro packages
+    # omit the convenience `lcut` alias.
+    words = list(jieba.cut(text))
     return [w.strip() for w in words if w.strip() and w.strip() not in _STOP_WORDS and len(w.strip()) > 0]
 
 
