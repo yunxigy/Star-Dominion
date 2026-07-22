@@ -57,6 +57,8 @@ button:focus-visible, input:focus-visible, select:focus-visible, a:focus-visible
 
 button { border: 0; border-radius: 8px; font-weight: 600; }
 .outline-button { padding: 10px 16px; border: 1px solid #bcc9c2; color: var(--green); background: transparent; }
+.api-config-button { background: var(--green); color: #fff; border-color: var(--green); font-weight: 700; box-shadow: 0 8px 18px rgba(42, 86, 68, .16); }
+.api-config-button:hover { background: #234e3d; border-color: #234e3d; }
 .workbench-shell { width: min(1560px, calc(100% - 32px)); margin: 0 auto; padding: 22px 0 44px; }
 .quick-lookup { display: flex; align-items: center; justify-content: space-between; gap: 28px; margin-bottom: 18px; padding: 15px 18px; border: 1px solid #d9dcd4; border-radius: 12px; background: rgba(255, 254, 249, .72); }
 .quick-lookup > div:first-child { display: grid; gap: 3px; }

@@ -31,7 +31,14 @@ export function WorkspaceHeader({ generatedAt, freshness, onOpenSettings }: Prop
           <strong>{formatTime(generatedAt)}</strong>
           {freshness && <i className={`freshness-dot ${freshness}`}>{freshness === "current" ? "数据新鲜" : "历史快照"}</i>}
         </div>
-        <button className="outline-button" type="button" onClick={onOpenSettings}>模型与 API</button>
+        <button
+          className="outline-button api-config-button"
+          type="button"
+          onClick={onOpenSettings}
+          title="填写、测试并保存硅基流动或其他兼容服务的 API"
+        >
+          API 配置
+        </button>
       </div>
     </header>
   );

@@ -139,6 +139,13 @@ afterEach(() => {
   Object.values(mocks).forEach((mock) => mock.mockReset());
 });
 
+test("keeps API configuration visible in the workspace header", async () => {
+  render(<App />);
+
+  fireEvent.click(screen.getByRole("button", { name: "API 配置" }));
+  expect(await screen.findByRole("heading", { name: "模型与 API 设置" })).toBeInTheDocument();
+});
+
 test("shows 九点猫研 as the primary workspace and removes anchor navigation", async () => {
   render(<App />);
 
