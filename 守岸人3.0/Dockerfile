@@ -22,7 +22,7 @@ COPY . .
 RUN mkdir -p data/characters data/chats data/groups data/worlds data/audio_cache data/voices data/characters/avatars
 
 # 暴露端口
-EXPOSE 8000
+EXPOSE 8006
 
 # 启动命令
 CMD ["python", "-m", "server.main"]

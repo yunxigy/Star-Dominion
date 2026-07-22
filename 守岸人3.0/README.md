@@ -45,7 +45,7 @@ pip install -r server/requirements.txt
 python -m server.main
 ```
 
-浏览器打开 `http://127.0.0.1:8000`
+浏览器打开 `http://127.0.0.1:8006`
 
 ### 配置
 
@@ -61,10 +61,8 @@ llm:
       model: mimo-v2.5-pro
 ```
 
-### 默认管理员
-
-- 用户名：`admin`
-- 密码：`admin123`
+登录由根目录 `site-auth` 统一提供。注册入口已关闭，请使用
+`site-auth-admin create-admin` 创建唯一管理员；项目不再提供默认账号或密码。
 
 ## 项目结构
 

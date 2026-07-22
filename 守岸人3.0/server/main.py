@@ -268,6 +268,6 @@ async def health_backends():
 if __name__ == "__main__":
     import uvicorn
     host = CONFIG.get("server", {}).get("host", "0.0.0.0")
-    port = CONFIG.get("server", {}).get("port", 8000)
+    port = CONFIG.get("server", {}).get("port", 8006)
     logger.info(f"🚀 守岸人 3.0 启动中... http://{host}:{port}")
     uvicorn.run(app, host=host, port=port)

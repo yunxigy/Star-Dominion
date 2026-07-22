@@ -47,7 +47,7 @@ export const Stm32ConsoleModal: React.FC<Stm32ConsoleModalProps> = ({ isOpen, on
   const [mapTheme, setMapTheme] = useState<'dark' | 'normal' | 'satellite'>('normal');
   const [notifications, setNotifications] = useState<{ msg: string; type: 'success' | 'error' | 'info' | 'warning'; time: string }[]>([]);
   const [showSettings, setShowSettings] = useState(false);
-  const [dataSource, setDataSource] = useState('http://117.72.222.38:5005');
+  const [dataSource, setDataSource] = useState('/stm32/api');
   const logEndRef = useRef<HTMLDivElement>(null);
 
   const mapRef = useRef<any>(null);
@@ -348,7 +348,7 @@ export const Stm32ConsoleModal: React.FC<Stm32ConsoleModalProps> = ({ isOpen, on
                   value={dataSource}
                   onChange={(e) => setDataSource(e.target.value)}
                   className="flex-1 max-w-md px-3 py-1.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500"
-                  placeholder="http://117.72.222.38:5005"
+                  placeholder="/stm32/api"
                 />
               </div>
             </div>

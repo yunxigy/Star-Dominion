@@ -9,8 +9,8 @@ const getShouAnRenUrl = () => {
   if (host !== 'localhost' && host !== '127.0.0.1') {
     return `${window.location.protocol}//${host}/wuwa/`;
   }
-  // 本地开发：直接访问端口 8000
-  return 'http://localhost:8000';
+  // 本地开发：守岸人独立服务端口 8006
+  return 'http://localhost:8006';
 };
 
 export const ShouAnRenPage: React.FC = () => {

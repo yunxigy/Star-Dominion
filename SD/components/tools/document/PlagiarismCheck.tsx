@@ -72,7 +72,7 @@ export default function PlagiarismCheck({ onClose }: { onClose: () => void }) {
       formData.append('file1', file1);
       formData.append('file2', file2);
 
-      const response = await fetch('/plagiarism/api/plagiarism/compare', {
+      const response = await fetch('/plagiarism-api/api/plagiarism/compare', {
         method: 'POST',
         body: formData,
       });

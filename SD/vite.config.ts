@@ -25,10 +25,16 @@ export default defineConfig({
         target: 'ws://localhost:8006',
         ws: true,
       },
-      '/plagiarism': {
+      '/plagiarism-api': {
         target: 'http://127.0.0.1:8005',
         changeOrigin: true,
-        rewrite: (path: string) => path.replace(/^\/plagiarism/, ''),
+        rewrite: (path: string) => path.replace(/^\/plagiarism-api/, ''),
+      },
+      '/stm32/api': {
+        target: 'http://127.0.0.1:8007',
+        changeOrigin: true,
+        ws: true,
+        rewrite: (path: string) => path.replace(/^\/stm32\/api/, ''),
       },
       '/ow-api': {
         target: 'http://localhost:8001',
