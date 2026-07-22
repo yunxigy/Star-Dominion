@@ -29,7 +29,15 @@ HTTP_PORT = _environment_port("STM32_HTTP_PORT", 8007)
 DEVICE_TCP_PORT = _environment_port("STM32_TCP_PORT", 8008)
 
 app = Flask(__name__)
-CORS(app)
+allowed_origins = [
+    origin.strip().rstrip('/')
+    for origin in os.environ.get(
+        'STM32_ALLOWED_ORIGINS',
+        'http://127.0.0.1:5173,http://localhost:5173',
+    ).split(',')
+    if origin.strip()
+]
+CORS(app, origins=allowed_origins)
 sock = Sock(app)
 
 NUM = r'[-+]?\d+(?:\.\d+)?'

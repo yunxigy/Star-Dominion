@@ -197,10 +197,16 @@ export default function Stm32Window() {
 
   const initMap = () => {
     if (!mapContainerRef.current) return;
-    (window as any)._AMapSecurityConfig = { securityJsCode: '7427090a19ead0f132fd6dedad4a2d6a' };
+    const amapKey = import.meta.env.VITE_AMAP_KEY?.trim();
+    const amapSecurityCode = import.meta.env.VITE_AMAP_SECURITY_CODE?.trim();
+    if (!amapKey || !amapSecurityCode) {
+      addNotification('地图未配置，请设置 VITE_AMAP_KEY 和 VITE_AMAP_SECURITY_CODE', 'error');
+      return;
+    }
+    (window as any)._AMapSecurityConfig = { securityJsCode: amapSecurityCode };
 
     AMapLoader.load({
-      key: '80d0f2e44986109a8c37f67194590127',
+      key: amapKey,
       version: '2.0',
       plugins: ['AMap.Scale', 'AMap.ToolBar', 'AMap.ControlBar', 'AMap.Polyline'],
     })
