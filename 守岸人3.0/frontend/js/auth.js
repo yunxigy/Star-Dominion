@@ -14,6 +14,9 @@ window.fetch = function siteAuthenticatedFetch(input, init = {}) {
   if (target.origin !== window.location.origin) return nativeFetch(input, init);
   const method = (init.method || (typeof input !== 'string' ? input.method : 'GET')).toUpperCase();
   const headers = new Headers(init.headers || (typeof input !== 'string' ? input.headers : undefined));
+  // Authentication is exclusively carried by the site's HttpOnly session cookie.
+  // Strip legacy browser bearer headers so they can never shadow central auth.
+  headers.delete('Authorization');
   if (!['GET', 'HEAD', 'OPTIONS'].includes(method)) {
     const csrf = readSiteCsrf();
     if (csrf) headers.set('X-CSRF-Token', csrf);

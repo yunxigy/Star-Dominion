@@ -173,6 +173,18 @@ def test_frontend_no_longer_reads_browser_auth_tokens() -> None:
     assert offenders == []
 
 
+def test_frontend_strips_legacy_bearer_headers() -> None:
+    frontend_source = "\n".join(
+        path.read_text("utf-8")
+        for path in (ROOT / "frontend").rglob("*")
+        if path.suffix in {".html", ".js"}
+    )
+    auth_adapter = (ROOT / "frontend" / "js" / "auth.js").read_text("utf-8")
+
+    assert "site-cookie-session" not in frontend_source
+    assert "headers.delete('Authorization')" in auth_adapter
+
+
 def test_default_backend_port_is_8006() -> None:
     config = (ROOT / "server" / "config.py").read_text("utf-8")
     assert '"port": 8006' in config

@@ -331,7 +331,7 @@ Openwrite-main/
 1. **`.env` 和 `config.yaml` 包含 API Key，不要提交到 Git**
 2. **`.gitignore` 已排除敏感文件，确认生效**
 3. **生产环境 CORS 不要用 `*`，指定具体域名**
-4. **守岸人默认管理员 admin/admin123，部署后立即修改**
+4. **全站认证不提供默认密码；部署时通过 site-auth CLI 从标准输入创建唯一管理员**
 5. **SQLite 不适合高并发，如需扩展改用 PostgreSQL**
 
 ---

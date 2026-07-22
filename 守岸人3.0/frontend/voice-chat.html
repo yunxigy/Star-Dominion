@@ -431,7 +431,7 @@
 
   <script src="/js/auth.js"></script>
   <script>
-    const token = 'site-cookie-session';
+    const token = 'central-cookie';
     Auth.loadUser().then((current) => {
       if (!current) window.location.href = Auth.loginUrl(window.location.pathname + window.location.search);
     });

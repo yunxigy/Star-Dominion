@@ -434,7 +434,7 @@
 
   <script src="/js/auth.js"></script>
   <script>
-    const token = 'site-cookie-session';
+    const token = 'central-cookie';
     Auth.loadUser().then((current) => {
       if (!current || current.role !== 'admin') {
         window.location.href = Auth.loginUrl('/admin.html');
