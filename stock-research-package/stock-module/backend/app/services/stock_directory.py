@@ -60,3 +60,6 @@ class StockDirectory:
             for entry in self._repository.search(query, limit)
         ]
 
+    def metadata(self):
+        return self._repository.metadata()
+

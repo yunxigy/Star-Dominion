@@ -90,8 +90,13 @@ async def test_health_reports_service_name() -> None:
 
 @pytest.mark.asyncio
 async def test_search_returns_main_board_matches() -> None:
+    isolated_app = create_app(
+        stock_directory=InMemoryStockDirectory(
+            [StockRecord(symbol="600519", name="贵州茅台")]
+        )
+    )
     async with httpx.AsyncClient(
-        transport=httpx.ASGITransport(app=app),
+        transport=httpx.ASGITransport(app=isolated_app),
         base_url="http://test",
     ) as client:
         response = await client.get("/api/v1/stocks/search", params={"q": "茅台"})

@@ -6,6 +6,7 @@ import json
 import os
 from pathlib import Path
 import secrets
+import shlex
 import sys
 
 from app.domain.model_profiles import PlatformModelProfileConfig
@@ -28,6 +29,15 @@ class Settings:
     site_auth_url: str = "http://127.0.0.1:8000"
     site_auth_internal_key: str = field(default="", repr=False)
     allow_private_model_endpoints: bool = False
+    xhs_data_dir: Path | None = None
+    xhs_mcp_command: tuple[str, ...] = (
+        "npx.cmd",
+        "-y",
+        "@sillyl12324/xhs-mcp@2.7.0",
+    )
+    market_proxy: str | None = None
+    mom_refresh_time: str = "08:30"
+    timezone_name: str = "Asia/Shanghai"
 
     @classmethod
     def from_env(cls) -> "Settings":
@@ -70,6 +80,10 @@ class Settings:
                 secret_dir / "route-signing.key"
             )
         platform_model_profiles = _platform_profiles_from_env()
+        xhs_command_text = os.environ.get(
+            "STOCK_XHS_MCP_COMMAND",
+            "npx.cmd -y @sillyl12324/xhs-mcp@2.7.0",
+        )
         catalyst_command = _worker_command_from_env(
             "CATALYST_WORKER_COMMAND_JSON",
             "catalyst",
@@ -136,6 +150,13 @@ class Settings:
                 and os.environ.get("STOCK_ALLOW_PRIVATE_MODEL_ENDPOINTS", "").strip().lower()
                 in {"1", "true", "yes", "on"}
             ),
+            xhs_data_dir=Path(
+                os.environ.get("STOCK_XHS_DATA_DIR", data_dir / "xhs-mcp")
+            ),
+            xhs_mcp_command=tuple(shlex.split(xhs_command_text, posix=False)),
+            market_proxy=os.environ.get("STOCK_MARKET_PROXY") or None,
+            mom_refresh_time=os.environ.get("STOCK_MOM_REFRESH_TIME", "08:30"),
+            timezone_name=os.environ.get("STOCK_TIMEZONE", "Asia/Shanghai"),
         )
 
 

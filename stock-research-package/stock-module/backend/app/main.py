@@ -28,17 +28,24 @@ from app.domain.morning_reports import (
     MorningReportHistoryResponse,
     StockResearchContext,
 )
+from app.domain.mom_index import MomIndexHistoryResponse, MomIndexSnapshot
 from app.domain.stocks import InvalidMainBoardSymbol
 from app.integrations.candidate_sources import CatalystReportSource, UserStrategySnapshotSource
 from app.integrations.catalyst_reports import CatalystMorningReportAdapter
 from app.integrations.candidate_workers import SubprocessCandidateWorker
 from app.integrations.individual_analysis import IndividualAnalysisClient
+from app.integrations.mom_sources import EastmoneyMomSource, XiaohongshuMomSource
 from app.integrations.model_providers import ModelProviderError, OpenAICompatibleProviderClient
+from app.integrations.stock_directory_sources import AkshareStockDirectorySource
+from app.integrations.xhs_mcp import XhsMcpClient
 from app.repositories.analysis_tasks import AnalysisTaskRepository
 from app.repositories.candidate_snapshots import CandidateSnapshotRepository
 from app.repositories.morning_reports import MorningReportRepository
 from app.repositories.refresh_tasks import RefreshTaskRepository
 from app.repositories.model_profiles import ModelProfileRepository
+from app.repositories.job_leases import JobLeaseRepository
+from app.repositories.mom_index import MomIndexRepository
+from app.repositories.stock_directory import StockDirectoryRepository
 from app.security.network_policy import UnsafeModelEndpoint
 from app.security.route_tokens import RouteTokenIssuer
 from app.security.secrets import FernetSecretStore, SecretNotFound
@@ -48,16 +55,11 @@ from app.services.candidate_refresh import CandidateRefreshService
 from app.services.refresh_coordinator import CandidateRefreshCoordinator
 from app.services.model_profiles import ModelProfileNotFound, ModelProfileService
 from app.services.morning_reports import MorningReportService, MorningReportUnavailable
-from app.services.stock_directory import InMemoryStockDirectory, StockRecord
-
-
-directory = InMemoryStockDirectory(
-    [
-        StockRecord(symbol="600519", name="贵州茅台"),
-        StockRecord(symbol="000001", name="平安银行"),
-        StockRecord(symbol="002594", name="比亚迪"),
-    ]
-)
+from app.services.mom_index import MomIndexService
+from app.services.scheduled_jobs import BackgroundOperationCoordinator, build_scheduler
+from app.services.stock_directory import StockDirectory
+from app.services.stock_directory_refresh import StockDirectoryRefreshService
+from app.services.xhs_login import XhsLoginService
 
 
 def create_app(
@@ -69,9 +71,49 @@ def create_app(
     model_profile_service: ModelProfileService | None = None,
     analysis_coordinator: AnalysisCoordinator | None = None,
     site_auth_client: SiteAuthClient | None = None,
+    stock_directory=None,
+    stock_directory_refresh_service=None,
+    mom_index_service=None,
+    mom_refresh_coordinator=None,
+    xhs_login_service=None,
+    scheduler=None,
 ) -> FastAPI:
     configured = settings or Settings.from_env()
     database_path = configured.data_dir / "hub.db"
+    stock_repository = StockDirectoryRepository(database_path)
+    directory = stock_directory or StockDirectory(stock_repository)
+    directory_refresher = stock_directory_refresh_service or StockDirectoryRefreshService(
+        stock_repository,
+        AkshareStockDirectorySource(),
+    )
+    leases = JobLeaseRepository(database_path)
+
+    xhs_client = XhsMcpClient(
+        list(configured.xhs_mcp_command),
+        data_dir=configured.xhs_data_dir or configured.data_dir / "xhs-mcp",
+    )
+    mom_indexes = mom_index_service or MomIndexService(
+        MomIndexRepository(database_path),
+        eastmoney=EastmoneyMomSource(proxy=configured.market_proxy),
+        xiaohongshu=XiaohongshuMomSource(xhs_client),
+    )
+    mom_refreshes = mom_refresh_coordinator or BackgroundOperationCoordinator(
+        job_name="mom-index-refresh",
+        operation=mom_indexes.refresh,
+        leases=leases,
+    )
+    directory_refreshes = BackgroundOperationCoordinator(
+        job_name="stock-directory-refresh",
+        operation=directory_refresher.refresh,
+        leases=leases,
+    )
+    xhs_logins = xhs_login_service or XhsLoginService(xhs_client)
+    job_scheduler = scheduler or build_scheduler(
+        timezone_name=configured.timezone_name,
+        mom_refresh=mom_refreshes.start,
+        directory_refresh=directory_refreshes.start,
+        mom_refresh_time=configured.mom_refresh_time,
+    )
     service = candidate_service or CandidateRefreshService(
         CandidateSnapshotRepository(database_path),
         [
@@ -127,13 +169,19 @@ def create_app(
 
     @asynccontextmanager
     async def lifespan(_: FastAPI):
+        if getattr(directory, "metadata", lambda: None)() is None:
+            directory_refreshes.start()
+        job_scheduler.start()
         yield
+        job_scheduler.shutdown(wait=False)
+        directory_refreshes.shutdown()
+        mom_refreshes.shutdown()
         coordinator.shutdown()
         analyses.shutdown()
         if analysis_http is not None:
             await analysis_http.aclose()
 
-    application = FastAPI(title="Star Dominion Stock Hub", version="0.4.0", lifespan=lifespan)
+    application = FastAPI(title="Star Dominion Stock Hub", version="0.5.0", lifespan=lifespan)
 
     async def current_user(request: Request) -> SiteIdentity:
         session_token = request.cookies.get("sd_session")
@@ -175,14 +223,18 @@ def create_app(
 
     @application.get("/api/v1/health")
     def health() -> dict:
-        return {"service": "stock-hub", "status": "ok", "version": "0.4.0"}
+        return {"service": "stock-hub", "status": "ok", "version": "0.5.0"}
 
     @application.get("/api/v1/stocks/search")
     def search_stocks(
         q: str = Query(min_length=1),
         limit: int = Query(default=20, ge=1, le=50),
     ) -> dict:
-        return {"items": [item.model_dump() for item in directory.search(q, limit)]}
+        metadata = getattr(directory, "metadata", lambda: None)()
+        return {
+            "items": [item.model_dump() for item in directory.search(q, limit)],
+            "directory": metadata.model_dump(mode="json") if metadata is not None else None,
+        }
 
     @application.get(
         "/api/v1/stocks/{symbol}/research-context",
@@ -256,6 +308,79 @@ def create_app(
         if task is None:
             raise HTTPException(status_code=404, detail="刷新任务不存在")
         return task.model_dump(mode="json")
+
+    @application.post(
+        "/api/v1/stocks/directory/refresh",
+        status_code=status.HTTP_202_ACCEPTED,
+    )
+    def refresh_stock_directory(_: SiteIdentity = Depends(current_admin)) -> dict:
+        return directory_refreshes.start().model_dump(mode="json")
+
+    @application.get(
+        "/api/v1/stocks/directory/refresh/{task_id}",
+    )
+    def stock_directory_refresh_status(
+        task_id: str,
+        _: SiteIdentity = Depends(current_admin),
+    ) -> dict:
+        task = directory_refreshes.get(task_id)
+        if task is None:
+            raise HTTPException(status_code=404, detail="股票目录刷新任务不存在")
+        return task.model_dump(mode="json")
+
+    @application.get(
+        "/api/v1/mom-index/current",
+        response_model=MomIndexSnapshot,
+    )
+    def current_mom_index() -> MomIndexSnapshot:
+        snapshot = mom_indexes.current()
+        if snapshot is None:
+            raise HTTPException(
+                status_code=404,
+                detail={"code": "MOM_INDEX_NOT_FOUND", "message": "暂无真实宝妈指数"},
+            )
+        return snapshot
+
+    @application.get(
+        "/api/v1/mom-index/history",
+        response_model=MomIndexHistoryResponse,
+    )
+    def mom_index_history(
+        limit: int = Query(default=30, ge=1, le=100),
+    ) -> MomIndexHistoryResponse:
+        return MomIndexHistoryResponse(items=mom_indexes.history(limit))
+
+    @application.post(
+        "/api/v1/mom-index/refresh",
+        status_code=status.HTTP_202_ACCEPTED,
+    )
+    def refresh_mom_index(_: SiteIdentity = Depends(current_admin)) -> dict:
+        return mom_refreshes.start().model_dump(mode="json")
+
+    @application.get("/api/v1/mom-index/refresh/{task_id}")
+    def mom_index_refresh_status(
+        task_id: str,
+        _: SiteIdentity = Depends(current_admin),
+    ) -> dict:
+        task = mom_refreshes.get(task_id)
+        if task is None:
+            raise HTTPException(status_code=404, detail="宝妈指数刷新任务不存在")
+        return task.model_dump(mode="json")
+
+    @application.post("/api/v1/mom-index/xhs/login")
+    async def start_xhs_login(_: SiteIdentity = Depends(current_admin)) -> dict:
+        return await xhs_logins.start()
+
+    @application.get("/api/v1/mom-index/xhs/login/{session_id}")
+    async def poll_xhs_login(
+        session_id: str,
+        _: SiteIdentity = Depends(current_admin),
+    ) -> dict:
+        return await xhs_logins.poll(session_id)
+
+    @application.get("/api/v1/mom-index/xhs/status")
+    async def xhs_login_status(_: SiteIdentity = Depends(current_admin)) -> dict:
+        return await xhs_logins.status()
 
     @application.post(
         "/api/v1/analyses",
