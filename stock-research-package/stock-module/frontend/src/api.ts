@@ -3,6 +3,7 @@ import type {
   AnalysisReport,
   AnalysisTask,
   CandidateResponse,
+  KlineDays,
   ModelProfile,
   ModelProfileCreate,
   MomIndexHistoryResponse,
@@ -10,6 +11,7 @@ import type {
   MorningReport,
   MorningReportHistoryResponse,
   RefreshTask,
+  StockKline,
   StockResearchContext,
   XhsLoginResponse,
 } from "./types";
@@ -125,6 +127,12 @@ export const loadStockResearchContext = (symbol: string) =>
   request<StockResearchContext>(
     `/stock-api/api/v1/stocks/${encodeURIComponent(symbol)}/research-context`,
     "股票详情加载失败",
+  );
+
+export const loadStockKline = (symbol: string, days: KlineDays = 60) =>
+  request<StockKline>(
+    `/stock-api/api/v1/stocks/${encodeURIComponent(symbol)}/kline?days=${days}`,
+    "K 线数据加载失败",
   );
 
 export const loadCandidates = () =>

@@ -7,6 +7,7 @@ import {
   loadMomIndexHistory,
   loadCurrentMorningReport,
   loadMorningReportHistory,
+  loadStockKline,
   loadStockResearchContext,
   startAnalysis,
 } from "./api";
@@ -123,6 +124,17 @@ describe("morning report API contracts", () => {
 
     expect(fetch).toHaveBeenCalledWith(
       "/stock-api/api/v1/stocks/600519/research-context",
+      expect.objectContaining({ credentials: "include" }),
+    );
+  });
+
+  it("loads a typed stock K-line series for the requested period", async () => {
+    vi.mocked(fetch).mockResolvedValueOnce(Response.json({ bars: [] }));
+
+    await loadStockKline("600519", 120);
+
+    expect(fetch).toHaveBeenCalledWith(
+      "/stock-api/api/v1/stocks/600519/kline?days=120",
       expect.objectContaining({ credentials: "include" }),
     );
   });

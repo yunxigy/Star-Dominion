@@ -166,6 +166,43 @@ export type StockResearchContext = {
   catalyst: CandidateEvidence | null;
 };
 
+export type KlineDays = 20 | 60 | 120;
+
+export type KlineBar = {
+  date: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  volume: number;
+  change_pct: number | null;
+  ma5: number | null;
+  ma10: number | null;
+  ma20: number | null;
+};
+
+export type StockKline = {
+  symbol: string;
+  name: string;
+  exchange: "SSE" | "SZSE";
+  period: "daily";
+  adjustment: "qfq";
+  days: KlineDays;
+  source: "eastmoney";
+  generated_at: string;
+  stale: boolean;
+  latest: {
+    trade_date: string;
+    price: number;
+    change: number;
+    change_pct: number;
+    high: number;
+    low: number;
+    volume: number;
+  };
+  bars: KlineBar[];
+};
+
 export type ModelProfile = {
   id: string;
   scope: "platform" | "personal";
