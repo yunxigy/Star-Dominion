@@ -3,6 +3,7 @@
 from pydantic import BaseModel
 
 from app.domain.stocks import InvalidMainBoardSymbol, exchange_for, normalize_symbol
+from app.repositories.stock_directory import StockDirectoryRepository
 
 
 class StockRecord(BaseModel):
@@ -41,4 +42,21 @@ class InMemoryStockDirectory:
             for record in self._records
             if needle in record.symbol or needle in record.name.lower()
         ][:limit]
+
+
+class StockDirectory:
+    """Search facade backed by the atomically replaced SQLite directory."""
+
+    def __init__(self, repository: StockDirectoryRepository) -> None:
+        self._repository = repository
+
+    def search(self, query: str, limit: int = 20) -> list[StockSearchResult]:
+        return [
+            StockSearchResult(
+                symbol=entry.symbol,
+                name=entry.name,
+                exchange=entry.exchange,
+            )
+            for entry in self._repository.search(query, limit)
+        ]
 
