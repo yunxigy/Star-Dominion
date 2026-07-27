@@ -15,6 +15,7 @@ dependencies = [
 dev = ["pytest>=8,<9", "pytest-asyncio>=0.23,<1"]
 workers = [
   "akshare>=1.18,<2",
+  "mcp>=1.20,<2",
   "numpy>=1.24,<3",
   "pandas>=2,<3",
   "python-dotenv>=1,<2",
