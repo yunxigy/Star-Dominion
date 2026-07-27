@@ -26,7 +26,7 @@ import { MorningReportPanel } from "./components/MorningReportPanel";
 import { MorningNewspaper } from "./components/MorningNewspaper";
 import { QuickStockLookup } from "./components/QuickStockLookup";
 import { StrategyPanel } from "./components/StrategyPanel";
-import { StockDetailDrawer } from "./components/StockDetailDrawer";
+import { StockResearchModal } from "./components/StockResearchModal";
 import { WorkspaceHeader } from "./components/WorkspaceHeader";
 import type {
   AnalysisTask,
@@ -305,7 +305,7 @@ export default function App() {
         </main>
       )}
 
-      <StockDetailDrawer
+      <StockResearchModal
         symbol={detailSymbol}
         profiles={profiles}
         returnFocus={detailTrigger.current}

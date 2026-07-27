@@ -15,6 +15,7 @@ const mocks = vi.hoisted(() => ({
   pollXhsLogin: vi.fn(),
   loadMorningReportHistory: vi.fn(),
   loadMorningReport: vi.fn(),
+  loadStockKline: vi.fn(),
   loadStockResearchContext: vi.fn(),
   refreshMorningReport: vi.fn(),
   startCandidateRefresh: vi.fn(),
@@ -129,6 +130,39 @@ const researchContext = {
   catalyst: catalystCandidate,
 };
 
+const defaultKline = {
+  symbol: "000400",
+  name: "许继电气",
+  exchange: "SZSE" as const,
+  period: "daily" as const,
+  adjustment: "qfq" as const,
+  days: 60 as const,
+  source: "eastmoney" as const,
+  generated_at: "2026-07-22T15:05:00+08:00",
+  stale: false,
+  latest: {
+    trade_date: "2026-07-22",
+    price: 31.28,
+    change: 0.48,
+    change_pct: 1.56,
+    high: 31.6,
+    low: 30.72,
+    volume: 248000,
+  },
+  bars: Array.from({ length: 60 }, (_, index) => ({
+    date: `2026-07-${String((index % 28) + 1).padStart(2, "0")}`,
+    open: 25 + index / 10,
+    high: 25.6 + index / 10,
+    low: 24.8 + index / 10,
+    close: 25.4 + index / 10,
+    volume: 200000 + index,
+    change_pct: 1.1,
+    ma5: index >= 4 ? 25.2 + index / 10 : null,
+    ma10: index >= 9 ? 25 + index / 10 : null,
+    ma20: index >= 19 ? 24.5 + index / 10 : null,
+  })),
+};
+
 beforeEach(() => {
   mocks.loadCurrentMorningReport.mockResolvedValue(structuredClone(currentReport));
   mocks.loadMorningReportHistory.mockResolvedValue({
@@ -141,6 +175,16 @@ beforeEach(() => {
   mocks.loadMomIndexHistory.mockResolvedValue({ items: [] });
   mocks.loadXhsStatus.mockRejectedValue(new Error("需要管理员权限"));
   mocks.loadStockResearchContext.mockResolvedValue(structuredClone(researchContext));
+  mocks.loadStockKline.mockImplementation((symbol: string, days: 20 | 60 | 120 = 60) =>
+    Promise.resolve({
+      ...structuredClone(defaultKline),
+      symbol,
+      name: symbol === "000400" ? "许继电气" : symbol,
+      exchange: symbol.startsWith("6") ? "SSE" : "SZSE",
+      days,
+      bars: structuredClone(defaultKline.bars.slice(-Math.min(days, 60))),
+    }),
+  );
   mocks.loadProfileModels.mockResolvedValue([]);
 });
 
@@ -217,7 +261,8 @@ test("shows structured evidence before asking for a model", async () => {
 
   fireEvent.click(await screen.findByRole("button", { name: "查看 许继电气 详情" }));
 
-  expect(await screen.findByRole("dialog", { name: "股票研究详情" })).toBeInTheDocument();
+  expect(await screen.findByRole("dialog", { name: "股票研究详情" })).toHaveClass("stock-research-modal");
+  expect(mocks.loadStockKline).toHaveBeenCalledWith("000400", 60);
   expect(screen.getAllByText("海外电力资本开支映射").length).toBeGreaterThan(0);
   expect(screen.getByText("历史优势 73")).toBeInTheDocument();
   expect(screen.getByText("风险：解禁")).toBeInTheDocument();
@@ -225,7 +270,7 @@ test("shows structured evidence before asking for a model", async () => {
   expect(screen.getByRole("combobox", { name: "分析模型" })).toHaveValue("");
 });
 
-test("starts the existing analysis flow from the drawer", async () => {
+test("starts the existing analysis flow from the research modal", async () => {
   mocks.loadModelProfiles.mockResolvedValueOnce([{ id: "profile-1", scope: "personal", name: "测试硅基流动", provider: "siliconflow", base_url: "https://api.siliconflow.cn/v1", timeout_seconds: 120, enabled: true, key_configured: true, updated_at: "2026-07-22T08:00:00+08:00" }]);
   mocks.loadProfileModels.mockResolvedValueOnce(["qa/model"]);
   mocks.startAnalysis.mockResolvedValueOnce({ task_id: "analysis-1", symbol: "000400", profile_id: "profile-1", profile_name: "测试硅基流动", profile_scope: "personal", model: "qa/model", report_type: "detailed", force_refresh: false, state: "queued", progress_message: "等待分析", cache_hit: false, error_code: null, error_message: null, created_at: "2026-07-22T09:10:00+08:00", updated_at: "2026-07-22T09:10:00+08:00", started_at: null, finished_at: null });
@@ -241,7 +286,7 @@ test("starts the existing analysis flow from the drawer", async () => {
   expect(mocks.startAnalysis).toHaveBeenCalledWith(expect.objectContaining({ profile_id: "profile-1", model: "qa/model" }));
 });
 
-test("opens the same drawer for an arbitrary valid main-board code", async () => {
+test("opens the same research modal for an arbitrary valid main-board code", async () => {
   mocks.loadStockResearchContext.mockResolvedValueOnce({ symbol: "600519", name: "600519", exchange: "SSE", cross_hit: false, sources: [], catalyst: null });
   render(<App />);
 
@@ -252,7 +297,7 @@ test("opens the same drawer for an arbitrary valid main-board code", async () =>
   expect(screen.getAllByText("600519").length).toBeGreaterThan(0);
 });
 
-test("closes the drawer with Escape and restores trigger focus", async () => {
+test("closes the research modal with Escape and restores trigger focus", async () => {
   render(<App />);
   const trigger = await screen.findByRole("button", { name: "查看 海康威视 详情" });
   fireEvent.click(trigger);
