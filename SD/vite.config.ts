@@ -20,6 +20,11 @@ export default defineConfig({
         target: 'http://127.0.0.1:5175',
         changeOrigin: true,
       },
+      '/stock-api': {
+        target: 'http://127.0.0.1:8002',
+        changeOrigin: true,
+        rewrite: (path: string) => path.replace(/^\/stock-api/, ''),
+      },
       '/api': {
         target: 'http://localhost:8006',
         changeOrigin: true,

@@ -45,13 +45,18 @@ function withSiteSession(init?: RequestInit): RequestInit {
 function announceLoginRequired(): void {
   if (typeof window === "undefined") return;
   const next = `${window.location.pathname}${window.location.search}${window.location.hash}`;
-  const safeNext = next.startsWith("/") ? next : "/stock/";
-  const url = `/auth/login?next=${encodeURIComponent(safeNext)}`;
+  const url = buildSiteLoginUrl(next);
   const event = new CustomEvent<{ url: string }>(AUTH_REQUIRED_EVENT, {
     cancelable: true,
     detail: { url },
   });
   if (window.dispatchEvent(event)) window.location.assign(url);
+}
+
+export function buildSiteLoginUrl(next: string): string {
+  const safeNext = next.startsWith("/") ? next : "/stock/";
+  const siteUrl = (import.meta.env.VITE_SITE_URL ?? "").replace(/\/+$/, "");
+  return `${siteUrl}/auth/login?next=${encodeURIComponent(safeNext)}`;
 }
 
 async function readResponse<T>(

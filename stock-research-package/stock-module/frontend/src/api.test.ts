@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   AUTH_REQUIRED_EVENT,
+  buildSiteLoginUrl,
   loadCurrentMomIndex,
   loadMomIndexHistory,
   loadCurrentMorningReport,
@@ -187,5 +188,13 @@ describe("morning report API contracts", () => {
     expect(redirects).toEqual([
       "/auth/login?next=%2Fstock%2F%3Fsymbol%3D600519",
     ]);
+  });
+
+  it("uses the configured main-site origin for local login", () => {
+    vi.stubEnv("VITE_SITE_URL", "http://127.0.0.1:5173/");
+
+    expect(buildSiteLoginUrl("/stock/")).toBe(
+      "http://127.0.0.1:5173/auth/login?next=%2Fstock%2F",
+    );
   });
 });
