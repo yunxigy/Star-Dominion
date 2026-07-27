@@ -114,10 +114,12 @@ class EastmoneyKlineSource:
         self,
         akshare_module: Any | None = None,
         *,
+        proxy: str | None = None,
         fetch_json: FetchJson | None = None,
         today: Callable[[], date] | None = None,
     ) -> None:
         self._akshare = akshare_module
+        self._proxy = proxy
         self._fetch_json = fetch_json
         self._today = today or date.today
 
@@ -129,7 +131,7 @@ class EastmoneyKlineSource:
     def _request_direct(self, params: dict[str, Any]) -> Mapping[str, Any]:
         if self._fetch_json is not None:
             return self._fetch_json(EASTMONEY_KLINE_URL, params)
-        with httpx.Client(timeout=20) as client:
+        with httpx.Client(proxy=self._proxy, timeout=20, trust_env=False) as client:
             response = client.get(
                 EASTMONEY_KLINE_URL,
                 params=params,

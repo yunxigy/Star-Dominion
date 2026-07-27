@@ -211,3 +211,48 @@ def test_eastmoney_source_hides_raw_upstream_errors() -> None:
 
     assert "secret upstream response body" not in str(exc_info.value)
     assert "AKShare stack details" not in str(exc_info.value)
+
+
+def test_eastmoney_direct_client_uses_only_the_configured_proxy(monkeypatch) -> None:
+    captured: dict = {}
+
+    class FakeResponse:
+        def raise_for_status(self) -> None:
+            pass
+
+        def json(self) -> dict:
+            return {
+                "data": {
+                    "klines": [
+                        "2026-07-25,10.5,11,11.2,10.2,1200,120000,9,4.76,0.5,1.8"
+                    ]
+                }
+            }
+
+    class FakeClient:
+        def __init__(self, **kwargs) -> None:
+            captured["client_kwargs"] = kwargs
+
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *_args) -> None:
+            pass
+
+        def get(self, _url: str, **_kwargs) -> FakeResponse:
+            return FakeResponse()
+
+    monkeypatch.setattr("app.integrations.market_data.httpx.Client", FakeClient)
+    source = EastmoneyKlineSource(
+        FakeAkshare(frame=FakeFrame([])),
+        proxy="http://127.0.0.1:7890",
+    )
+
+    result = source.load("600519", minimum_bars=1)
+
+    assert result[-1].close == 11
+    assert captured["client_kwargs"] == {
+        "proxy": "http://127.0.0.1:7890",
+        "timeout": 20,
+        "trust_env": False,
+    }
