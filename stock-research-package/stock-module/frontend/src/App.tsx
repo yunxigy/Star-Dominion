@@ -2,12 +2,19 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import {
   loadCandidates,
+  loadCurrentMomIndex,
   loadCurrentMorningReport,
   loadModelProfiles,
+  loadMomIndexHistory,
+  loadMomRefreshTask,
   loadMorningReport,
   loadMorningReportHistory,
   loadRefreshTask,
+  loadXhsStatus,
+  pollXhsLogin,
+  refreshMomIndex,
   refreshMorningReport,
+  startXhsLogin,
 } from "./api";
 import { AnalysisReport } from "./components/AnalysisReport";
 import { CrossHitSummary } from "./components/CrossHitSummary";
@@ -25,6 +32,7 @@ import type {
   AnalysisTask,
   CandidateResponse,
   ModelProfile,
+  MomIndexSnapshot,
   MorningReport,
   MorningReportHistoryResponse,
 } from "./types";
@@ -43,6 +51,13 @@ export default function App() {
   const [morningHistory, setMorningHistory] = useState<MorningReportHistoryResponse>({ items: [] });
   const [candidates, setCandidates] = useState<CandidateResponse>(emptyCandidates);
   const [profiles, setProfiles] = useState<ModelProfile[]>([]);
+  const [momSnapshot, setMomSnapshot] = useState<MomIndexSnapshot | null>(null);
+  const [momHistory, setMomHistory] = useState<MomIndexSnapshot[]>([]);
+  const [momError, setMomError] = useState("");
+  const [momRefreshing, setMomRefreshing] = useState(false);
+  const [momAdmin, setMomAdmin] = useState(false);
+  const [xhsQrCode, setXhsQrCode] = useState("");
+  const [xhsLoginStatus, setXhsLoginStatus] = useState("");
   const [morningError, setMorningError] = useState("");
   const [candidateError, setCandidateError] = useState("");
   const [profileError, setProfileError] = useState("");
@@ -89,10 +104,33 @@ export default function App() {
     }
   }, []);
 
+  const reloadMomIndex = useCallback(async () => {
+    setMomError("");
+    const [current, history] = await Promise.allSettled([
+      loadCurrentMomIndex(),
+      loadMomIndexHistory(30),
+    ]);
+    if (current.status === "fulfilled") setMomSnapshot(current.value);
+    else setMomError(current.reason instanceof Error ? current.reason.message : "宝妈指数加载失败");
+    if (history.status === "fulfilled") setMomHistory(history.value.items);
+  }, []);
+
+  const detectMomAdmin = useCallback(async () => {
+    try {
+      const status = await loadXhsStatus(false);
+      setMomAdmin(true);
+      if (status.status === "authenticated") setXhsLoginStatus("小红书登录态正常");
+    } catch {
+      setMomAdmin(false);
+    }
+  }, []);
+
   useEffect(() => { void reloadMorning(); }, [reloadMorning]);
   useEffect(() => { void reloadCandidates(); }, [reloadCandidates]);
   useEffect(() => { void reloadHistory(); }, [reloadHistory]);
   useEffect(() => { void reloadProfiles(false); }, [reloadProfiles]);
+  useEffect(() => { void reloadMomIndex(); }, [reloadMomIndex]);
+  useEffect(() => { void detectMomAdmin(); }, [detectMomAdmin]);
 
   useEffect(() => {
     if (view.kind !== "newspaper") return;
@@ -127,6 +165,53 @@ export default function App() {
       setRefreshMessage((reason as Error).message);
     } finally {
       setRefreshing(false);
+    }
+  };
+
+  const refreshMom = async () => {
+    setMomRefreshing(true);
+    setXhsLoginStatus("正在采集东方财富和小红书真实数据…");
+    try {
+      let task = await refreshMomIndex();
+      for (let attempt = 0; attempt < 180 && ["queued", "running"].includes(task.status); attempt += 1) {
+        await new Promise((resolve) => window.setTimeout(resolve, 1000));
+        task = await loadMomRefreshTask(task.task_id);
+      }
+      if (["queued", "running"].includes(task.status)) throw new Error("宝妈指数刷新等待超时");
+      setXhsLoginStatus(task.message ?? (task.status === "succeeded" ? "宝妈指数刷新完成" : "宝妈指数刷新失败"));
+      if (task.status === "succeeded" || task.status === "partial") await reloadMomIndex();
+    } catch (reason) {
+      setXhsLoginStatus((reason as Error).message);
+    } finally {
+      setMomRefreshing(false);
+    }
+  };
+
+  const loginXhs = async () => {
+    setXhsLoginStatus("正在生成小红书登录二维码…");
+    setXhsQrCode("");
+    try {
+      let session = await startXhsLogin();
+      const qrCode = session.qr_code ?? session.qrCode ?? session.qrCodeUrl ?? "";
+      const sessionId = session.session_id ?? session.sessionId;
+      setXhsQrCode(qrCode);
+      setXhsLoginStatus(qrCode ? "请使用小红书扫码" : session.message ?? "等待小红书登录");
+      if (!sessionId) return;
+      for (let attempt = 0; attempt < 120; attempt += 1) {
+        await new Promise((resolve) => window.setTimeout(resolve, 1500));
+        session = await pollXhsLogin(sessionId);
+        if (["succeeded", "authenticated", "success"].includes(session.status ?? "")) {
+          setXhsQrCode("");
+          setXhsLoginStatus("小红书登录成功，可以刷新宝妈指数");
+          return;
+        }
+        if (["failed", "expired", "error"].includes(session.status ?? "")) {
+          throw new Error(session.message ?? "小红书登录失败或二维码已过期");
+        }
+      }
+      throw new Error("小红书扫码登录等待超时");
+    } catch (reason) {
+      setXhsLoginStatus((reason as Error).message);
     }
   };
 
@@ -202,7 +287,18 @@ export default function App() {
               onOpenReport={openNewspaper}
             />
           </div>
-          <MomIndexPanel />
+          <MomIndexPanel
+            snapshot={momSnapshot}
+            history={momHistory}
+            error={momError}
+            admin={momAdmin ? {
+              refreshing: momRefreshing,
+              onRefresh: () => void refreshMom(),
+              onLogin: () => void loginXhs(),
+              loginStatus: xhsLoginStatus,
+              qrCode: xhsQrCode,
+            } : undefined}
+          />
           <footer className="research-footer">本模块仅用于研究，不构成投资建议 · 仅覆盖 A 股主板</footer>
         </main>
       )}

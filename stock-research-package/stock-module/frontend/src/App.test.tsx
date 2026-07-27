@@ -6,6 +6,13 @@ import App from "./App";
 const mocks = vi.hoisted(() => ({
   loadCandidates: vi.fn(),
   loadCurrentMorningReport: vi.fn(),
+  loadCurrentMomIndex: vi.fn(),
+  loadMomIndexHistory: vi.fn(),
+  refreshMomIndex: vi.fn(),
+  loadMomRefreshTask: vi.fn(),
+  loadXhsStatus: vi.fn(),
+  startXhsLogin: vi.fn(),
+  pollXhsLogin: vi.fn(),
   loadMorningReportHistory: vi.fn(),
   loadMorningReport: vi.fn(),
   loadStockResearchContext: vi.fn(),
@@ -130,6 +137,9 @@ beforeEach(() => {
   mocks.loadMorningReport.mockResolvedValue(structuredClone(fullReport));
   mocks.loadCandidates.mockResolvedValue(structuredClone(candidateCollection));
   mocks.loadModelProfiles.mockResolvedValue([]);
+  mocks.loadCurrentMomIndex.mockRejectedValue(new Error("暂无真实宝妈指数"));
+  mocks.loadMomIndexHistory.mockResolvedValue({ items: [] });
+  mocks.loadXhsStatus.mockRejectedValue(new Error("需要管理员权限"));
   mocks.loadStockResearchContext.mockResolvedValue(structuredClone(researchContext));
   mocks.loadProfileModels.mockResolvedValue([]);
 });

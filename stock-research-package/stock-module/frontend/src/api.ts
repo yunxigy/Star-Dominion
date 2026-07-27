@@ -5,10 +5,13 @@ import type {
   CandidateResponse,
   ModelProfile,
   ModelProfileCreate,
+  MomIndexHistoryResponse,
+  MomIndexSnapshot,
   MorningReport,
   MorningReportHistoryResponse,
   RefreshTask,
   StockResearchContext,
+  XhsLoginResponse,
 } from "./types";
 
 export class PublicApiError extends Error {
@@ -133,6 +136,52 @@ export const loadRefreshTask = (taskId: string) =>
   request<RefreshTask>(
     `/stock-api/api/v1/candidates/refresh/${encodeURIComponent(taskId)}`,
     "候选股刷新状态加载失败",
+  );
+
+export const loadCurrentMomIndex = () =>
+  request<MomIndexSnapshot>(
+    "/stock-api/api/v1/mom-index/current",
+    "宝妈指数加载失败",
+  );
+
+export const loadMomIndexHistory = (limit = 30) =>
+  request<MomIndexHistoryResponse>(
+    `/stock-api/api/v1/mom-index/history?limit=${Math.min(100, Math.max(1, limit))}`,
+    "宝妈指数历史加载失败",
+  );
+
+export const refreshMomIndex = () =>
+  request<RefreshTask>(
+    "/stock-api/api/v1/mom-index/refresh",
+    "宝妈指数刷新任务创建失败",
+    { method: "POST" },
+  );
+
+export const loadMomRefreshTask = (taskId: string) =>
+  request<RefreshTask>(
+    `/stock-api/api/v1/mom-index/refresh/${encodeURIComponent(taskId)}`,
+    "宝妈指数刷新状态加载失败",
+  );
+
+export const loadXhsStatus = (redirectUnauthorized = true) =>
+  request<XhsLoginResponse>(
+    "/stock-api/api/v1/mom-index/xhs/status",
+    "小红书登录状态加载失败",
+    undefined,
+    redirectUnauthorized,
+  );
+
+export const startXhsLogin = () =>
+  request<XhsLoginResponse>(
+    "/stock-api/api/v1/mom-index/xhs/login",
+    "小红书扫码登录启动失败",
+    { method: "POST" },
+  );
+
+export const pollXhsLogin = (sessionId: string) =>
+  request<XhsLoginResponse>(
+    `/stock-api/api/v1/mom-index/xhs/login/${encodeURIComponent(sessionId)}`,
+    "小红书登录状态检查失败",
   );
 
 export async function loadModelProfiles(redirectUnauthorized = true): Promise<ModelProfile[]> {

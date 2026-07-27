@@ -28,12 +28,71 @@ export type CandidateSourceStatus = {
   error: string | null;
 };
 
-export type RefreshTaskStatus = "queued" | "running" | "succeeded" | "partial" | "failed";
+export type RefreshTaskStatus = "queued" | "running" | "succeeded" | "partial" | "failed" | "skipped";
 
 export type RefreshTask = {
   task_id: string;
   status: RefreshTaskStatus;
   message: string | null;
+};
+
+export type MomPostEvidence = {
+  platform: "eastmoney" | "xiaohongshu";
+  platform_id: string;
+  title: string;
+  url: string | null;
+  published_at: string | null;
+  collected_at: string;
+  reasoning: string;
+  intent: "buy" | "sell" | "neutral";
+};
+
+export type MomSourceStatus = {
+  source_id: "eastmoney" | "xiaohongshu";
+  status: "ok" | "error" | "login_required" | "risk_controlled";
+  collected_at: string;
+  post_count: number;
+  message: string | null;
+};
+
+export type MomSectorIndex = {
+  sector_id: "nasdaq" | "gold" | "cpo" | "semiconductor";
+  name: string;
+  index: number;
+  buy_index: number;
+  sell_index: number;
+  total_posts: number;
+  valid_posts: number;
+  newbie_posts: number;
+  newbie_ratio: number;
+  buy_count: number;
+  sell_count: number;
+  risk_level: "cold" | "normal" | "warming" | "warning" | "extreme";
+  interpretation: string;
+  top_posts: MomPostEvidence[];
+};
+
+export type MomIndexSnapshot = {
+  snapshot_date: string;
+  generated_at: string;
+  completeness: "complete" | "partial";
+  sectors: Record<string, MomSectorIndex>;
+  sources: MomSourceStatus[];
+  stale: boolean;
+};
+
+export type MomIndexHistoryResponse = {
+  items: MomIndexSnapshot[];
+};
+
+export type XhsLoginResponse = {
+  session_id?: string;
+  sessionId?: string;
+  qr_code?: string;
+  qrCode?: string;
+  qrCodeUrl?: string;
+  status?: string;
+  message?: string;
 };
 
 export type ImportantNewsItem = {

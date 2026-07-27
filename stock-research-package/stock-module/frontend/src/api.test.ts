@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import {
   AUTH_REQUIRED_EVENT,
+  loadCurrentMomIndex,
+  loadMomIndexHistory,
   loadCurrentMorningReport,
   loadMorningReportHistory,
   loadStockResearchContext,
@@ -120,6 +122,26 @@ describe("morning report API contracts", () => {
 
     expect(fetch).toHaveBeenCalledWith(
       "/stock-api/api/v1/stocks/600519/research-context",
+      expect.objectContaining({ credentials: "include" }),
+    );
+  });
+
+  it("loads the current mom index and bounded history from public endpoints", async () => {
+    vi.mocked(fetch)
+      .mockResolvedValueOnce(Response.json({ snapshot_date: "2026-07-27" }))
+      .mockResolvedValueOnce(Response.json({ items: [] }));
+
+    await loadCurrentMomIndex();
+    await loadMomIndexHistory(30);
+
+    expect(fetch).toHaveBeenNthCalledWith(
+      1,
+      "/stock-api/api/v1/mom-index/current",
+      expect.objectContaining({ credentials: "include" }),
+    );
+    expect(fetch).toHaveBeenNthCalledWith(
+      2,
+      "/stock-api/api/v1/mom-index/history?limit=30",
       expect.objectContaining({ credentials: "include" }),
     );
   });
