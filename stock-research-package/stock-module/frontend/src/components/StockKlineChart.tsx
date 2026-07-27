@@ -37,6 +37,12 @@ function formatVolume(value: number) {
   return value.toLocaleString("zh-CN");
 }
 
+function formatChangePercent(value: number | null) {
+  if (value == null) return "--";
+  const sign = value > 0 ? "+" : "";
+  return `${sign}${value.toFixed(2)}%`;
+}
+
 
 function priceY(value: number, minimum: number, range: number) {
   return PRICE_BOTTOM - ((value - minimum) / range) * (PRICE_BOTTOM - PRICE_TOP);
@@ -71,6 +77,7 @@ function barLabel(bar: KlineBar) {
     `最高 ${formatPrice(bar.high)}`,
     `最低 ${formatPrice(bar.low)}`,
     `收盘 ${formatPrice(bar.close)}`,
+    `涨跌 ${formatChangePercent(bar.change_pct)}`,
     `成交量 ${formatVolume(bar.volume)}`,
   ].join("，");
 }
@@ -193,6 +200,7 @@ export function StockKlineChart({ kline }: StockKlineChartProps) {
         <span>高 {formatPrice(activeBar.high)}</span>
         <span>低 {formatPrice(activeBar.low)}</span>
         <span>收 {formatPrice(activeBar.close)}</span>
+        <span>涨跌 {formatChangePercent(activeBar.change_pct)}</span>
         <span>量 {formatVolume(activeBar.volume)}</span>
       </div>
     </section>

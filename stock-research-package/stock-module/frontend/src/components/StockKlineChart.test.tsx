@@ -65,7 +65,7 @@ it("renders the quote summary with price, movement, range, volume, time and stal
   expect(screen.getByText("1,480.00")).toBeInTheDocument();
   expect(screen.getByText("123.46万")).toBeInTheDocument();
   expect(screen.getByText("2026-07-25")).toBeInTheDocument();
-  expect(screen.getByText("数据可能已过期")).toBeInTheDocument();
+  expect(screen.getByText("最近缓存")).toBeInTheDocument();
 });
 
 
@@ -88,12 +88,28 @@ it("shows complete bar details when a keyboard user focuses a data point", () =>
 
   fireEvent.focus(screen.getByRole("button", { name: /2026-07-25/ }));
 
+  expect(screen.getByRole("button", { name: /2026-07-25.*涨跌 \+0\.84%/ })).toBeInTheDocument();
   expect(screen.getByText("2026-07-25", { selector: ".kline-detail-date" })).toBeInTheDocument();
   expect(screen.getByText(/开 1,490\.00/)).toBeInTheDocument();
   expect(screen.getByText(/高 1,512\.00/)).toBeInTheDocument();
   expect(screen.getByText(/低 1,480\.00/)).toBeInTheDocument();
   expect(screen.getByText(/收 1,501\.25/)).toBeInTheDocument();
   expect(screen.getByText(/量 123\.46万/)).toBeInTheDocument();
+  expect(screen.getByText("涨跌 +0.84%")).toBeInTheDocument();
+});
+
+
+it("formats a negative percentage with one minus sign and describes fresh data conservatively", () => {
+  const fresh = { ...kline, stale: false };
+  const { rerender } = render(<StockKlineChart kline={fresh} />);
+
+  fireEvent.focus(screen.getByRole("button", { name: /2026-07-24/ }));
+  expect(screen.getByText("涨跌 -0.75%")).toBeInTheDocument();
+  expect(screen.queryByText(/--0\.75%/)).not.toBeInTheDocument();
+
+  rerender(<StockQuoteSummary kline={fresh} />);
+  expect(screen.getByText("东方财富真实日线")).toBeInTheDocument();
+  expect(screen.queryByText(/实时/)).not.toBeInTheDocument();
 });
 
 
