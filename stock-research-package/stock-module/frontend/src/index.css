@@ -298,6 +298,46 @@ button { border: 0; border-radius: 8px; font-weight: 600; }
 .analysis-control-actions .primary-button { margin-left: auto; }
 .analysis-launcher { display: grid; gap: 14px; }
 
+.stock-quote-summary { display: grid; grid-template-columns: minmax(180px, .8fr) minmax(360px, 1.4fr); gap: 16px 26px; padding: 18px 20px; border: 1px solid var(--green-line); border-radius: 12px; background: #f7faf8; }
+.stock-quote-primary { display: grid; align-content: center; grid-template-columns: auto 1fr; gap: 3px 10px; }
+.stock-quote-primary > span { grid-column: 1 / -1; color: var(--muted); font-size: 12px; }
+.stock-quote-primary > strong { color: var(--ink); font-family: "Noto Serif SC", serif; font-size: 31px; line-height: 1; }
+.stock-quote-primary > em { align-self: end; font-size: 14px; font-style: normal; font-weight: 700; }
+.stock-quote-primary .up, .stock-quote-primary .down { color: #b54539; }
+.stock-quote-primary .down { color: #24815d; }
+.stock-quote-metrics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 0; }
+.stock-quote-metrics div { display: grid; align-content: center; gap: 4px; }
+.stock-quote-metrics dt { color: var(--muted); font-size: 12px; }
+.stock-quote-metrics dd { margin: 0; font-size: 15px; font-weight: 700; }
+.stock-quote-freshness { grid-column: 1 / -1; display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px; padding-top: 10px; border-top: 1px solid var(--green-line); color: var(--muted); font-size: 12px; }
+.stock-quote-freshness strong { color: #8f5a24; }
+
+.stock-kline-chart { overflow: hidden; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
+.kline-legend { display: flex; flex-wrap: wrap; gap: 13px; padding: 11px 16px 0; color: var(--muted); font-size: 12px; }
+.kline-legend span::before { content: ""; display: inline-block; width: 14px; height: 2px; margin: 0 5px 3px 0; background: #9ba39e; }
+.kline-legend .ma5::before { background: #d59a2e; }
+.kline-legend .ma10::before { background: #467fb2; }
+.kline-legend .ma20::before { background: #8a62a5; }
+.kline-svg-scroll { width: 100%; overflow-x: auto; }
+.kline-svg-scroll svg { display: block; width: 100%; min-width: 620px; height: auto; }
+.kline-grid line { stroke: #eceee9; stroke-width: 1; }
+.kline-grid text, .kline-axis-label { fill: #7a8580; font-size: 10px; text-anchor: end; }
+.kline-wick { stroke-width: 1.2; vector-effect: non-scaling-stroke; }
+.kline-wick.up, .kline-candle.up, .kline-volume-bar.up { stroke: #b54539; fill: #b54539; }
+.kline-wick.down, .kline-candle.down, .kline-volume-bar.down { stroke: #24815d; fill: #24815d; }
+.kline-volume-bar { opacity: .55; }
+.kline-ma-line { fill: none; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5; vector-effect: non-scaling-stroke; pointer-events: none; }
+.kline-ma-line.ma5 { stroke: #d59a2e; }
+.kline-ma-line.ma10 { stroke: #467fb2; }
+.kline-ma-line.ma20 { stroke: #8a62a5; }
+.kline-volume-axis { stroke: #dfe2dc; stroke-width: 1; }
+.kline-hit-target { fill: transparent; cursor: crosshair; }
+.kline-hit-target:hover, .kline-hit-target:focus { fill: rgba(31, 92, 73, .07); outline: none; }
+.kline-hit-target:focus { stroke: var(--green); stroke-width: 2; }
+.kline-bar-detail { display: flex; flex-wrap: wrap; gap: 8px 18px; min-height: 42px; padding: 11px 16px; border-top: 1px solid var(--line); color: #53625b; font-size: 13px; }
+.kline-bar-detail strong { color: var(--ink); }
+.kline-empty { display: grid; min-height: 220px; place-items: center; border: 1px dashed var(--line); border-radius: 12px; color: var(--muted); background: #f7f8f5; }
+
 @media (max-width: 1040px) {
   .primary-workbench-grid, .evidence-grid { grid-template-columns: 1fr; }
   .theme-strip { grid-template-columns: repeat(2, 1fr); }
@@ -346,6 +386,9 @@ button { border: 0; border-radius: 8px; font-weight: 600; }
   .settings-panel { padding: 20px; }
   .stock-drawer { width: 100%; padding: 20px; }
   .analysis-control-actions .primary-button { width: 100%; margin-left: 0; }
+  .stock-quote-summary { grid-template-columns: 1fr; }
+  .stock-quote-metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stock-quote-freshness { grid-column: auto; }
   button, input, select { min-height: 44px; }
   .newspaper-page { width: calc(100% - 20px); }
   .newspaper-masthead, .newspaper-lead, .newspaper-section, .newspaper-footer { padding-left: 18px; padding-right: 18px; }
