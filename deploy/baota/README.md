@@ -32,14 +32,32 @@ python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().d
 
 硅基流动等平台模型配置可以不填。系统不会自动选默认来源：每次分析由用户选择“个人配置”或后台提供的平台配置。
 
+宝妈指数需要 Node.js/npm 可供股票后端进程调用，并使用固定只读采集器：
+
+```bash
+STOCK_XHS_MCP_COMMAND="npx -y @sillyl12324/xhs-mcp@2.7.0"
+STOCK_XHS_DATA_DIR="<SITE_ROOT>/stock-research-package/stock-module/data/xhs-mcp"
+STOCK_MOM_REFRESH_TIME="08:30"
+STOCK_TIMEZONE="Asia/Shanghai"
+```
+
+`STOCK_XHS_DATA_DIR` 含小红书登录态，必须只允许运行用户读写，禁止放入 Nginx 静态目录或备份到公开位置。首次上线由管理员在股票页面扫码登录；之后系统每天 08:30 自动采集东方财富和小红书，管理员也可手动刷新。若部署多进程，SQLite 租约会阻止同一时刻重复采集。
+
 ## 3. 安装与构建
 
-在各 Python 项目中使用独立虚拟环境安装对应 `requirements.txt` 或 `pyproject.toml`。前端构建：
+在各 Python 项目中使用独立虚拟环境安装对应 `requirements.txt` 或 `pyproject.toml`。股票后端必须安装 `workers` 可选依赖（包含 AKShare、APScheduler、MCP 客户端），并确保 Node.js/npm 已安装。前端构建：
 
 ```bash
 cd <SITE_ROOT>/SD && npm ci && npm run build
 cd <SITE_ROOT>/Openwrite-main/frontend && npm ci && npm run build
 cd <SITE_ROOT>/stock-research-package/stock-module/frontend && npm ci && npm run build
+```
+
+```bash
+cd <SITE_ROOT>/stock-research-package/stock-module/backend
+<PYTHON> -m pip install -e ".[workers]"
+node --version
+npx --version
 ```
 
 构建 SD 前必须把 `VITE_AMAP_KEY` 与 `VITE_AMAP_SECURITY_CODE` 放入构建进程环境。它们会进入浏览器资源，应在高德控制台绑定正式域名。
@@ -90,5 +108,7 @@ cd <SITE_ROOT>/site-auth
 5. `POST /plagiarism-api/api/plagiarism/compare` 接受 `file1`、`file2`，单文件超过 10 MiB 返回 413。
 6. `/stm32/api/ws` 可升级 WebSocket，8008 仅允许设备白名单访问。
 7. 浏览器 Cookie 中 `sd_session` 为 HttpOnly、Secure，修改类请求携带 `X-CSRF-Token`。
+8. 股票目录能按代码、名称和拼音首字母搜索；管理员可刷新目录。
+9. 宝妈指数历史接口可读；管理员扫码登录小红书后可手动刷新，东方财富或小红书单源失败时页面明确显示部分可用。
 
 验收失败时先恢复上一版进程与 Nginx 配置，再恢复部署前数据库备份。线上验收全部通过后，才能更新根目录 README 的“已上线”状态。

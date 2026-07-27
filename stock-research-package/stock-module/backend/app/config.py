@@ -31,7 +31,7 @@ class Settings:
     allow_private_model_endpoints: bool = False
     xhs_data_dir: Path | None = None
     xhs_mcp_command: tuple[str, ...] = (
-        "npx.cmd",
+        "npx.cmd" if os.name == "nt" else "npx",
         "-y",
         "@sillyl12324/xhs-mcp@2.7.0",
     )
@@ -80,9 +80,10 @@ class Settings:
                 secret_dir / "route-signing.key"
             )
         platform_model_profiles = _platform_profiles_from_env()
+        default_xhs_executable = "npx.cmd" if os.name == "nt" else "npx"
         xhs_command_text = os.environ.get(
             "STOCK_XHS_MCP_COMMAND",
-            "npx.cmd -y @sillyl12324/xhs-mcp@2.7.0",
+            f"{default_xhs_executable} -y @sillyl12324/xhs-mcp@2.7.0",
         )
         catalyst_command = _worker_command_from_env(
             "CATALYST_WORKER_COMMAND_JSON",
@@ -153,7 +154,7 @@ class Settings:
             xhs_data_dir=Path(
                 os.environ.get("STOCK_XHS_DATA_DIR", data_dir / "xhs-mcp")
             ),
-            xhs_mcp_command=tuple(shlex.split(xhs_command_text, posix=False)),
+            xhs_mcp_command=tuple(shlex.split(xhs_command_text, posix=os.name != "nt")),
             market_proxy=os.environ.get("STOCK_MARKET_PROXY") or None,
             mom_refresh_time=os.environ.get("STOCK_MOM_REFRESH_TIME", "08:30"),
             timezone_name=os.environ.get("STOCK_TIMEZONE", "Asia/Shanghai"),

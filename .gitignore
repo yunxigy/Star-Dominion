@@ -50,6 +50,7 @@ logs/
 # 守岸人数据目录（含 API Key）
 守岸人3.0/data/
 site-auth/data/
+stock-research-package/stock-module/data/
 
 # SillyTavern（第三方项目，不提交）
 SillyTavern/

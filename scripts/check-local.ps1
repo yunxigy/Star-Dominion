@@ -60,6 +60,8 @@ foreach ($port in 8000..8008) { Report "port $port" (Test-Port $port) }
 Test-Http 'site-auth health' 'http://127.0.0.1:8000/health' 200 | Out-Null
 Test-Http 'Openwrite health' 'http://127.0.0.1:8001/health' 200 | Out-Null
 Test-Http 'stock public health' 'http://127.0.0.1:8002/api/v1/health' 200 | Out-Null
+Test-Http 'stock directory search' 'http://127.0.0.1:8002/api/v1/stocks/search?q=600' 200 | Out-Null
+Test-Http 'mom index history' 'http://127.0.0.1:8002/api/v1/mom-index/history?limit=1' 200 | Out-Null
 Test-Http 'stock analysis health' 'http://127.0.0.1:8003/api/v1/health' 200 | Out-Null
 Test-Http 'plagiarism health' 'http://127.0.0.1:8005/api/plagiarism/health' 200 | Out-Null
 Test-Http 'ShouAnRen health' 'http://127.0.0.1:8006/api/health' 200 | Out-Null

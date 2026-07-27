@@ -105,6 +105,13 @@ function Start-ManagedService($Service) {
 
 Import-LocalEnvironment
 New-Item -ItemType Directory -Force -Path $runtimeRoot, $logRoot | Out-Null
+if ([string]::IsNullOrWhiteSpace($env:STOCK_XHS_MCP_COMMAND)) {
+    $env:STOCK_XHS_MCP_COMMAND = 'npx.cmd -y @sillyl12324/xhs-mcp@2.7.0'
+}
+if ([string]::IsNullOrWhiteSpace($env:STOCK_XHS_DATA_DIR)) {
+    $env:STOCK_XHS_DATA_DIR = Join-Path $workspaceRoot 'stock-research-package\stock-module\data\xhs-mcp'
+}
+New-Item -ItemType Directory -Force -Path $env:STOCK_XHS_DATA_DIR | Out-Null
 $shouDirectory = Get-ChildItem -LiteralPath $workspaceRoot -Directory |
     Where-Object { Test-Path -LiteralPath (Join-Path $_.FullName 'server\middleware\site_auth_client.py') } |
     Select-Object -First 1 -ExpandProperty FullName
