@@ -27,6 +27,10 @@ class FakeWorker:
     def run(self) -> WorkerResult:
         return self.result
 
+    @property
+    def source_name(self) -> str:
+        return self.result.source_name
+
 
 class FakeCandidateService:
     def __init__(self, collection: CandidateCollection) -> None:
@@ -141,6 +145,31 @@ def test_morning_report_failure_with_usable_candidates_is_partial(tmp_path: Path
     executor.run_pending()
 
     assert coordinator.get(task.task_id).status == "partial"  # type: ignore[union-attr]
+
+
+def test_persists_current_worker_message_while_refresh_is_running(tmp_path: Path) -> None:
+    repository = RefreshTaskRepository(tmp_path / "hub.db")
+    executor = ManualExecutor()
+    observed_messages: list[str | None] = []
+    task_id = ""
+
+    class InspectingWorker(FakeWorker):
+        def run(self) -> WorkerResult:
+            observed_messages.append(repository.get(task_id).message)  # type: ignore[union-attr]
+            return super().run()
+
+    worker = InspectingWorker(_worker("succeeded").result)
+    coordinator = CandidateRefreshCoordinator(
+        repository,
+        FakeCandidateService(_collection("ok")),
+        [worker],
+        executor=executor,
+    )
+    task_id = coordinator.start().task_id
+
+    executor.run_pending()
+
+    assert observed_messages == ["正在运行 九点猫研（1/1）"]
 
 
 def _worker(status: str) -> FakeWorker:

@@ -48,6 +48,10 @@ class SubprocessCandidateWorker:
     def source_id(self) -> str:
         return self.command.source_id
 
+    @property
+    def source_name(self) -> str:
+        return self.command.source_name
+
     def run(self) -> WorkerResult:
         started = monotonic()
         try:

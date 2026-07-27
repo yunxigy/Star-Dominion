@@ -150,8 +150,10 @@ export default function App() {
     setRefreshMessage("正在刷新九点猫研与个人策略…");
     try {
       let task = await refreshMorningReport();
+      if (task.message) setRefreshMessage(task.message);
       for (let attempt = 0; attempt < 180 && ["queued", "running"].includes(task.status); attempt += 1) {
         task = await loadRefreshTask(task.task_id);
+        if (task.message) setRefreshMessage(task.message);
         if (["queued", "running"].includes(task.status)) {
           await new Promise((resolve) => window.setTimeout(resolve, 1000));
         }

@@ -10,6 +10,9 @@ from app.services.candidate_refresh import CandidateCollection
 
 
 class CandidateWorker(Protocol):
+    @property
+    def source_name(self) -> str: ...
+
     def run(self) -> WorkerResult: ...
 
 
@@ -55,13 +58,22 @@ class CandidateRefreshCoordinator:
         self._repository.save(task)
 
         try:
-            worker_results = [worker.run() for worker in self._workers]
+            worker_results = []
+            worker_count = len(self._workers)
+            for index, worker in enumerate(self._workers, start=1):
+                task.message = f"正在运行 {worker.source_name}（{index}/{worker_count}）"
+                self._repository.save(task)
+                worker_results.append(worker.run())
             morning_report_failed = False
             if self._morning_report_service is not None:
+                task.message = "正在整理九点猫研晨报"
+                self._repository.save(task)
                 try:
                     self._morning_report_service.refresh()
                 except Exception:
                     morning_report_failed = True
+            task.message = "正在导入候选结果"
+            self._repository.save(task)
             collection = self._candidate_service.refresh()
             usable = any(status.status in {"ok", "stale"} for status in collection.sources)
             has_issues = (

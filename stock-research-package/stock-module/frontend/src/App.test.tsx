@@ -281,3 +281,17 @@ test("keeps 宝妈指数 independent from candidate scores", async () => {
   expect(await screen.findByRole("heading", { name: "宝妈指数" })).toBeInTheDocument();
   expect(screen.getAllByText("不参与候选排序").length).toBeGreaterThan(0);
 });
+
+test("shows live refresh step while a worker is still running", async () => {
+  mocks.refreshMorningReport.mockResolvedValueOnce({
+    task_id: "refresh-live",
+    status: "running",
+    message: "正在运行 九点猫研（1/2）",
+  });
+  mocks.loadRefreshTask.mockImplementationOnce(() => new Promise(() => undefined));
+  render(<App />);
+
+  fireEvent.click(await screen.findByRole("button", { name: "运行九点猫研" }));
+
+  expect(await screen.findByText("正在运行 九点猫研（1/2）")).toBeInTheDocument();
+});
