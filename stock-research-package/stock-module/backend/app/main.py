@@ -28,6 +28,7 @@ from app.domain.morning_reports import (
     MorningReportHistoryResponse,
     StockResearchContext,
 )
+from app.domain.market_data import KlineUnavailable, StockKline
 from app.domain.mom_index import MomIndexHistoryResponse, MomIndexSnapshot
 from app.domain.stocks import InvalidMainBoardSymbol
 from app.integrations.candidate_sources import CatalystReportSource, UserStrategySnapshotSource
@@ -35,6 +36,7 @@ from app.integrations.catalyst_reports import CatalystMorningReportAdapter
 from app.integrations.candidate_workers import SubprocessCandidateWorker
 from app.integrations.individual_analysis import IndividualAnalysisClient
 from app.integrations.mom_sources import EastmoneyMomSource, XiaohongshuMomSource
+from app.integrations.market_data import EastmoneyKlineSource
 from app.integrations.model_providers import ModelProviderError, OpenAICompatibleProviderClient
 from app.integrations.stock_directory_sources import AkshareStockDirectorySource
 from app.integrations.xhs_mcp import XhsMcpClient
@@ -44,6 +46,7 @@ from app.repositories.morning_reports import MorningReportRepository
 from app.repositories.refresh_tasks import RefreshTaskRepository
 from app.repositories.model_profiles import ModelProfileRepository
 from app.repositories.job_leases import JobLeaseRepository
+from app.repositories.kline_cache import KlineRepository
 from app.repositories.mom_index import MomIndexRepository
 from app.repositories.stock_directory import StockDirectoryRepository
 from app.security.network_policy import UnsafeModelEndpoint
@@ -55,6 +58,7 @@ from app.services.candidate_refresh import CandidateRefreshService
 from app.services.refresh_coordinator import CandidateRefreshCoordinator
 from app.services.model_profiles import ModelProfileNotFound, ModelProfileService
 from app.services.morning_reports import MorningReportService, MorningReportUnavailable
+from app.services.kline import KlineService
 from app.services.mom_index import MomIndexService
 from app.services.scheduled_jobs import BackgroundOperationCoordinator, build_scheduler
 from app.services.stock_directory import StockDirectory
@@ -73,6 +77,7 @@ def create_app(
     site_auth_client: SiteAuthClient | None = None,
     stock_directory=None,
     stock_directory_refresh_service=None,
+    kline_service=None,
     mom_index_service=None,
     mom_refresh_coordinator=None,
     xhs_login_service=None,
@@ -85,6 +90,11 @@ def create_app(
     directory_refresher = stock_directory_refresh_service or StockDirectoryRefreshService(
         stock_repository,
         AkshareStockDirectorySource(),
+    )
+    klines = kline_service or KlineService(
+        KlineRepository(database_path),
+        EastmoneyKlineSource(proxy=configured.market_proxy),
+        directory=directory,
     )
     leases = JobLeaseRepository(database_path)
 
@@ -247,6 +257,38 @@ def create_app(
             raise HTTPException(
                 status_code=422,
                 detail={"code": "MAIN_BOARD_ONLY", "message": str(exc)},
+            ) from exc
+
+    @application.get(
+        "/api/v1/stocks/{symbol}/kline",
+        response_model=StockKline,
+    )
+    def stock_kline(
+        symbol: str,
+        days: int = Query(default=60),
+    ) -> StockKline:
+        if days not in (20, 60, 120):
+            raise HTTPException(
+                status_code=422,
+                detail={
+                    "code": "INVALID_KLINE_DAYS",
+                    "message": "K线周期仅支持 20、60 或 120 个交易日",
+                },
+            )
+        try:
+            return klines.get(symbol, days=days)
+        except InvalidMainBoardSymbol as exc:
+            raise HTTPException(
+                status_code=422,
+                detail={"code": "MAIN_BOARD_ONLY", "message": str(exc)},
+            ) from exc
+        except KlineUnavailable as exc:
+            raise HTTPException(
+                status_code=503,
+                detail={
+                    "code": "KLINE_UNAVAILABLE",
+                    "message": "当前真实行情暂不可用",
+                },
             ) from exc
 
     @application.get("/api/v1/candidates")
