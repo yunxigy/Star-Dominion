@@ -1,6 +1,12 @@
+from datetime import date
+from pathlib import Path
+
+import pandas as pd
+
 from workers.ths_hot_concepts import (
     ConceptMember,
     ConceptSnapshot,
+    collect_ths_hot_stock_pool,
     parse_concept_detail,
     parse_fund_flow_page,
     rank_stock_concepts,
@@ -80,6 +86,105 @@ def test_rank_stock_concepts_uses_name_as_stable_tiebreaker() -> None:
     ]
 
     assert rank_stock_concepts("600001", snapshots, limit=3) == ["A概念", "B概念"]
+
+
+def test_collect_ths_pool_uses_headers_limits_boards_and_reuses_daily_cache(tmp_path: Path) -> None:
+    calls: list[tuple[str, dict[str, str]]] = []
+
+    class FakeAkshare:
+        def stock_board_concept_name_ths(self) -> pd.DataFrame:
+            return pd.DataFrame([{"name": "机器人", "code": "301024"}])
+
+    def fake_get(url: str, **kwargs: object) -> FakeResponse:
+        headers = dict(kwargs.get("headers", {}))
+        calls.append((url, headers))
+        if "funds/gnzjl" in url:
+            return FakeResponse(FUND_FLOW_HTML)
+        return FakeResponse(DETAIL_HTML)
+
+    cache_path = tmp_path / "ths-concepts.json"
+    pool = collect_ths_hot_stock_pool(
+        FakeAkshare(),
+        top_concepts=1,
+        max_stocks=10,
+        cache_path=cache_path,
+        http_get=fake_get,
+        today=date(2026, 7, 28),
+    )
+
+    assert pool["600001"].concepts == ["机器人"]
+    assert len(calls) == 2
+    assert calls[0][1]["X-Requested-With"] == "XMLHttpRequest"
+    assert "data.10jqka.com.cn/funds/gnzjl/" in calls[0][1]["Referer"]
+
+    cached = collect_ths_hot_stock_pool(
+        FakeAkshare(),
+        top_concepts=1,
+        max_stocks=10,
+        cache_path=cache_path,
+        http_get=lambda *_args, **_kwargs: (_ for _ in ()).throw(AssertionError("unexpected HTTP request")),
+        today=date(2026, 7, 28),
+    )
+
+    assert cached == pool
+    assert len(calls) == 2
+
+    collect_ths_hot_stock_pool(
+        FakeAkshare(),
+        top_concepts=1,
+        max_stocks=10,
+        cache_path=cache_path,
+        http_get=fake_get,
+        today=date(2026, 7, 29),
+    )
+    assert len(calls) == 4
+
+
+def test_collect_ths_pool_skips_one_failed_concept_detail(tmp_path: Path) -> None:
+    fund_html = FUND_FLOW_HTML.replace(
+        "</tbody>",
+        "<tr><td>2</td><td>人工智能</td><td>900</td><td>3.80%</td>"
+        "<td>18</td><td>10</td><td>8</td><td>70</td><td>乙公司</td><td>9%</td><td>11</td></tr>"
+        "</tbody>",
+    )
+
+    class FakeAkshare:
+        def stock_board_concept_name_ths(self) -> pd.DataFrame:
+            return pd.DataFrame(
+                [
+                    {"name": "机器人", "code": "301024"},
+                    {"name": "人工智能", "code": "301025"},
+                ]
+            )
+
+    def fake_get(url: str, **_kwargs: object) -> FakeResponse:
+        if "funds/gnzjl" in url:
+            return FakeResponse(fund_html)
+        if "301024" in url:
+            return FakeResponse("", error=ConnectionError("one board unavailable"))
+        return FakeResponse(DETAIL_HTML.replace("600001", "600002").replace("甲公司", "乙公司"))
+
+    pool = collect_ths_hot_stock_pool(
+        FakeAkshare(),
+        top_concepts=2,
+        max_stocks=10,
+        cache_path=tmp_path / "ths-concepts.json",
+        http_get=fake_get,
+        today=date(2026, 7, 28),
+    )
+
+    assert list(pool) == ["600002"]
+    assert pool["600002"].concepts == ["人工智能"]
+
+
+class FakeResponse:
+    def __init__(self, text: str, *, error: Exception | None = None) -> None:
+        self.text = text
+        self.error = error
+
+    def raise_for_status(self) -> None:
+        if self.error is not None:
+            raise self.error
 
 
 def _snapshot(
