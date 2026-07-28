@@ -11,6 +11,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 from app.domain.stocks import InvalidMainBoardSymbol, normalize_symbol
+from workers.ths_hot_concepts import StockSeedData, collect_ths_hot_stock_pool
 
 
 @dataclass(frozen=True)
@@ -97,7 +98,45 @@ def write_snapshot_atomic(payload: dict[str, object], output_path: Path) -> None
             temporary.unlink()
 
 
-def collect_hot_stock_pool(akshare: Any, *, top_concepts: int, max_stocks: int) -> dict[str, StockSeed]:
+def collect_hot_stock_pool(
+    akshare: Any,
+    *,
+    top_concepts: int,
+    max_stocks: int,
+    concept_cache: Path | None = None,
+    ths_collector: Callable[..., dict[str, StockSeedData]] = collect_ths_hot_stock_pool,
+) -> dict[str, StockSeed]:
+    try:
+        ths_pool = ths_collector(
+            akshare,
+            top_concepts=top_concepts,
+            max_stocks=max_stocks,
+            cache_path=concept_cache,
+        )
+    except Exception:
+        ths_pool = {}
+    if ths_pool:
+        return {
+            symbol: StockSeed(
+                symbol=seed.symbol,
+                name=seed.name,
+                concepts=list(seed.concepts[:3]),
+            )
+            for symbol, seed in ths_pool.items()
+        }
+    return _collect_eastmoney_concept_pool(
+        akshare,
+        top_concepts=top_concepts,
+        max_stocks=max_stocks,
+    )
+
+
+def _collect_eastmoney_concept_pool(
+    akshare: Any,
+    *,
+    top_concepts: int,
+    max_stocks: int,
+) -> dict[str, StockSeed]:
     try:
         board_frame = akshare.stock_board_concept_name_em()
     except Exception:
@@ -222,6 +261,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--top-concepts", type=int, default=10)
     parser.add_argument("--max-stocks", type=int, default=120)
     parser.add_argument("--lookback-days", type=int, default=420)
+    parser.add_argument("--concept-cache", help="同花顺概念交易日缓存路径")
     args = parser.parse_args(argv)
     if args.lookback_days < 180:
         parser.error("--lookback-days 不能少于 180")
@@ -236,7 +276,18 @@ def main(argv: list[str] | None = None) -> int:
     except ImportError as exc:
         raise SystemExit('缺少 Worker 依赖，请安装 pip install -e ".[workers]"') from exc
 
-    pool = collect_hot_stock_pool(ak, top_concepts=args.top_concepts, max_stocks=args.max_stocks)
+    output_path = Path(args.output)
+    concept_cache = (
+        Path(args.concept_cache)
+        if args.concept_cache
+        else output_path.parent / "ths-concepts-cache.json"
+    )
+    pool = collect_hot_stock_pool(
+        ak,
+        top_concepts=args.top_concepts,
+        max_stocks=args.max_stocks,
+        concept_cache=concept_cache,
+    )
     start_date = (datetime.now() - timedelta(days=args.lookback_days)).strftime("%Y%m%d")
     end_date = datetime.now().strftime("%Y%m%d")
 
@@ -244,8 +295,8 @@ def main(argv: list[str] | None = None) -> int:
         return load_history_with_fallback(ak, symbol, start_date, end_date)
 
     payload = build_snapshot(pool, load_history, datetime.now(ZoneInfo("Asia/Shanghai")))
-    write_snapshot_atomic(payload, Path(args.output))
-    print(f"已生成用户策略快照：{Path(args.output).resolve()}（{len(payload['stocks'])} 只股票）")
+    write_snapshot_atomic(payload, output_path)
+    print(f"已生成用户策略快照：{output_path.resolve()}（{len(payload['stocks'])} 只股票）")
     return 0
 
 

@@ -2,8 +2,10 @@ from datetime import UTC, datetime
 import json
 from pathlib import Path
 
+import pandas as pd
 import pytest
 
+from workers.ths_hot_concepts import StockSeedData
 from workers.user_strategy_snapshot import (
     StockSeed,
     build_snapshot,
@@ -80,6 +82,55 @@ def test_atomic_writer_writes_complete_snapshot(tmp_path: Path) -> None:
     assert list(tmp_path.glob("*.tmp")) == []
 
 
+def test_hot_pool_prefers_ths_and_preserves_ranked_concepts() -> None:
+    class FakeAkshare:
+        def stock_board_concept_name_em(self) -> object:
+            raise AssertionError("Eastmoney should not run when THS succeeds")
+
+    def collect_ths(*_args: object, **_kwargs: object) -> dict[str, StockSeedData]:
+        return {
+            "600001": StockSeedData(
+                symbol="600001",
+                name="主板甲",
+                concepts=["机器人", "人工智能", "低价股"],
+            )
+        }
+
+    pool = collect_hot_stock_pool(
+        FakeAkshare(),
+        top_concepts=10,
+        max_stocks=120,
+        concept_cache=None,
+        ths_collector=collect_ths,
+    )
+
+    assert pool["600001"] == StockSeed(
+        symbol="600001",
+        name="主板甲",
+        concepts=["机器人", "人工智能", "低价股"],
+    )
+
+
+def test_hot_pool_uses_eastmoney_when_ths_is_unavailable() -> None:
+    class FakeAkshare:
+        def stock_board_concept_name_em(self) -> pd.DataFrame:
+            return pd.DataFrame([{"板块名称": "算力", "涨跌幅": 5.0, "换手率": 3.0}])
+
+        def stock_board_concept_cons_em(self, *, symbol: str) -> pd.DataFrame:
+            assert symbol == "算力"
+            return pd.DataFrame([{"代码": "600001", "名称": "主板甲"}])
+
+    pool = collect_hot_stock_pool(
+        FakeAkshare(),
+        top_concepts=10,
+        max_stocks=120,
+        concept_cache=None,
+        ths_collector=_unavailable_ths,
+    )
+
+    assert pool["600001"].concepts == ["算力"]
+
+
 def test_hot_pool_falls_back_to_sina_market_when_concept_api_fails() -> None:
     class FakeAkshare:
         def stock_board_concept_name_em(self) -> object:
@@ -110,7 +161,13 @@ def test_hot_pool_falls_back_to_sina_market_when_concept_api_fails() -> None:
             }
             return FakeFrame(members[sector])
 
-    pool = collect_hot_stock_pool(FakeAkshare(), top_concepts=10, max_stocks=2)
+    pool = collect_hot_stock_pool(
+        FakeAkshare(),
+        top_concepts=10,
+        max_stocks=2,
+        concept_cache=None,
+        ths_collector=_unavailable_ths,
+    )
 
     assert list(pool) == ["000001", "600001"]
     assert pool["000001"].concepts == ["银行"]
@@ -130,7 +187,13 @@ def test_hot_pool_marks_missing_theme_honestly_when_sector_lookup_fails() -> Non
         def stock_sector_spot(self, *, indicator: str) -> object:
             raise ConnectionError(f"{indicator} unavailable")
 
-    pool = collect_hot_stock_pool(FakeAkshare(), top_concepts=10, max_stocks=1)
+    pool = collect_hot_stock_pool(
+        FakeAkshare(),
+        top_concepts=10,
+        max_stocks=1,
+        concept_cache=None,
+        ths_collector=_unavailable_ths,
+    )
 
     assert pool["600001"].concepts == ["题材暂不可用"]
 
@@ -147,3 +210,7 @@ def test_history_loader_uses_sina_when_eastmoney_fails() -> None:
             return fallback
 
     assert load_history_with_fallback(FakeAkshare(), "600001", "20250101", "20260722") is fallback
+
+
+def _unavailable_ths(*_args: object, **_kwargs: object) -> dict[str, StockSeedData]:
+    raise ConnectionError("THS unavailable")
