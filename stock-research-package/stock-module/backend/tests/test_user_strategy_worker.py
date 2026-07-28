@@ -94,10 +94,45 @@ def test_hot_pool_falls_back_to_sina_market_when_concept_api_fails() -> None:
                 ]
             )
 
+        def stock_sector_spot(self, *, indicator: str) -> FakeFrame:
+            assert indicator == "新浪行业"
+            return FakeFrame(
+                [
+                    {"label": "new_bank", "板块": "银行"},
+                    {"label": "new_equipment", "板块": "专用设备"},
+                ]
+            )
+
+        def stock_sector_detail(self, *, sector: str) -> FakeFrame:
+            members = {
+                "new_bank": [{"code": "000001", "name": "主板乙"}],
+                "new_equipment": [{"code": "600001", "name": "主板甲"}],
+            }
+            return FakeFrame(members[sector])
+
     pool = collect_hot_stock_pool(FakeAkshare(), top_concepts=10, max_stocks=2)
 
     assert list(pool) == ["000001", "600001"]
-    assert pool["000001"].concepts == ["全市场强势"]
+    assert pool["000001"].concepts == ["银行"]
+    assert pool["600001"].concepts == ["专用设备"]
+
+
+def test_hot_pool_marks_missing_theme_honestly_when_sector_lookup_fails() -> None:
+    class FakeAkshare:
+        def stock_board_concept_name_em(self) -> object:
+            raise ConnectionError("concept endpoint unavailable")
+
+        def stock_zh_a_spot(self) -> FakeFrame:
+            return FakeFrame(
+                [{"代码": "sh600001", "名称": "主板甲", "涨跌幅": 3.2, "成交量": 500}]
+            )
+
+        def stock_sector_spot(self, *, indicator: str) -> object:
+            raise ConnectionError(f"{indicator} unavailable")
+
+    pool = collect_hot_stock_pool(FakeAkshare(), top_concepts=10, max_stocks=1)
+
+    assert pool["600001"].concepts == ["题材暂不可用"]
 
 
 def test_history_loader_uses_sina_when_eastmoney_fails() -> None:

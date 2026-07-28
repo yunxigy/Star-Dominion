@@ -150,10 +150,44 @@ def _collect_market_fallback(akshare: Any, *, max_stocks: int) -> dict[str, Stoc
         ranked.append((pct, volume, symbol, name))
 
     ranked.sort(key=lambda item: (-item[0], -item[1], item[2]))
-    return {
-        symbol: StockSeed(symbol=symbol, name=name, concepts=["全市场强势"])
+    pool = {
+        symbol: StockSeed(symbol=symbol, name=name, concepts=[])
         for _, _, symbol, name in ranked[:max_stocks]
     }
+    return _attach_sina_industries(akshare, pool)
+
+
+def _attach_sina_industries(
+    akshare: Any,
+    pool: dict[str, StockSeed],
+) -> dict[str, StockSeed]:
+    unresolved = set(pool)
+    try:
+        sectors = akshare.stock_sector_spot(indicator="新浪行业")
+        sector_rows = sectors.to_dict(orient="records")
+    except Exception:
+        sector_rows = []
+
+    for sector in sector_rows:
+        label = str(sector.get("label", "")).strip()
+        name = str(sector.get("板块", "")).strip()
+        if not label or not name:
+            continue
+        try:
+            members = akshare.stock_sector_detail(sector=label)
+        except Exception:
+            continue
+        for row in members.to_dict(orient="records"):
+            symbol = str(row.get("code", row.get("代码", ""))).strip()[-6:]
+            if symbol in unresolved:
+                pool[symbol].concepts.append(name)
+                unresolved.remove(symbol)
+        if not unresolved:
+            break
+
+    for symbol in unresolved:
+        pool[symbol].concepts.append("题材暂不可用")
+    return pool
 
 
 def load_history_with_fallback(
