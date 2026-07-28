@@ -1,4 +1,10 @@
-from workers.ths_hot_concepts import parse_concept_detail, parse_fund_flow_page
+from workers.ths_hot_concepts import (
+    ConceptMember,
+    ConceptSnapshot,
+    parse_concept_detail,
+    parse_fund_flow_page,
+    rank_stock_concepts,
+)
 
 
 FUND_FLOW_HTML = """
@@ -50,3 +56,47 @@ def test_parse_concept_detail_reads_breadth_turnover_and_members() -> None:
     assert [(item.symbol, item.name, item.pct) for item in snapshot.members] == [
         ("600001", "甲公司", 9.8)
     ]
+
+
+def test_rank_stock_concepts_prefers_hot_synchronized_themes_and_limits_three() -> None:
+    snapshots = [
+        _snapshot("机器人", pct=5.0, turnover=500, up=80, down=20, stock_pct=6.0),
+        _snapshot("人工智能", pct=4.0, turnover=800, up=70, down=30, stock_pct=5.0),
+        _snapshot("低价股", pct=3.0, turnover=400, up=60, down=40, stock_pct=4.0),
+        _snapshot("国企改革", pct=2.0, turnover=300, up=55, down=45, stock_pct=3.0),
+    ]
+
+    assert rank_stock_concepts("600001", snapshots, limit=3) == [
+        "机器人",
+        "人工智能",
+        "低价股",
+    ]
+
+
+def test_rank_stock_concepts_uses_name_as_stable_tiebreaker() -> None:
+    snapshots = [
+        _snapshot("B概念", pct=3.0, turnover=500, up=60, down=40, stock_pct=4.0),
+        _snapshot("A概念", pct=3.0, turnover=500, up=60, down=40, stock_pct=4.0),
+    ]
+
+    assert rank_stock_concepts("600001", snapshots, limit=3) == ["A概念", "B概念"]
+
+
+def _snapshot(
+    name: str,
+    *,
+    pct: float,
+    turnover: float,
+    up: int,
+    down: int,
+    stock_pct: float,
+) -> ConceptSnapshot:
+    return ConceptSnapshot(
+        name=name,
+        code=f"code-{name}",
+        pct=pct,
+        turnover_yi=turnover,
+        up_count=up,
+        down_count=down,
+        members=(ConceptMember(symbol="600001", name="甲公司", pct=stock_pct),),
+    )

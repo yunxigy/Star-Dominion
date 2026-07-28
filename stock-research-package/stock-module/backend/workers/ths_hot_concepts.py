@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from io import StringIO
+import math
 import re
 
 from bs4 import BeautifulSoup
@@ -24,6 +25,30 @@ class ConceptSnapshot:
     up_count: int
     down_count: int
     members: tuple[ConceptMember, ...]
+
+
+def rank_stock_concepts(
+    symbol: str,
+    concepts: list[ConceptSnapshot],
+    *,
+    limit: int = 3,
+) -> list[str]:
+    ranked: list[tuple[float, str]] = []
+    for concept in concepts:
+        member = next((item for item in concept.members if item.symbol == symbol), None)
+        if member is not None:
+            ranked.append((concept_heat_score(concept, member), concept.name))
+    ranked.sort(key=lambda item: (-item[0], item[1]))
+    return [name for _, name in ranked[:limit]]
+
+
+def concept_heat_score(concept: ConceptSnapshot, member: ConceptMember) -> float:
+    board_strength = _clamp((concept.pct + 5.0) / 10.0)
+    breadth_total = max(concept.up_count + concept.down_count, 1)
+    breadth = _clamp(((concept.up_count - concept.down_count) / breadth_total + 1.0) / 2.0)
+    activity = _clamp(math.log1p(max(concept.turnover_yi, 0.0)) / math.log1p(2000.0))
+    sync = _clamp(1.0 - abs(member.pct - concept.pct) / 20.0)
+    return board_strength * 0.55 + breadth * 0.25 + activity * 0.10 + sync * 0.10
 
 
 def parse_fund_flow_page(html: str) -> list[dict[str, object]]:
@@ -82,6 +107,10 @@ def parse_concept_detail(name: str, code: str, html: str) -> ConceptSnapshot:
 def _integer(value: object) -> int:
     number = _number(value)
     return int(number) if number is not None else 0
+
+
+def _clamp(value: float) -> float:
+    return max(0.0, min(value, 1.0))
 
 
 def _number(value: object) -> float | None:
