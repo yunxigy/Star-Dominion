@@ -7,6 +7,7 @@ import pytest
 
 from workers.ths_hot_concepts import StockSeedData
 from workers.user_strategy_snapshot import (
+    DEFAULT_TOP_CONCEPTS,
     StockSeed,
     build_snapshot,
     collect_hot_stock_pool,
@@ -27,6 +28,10 @@ class FakeFrame:
     @property
     def empty(self) -> bool:
         return not self._rows
+
+
+def test_default_concept_scope_covers_many_hot_ths_themes() -> None:
+    assert DEFAULT_TOP_CONCEPTS == 30
 
 
 def test_normalize_history_maps_akshare_columns_and_computes_missing_pct() -> None:

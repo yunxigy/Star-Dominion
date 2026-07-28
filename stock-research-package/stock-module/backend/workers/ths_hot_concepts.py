@@ -3,6 +3,7 @@
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import date
+from importlib.resources import files
 from io import StringIO
 import json
 import math
@@ -59,17 +60,34 @@ def collect_ths_hot_stock_pool(
     top_concepts: int,
     max_stocks: int,
     cache_path: Path | None,
-    http_get: Callable[..., Any] = requests.get,
+    http_get: Callable[..., Any] | None = None,
     today: date | None = None,
 ) -> dict[str, StockSeedData]:
     current_date = today or date.today()
     concepts = _load_cached_concepts(cache_path, current_date, top_concepts)
     if concepts is None:
-        concepts = _fetch_concepts(
-            akshare,
-            top_concepts=top_concepts,
-            http_get=http_get,
-        )
+        token = _generate_hexin_v()
+        session: requests.Session | None = None
+        getter = http_get
+        if getter is None:
+            session = requests.Session()
+            landing = session.get(
+                FUND_FLOW_REFERER,
+                headers={"User-Agent": USER_AGENT},
+                timeout=20,
+            )
+            landing.raise_for_status()
+            getter = session.get
+        try:
+            concepts = _fetch_concepts(
+                akshare,
+                top_concepts=top_concepts,
+                http_get=getter,
+                token=token,
+            )
+        finally:
+            if session is not None:
+                session.close()
         if concepts:
             _write_cached_concepts(cache_path, current_date, top_concepts, concepts)
     if not concepts:
@@ -106,17 +124,27 @@ def _fetch_concepts(
     *,
     top_concepts: int,
     http_get: Callable[..., Any],
+    token: str,
 ) -> list[ConceptSnapshot]:
-    response = http_get(
-        FUND_FLOW_URL,
-        headers={
-            "User-Agent": USER_AGENT,
-            "Referer": FUND_FLOW_REFERER,
-            "X-Requested-With": "XMLHttpRequest",
-        },
-        timeout=20,
-    )
-    response.raise_for_status()
+    fund_headers = {
+        "User-Agent": USER_AGENT,
+        "Referer": FUND_FLOW_REFERER,
+        "X-Requested-With": "XMLHttpRequest",
+        "hexin-v": token,
+        "Cookie": f"v={token}",
+    }
+    try:
+        response = http_get(FUND_FLOW_URL, headers=fund_headers, timeout=20)
+        response.raise_for_status()
+    except Exception:
+        landing = http_get(
+            FUND_FLOW_REFERER,
+            headers={"User-Agent": USER_AGENT},
+            timeout=20,
+        )
+        landing.raise_for_status()
+        response = http_get(FUND_FLOW_URL, headers=fund_headers, timeout=20)
+        response.raise_for_status()
     hot_rows = parse_fund_flow_page(response.text)[:top_concepts]
     names = akshare.stock_board_concept_name_ths()
     code_by_name = {
@@ -132,7 +160,11 @@ def _fetch_concepts(
         try:
             detail = http_get(
                 CONCEPT_DETAIL_URL.format(code=code),
-                headers={"User-Agent": USER_AGENT, "Referer": FUND_FLOW_REFERER},
+                headers={
+                    "User-Agent": USER_AGENT,
+                    "Referer": FUND_FLOW_REFERER,
+                    "Cookie": f"v={token}",
+                },
                 timeout=20,
             )
             detail.raise_for_status()
@@ -142,6 +174,15 @@ def _fetch_concepts(
         if snapshot.members:
             concepts.append(snapshot)
     return concepts
+
+
+def _generate_hexin_v() -> str:
+    import py_mini_racer
+
+    runtime = py_mini_racer.MiniRacer()
+    script = files("akshare.data").joinpath("ths.js").read_text(encoding="utf-8")
+    runtime.eval(script)
+    return str(runtime.call("v"))
 
 
 def _build_stock_pool(

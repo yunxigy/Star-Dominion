@@ -115,6 +115,7 @@ def test_collect_ths_pool_uses_headers_limits_boards_and_reuses_daily_cache(tmp_
     assert pool["600001"].concepts == ["机器人"]
     assert len(calls) == 2
     assert calls[0][1]["X-Requested-With"] == "XMLHttpRequest"
+    assert calls[0][1]["hexin-v"]
     assert "data.10jqka.com.cn/funds/gnzjl/" in calls[0][1]["Referer"]
 
     cached = collect_ths_hot_stock_pool(
@@ -175,6 +176,38 @@ def test_collect_ths_pool_skips_one_failed_concept_detail(tmp_path: Path) -> Non
 
     assert list(pool) == ["600002"]
     assert pool["600002"].concepts == ["人工智能"]
+
+
+def test_collect_ths_pool_primes_source_and_retries_fund_flow_failure(tmp_path: Path) -> None:
+    calls: list[str] = []
+
+    class FakeAkshare:
+        def stock_board_concept_name_ths(self) -> pd.DataFrame:
+            return pd.DataFrame([{"name": "机器人", "code": "301024"}])
+
+    def fake_get(url: str, **_kwargs: object) -> FakeResponse:
+        calls.append(url)
+        fund_requests = sum("field/tradezdf" in item for item in calls)
+        if "field/tradezdf" in url and fund_requests == 1:
+            return FakeResponse("", error=ConnectionError("401 unauthorized"))
+        if "field/tradezdf" in url:
+            return FakeResponse(FUND_FLOW_HTML)
+        if url.rstrip("/") == "http://data.10jqka.com.cn/funds/gnzjl":
+            return FakeResponse("<html>landing</html>")
+        return FakeResponse(DETAIL_HTML)
+
+    pool = collect_ths_hot_stock_pool(
+        FakeAkshare(),
+        top_concepts=1,
+        max_stocks=10,
+        cache_path=tmp_path / "ths-concepts.json",
+        http_get=fake_get,
+        today=date(2026, 7, 28),
+    )
+
+    assert pool["600001"].concepts == ["机器人"]
+    assert sum("field/tradezdf" in item for item in calls) == 2
+    assert "http://data.10jqka.com.cn/funds/gnzjl/" in calls
 
 
 class FakeResponse:

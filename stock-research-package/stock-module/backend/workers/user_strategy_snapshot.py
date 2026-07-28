@@ -14,6 +14,9 @@ from app.domain.stocks import InvalidMainBoardSymbol, normalize_symbol
 from workers.ths_hot_concepts import StockSeedData, collect_ths_hot_stock_pool
 
 
+DEFAULT_TOP_CONCEPTS = 30
+
+
 @dataclass(frozen=True)
 class StockSeed:
     symbol: str
@@ -258,7 +261,7 @@ def load_history_with_fallback(
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="生成 Star Dominion 用户策略 K 线快照")
     parser.add_argument("--output", required=True, help="latest.json 输出路径")
-    parser.add_argument("--top-concepts", type=int, default=10)
+    parser.add_argument("--top-concepts", type=int, default=DEFAULT_TOP_CONCEPTS)
     parser.add_argument("--max-stocks", type=int, default=120)
     parser.add_argument("--lookback-days", type=int, default=420)
     parser.add_argument("--concept-cache", help="同花顺概念交易日缓存路径")
