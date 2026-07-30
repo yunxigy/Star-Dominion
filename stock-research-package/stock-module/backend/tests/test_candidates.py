@@ -51,4 +51,3 @@ def test_merge_candidates_deduplicates_same_source() -> None:
 
     assert len(merged) == 1
     assert len(merged[0].sources) == 1
-

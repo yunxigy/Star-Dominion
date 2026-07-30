@@ -26,4 +26,3 @@ def exchange_for(symbol: str) -> str:
     if normalized.startswith(("600", "601", "603", "605")):
         return "SSE"
     return "SZSE"
-

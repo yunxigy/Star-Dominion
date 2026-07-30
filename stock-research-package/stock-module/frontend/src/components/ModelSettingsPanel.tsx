@@ -149,4 +149,3 @@ export function ModelSettingsPanel({ open, profiles, onClose, onChanged }: Props
     </div>
   );
 }
-

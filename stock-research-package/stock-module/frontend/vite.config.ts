@@ -18,4 +18,3 @@ export default defineConfig({
     setupFiles: "./src/testSetup.ts",
   },
 });
-

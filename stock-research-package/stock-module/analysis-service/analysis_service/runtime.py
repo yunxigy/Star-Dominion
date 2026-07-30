@@ -153,4 +153,3 @@ class RequestScopedAnalysisRuntime:
             report_type=normalized_type.value,
         )
         return {"success": True, **response}
-

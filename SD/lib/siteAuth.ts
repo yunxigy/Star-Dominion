@@ -74,4 +74,3 @@ export function currentRelativeUrl(): string {
 export function loginUrl(next = currentRelativeUrl()): string {
   return `/auth/login?next=${encodeURIComponent(safeNextPath(next))}`;
 }
-

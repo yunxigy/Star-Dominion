@@ -142,4 +142,3 @@ class AnalysisTaskRepository:
 
     def _connect(self) -> sqlite3.Connection:
         return sqlite3.connect(self._path)
-

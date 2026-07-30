@@ -30,4 +30,3 @@ async def test_analysis_request_disables_notifications() -> None:
     assert captured["notify"] is False
     assert captured["async_mode"] is False
     assert captured["report_language"] == "zh-CN"
-

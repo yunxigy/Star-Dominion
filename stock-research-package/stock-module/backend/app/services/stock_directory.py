@@ -62,4 +62,3 @@ class StockDirectory:
 
     def metadata(self):
         return self._repository.metadata()
-

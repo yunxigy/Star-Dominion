@@ -43,4 +43,3 @@ def build_gateway_app(
 
 
 app = build_gateway_app()
-

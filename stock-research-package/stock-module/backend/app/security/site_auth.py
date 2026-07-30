@@ -86,4 +86,3 @@ class SiteAuthClient:
             )
         except (KeyError, TypeError, ValueError) as exc:
             raise ConnectionError("invalid site-auth response") from exc
-

@@ -50,4 +50,3 @@ def login(client: TestClient) -> TestClient:
     )
     assert response.status_code == 204
     return client
-

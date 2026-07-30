@@ -29,4 +29,3 @@ def test_normalize_symbol_rejects_non_main_board_codes(raw: str) -> None:
 )
 def test_exchange_for_returns_listing_exchange(symbol: str, expected: str) -> None:
     assert exchange_for(symbol) == expected
-

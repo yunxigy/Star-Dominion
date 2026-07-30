@@ -188,4 +188,3 @@ async def test_internal_api_rejects_unsupported_requests(override: dict) -> None
         response = await client.post("/api/v1/analysis/analyze", json=payload)
 
     assert response.status_code == 422
-

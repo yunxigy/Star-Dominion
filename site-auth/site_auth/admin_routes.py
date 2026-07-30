@@ -170,4 +170,3 @@ def reset_password(
     _revoke_user_sessions(context.db, user.id)
     context.db.commit()
     return Response(status_code=status.HTTP_204_NO_CONTENT)
-

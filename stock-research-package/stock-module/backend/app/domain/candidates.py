@@ -63,4 +63,3 @@ def merge_candidates(items: list[CandidateStock]) -> list[CandidateStock]:
         )
 
     return sorted(merged.values(), key=lambda candidate: candidate.stock.symbol)
-

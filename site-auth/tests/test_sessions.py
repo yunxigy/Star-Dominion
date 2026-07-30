@@ -91,4 +91,3 @@ def test_public_registration_route_does_not_exist(client: TestClient) -> None:
     )
 
     assert response.status_code == 404
-

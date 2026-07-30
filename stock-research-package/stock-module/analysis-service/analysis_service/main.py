@@ -126,4 +126,3 @@ def _default_source_root() -> Path:
 
 
 app = create_app()
-

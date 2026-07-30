@@ -44,4 +44,3 @@ def verify_session(
     if not valid:
         raise HTTPException(status_code=403, detail="CSRF 校验失败")
     return UserPublic.model_validate(authenticated.user)
-

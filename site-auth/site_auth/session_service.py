@@ -106,4 +106,3 @@ class SessionService:
     def revoke(self, db: OrmSession, authenticated: AuthenticatedSession) -> None:
         authenticated.session.revoked_at = _utcnow()
         db.commit()
-

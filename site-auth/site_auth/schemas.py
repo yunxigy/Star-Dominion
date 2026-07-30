@@ -15,4 +15,3 @@ class UserPublic(BaseModel):
     email: str
     username: str
     role: str
-

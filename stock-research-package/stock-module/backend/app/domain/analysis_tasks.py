@@ -97,4 +97,3 @@ def cache_key(*, owner: str, symbol: str, profile: str, model: str, report: str)
         separators=(",", ":"),
     )
     return hashlib.sha256(value.encode("utf-8")).hexdigest()
-

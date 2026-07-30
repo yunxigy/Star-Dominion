@@ -60,4 +60,3 @@ class Settings:
             allowed_origins=origins,
             cookie_secure=cookie_secure,
         )
-

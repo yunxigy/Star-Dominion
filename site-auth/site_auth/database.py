@@ -44,4 +44,3 @@ def create_database(path: Path) -> Database:
         engine=engine,
         sessions=sessionmaker(bind=engine, expire_on_commit=False),
     )
-

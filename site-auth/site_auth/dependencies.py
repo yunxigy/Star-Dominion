@@ -34,4 +34,3 @@ def require_admin(user: User) -> User:
             detail="需要管理员权限",
         )
     return user
-
