@@ -221,12 +221,25 @@ class TestListEntities:
         assert result[0]["name"] == "天山派"
 
 
-def test_world_query_supports_direct_script_execution():
+def test_world_query_supports_direct_script_execution(tmp_path):
     repo_root = Path(__file__).parent.parent
     script = repo_root / "tools" / "world_query.py"
+    entities_dir = tmp_path / "data" / "novels" / "test" / "src" / "world" / "entities"
+    entities_dir.mkdir(parents=True)
+    (entities_dir / "company.md").write_text(
+        "# 公司（互联网科技公司）\n\n> 地点 | 建筑 | active\n\n故事主要发生地。\n",
+        encoding="utf-8",
+    )
 
     result = subprocess.run(
-        [sys.executable, str(script), "test_novel", "company"],
+        [
+            sys.executable,
+            str(script),
+            "test",
+            "company",
+            "--project-root",
+            str(tmp_path),
+        ],
         cwd=repo_root,
         capture_output=True,
         text=True,

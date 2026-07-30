@@ -28,7 +28,7 @@ def test_outline_to_hierarchy_sync(tmp_path):
 
 > 戏剧位置: 起
 > 内容焦点: 陈明开始适应新的生活
-""")
+""", encoding="utf-8")
 
     data_dir = tmp_path / "data"
     data_dir.mkdir()
@@ -39,7 +39,7 @@ def test_outline_to_hierarchy_sync(tmp_path):
     assert hierarchy_path.exists()
     import yaml
 
-    with open(hierarchy_path) as f:
+    with open(hierarchy_path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
     assert "story_info" in data
     assert "arcs" in data

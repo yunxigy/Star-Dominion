@@ -2,6 +2,7 @@ from pathlib import Path
 import re
 
 import yaml
+import pytest
 
 from tools.frontmatter import parse_toml_front_matter
 from tools.outline_parser import OutlineMdParser
@@ -9,6 +10,10 @@ from tools.outline_parser import OutlineMdParser
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 NOVEL_ROOT = PROJECT_ROOT / "data" / "novels" / "test_novel"
+pytestmark = pytest.mark.skipif(
+    not (NOVEL_ROOT / "src" / "outline.md").exists(),
+    reason="optional rich test_novel fixture is not included in this checkout",
+)
 
 
 def test_test_novel_is_a_rich_standard_sample_fixture():

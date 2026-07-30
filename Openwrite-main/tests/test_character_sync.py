@@ -14,7 +14,7 @@ def test_profile_to_card_sync(tmp_path):
 
 ## 性格
 996社畜，理工科思维
-""")
+""", encoding="utf-8")
 
     data_chars = tmp_path / "data" / "characters"
     data_chars.mkdir(parents=True)
@@ -25,7 +25,7 @@ def test_profile_to_card_sync(tmp_path):
     assert card_file.exists()
     import yaml
 
-    with open(card_file) as f:
+    with open(card_file, encoding="utf-8") as f:
         card = yaml.safe_load(f)
     assert card["name"] == "陈明"
     assert card["identity"] == "程序员"

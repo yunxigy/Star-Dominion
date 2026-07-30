@@ -381,6 +381,7 @@ class TestToolsRegistry:
             "advance_workflow",
             "chunk_text",
             "compress_section",
+            "write_and_review",
         }
 
         registered_names = {t.name for t in OPENWRITE_TOOLS}
@@ -397,12 +398,18 @@ class TestToolsRegistry:
         if extra:
             print(f"\n⚠️ 额外工具: {extra}")
 
-        assert len(registered_names) == 23, f"Expected 23 tools, got {len(registered_names)}"
+        assert len(registered_names) == len(EXPECTED_TOOLS), (
+            f"Expected {len(EXPECTED_TOOLS)} tools, got {len(registered_names)}"
+        )
         assert not missing, f"Missing tools: {missing}"
 
         print(f"\n✅ 所有 {len(registered_names)} 个工具已正确注册")
 
 
+@pytest.mark.skipif(
+    not (TEST_NOVEL / "src" / "outline.md").exists(),
+    reason="optional test_novel integration fixture is not included in this checkout",
+)
 class TestIntegration23Tools:
     """
     23工具全功能集成测试

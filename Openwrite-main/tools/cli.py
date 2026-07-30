@@ -1697,6 +1697,8 @@ def _build_writer_context_payload(
     context_packet: dict,
     guidance: str,
     target_words: int,
+    project_root: Path = None,
+    novel_id: str = "",
 ) -> dict:
     payload = {
         "target_words": target_words or getattr(context, "target_words", 0),
@@ -1706,6 +1708,14 @@ def _build_writer_context_payload(
         "ledger": getattr(context, "ledger", ""),
         "relationships": truth.relationships,
     }
+
+    # 直接读取大纲文件（确保内容传到 LLM）
+    if project_root and novel_id:
+        outline_path = project_root / "data" / "novels" / novel_id / "src" / "outline.md"
+        if outline_path.exists():
+            outline_content = outline_path.read_text(encoding="utf-8").strip()
+            if outline_content:
+                payload["outline"] = outline_content
 
     if context_packet:
         prompt_sections = context_packet.get("prompt_sections", {})
@@ -1801,6 +1811,8 @@ def _exec_write_chapter(project_root: Path, args: dict) -> dict:
             truth=truth,
             context_packet=context_packet,
             guidance=guidance,
+            project_root=project_root,
+            novel_id=novel_id,
             target_words=target_words,
         )
 

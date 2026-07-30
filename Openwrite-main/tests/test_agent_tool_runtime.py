@@ -73,6 +73,8 @@ def test_dante_action_toolkit_exposes_high_level_actions():
         "confirm_ideation_summary",
         "generate_outline_draft",
         "run_chapter_preflight",
+        "delegate_chapter_write",
+        "delegate_chapter_review",
     }
     assert "get_status" not in DANTE_ACTION_TOOLKIT
     assert "write_chapter" not in DANTE_ACTION_TOOLKIT

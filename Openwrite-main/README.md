@@ -2,6 +2,12 @@
 
 AI 驱动的长篇小说创作平台 — Web 端 + CLI 双模式。
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg">
+  <source media="(prefers-color-scheme: light)" srcset="assets/logo-light.svg">
+  <img src="assets/logo-light.svg" alt="OpenWrite" width="560">
+</picture>
+
 <p align="center">
   <img src="https://img.shields.io/badge/version-5.4.0-2563eb" alt="Version">
   <img src="https://img.shields.io/badge/python-%3E%3D3.11-22c55e?logo=python" alt="Python >= 3.11">
@@ -98,6 +104,16 @@ cd frontend && npm run dev
 ```
 
 访问 `http://localhost:5174/openwrite/`
+
+### CLI 入口
+
+- `openwrite dante`：长期会话主编排入口
+- `openwrite goethe`：长期会话规划入口
+- `openwrite write ch_005`：写作指定章节
+- `openwrite review ch_005`：审查指定章节
+- `openwrite multi-write ch_005`：连续写作
+
+`openwrite agent` 已退役，请使用 `openwrite dante`。
 
 ### CLI 使用
 

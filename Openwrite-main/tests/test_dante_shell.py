@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 import yaml
@@ -338,6 +339,9 @@ def test_dante_default_react_agent_has_direct_and_action_tool_surface(
         novel_id="demo",
         prompt_session_factory=lambda **kwargs: FakePromptSession(["exit"]),
         react_agent=None,
+        llm_client_factory=lambda: SimpleNamespace(
+            config=SimpleNamespace(model="test-model")
+        ),
         tool_executors={
             "get_status": lambda args: {"ok": True},
             "get_context": lambda args: {"ok": True},
@@ -351,6 +355,8 @@ def test_dante_default_react_agent_has_direct_and_action_tool_surface(
             "confirm_ideation_summary": lambda args: {"ok": True, "action": "confirm_ideation_summary"},
             "generate_outline_draft": lambda args: {"ok": True, "action": "generate_outline_draft"},
             "run_chapter_preflight": lambda args: {"ok": True, "action": "run_chapter_preflight"},
+            "delegate_chapter_write": lambda args: {"ok": True, "action": "delegate_chapter_write"},
+            "delegate_chapter_review": lambda args: {"ok": True, "action": "delegate_chapter_review"},
         },
     )
 
@@ -478,6 +484,8 @@ def test_dante_injected_real_react_agent_gets_tool_definitions_and_surface(
             "confirm_ideation_summary": lambda args: {"ok": True, "action": "confirm_ideation_summary"},
             "generate_outline_draft": lambda args: {"ok": True, "action": "generate_outline_draft"},
             "run_chapter_preflight": lambda args: {"ok": True, "action": "run_chapter_preflight"},
+            "delegate_chapter_write": lambda args: {"ok": True, "action": "delegate_chapter_write"},
+            "delegate_chapter_review": lambda args: {"ok": True, "action": "delegate_chapter_review"},
         },
     )
 
