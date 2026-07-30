@@ -56,4 +56,3 @@ def test_akshare_source_falls_back_to_combined_eastmoney_markets() -> None:
 
     assert batch.source == "eastmoney_spot_fallback"
     assert [item.symbol for item in batch.entries] == ["600519", "002594"]
-

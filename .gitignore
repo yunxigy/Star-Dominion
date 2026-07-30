@@ -51,6 +51,9 @@ logs/
 守岸人3.0/data/
 site-auth/data/
 stock-research-package/stock-module/data/
+stock-research-package/upstreams/
+stock-research-package/*.xlsx
+stock-research-package/*.docx
 
 # SillyTavern（第三方项目，不提交）
 SillyTavern/

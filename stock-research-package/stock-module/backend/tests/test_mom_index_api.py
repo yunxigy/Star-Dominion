@@ -104,4 +104,3 @@ async def test_public_reads_and_admin_controls() -> None:
     assert denied.status_code == 401
     assert started.status_code == 202
     assert login.status_code == 200
-
