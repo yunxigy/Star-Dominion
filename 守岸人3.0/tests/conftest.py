@@ -3,19 +3,28 @@ from __future__ import annotations
 from collections.abc import Iterator
 
 import pytest
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, sessionmaker
 
 from server.database import Base
 from server.models.character_db import CharacterDB
 from server.models.chat_db import ChatBranch, ChatMessage, ChatSession
+from server.models.lorebook import Lorebook, LorebookEntry
+from server.models.memory import Memory, MemorySummary
 from server.models.user import User
+from server.middleware.auth import get_current_user
+from server.database import get_db
 
 
 @pytest.fixture
 def db_session(tmp_path) -> Iterator[Session]:
     database_path = tmp_path / "test.db"
-    engine = create_engine(f"sqlite:///{database_path}")
+    engine = create_engine(
+        f"sqlite:///{database_path}",
+        connect_args={"check_same_thread": False},
+    )
     Base.metadata.create_all(bind=engine)
     session_factory = sessionmaker(bind=engine, expire_on_commit=False)
     session = session_factory()
@@ -101,3 +110,37 @@ def seeded_chat(db_session):
             "assistant_message": assistant_message,
         },
     )()
+
+
+@pytest.fixture
+def fake_llm():
+    class FakeLLM:
+        last_messages = None
+
+        def chat(self, messages, backend=None):
+            self.last_messages = messages
+            return "新的回答"
+
+    return FakeLLM()
+
+
+@pytest.fixture
+def chat_client(db_session, seeded_chat, fake_llm, monkeypatch):
+    from server.routers import chat as chat_router
+
+    app = FastAPI()
+    app.include_router(chat_router.router)
+
+    async def override_current_user():
+        return seeded_chat.owner
+
+    def override_db():
+        yield db_session
+
+    app.dependency_overrides[get_current_user] = override_current_user
+    app.dependency_overrides[get_db] = override_db
+    monkeypatch.setattr(chat_router, "llm_service", fake_llm)
+    monkeypatch.setattr(chat_router, "tts_service", None)
+
+    with TestClient(app) as client:
+        yield client

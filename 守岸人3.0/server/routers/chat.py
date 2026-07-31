@@ -15,8 +15,13 @@ from sqlalchemy.orm import Session
 from ..database import get_db
 from ..middleware.auth import get_current_user
 from ..models.character import Character
-from ..models.chat_db import ChatSession, ChatMessage
+from ..models.chat_db import ChatBranch, ChatSession, ChatMessage
 from ..models.user import User
+from ..services.chat_history import (
+    ChatHistoryService,
+    ChatResourceNotFound,
+    ChatVersionConflict,
+)
 from ..utils.prompt_builder import build_system_prompt, build_messages
 from ..utils.text_cleaner import clean_text
 
@@ -302,7 +307,14 @@ async def chat(
         raise HTTPException(status_code=404, detail="角色不存在")
 
     # 3. 构建提示词
-    history = _load_db_history(db, session.id)
+    history_service = ChatHistoryService(db, owner_id=current_user.id)
+    history = [
+        {
+            "role": message.role,
+            "content": history_service.selected_text(message),
+        }
+        for message in history_service.active_path(session.id)
+    ]
 
     # 获取触发的 Lorebook 条目（支持多关键词、优先级、数量限制）
     from ..models.lorebook import Lorebook, LorebookEntry
@@ -391,18 +403,12 @@ async def chat(
     clean_response = clean_text(ai_response, mode="display")
 
     # 6. 保存对话历史到数据库
-    user_msg = ChatMessage(session_id=session.id, role="user", content={"text": user_input})
-    db.add(user_msg)
-    ai_msg = ChatMessage(
-        session_id=session.id,
-        role="assistant",
-        content={"text": clean_response},
-        swipes=[clean_response],
-        swipe_id="0",
+    history_service.append_message(session.id, "user", user_input)
+    ai_msg = history_service.append_message(
+        session.id,
+        "assistant",
+        clean_response,
     )
-    db.add(ai_msg)
-    db.commit()
-    db.refresh(ai_msg)
 
     # 6.5 异步记忆提取
     msg_count = _count_db_messages(db, session.id)
@@ -506,14 +512,15 @@ async def get_history(
     db: Session = Depends(get_db),
 ):
     """获取对话历史"""
+    service = ChatHistoryService(db, owner_id=current_user.id)
     if session_id:
-        session = db.query(ChatSession).filter(
-            ChatSession.id == session_id,
-            ChatSession.user_id == current_user.id,
-        ).first()
-        if not session:
+        try:
+            messages = service.active_path(session_id)
+        except ChatResourceNotFound:
             raise HTTPException(status_code=404, detail="会话不存在")
-        return JSONResponse(content=_load_db_history(db, session_id))
+        return JSONResponse(
+            content=[serialize_chat_message(message) for message in messages]
+        )
 
     if character_id:
         session = db.query(ChatSession).filter(
@@ -521,7 +528,10 @@ async def get_history(
             ChatSession.character_id == character_id,
         ).first()
         if session:
-            return JSONResponse(content=_load_db_history(db, session.id))
+            messages = service.active_path(session.id)
+            return JSONResponse(
+                content=[serialize_chat_message(message) for message in messages]
+            )
 
     return JSONResponse(content=[])
 
@@ -695,8 +705,17 @@ def _get_or_create_session(db: Session, user_id: str, character_id: str) -> Chat
     ).first()
 
     if not session:
-        session = ChatSession(user_id=user_id, character_id=character_id)
+        session = ChatSession(
+            user_id=user_id,
+            character_id=character_id,
+            version=1,
+        )
         db.add(session)
+        db.flush()
+        branch = ChatBranch(session_id=session.id, name="主分支")
+        db.add(branch)
+        db.flush()
+        session.current_branch_id = branch.id
         db.commit()
         db.refresh(session)
 
@@ -724,7 +743,79 @@ def _count_db_messages(db: Session, session_id: str) -> int:
     return db.query(ChatMessage).filter(ChatMessage.session_id == session_id).count()
 
 
+def serialize_chat_message(message: ChatMessage) -> dict:
+    try:
+        swipe_id = int(message.swipe_id or 0)
+    except (TypeError, ValueError):
+        swipe_id = 0
+    swipes = list(message.swipes or [])
+    content = ChatHistoryService.selected_text(message)
+    return {
+        "id": message.id,
+        "role": message.role,
+        "content": content,
+        "swipes": swipes,
+        "swipe_id": swipe_id,
+        "branch_id": message.branch_id,
+        "parent_message_id": message.parent_message_id,
+        "created_at": message.created_at.isoformat() if message.created_at else None,
+        "edited_at": message.edited_at.isoformat() if message.edited_at else None,
+    }
+
+
 # ========== Swipe 相关端点 ==========
+
+def _regenerate_message(
+    *,
+    message_id: str,
+    version: int,
+    backend: Optional[str],
+    current_user: User,
+    db: Session,
+) -> ChatMessage:
+    service = ChatHistoryService(db, owner_id=current_user.id)
+    try:
+        target = service.owned_message(message_id)
+        session = service.require_version(target.session_id, version)
+    except ChatResourceNotFound as exc:
+        raise HTTPException(status_code=404, detail="消息不存在") from exc
+    except ChatVersionConflict as exc:
+        raise HTTPException(status_code=409, detail="对话已在其他页面更新") from exc
+
+    character = _load_character(session.character_id, db)
+    if not character:
+        raise HTTPException(status_code=404, detail="角色不存在")
+    history = service.prompt_messages_before(message_id)
+    messages = build_messages(build_system_prompt(character), history)
+    try:
+        ai_response = llm_service.chat(messages, backend=backend)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=f"LLM 调用失败: {exc}") from exc
+    clean_response = clean_text(ai_response, mode="display")
+
+    try:
+        service.require_version(target.session_id, version)
+    except ChatVersionConflict as exc:
+        raise HTTPException(status_code=409, detail="对话已在其他页面更新") from exc
+    return service.append_swipe(message_id, clean_response)
+
+
+@router.post("/messages/{message_id}/regenerate")
+async def regenerate_message(
+    message_id: str,
+    version: int = Form(...),
+    backend: Optional[str] = Form(None),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    updated = _regenerate_message(
+        message_id=message_id,
+        version=version,
+        backend=backend,
+        current_user=current_user,
+        db=db,
+    )
+    return serialize_chat_message(updated)
 
 @router.post("/swipe")
 async def swipe_regenerate(
@@ -734,51 +825,25 @@ async def swipe_regenerate(
     backend: Optional[str] = Form(None),
 ):
     """重新生成回复（添加新的 swipe）"""
-    msg = db.query(ChatMessage).filter(ChatMessage.id == message_id).first()
-    if not msg:
-        raise HTTPException(status_code=404, detail="消息不存在")
-
-    # 验证会话归属
-    session = db.query(ChatSession).filter(
-        ChatSession.id == msg.session_id,
-        ChatSession.user_id == current_user.id,
-    ).first()
-    if not session:
-        raise HTTPException(status_code=403, detail="无权操作")
-
-    character = _load_character(session.character_id, db)
-    if not character:
-        raise HTTPException(status_code=404, detail="角色不存在")
-
-    # 加载历史上下文（到该消息之前）
-    history = _load_db_history(db, session.id, limit=50)
-
-    # 构建提示词
-    system_prompt = build_system_prompt(character)
-    messages = build_messages(system_prompt, history)
-
-    # 生成新回复
     try:
-        ai_response = llm_service.chat(messages, backend=backend)
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"LLM 调用失败: {e}")
-
-    clean_response = clean_text(ai_response, mode="display")
-
-    # 添加到 swipes
-    swipes = msg.swipes or [msg.content.get("text", "")]
-    swipes.append(clean_response)
-    msg.swipes = swipes
-    msg.swipe_id = str(len(swipes) - 1)
-    msg.content = {"text": clean_response}
-    db.commit()
-
-    return {
-        "message_id": message_id,
-        "text": clean_response,
-        "swipes": swipes,
-        "swipe_id": len(swipes) - 1,
-    }
+        service = ChatHistoryService(db, owner_id=current_user.id)
+        target = service.owned_message(message_id)
+        session = service.owned_session(target.session_id)
+    except ChatResourceNotFound as exc:
+        raise HTTPException(status_code=404, detail="消息不存在") from exc
+    updated = _regenerate_message(
+        message_id=message_id,
+        version=session.version,
+        backend=backend,
+        current_user=current_user,
+        db=db,
+    )
+    payload = serialize_chat_message(updated)
+    payload.update({"message_id": updated.id, "text": payload["content"]})
+    return JSONResponse(
+        content=payload,
+        headers={"Deprecation": "true", "Sunset": "version-next"},
+    )
 
 
 @router.put("/swipe")
