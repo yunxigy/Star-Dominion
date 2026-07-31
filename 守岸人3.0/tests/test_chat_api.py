@@ -1,7 +1,10 @@
 from __future__ import annotations
 
+import json
+
 from server.models.character_db import CharacterDB
-from server.models.chat_db import ChatBranch
+from server.models.chat_db import ChatBranch, ChatMessage, ChatSession
+from server.models.user import User
 
 
 def test_history_returns_message_and_swipe_metadata(chat_client, seeded_chat):
@@ -194,3 +197,101 @@ def test_delete_api_truncates_without_destroying_message(chat_client, seeded_cha
         params={"session_id": seeded_chat.session.id},
     )
     assert [item["role"] for item in history.json()] == ["user"]
+
+
+def test_search_is_scoped_to_owner(chat_client, seeded_chat, db_session):
+    other = User(
+        id="other-user",
+        username="other",
+        email="other@example.com",
+        password_hash="!site-auth-only!",
+    )
+    other_session = ChatSession(
+        id="other-session",
+        user_id=other.id,
+        character_id=seeded_chat.character.id,
+        current_branch_id="other-branch",
+        head_message_id="other-message",
+        version=1,
+    )
+    other_branch = ChatBranch(
+        id="other-branch",
+        session_id=other_session.id,
+        head_message_id="other-message",
+        name="主分支",
+    )
+    other_message = ChatMessage(
+        id="other-message",
+        session_id=other_session.id,
+        role="assistant",
+        content={"text": "你好，漂泊者"},
+        swipes=["你好，漂泊者"],
+        swipe_id="0",
+        branch_id=other_branch.id,
+        sequence=1,
+    )
+    db_session.add_all([other, other_session, other_branch, other_message])
+    db_session.commit()
+
+    response = chat_client.get("/api/chat/search", params={"q": "漂泊者"})
+
+    assert response.status_code == 200
+    assert {item["session_id"] for item in response.json()["items"]} == {
+        seeded_chat.session.id
+    }
+
+
+def test_jsonl_export_contains_only_active_path(chat_client, seeded_chat):
+    edited = chat_client.patch(
+        f"/api/chat/messages/{seeded_chat.user_message.id}",
+        json={"content": "活动分支内容", "version": 1},
+    )
+    assert edited.status_code == 200
+
+    response = chat_client.get(
+        "/api/chat/export",
+        params={"session_id": seeded_chat.session.id},
+    )
+
+    assert response.status_code == 200
+    lines = [json.loads(line) for line in response.text.splitlines() if line]
+    assert [line["content"]["text"] for line in lines] == ["活动分支内容"]
+
+
+def test_structural_change_writes_full_snapshot(
+    chat_client,
+    seeded_chat,
+    chat_backup_root,
+):
+    response = chat_client.patch(
+        f"/api/chat/messages/{seeded_chat.user_message.id}",
+        json={"content": "自动备份", "version": 1},
+    )
+
+    assert response.status_code == 200
+    snapshots = list(chat_backup_root.glob("*.json"))
+    assert len(snapshots) == 1
+    payload = json.loads(snapshots[0].read_text("utf-8"))
+    assert payload["format"] == "shouanren-chat-backup"
+
+
+def test_full_backup_download_and_import(chat_client, seeded_chat):
+    exported = chat_client.get(
+        f"/api/chat/sessions/{seeded_chat.session.id}/backup"
+    )
+    assert exported.status_code == 200
+    payload = exported.json()
+    assert payload["format"] == "shouanren-chat-backup"
+
+    imported = chat_client.post(
+        "/api/chat/backup/import",
+        files={
+            "file": (
+                "chat-backup.json",
+                json.dumps(payload, ensure_ascii=False).encode("utf-8"),
+                "application/json",
+            )
+        },
+    )
+    assert imported.status_code == 200
+    assert imported.json()["message_count"] == payload["message_count"]

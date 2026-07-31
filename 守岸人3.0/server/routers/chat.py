@@ -23,6 +23,11 @@ from ..services.chat_history import (
     ChatResourceNotFound,
     ChatVersionConflict,
 )
+from ..services.chat_backups import (
+    ChatBackupInvalid,
+    ChatBackupService,
+    MAX_BACKUP_BYTES,
+)
 from ..utils.prompt_builder import build_system_prompt, build_messages
 from ..utils.text_cleaner import clean_text
 
@@ -37,6 +42,7 @@ characters_dir: Path = None
 chats_dir: Path = None
 worlds_dir: Path = None
 audio_cache_dir: Path = None
+chat_backup_root: Path = None
 
 # TTS 异步任务队列 {task_id: {user_id, status, audio_url, text, error, created_at}}
 tts_tasks: Dict[str, dict] = {}
@@ -122,7 +128,7 @@ def _schedule_cleanup():
 
 def init_router(llm, tts, stt, chars_dir, c_dir, w_dir, a_dir):
     global llm_service, tts_service, stt_service
-    global characters_dir, chats_dir, worlds_dir, audio_cache_dir
+    global characters_dir, chats_dir, worlds_dir, audio_cache_dir, chat_backup_root
     llm_service = llm
     tts_service = tts
     stt_service = stt
@@ -130,6 +136,7 @@ def init_router(llm, tts, stt, chars_dir, c_dir, w_dir, a_dir):
     chats_dir = c_dir
     worlds_dir = w_dir
     audio_cache_dir = a_dir
+    chat_backup_root = c_dir.parent / "chat_backups"
 
     # 启动定期清理任务
     _schedule_cleanup()
@@ -579,6 +586,53 @@ async def clear_history(
     return {"status": "ok"}
 
 
+@router.get("/search")
+async def search_chats(
+    q: str,
+    limit: int = 50,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    query = q.strip()
+    if not query:
+        raise HTTPException(status_code=400, detail="请输入搜索内容")
+    safe_limit = min(max(limit, 1), 50)
+    rows = (
+        db.query(ChatMessage, ChatSession)
+        .join(ChatSession, ChatSession.id == ChatMessage.session_id)
+        .filter(ChatSession.user_id == current_user.id)
+        .order_by(ChatMessage.created_at.desc(), ChatMessage.id.desc())
+        .all()
+    )
+    needle = query.casefold()
+    items = []
+    for message, session in rows:
+        values = [ChatHistoryService.selected_text(message)] + list(
+            message.swipes or []
+        )
+        matched = next(
+            (str(value) for value in values if needle in str(value).casefold()),
+            None,
+        )
+        if matched is None:
+            continue
+        items.append(
+            {
+                "session_id": session.id,
+                "message_id": message.id,
+                "branch_id": message.branch_id,
+                "role": message.role,
+                "snippet": matched[:160],
+                "created_at": (
+                    message.created_at.isoformat() if message.created_at else None
+                ),
+            }
+        )
+        if len(items) >= safe_limit:
+            break
+    return {"items": items, "query": query}
+
+
 # ========== JSONL 导出/导入 ==========
 
 @router.get("/export")
@@ -607,9 +661,8 @@ async def export_chat_jsonl(
     if not session:
         raise HTTPException(status_code=404, detail="会话不存在")
 
-    messages = db.query(ChatMessage).filter(
-        ChatMessage.session_id == session.id
-    ).order_by(ChatMessage.created_at.asc()).all()
+    history_service = ChatHistoryService(db, owner_id=current_user.id)
+    messages = history_service.active_path(session.id)
 
     # 写入 JSONL
     with tempfile.NamedTemporaryFile(suffix=".jsonl", delete=False, mode="w", encoding="utf-8") as tmp:
@@ -660,27 +713,83 @@ async def import_chat_jsonl(
     # 获取或创建会话
     session = _get_or_create_session(db, current_user.id, character_id)
 
-    # 导入消息
+    # 导入消息到当前活动分支
+    history_service = ChatHistoryService(db, owner_id=current_user.id)
     for msg in messages:
         role = msg.get("role", "user")
         content = msg.get("content", {})
         if isinstance(content, str):
             content = {"text": content}
-
-        db.add(ChatMessage(
-            session_id=session.id,
-            role=role,
-            content=content,
-            swipes=msg.get("swipes"),
-            swipe_id=str(msg.get("swipe_id", 0)),
-        ))
-
-    db.commit()
+        imported = history_service.append_message(
+            session.id,
+            role,
+            str(content.get("text", "")),
+        )
+        if role == "assistant" and msg.get("swipes"):
+            imported.swipes = list(msg["swipes"])
+            imported.swipe_id = str(msg.get("swipe_id", 0))
+            db.commit()
 
     return {
         "status": "ok",
         "imported": len(messages),
         "session_id": session.id,
+    }
+
+
+@router.get("/sessions/{session_id}/backup")
+async def export_full_chat_backup(
+    session_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    try:
+        payload = ChatBackupService(
+            db,
+            root=chat_backup_root or Path("."),
+        ).export_session(session_id, owner_id=current_user.id)
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail="会话不存在") from exc
+    return JSONResponse(
+        content=payload,
+        headers={
+            "Content-Disposition": (
+                f'attachment; filename="shouanren-{session_id[:8]}-backup.json"'
+            )
+        },
+    )
+
+
+@router.post("/backup/import")
+async def import_full_chat_backup(
+    file: UploadFile = File(...),
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    raw = await file.read(MAX_BACKUP_BYTES + 1)
+    if len(raw) > MAX_BACKUP_BYTES:
+        raise HTTPException(status_code=400, detail="备份文件超过 10 MiB")
+    try:
+        payload = json.loads(raw.decode("utf-8"))
+        backups = ChatBackupService(
+            db,
+            root=chat_backup_root or Path("."),
+        )
+        imported = backups.import_session(payload, owner_id=current_user.id)
+        imported_session = db.get(ChatSession, imported.session_id)
+        _snapshot_session(
+            db,
+            owner_id=current_user.id,
+            session=imported_session,
+        )
+    except (UnicodeDecodeError, json.JSONDecodeError, ChatBackupInvalid) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return {
+        "status": "ok",
+        "session_id": imported.session_id,
+        "branch_count": imported.branch_count,
+        "message_count": imported.message_count,
+        "checkpoint_count": imported.checkpoint_count,
     }
 
 
@@ -726,6 +835,7 @@ async def edit_chat_message(
         session = service.owned_session(message.session_id)
     except (ChatResourceNotFound, ChatVersionConflict, ValueError) as exc:
         _raise_chat_domain_error(exc)
+    _snapshot_session(db, owner_id=current_user.id, session=session)
     return {"message": serialize_chat_message(message), "version": session.version}
 
 
@@ -745,6 +855,7 @@ async def delete_chat_message(
         session = service.owned_session(branch.session_id)
     except (ChatResourceNotFound, ChatVersionConflict) as exc:
         _raise_chat_domain_error(exc)
+    _snapshot_session(db, owner_id=current_user.id, session=session)
     return {
         "branch": serialize_chat_branch(
             branch,
@@ -795,6 +906,7 @@ async def activate_chat_branch(
         )
     except (ChatResourceNotFound, ChatVersionConflict) as exc:
         _raise_chat_domain_error(exc)
+    _snapshot_session(db, owner_id=current_user.id, session=session)
     return {"version": session.version, "branch_id": session.current_branch_id}
 
 
@@ -834,6 +946,7 @@ async def create_chat_checkpoint(
         session = service.owned_session(session_id)
     except (ChatResourceNotFound, ChatVersionConflict, ValueError) as exc:
         _raise_chat_domain_error(exc)
+    _snapshot_session(db, owner_id=current_user.id, session=session)
     return {
         "checkpoint": serialize_chat_checkpoint(checkpoint),
         "version": session.version,
@@ -855,6 +968,7 @@ async def restore_chat_checkpoint(
         )
     except (ChatResourceNotFound, ChatVersionConflict) as exc:
         _raise_chat_domain_error(exc)
+    _snapshot_session(db, owner_id=current_user.id, session=session)
     return {"version": session.version, "branch_id": session.current_branch_id}
 
 
@@ -873,6 +987,7 @@ async def delete_chat_checkpoint(
         )
     except (ChatResourceNotFound, ChatVersionConflict) as exc:
         _raise_chat_domain_error(exc)
+    _snapshot_session(db, owner_id=current_user.id, session=session)
     return {"status": "ok", "version": session.version}
 
 
@@ -978,6 +1093,25 @@ def _raise_chat_domain_error(exc: Exception) -> None:
     if isinstance(exc, ValueError):
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     raise exc
+
+
+def _snapshot_session(
+    db: Session,
+    *,
+    owner_id: str,
+    session: ChatSession,
+) -> None:
+    if chat_backup_root is None:
+        return
+    try:
+        ChatBackupService(db, root=chat_backup_root).snapshot_after_change(
+            session.id,
+            owner_id=owner_id,
+            version=session.version,
+        )
+    except Exception as exc:
+        logger.exception("聊天自动备份失败: %s", session.id)
+        raise HTTPException(status_code=500, detail="聊天已保存，但自动备份失败") from exc
 
 
 # ========== Swipe 相关端点 ==========

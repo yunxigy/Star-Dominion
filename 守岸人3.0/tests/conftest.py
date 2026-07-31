@@ -125,7 +125,18 @@ def fake_llm():
 
 
 @pytest.fixture
-def chat_client(db_session, seeded_chat, fake_llm, monkeypatch):
+def chat_backup_root(tmp_path):
+    return tmp_path / "chat-backups"
+
+
+@pytest.fixture
+def chat_client(
+    db_session,
+    seeded_chat,
+    fake_llm,
+    chat_backup_root,
+    monkeypatch,
+):
     from server.routers import chat as chat_router
 
     app = FastAPI()
@@ -141,6 +152,12 @@ def chat_client(db_session, seeded_chat, fake_llm, monkeypatch):
     app.dependency_overrides[get_db] = override_db
     monkeypatch.setattr(chat_router, "llm_service", fake_llm)
     monkeypatch.setattr(chat_router, "tts_service", None)
+    monkeypatch.setattr(
+        chat_router,
+        "chat_backup_root",
+        chat_backup_root,
+        raising=False,
+    )
 
     with TestClient(app) as client:
         yield client
