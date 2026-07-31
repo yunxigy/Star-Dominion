@@ -2,7 +2,7 @@
 """数据模型"""
 from .user import User
 from .character_db import CharacterDB
-from .chat_db import ChatSession, ChatMessage
+from .chat_db import ChatSession, ChatMessage, ChatBranch, ChatCheckpoint
 from .image import GeneratedImage
 from .system_config import SystemConfig
 from .story import Story, StorySession, StoryMessage, StoryFavorite, StoryRating, StoryBranch
@@ -17,6 +17,8 @@ __all__ = [
     "CharacterDB",
     "ChatSession",
     "ChatMessage",
+    "ChatBranch",
+    "ChatCheckpoint",
     "GeneratedImage",
     "SystemConfig",
     "Story",

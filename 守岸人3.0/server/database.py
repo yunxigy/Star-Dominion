@@ -2,6 +2,7 @@
 """数据库连接配置 - 支持 SQLite 和 PostgreSQL"""
 import os
 import logging
+import uuid
 from pathlib import Path
 
 from sqlalchemy import create_engine, inspect, text, event
@@ -71,6 +72,182 @@ else:
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
+
+
+def _ensure_column_on(target_engine, table_name: str, column) -> bool:
+    inspector = inspect(target_engine)
+    existing_columns = {item["name"] for item in inspector.get_columns(table_name)}
+    if column.name in existing_columns:
+        return False
+
+    col_type = column.type.compile(dialect=target_engine.dialect)
+    nullable = "NULL" if column.nullable else "NOT NULL"
+    default = ""
+    if column.default is not None:
+        default_value = (
+            column.default.arg
+            if hasattr(column.default, "arg")
+            else column.default
+        )
+        if not callable(default_value):
+            if isinstance(default_value, bool):
+                default = f" DEFAULT {1 if default_value else 0}"
+            elif isinstance(default_value, (int, float)):
+                default = f" DEFAULT {default_value}"
+            elif isinstance(default_value, str):
+                escaped = default_value.replace("'", "''")
+                default = f" DEFAULT '{escaped}'"
+
+    statement = (
+        f"ALTER TABLE {table_name} ADD COLUMN "
+        f"{column.name} {col_type} {nullable}{default}"
+    )
+    with target_engine.begin() as connection:
+        connection.execute(text(statement))
+    return True
+
+
+def migrate_chat_graph(target_engine) -> None:
+    """Upgrade linear chat history into a parent-pointer branch graph."""
+    from sqlalchemy import Column, DateTime, Integer, String
+
+    from .models.chat_db import ChatBranch, ChatCheckpoint
+
+    inspector = inspect(target_engine)
+    if not inspector.has_table("chat_sessions") or not inspector.has_table(
+        "chat_messages"
+    ):
+        return
+
+    session_columns = (
+        Column("current_branch_id", String, nullable=True),
+        Column("head_message_id", String, nullable=True),
+        Column("title", String(120), nullable=True),
+        Column("version", Integer, nullable=False, default=1),
+    )
+    message_columns = (
+        Column("branch_id", String, nullable=True),
+        Column("parent_message_id", String, nullable=True),
+        Column("sequence", Integer, nullable=True),
+        Column("edited_at", DateTime(timezone=True), nullable=True),
+    )
+    for column in session_columns:
+        _ensure_column_on(target_engine, "chat_sessions", column)
+    for column in message_columns:
+        _ensure_column_on(target_engine, "chat_messages", column)
+
+    ChatBranch.__table__.create(bind=target_engine, checkfirst=True)
+    ChatCheckpoint.__table__.create(bind=target_engine, checkfirst=True)
+
+    with target_engine.begin() as connection:
+        legacy_sessions = connection.execute(
+            text(
+                """
+                SELECT id
+                FROM chat_sessions
+                WHERE current_branch_id IS NULL
+                ORDER BY id
+                """
+            )
+        ).mappings()
+        for session_row in legacy_sessions:
+            session_id = session_row["id"]
+            root_branch_id = str(
+                uuid.uuid5(
+                    uuid.NAMESPACE_URL,
+                    f"shouanren:{session_id}:root",
+                )
+            )
+            message_rows = list(
+                connection.execute(
+                    text(
+                        """
+                        SELECT id
+                        FROM chat_messages
+                        WHERE session_id = :session_id
+                        ORDER BY created_at, id
+                        """
+                    ),
+                    {"session_id": session_id},
+                ).mappings()
+            )
+            head_message_id = message_rows[-1]["id"] if message_rows else None
+            branch_exists = connection.execute(
+                text("SELECT 1 FROM chat_branches WHERE id = :branch_id"),
+                {"branch_id": root_branch_id},
+            ).first()
+            if branch_exists is None:
+                connection.execute(
+                    text(
+                        """
+                        INSERT INTO chat_branches (
+                            id, session_id, parent_branch_id,
+                            fork_message_id, head_message_id, name, created_at
+                        )
+                        VALUES (
+                            :id, :session_id, NULL,
+                            NULL, :head_message_id, :name, CURRENT_TIMESTAMP
+                        )
+                        """
+                    ),
+                    {
+                        "id": root_branch_id,
+                        "session_id": session_id,
+                        "head_message_id": head_message_id,
+                        "name": "主分支",
+                    },
+                )
+
+            parent_message_id = None
+            for sequence, message_row in enumerate(message_rows, start=1):
+                connection.execute(
+                    text(
+                        """
+                        UPDATE chat_messages
+                        SET branch_id = :branch_id,
+                            parent_message_id = :parent_message_id,
+                            sequence = :sequence
+                        WHERE id = :message_id
+                        """
+                    ),
+                    {
+                        "branch_id": root_branch_id,
+                        "parent_message_id": parent_message_id,
+                        "sequence": sequence,
+                        "message_id": message_row["id"],
+                    },
+                )
+                parent_message_id = message_row["id"]
+
+            connection.execute(
+                text(
+                    """
+                    UPDATE chat_branches
+                    SET head_message_id = :head_message_id
+                    WHERE id = :branch_id
+                    """
+                ),
+                {
+                    "head_message_id": head_message_id,
+                    "branch_id": root_branch_id,
+                },
+            )
+            connection.execute(
+                text(
+                    """
+                    UPDATE chat_sessions
+                    SET current_branch_id = :branch_id,
+                        head_message_id = :head_message_id,
+                        version = COALESCE(version, 1)
+                    WHERE id = :session_id
+                    """
+                ),
+                {
+                    "branch_id": root_branch_id,
+                    "head_message_id": head_message_id,
+                    "session_id": session_id,
+                },
+            )
 
 
 def get_db():
@@ -189,6 +366,8 @@ def _migrate_existing_tables() -> None:
     _ensure_column("characters", Column("tts_style_prompt", Text, nullable=True))
     _ensure_column("characters", Column("tts_ref_audio_path", String, nullable=True))
     _ensure_column("characters", Column("tts_ref_audio_filename", String, nullable=True))
+
+    migrate_chat_graph(engine)
 
     logger.info("数据库迁移检查完成")
 
