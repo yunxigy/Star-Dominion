@@ -45,7 +45,10 @@ const API = {
   async parse(response) {
     if (!response.ok) {
       const data = await response.json().catch(() => ({}));
-      throw new Error(data.detail || '请求失败');
+      const error = new Error(data.detail || '请求失败');
+      error.status = response.status;
+      error.payload = data;
+      throw error;
     }
     if (response.status === 204) return null;
     return response.json();
@@ -60,8 +63,11 @@ const API = {
   async put(endpoint, body) {
     return this.parse(await this.request(endpoint, { method: 'PUT', body }));
   },
-  async del(endpoint) {
-    return this.parse(await this.request(endpoint, { method: 'DELETE' }));
+  async patch(endpoint, body) {
+    return this.parse(await this.request(endpoint, { method: 'PATCH', body }));
+  },
+  async del(endpoint, body) {
+    return this.parse(await this.request(endpoint, { method: 'DELETE', body }));
   },
   async postForm(endpoint, body) {
     return this.parse(await this.request(endpoint, { method: 'POST', body }));

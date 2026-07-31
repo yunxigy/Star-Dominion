@@ -295,3 +295,25 @@ def test_full_backup_download_and_import(chat_client, seeded_chat):
     )
     assert imported.status_code == 200
     assert imported.json()["message_count"] == payload["message_count"]
+
+
+def test_clear_history_creates_empty_branch_without_deleting_messages(
+    chat_client,
+    seeded_chat,
+    db_session,
+):
+    response = chat_client.request(
+        "DELETE",
+        "/api/chat/history",
+        params={"session_id": seeded_chat.session.id},
+        json={"version": 1},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["version"] == 2
+    history = chat_client.get(
+        "/api/chat/history",
+        params={"session_id": seeded_chat.session.id},
+    )
+    assert history.json() == []
+    assert db_session.get(ChatMessage, seeded_chat.user_message.id) is not None

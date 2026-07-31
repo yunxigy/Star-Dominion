@@ -8,6 +8,9 @@ const state = {
   characters: [],
   currentCharacter: null,
   currentSessionId: null,
+  chatVersion: 1,
+  branches: [],
+  checkpoints: [],
   isSending: false,
   isRecording: false,
   mediaRecorder: null,
@@ -85,15 +88,29 @@ async function loadChatHistory() {
     const container = document.getElementById('chat-container');
     container.innerHTML = '';
     history.forEach(msg => {
-      addMessage(msg.role === 'user' ? 'user' : 'ai', msg.content, false);
+      addMessage(
+        msg.role === 'user' ? 'user' : 'ai',
+        msg.content,
+        false,
+        msg.id,
+        msg.swipes,
+        msg.swipe_id,
+        {
+          branch_id: msg.branch_id,
+          parent_message_id: msg.parent_message_id,
+          created_at: msg.created_at,
+          edited_at: msg.edited_at,
+        },
+      );
     });
+    await refreshChatTools();
     scrollToBottom();
   } catch (e) {
     console.error('加载对话历史失败:', e);
   }
 }
 
-function addMessage(role, text, animate = true, messageId = null, swipes = null, swipeId = 0) {
+function addMessage(role, text, animate = true, messageId = null, swipes = null, swipeId = 0, metadata = {}) {
   const container = document.getElementById('chat-container');
   const welcome = document.getElementById('welcome-screen');
   if (welcome) welcome.style.display = 'none';
@@ -102,6 +119,8 @@ function addMessage(role, text, animate = true, messageId = null, swipes = null,
   row.className = `message-row ${role}`;
   if (!animate) row.style.animation = 'none';
   if (messageId) row.dataset.messageId = messageId;
+  if (metadata.branch_id) row.dataset.branchId = metadata.branch_id;
+  if (metadata.parent_message_id) row.dataset.parentMessageId = metadata.parent_message_id;
 
   const c = state.currentCharacter;
   const avatarSrc = role === 'ai' && c?.avatar ? `/avatars/${c.avatar}` : '/static/守岸人头像.jpg';
@@ -122,10 +141,30 @@ function addMessage(role, text, animate = true, messageId = null, swipes = null,
 
   bubbleWrap.appendChild(bubble);
 
+  if (messageId) {
+    const actions = document.createElement('div');
+    actions.className = 'message-actions';
+    actions.setAttribute('aria-label', '消息操作');
+    const editButton = document.createElement('button');
+    editButton.type = 'button';
+    editButton.textContent = '编辑';
+    editButton.onclick = () => editChatMessage(messageId);
+    const checkpointButton = document.createElement('button');
+    checkpointButton.type = 'button';
+    checkpointButton.textContent = '检查点';
+    checkpointButton.onclick = () => createChatCheckpoint(messageId);
+    const deleteButton = document.createElement('button');
+    deleteButton.type = 'button';
+    deleteButton.textContent = '删除后续';
+    deleteButton.onclick = () => deleteChatMessage(messageId);
+    actions.append(editButton, checkpointButton, deleteButton);
+    bubbleWrap.appendChild(actions);
+  }
+
   // AI 消息加滑动控件
   if (role === 'ai' && messageId) {
     const swipeData = swipes || [text];
-    const currentId = swipeId || 0;
+    const currentId = Number.isInteger(Number(swipeId)) ? Number(swipeId) : 0;
 
     const swipeNav = document.createElement('div');
     swipeNav.className = 'swipe-nav';
@@ -187,42 +226,31 @@ async function swipeMessage(messageId, direction) {
   if (prevBtn) prevBtn.disabled = newId <= 0;
 
   // 同步到后端
-  const token = 'central-cookie';
   const formData = new FormData();
   formData.append('message_id', messageId);
   formData.append('swipe_id', newId);
-  await fetch('/api/chat/swipe', {
-    method: 'PUT',
-    headers: { 'Authorization': `Bearer ${token}` },
-    body: formData,
-  });
+  await API.putForm('/api/chat/swipe', formData);
 }
 
 async function regenerateMessage(messageId) {
   const row = document.querySelector(`[data-message-id="${messageId}"]`);
   if (!row) return;
 
-  const token = 'central-cookie';
   const formData = new FormData();
-  formData.append('message_id', messageId);
+  formData.append('version', String(state.chatVersion));
 
   const regenBtn = row.querySelector('.swipe-regen');
   if (regenBtn) regenBtn.disabled = true;
 
   try {
-    const res = await fetch('/api/chat/swipe', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${token}` },
-      body: formData,
-    });
-    const data = await res.json();
-    if (res.ok) {
+    const data = await API.postForm(`/api/chat/messages/${encodeURIComponent(messageId)}/regenerate`, formData);
+    if (data) {
       const swipes = data.swipes || [];
       row.dataset.swipes = JSON.stringify(swipes);
       row.dataset.swipeId = data.swipe_id;
 
       const bubble = row.querySelector('.bubble-content');
-      renderBubbleContent(bubble, data.text, 'ai');
+      renderBubbleContent(bubble, data.content, 'ai');
 
       const counter = row.querySelector('.swipe-counter');
       if (counter) counter.textContent = `${data.swipe_id + 1}/${swipes.length}`;
@@ -231,9 +259,245 @@ async function regenerateMessage(messageId) {
       if (prevBtn) prevBtn.disabled = false;
     }
   } catch (e) {
-    console.error('重新生成失败:', e);
+    await handleChatMutationError(e, '重新生成失败');
   } finally {
     if (regenBtn) regenBtn.disabled = false;
+  }
+}
+
+const chatChannel = 'BroadcastChannel' in window
+  ? new BroadcastChannel('shouanren-chat-updates')
+  : null;
+
+if (chatChannel) {
+  chatChannel.addEventListener('message', async (event) => {
+    if (event.data?.sessionId !== state.currentSessionId) return;
+    Toast.show('对话已在其他页面更新，正在重新加载');
+    await loadChatHistory();
+  });
+}
+
+function notifyChatUpdated() {
+  chatChannel?.postMessage({ sessionId: state.currentSessionId });
+}
+
+async function handleChatMutationError(error, label = '操作失败') {
+  if (error.status === 409) {
+    Toast.show('对话已在其他页面更新，正在重新加载');
+    await loadChatHistory();
+    return;
+  }
+  Toast.error(`${label}: ${error.message}`);
+}
+
+async function refreshChatTools() {
+  const branchSelect = document.getElementById('branch-select');
+  const checkpointList = document.getElementById('checkpoint-list');
+  if (!state.currentSessionId) {
+    if (branchSelect) branchSelect.innerHTML = '';
+    if (checkpointList) checkpointList.innerHTML = '';
+    return;
+  }
+  try {
+    const sessionId = encodeURIComponent(state.currentSessionId);
+    const [branchData, checkpointData] = await Promise.all([
+      API.get(`/api/chat/sessions/${sessionId}/branches`),
+      API.get(`/api/chat/sessions/${sessionId}/checkpoints`),
+    ]);
+    state.branches = branchData.items || [];
+    state.checkpoints = checkpointData.items || [];
+    state.chatVersion = Math.max(branchData.version || 1, checkpointData.version || 1);
+    if (branchSelect) {
+      branchSelect.innerHTML = '';
+      state.branches.forEach((branch) => {
+        const option = document.createElement('option');
+        option.value = branch.id;
+        option.textContent = branch.name || '未命名分支';
+        option.selected = Boolean(branch.is_active);
+        branchSelect.appendChild(option);
+      });
+    }
+    renderCheckpointList();
+  } catch (error) {
+    console.error('加载对话管理信息失败:', error);
+  }
+}
+
+function renderCheckpointList() {
+  const list = document.getElementById('checkpoint-list');
+  if (!list) return;
+  list.innerHTML = '';
+  if (!state.checkpoints.length) {
+    list.textContent = '还没有检查点';
+    return;
+  }
+  state.checkpoints.forEach((checkpoint) => {
+    const item = document.createElement('div');
+    item.className = 'checkpoint-item';
+    const label = document.createElement('span');
+    label.textContent = checkpoint.name;
+    const restore = document.createElement('button');
+    restore.type = 'button';
+    restore.textContent = '恢复';
+    restore.onclick = () => restoreChatCheckpoint(checkpoint.id);
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.textContent = '删除';
+    remove.onclick = () => deleteChatCheckpoint(checkpoint.id);
+    item.append(label, restore, remove);
+    list.appendChild(item);
+  });
+}
+
+async function editChatMessage(messageId) {
+  const row = document.querySelector(`[data-message-id="${messageId}"]`);
+  const current = row?.querySelector('.bubble-content')?.textContent?.trim() || '';
+  const content = prompt('编辑消息（原内容会保留在旧分支）', current);
+  if (content === null || !content.trim()) return;
+  try {
+    const data = await API.patch(`/api/chat/messages/${encodeURIComponent(messageId)}`, {
+      content: content.trim(),
+      version: state.chatVersion,
+    });
+    state.chatVersion = data.version;
+    notifyChatUpdated();
+    await loadChatHistory();
+  } catch (error) {
+    await handleChatMutationError(error, '编辑失败');
+  }
+}
+
+async function deleteChatMessage(messageId) {
+  if (!confirm('从这条消息开始移出当前分支？原分支仍可恢复。')) return;
+  try {
+    const data = await API.del(`/api/chat/messages/${encodeURIComponent(messageId)}`, {
+      version: state.chatVersion,
+    });
+    state.chatVersion = data.version;
+    notifyChatUpdated();
+    await loadChatHistory();
+  } catch (error) {
+    await handleChatMutationError(error, '删除失败');
+  }
+}
+
+async function activateChatBranch(branchId) {
+  if (!branchId || !state.currentSessionId) return;
+  try {
+    const data = await API.post(
+      `/api/chat/sessions/${encodeURIComponent(state.currentSessionId)}/branches/${encodeURIComponent(branchId)}/activate`,
+      { version: state.chatVersion },
+    );
+    state.chatVersion = data.version;
+    notifyChatUpdated();
+    await loadChatHistory();
+  } catch (error) {
+    await handleChatMutationError(error, '切换分支失败');
+  }
+}
+
+async function createChatCheckpoint(messageId = null) {
+  if (!state.currentSessionId) return;
+  const name = prompt('检查点名称', '新的检查点');
+  if (name === null || !name.trim()) return;
+  try {
+    const data = await API.post(
+      `/api/chat/sessions/${encodeURIComponent(state.currentSessionId)}/checkpoints`,
+      { name: name.trim(), message_id: messageId, version: state.chatVersion },
+    );
+    state.chatVersion = data.version;
+    notifyChatUpdated();
+    await refreshChatTools();
+  } catch (error) {
+    await handleChatMutationError(error, '创建检查点失败');
+  }
+}
+
+async function restoreChatCheckpoint(checkpointId) {
+  try {
+    const data = await API.post(
+      `/api/chat/checkpoints/${encodeURIComponent(checkpointId)}/restore`,
+      { version: state.chatVersion },
+    );
+    state.chatVersion = data.version;
+    notifyChatUpdated();
+    await loadChatHistory();
+  } catch (error) {
+    await handleChatMutationError(error, '恢复检查点失败');
+  }
+}
+
+async function deleteChatCheckpoint(checkpointId) {
+  if (!confirm('删除这个检查点？')) return;
+  try {
+    const data = await API.del(`/api/chat/checkpoints/${encodeURIComponent(checkpointId)}`, {
+      version: state.chatVersion,
+    });
+    state.chatVersion = data.version;
+    notifyChatUpdated();
+    await refreshChatTools();
+  } catch (error) {
+    await handleChatMutationError(error, '删除检查点失败');
+  }
+}
+
+async function searchChats() {
+  const input = document.getElementById('chat-search-input');
+  const results = document.getElementById('chat-search-results');
+  const query = input?.value.trim();
+  if (!query || !results) return;
+  try {
+    const data = await API.get(`/api/chat/search?q=${encodeURIComponent(query)}`);
+    results.innerHTML = '';
+    if (!data.items.length) {
+      results.textContent = '没有匹配消息';
+      return;
+    }
+    data.items.forEach((item) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'search-result';
+      button.textContent = item.snippet;
+      button.onclick = async () => {
+        state.currentSessionId = item.session_id;
+        await loadChatHistory();
+      };
+      results.appendChild(button);
+    });
+  } catch (error) {
+    Toast.error(`搜索失败: ${error.message}`);
+  }
+}
+
+async function exportChatBackup() {
+  if (!state.currentSessionId) return;
+  try {
+    const payload = await API.get(`/api/chat/sessions/${encodeURIComponent(state.currentSessionId)}/backup`);
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = `shouanren-${state.currentSessionId.slice(0, 8)}-backup.json`;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  } catch (error) {
+    Toast.error(`备份导出失败: ${error.message}`);
+  }
+}
+
+async function importChatBackup(input) {
+  const file = input?.files?.[0];
+  if (!file) return;
+  const body = new FormData();
+  body.append('file', file);
+  try {
+    const data = await API.postForm('/api/chat/backup/import', body);
+    state.currentSessionId = data.session_id;
+    await loadChatHistory();
+    Toast.show('完整备份已导入');
+  } catch (error) {
+    Toast.error(`备份导入失败: ${error.message}`);
+  } finally {
+    input.value = '';
   }
 }
 
@@ -297,17 +561,11 @@ async function handleSlashCommand(text) {
   // 其他命令发送到后端
   addMessage('user', text);
   try {
-    const token = 'central-cookie';
     const formData = new FormData();
     formData.append('command', text);
     formData.append('session_id', state.currentSessionId || '');
     formData.append('character_name', state.currentCharacter?.name || '');
-    const res = await fetch('/api/commands/execute', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${token}` },
-      body: formData,
-    });
-    const data = await res.json();
+    const data = await API.postForm('/api/commands/execute', formData);
     if (data.result) {
       addMessage('ai', data.result);
     } else if (data.error) {
@@ -348,11 +606,12 @@ async function sendMessage(text) {
 
     removeLoadingMessage();
     state.currentSessionId = data.session_id || state.currentSessionId;
-    const row = addMessage('ai', data.text, true, data.message_id);
+    await loadChatHistory();
+    const row = document.querySelector(`[data-message-id="${data.message_id}"]`);
 
-    if (data.audio_url) {
+    if (row && data.audio_url) {
       addAudioButton(row, data.audio_url, false);
-    } else if (data.tts_task_id) {
+    } else if (row && data.tts_task_id) {
       addTTSStatusButton(row, data.tts_task_id);
     }
   } catch (e) {
@@ -386,10 +645,10 @@ async function sendAudio(audioBlob) {
 
     removeLoadingMessage();
     state.currentSessionId = data.session_id || state.currentSessionId;
-    addMessage('user', data.user_text || '[语音消息]');
-    const row = addMessage('ai', data.text, true, data.message_id);
-    if (data.audio_url) addAudioButton(row, data.audio_url, false);
-    else if (data.tts_task_id) addTTSStatusButton(row, data.tts_task_id);
+    await loadChatHistory();
+    const row = document.querySelector(`[data-message-id="${data.message_id}"]`);
+    if (row && data.audio_url) addAudioButton(row, data.audio_url, false);
+    else if (row && data.tts_task_id) addTTSStatusButton(row, data.tts_task_id);
   } catch (e) {
     removeLoadingMessage();
     addMessage('ai', `发送失败: ${e.message}`);
@@ -410,16 +669,12 @@ async function clearChatHistory() {
       params = `?character_id=${state.currentCharacter.id}`;
     }
 
-    await API.del(`/api/chat/history${params}`);
-
-    const container = document.getElementById('chat-container');
-    container.innerHTML = '';
-
-    const welcome = document.getElementById('welcome-screen');
-    if (welcome) {
-      welcome.style.display = 'flex';
-      container.appendChild(welcome);
-    }
+    const data = await API.del(`/api/chat/history${params}`, {
+      version: state.chatVersion,
+    });
+    state.chatVersion = data.version;
+    notifyChatUpdated();
+    await loadChatHistory();
 
     if (state.currentCharacter?.first_mes) {
       setTimeout(() => {
@@ -804,23 +1059,13 @@ async function handleImportFile(input) {
   const file = input.files[0];
   if (!file) return;
 
-  const token = 'central-cookie';
   const formData = new FormData();
   formData.append('file', file);
 
   try {
-    const res = await fetch('/api/characters/import', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${token}` },
-      body: formData,
-    });
-    const data = await res.json();
-    if (res.ok) {
-      Toast.show(`角色「${data.name}」导入成功`, 'success');
-      await loadCharacters();
-    } else {
-      Toast.show(data.detail || '导入失败', 'error');
-    }
+    const data = await API.postForm('/api/characters/import', formData);
+    Toast.show(`角色「${data.name}」导入成功`, 'success');
+    await loadCharacters();
   } catch (e) {
     Toast.show('导入失败: ' + e.message, 'error');
   }
@@ -829,13 +1074,11 @@ async function handleImportFile(input) {
 }
 
 function exportCharacter(charId, format) {
-  const token = 'central-cookie';
   const url = `/api/characters/${charId}/export/${format}`;
   const a = document.createElement('a');
   a.href = url;
   a.download = '';
-  // 带 token 的下载
-  fetch(url, { headers: { 'Authorization': `Bearer ${token}` } })
+  fetch(url, { credentials: 'include' })
     .then(res => res.blob())
     .then(blob => {
       a.href = URL.createObjectURL(blob);

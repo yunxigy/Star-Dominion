@@ -30,6 +30,30 @@
     </div>
     <input type="file" id="import-file" accept=".png,.json" style="display:none" onchange="handleImportFile(this)">
     <div id="character-list"></div>
+    <section id="chat-session-panel" aria-label="对话管理">
+      <div class="chat-tool-heading">
+        <span>对话管理</span>
+        <button type="button" class="chat-tool-icon" onclick="refreshChatTools()" aria-label="刷新对话管理">↻</button>
+      </div>
+      <div class="chat-search-row">
+        <label class="sr-only" for="chat-search-input">搜索聊天</label>
+        <input id="chat-search-input" type="search" placeholder="搜索消息…" onkeydown="if(event.key === 'Enter') searchChats()">
+        <button type="button" onclick="searchChats()">搜索</button>
+      </div>
+      <div id="chat-search-results" class="chat-tool-list" aria-live="polite"></div>
+      <label class="chat-tool-label" for="branch-select">当前分支</label>
+      <select id="branch-select" onchange="activateChatBranch(this.value)"></select>
+      <div class="chat-tool-heading compact">
+        <span>检查点</span>
+        <button type="button" class="chat-tool-icon" onclick="createChatCheckpoint()" aria-label="新建检查点">＋</button>
+      </div>
+      <div id="checkpoint-list" class="chat-tool-list"></div>
+      <div class="chat-backup-actions">
+        <button type="button" onclick="exportChatBackup()">完整备份</button>
+        <button type="button" onclick="document.getElementById('chat-backup-file').click()">导入备份</button>
+      </div>
+      <input id="chat-backup-file" type="file" accept="application/json,.json" hidden onchange="importChatBackup(this)">
+    </section>
     <div class="sidebar-nav" style="padding:10px 16px;border-top:1px solid rgba(0,0,0,0.06);">
       <a href="/characters.html" style="display:block;padding:8px;color:var(--text-color);text-decoration:none;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.background='rgba(0,119,182,0.1)'" onmouseout="this.style.background='none'">📚 角色库</a>
       <a href="/stories.html" style="display:block;padding:8px;color:var(--text-color);text-decoration:none;border-radius:8px;transition:all 0.2s;" onmouseover="this.style.background='rgba(0,119,182,0.1)'" onmouseout="this.style.background='none'">📖 互动剧情</a>

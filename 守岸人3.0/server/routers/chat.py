@@ -559,31 +559,38 @@ async def get_history(
 
 @router.delete("/history")
 async def clear_history(
+    payload: VersionRequest,
     session_id: Optional[str] = None,
     character_id: Optional[str] = None,
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    """清空对话历史"""
-    if session_id:
-        session = db.query(ChatSession).filter(
-            ChatSession.id == session_id,
-            ChatSession.user_id == current_user.id,
-        ).first()
-        if not session:
-            raise HTTPException(status_code=404, detail="会话不存在")
-        db.query(ChatMessage).filter(ChatMessage.session_id == session_id).delete()
-        db.commit()
-    elif character_id:
+    """通过创建空分支清空当前视图，保留原始历史。"""
+    service = ChatHistoryService(db, owner_id=current_user.id)
+    if not session_id and character_id:
         session = db.query(ChatSession).filter(
             ChatSession.user_id == current_user.id,
             ChatSession.character_id == character_id,
         ).first()
-        if session:
-            db.query(ChatMessage).filter(ChatMessage.session_id == session.id).delete()
-            db.commit()
+        session_id = session.id if session else None
+    if not session_id:
+        raise HTTPException(status_code=404, detail="会话不存在")
+    try:
+        path = service.active_path(session_id)
+        service.require_version(session_id, payload.version)
+        if path:
+            branch = service.delete_from(
+                path[0].id,
+                expected_version=payload.version,
+            )
+            session = service.owned_session(branch.session_id)
+        else:
+            session = service.owned_session(session_id)
+    except (ChatResourceNotFound, ChatVersionConflict) as exc:
+        _raise_chat_domain_error(exc)
 
-    return {"status": "ok"}
+    _snapshot_session(db, owner_id=current_user.id, session=session)
+    return {"status": "ok", "version": session.version}
 
 
 @router.get("/search")
