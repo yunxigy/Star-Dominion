@@ -87,3 +87,60 @@ def test_chat_graph_migration_is_idempotent(tmp_path):
         assert session.query(ChatBranch).count() == 1
 
     engine.dispose()
+
+
+def test_active_path_follows_parent_pointers(db_session, seeded_chat):
+    from server.services.chat_history import ChatHistoryService
+
+    service = ChatHistoryService(db_session, owner_id=seeded_chat.user_id)
+
+    assert [
+        item.content["text"]
+        for item in service.active_path(seeded_chat.session.id)
+    ] == ["你好", "你好，漂泊者"]
+
+
+def test_regeneration_context_excludes_target_and_descendants(
+    db_session,
+    seeded_chat,
+):
+    from server.services.chat_history import ChatHistoryService
+
+    service = ChatHistoryService(db_session, owner_id=seeded_chat.user_id)
+    context = service.context_before(seeded_chat.assistant_message.id)
+
+    assert [item.content["text"] for item in context] == ["你好"]
+    assert service.prompt_messages_before(
+        seeded_chat.assistant_message.id
+    ) == [{"role": "user", "content": "你好"}]
+
+
+def test_selecting_swipe_updates_only_selected_candidate(db_session, seeded_chat):
+    from server.services.chat_history import ChatHistoryService
+
+    service = ChatHistoryService(db_session, owner_id=seeded_chat.user_id)
+    updated = service.append_swipe(
+        seeded_chat.assistant_message.id,
+        "另一个回答",
+    )
+    selected = service.select_swipe(updated.id, 0)
+
+    assert selected.swipes == ["你好，漂泊者", "另一个回答"]
+    assert selected.swipe_id == "0"
+    assert selected.content["text"] == "你好，漂泊者"
+
+
+def test_owned_resources_are_hidden_from_other_users(db_session, seeded_chat):
+    from server.services.chat_history import (
+        ChatHistoryService,
+        ChatResourceNotFound,
+    )
+
+    service = ChatHistoryService(db_session, owner_id="another-user")
+
+    try:
+        service.owned_message(seeded_chat.assistant_message.id)
+    except ChatResourceNotFound:
+        pass
+    else:
+        raise AssertionError("another user's message must be hidden")
