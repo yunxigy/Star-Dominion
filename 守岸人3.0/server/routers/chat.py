@@ -10,6 +10,7 @@ from typing import Optional, Dict
 
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form
 from fastapi.responses import JSONResponse
+from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 
 from ..database import get_db
@@ -39,6 +40,19 @@ audio_cache_dir: Path = None
 
 # TTS 异步任务队列 {task_id: {user_id, status, audio_url, text, error, created_at}}
 tts_tasks: Dict[str, dict] = {}
+
+
+class VersionRequest(BaseModel):
+    version: int = Field(ge=1)
+
+
+class MessageEditRequest(VersionRequest):
+    content: str = Field(min_length=1, max_length=20000)
+
+
+class CheckpointCreateRequest(VersionRequest):
+    name: str = Field(min_length=1, max_length=120)
+    message_id: Optional[str] = None
 
 # TTS 任务过期时间（秒）
 TTS_TASK_EXPIRE = 600  # 10分钟
@@ -695,6 +709,173 @@ async def get_user_sessions(
     return result
 
 
+@router.patch("/messages/{message_id}")
+async def edit_chat_message(
+    message_id: str,
+    payload: MessageEditRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    service = ChatHistoryService(db, owner_id=current_user.id)
+    try:
+        message = service.edit_message(
+            message_id,
+            payload.content,
+            expected_version=payload.version,
+        )
+        session = service.owned_session(message.session_id)
+    except (ChatResourceNotFound, ChatVersionConflict, ValueError) as exc:
+        _raise_chat_domain_error(exc)
+    return {"message": serialize_chat_message(message), "version": session.version}
+
+
+@router.delete("/messages/{message_id}")
+async def delete_chat_message(
+    message_id: str,
+    payload: VersionRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    service = ChatHistoryService(db, owner_id=current_user.id)
+    try:
+        branch = service.delete_from(
+            message_id,
+            expected_version=payload.version,
+        )
+        session = service.owned_session(branch.session_id)
+    except (ChatResourceNotFound, ChatVersionConflict) as exc:
+        _raise_chat_domain_error(exc)
+    return {
+        "branch": serialize_chat_branch(
+            branch,
+            active_branch_id=session.current_branch_id,
+        ),
+        "version": session.version,
+    }
+
+
+@router.get("/sessions/{session_id}/branches")
+async def list_chat_branches(
+    session_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    service = ChatHistoryService(db, owner_id=current_user.id)
+    try:
+        session = service.owned_session(session_id)
+        branches = service.list_branches(session_id)
+    except ChatResourceNotFound as exc:
+        _raise_chat_domain_error(exc)
+    return {
+        "items": [
+            serialize_chat_branch(
+                branch,
+                active_branch_id=session.current_branch_id,
+            )
+            for branch in branches
+        ],
+        "version": session.version,
+    }
+
+
+@router.post("/sessions/{session_id}/branches/{branch_id}/activate")
+async def activate_chat_branch(
+    session_id: str,
+    branch_id: str,
+    payload: VersionRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    service = ChatHistoryService(db, owner_id=current_user.id)
+    try:
+        session = service.activate_branch(
+            session_id,
+            branch_id,
+            expected_version=payload.version,
+        )
+    except (ChatResourceNotFound, ChatVersionConflict) as exc:
+        _raise_chat_domain_error(exc)
+    return {"version": session.version, "branch_id": session.current_branch_id}
+
+
+@router.get("/sessions/{session_id}/checkpoints")
+async def list_chat_checkpoints(
+    session_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    service = ChatHistoryService(db, owner_id=current_user.id)
+    try:
+        session = service.owned_session(session_id)
+        checkpoints = service.list_checkpoints(session_id)
+    except ChatResourceNotFound as exc:
+        _raise_chat_domain_error(exc)
+    return {
+        "items": [serialize_chat_checkpoint(item) for item in checkpoints],
+        "version": session.version,
+    }
+
+
+@router.post("/sessions/{session_id}/checkpoints")
+async def create_chat_checkpoint(
+    session_id: str,
+    payload: CheckpointCreateRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    service = ChatHistoryService(db, owner_id=current_user.id)
+    try:
+        checkpoint = service.create_checkpoint(
+            session_id,
+            payload.name,
+            payload.message_id,
+            expected_version=payload.version,
+        )
+        session = service.owned_session(session_id)
+    except (ChatResourceNotFound, ChatVersionConflict, ValueError) as exc:
+        _raise_chat_domain_error(exc)
+    return {
+        "checkpoint": serialize_chat_checkpoint(checkpoint),
+        "version": session.version,
+    }
+
+
+@router.post("/checkpoints/{checkpoint_id}/restore")
+async def restore_chat_checkpoint(
+    checkpoint_id: str,
+    payload: VersionRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    service = ChatHistoryService(db, owner_id=current_user.id)
+    try:
+        session = service.restore_checkpoint(
+            checkpoint_id,
+            expected_version=payload.version,
+        )
+    except (ChatResourceNotFound, ChatVersionConflict) as exc:
+        _raise_chat_domain_error(exc)
+    return {"version": session.version, "branch_id": session.current_branch_id}
+
+
+@router.delete("/checkpoints/{checkpoint_id}")
+async def delete_chat_checkpoint(
+    checkpoint_id: str,
+    payload: VersionRequest,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    service = ChatHistoryService(db, owner_id=current_user.id)
+    try:
+        session = service.delete_checkpoint(
+            checkpoint_id,
+            expected_version=payload.version,
+        )
+    except (ChatResourceNotFound, ChatVersionConflict) as exc:
+        _raise_chat_domain_error(exc)
+    return {"status": "ok", "version": session.version}
+
+
 # ========== 内部工具函数 ==========
 
 def _get_or_create_session(db: Session, user_id: str, character_id: str) -> ChatSession:
@@ -761,6 +942,42 @@ def serialize_chat_message(message: ChatMessage) -> dict:
         "created_at": message.created_at.isoformat() if message.created_at else None,
         "edited_at": message.edited_at.isoformat() if message.edited_at else None,
     }
+
+
+def serialize_chat_branch(branch: ChatBranch, *, active_branch_id: str) -> dict:
+    return {
+        "id": branch.id,
+        "session_id": branch.session_id,
+        "parent_branch_id": branch.parent_branch_id,
+        "fork_message_id": branch.fork_message_id,
+        "head_message_id": branch.head_message_id,
+        "name": branch.name,
+        "is_active": branch.id == active_branch_id,
+        "created_at": branch.created_at.isoformat() if branch.created_at else None,
+    }
+
+
+def serialize_chat_checkpoint(checkpoint) -> dict:
+    return {
+        "id": checkpoint.id,
+        "session_id": checkpoint.session_id,
+        "branch_id": checkpoint.branch_id,
+        "message_id": checkpoint.message_id,
+        "name": checkpoint.name,
+        "created_at": (
+            checkpoint.created_at.isoformat() if checkpoint.created_at else None
+        ),
+    }
+
+
+def _raise_chat_domain_error(exc: Exception) -> None:
+    if isinstance(exc, ChatResourceNotFound):
+        raise HTTPException(status_code=404, detail="对话资源不存在") from exc
+    if isinstance(exc, ChatVersionConflict):
+        raise HTTPException(status_code=409, detail="对话已在其他页面更新") from exc
+    if isinstance(exc, ValueError):
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    raise exc
 
 
 # ========== Swipe 相关端点 ==========

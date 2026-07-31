@@ -144,3 +144,96 @@ def test_owned_resources_are_hidden_from_other_users(db_session, seeded_chat):
         pass
     else:
         raise AssertionError("another user's message must be hidden")
+
+
+def test_edit_creates_branch_and_preserves_original_path(db_session, seeded_chat):
+    from server.services.chat_history import ChatHistoryService
+
+    service = ChatHistoryService(db_session, owner_id=seeded_chat.user_id)
+    original_branch = seeded_chat.session.current_branch_id
+    edited = service.edit_message(
+        seeded_chat.user_message.id,
+        "重新问候",
+        expected_version=1,
+    )
+
+    assert edited.branch_id != original_branch
+    assert [
+        item.content["text"]
+        for item in service.active_path(seeded_chat.session.id)
+    ] == ["重新问候"]
+    service.activate_branch(
+        seeded_chat.session.id,
+        original_branch,
+        expected_version=2,
+    )
+    assert [
+        item.content["text"]
+        for item in service.active_path(seeded_chat.session.id)
+    ] == ["你好", "你好，漂泊者"]
+
+
+def test_delete_truncates_new_branch_without_deleting_original(
+    db_session,
+    seeded_chat,
+):
+    from server.services.chat_history import ChatHistoryService
+
+    service = ChatHistoryService(db_session, owner_id=seeded_chat.user_id)
+    branch = service.delete_from(
+        seeded_chat.assistant_message.id,
+        expected_version=1,
+    )
+
+    assert branch.id != seeded_chat.root_branch.id
+    assert [
+        item.role for item in service.active_path(seeded_chat.session.id)
+    ] == ["user"]
+    assert db_session.get(
+        type(seeded_chat.assistant_message),
+        seeded_chat.assistant_message.id,
+    ) is not None
+
+
+def test_checkpoint_restore_creates_recoverable_branch(db_session, seeded_chat):
+    from server.services.chat_history import ChatHistoryService
+
+    service = ChatHistoryService(db_session, owner_id=seeded_chat.user_id)
+    checkpoint = service.create_checkpoint(
+        seeded_chat.session.id,
+        "初次见面",
+        seeded_chat.user_message.id,
+        expected_version=1,
+    )
+    service.append_message(seeded_chat.session.id, "user", "继续")
+    restored = service.restore_checkpoint(
+        checkpoint.id,
+        expected_version=3,
+    )
+
+    assert restored.current_branch_id != seeded_chat.root_branch.id
+    assert [
+        item.content["text"]
+        for item in service.active_path(seeded_chat.session.id)
+    ] == ["你好"]
+    service.delete_checkpoint(checkpoint.id, expected_version=4)
+    assert service.list_checkpoints(seeded_chat.session.id) == []
+
+
+def test_edit_rejects_stale_version(db_session, seeded_chat):
+    from server.services.chat_history import (
+        ChatHistoryService,
+        ChatVersionConflict,
+    )
+
+    service = ChatHistoryService(db_session, owner_id=seeded_chat.user_id)
+    try:
+        service.edit_message(
+            seeded_chat.user_message.id,
+            "不会保存",
+            expected_version=0,
+        )
+    except ChatVersionConflict:
+        pass
+    else:
+        raise AssertionError("stale edits must be rejected")

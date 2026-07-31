@@ -102,3 +102,95 @@ def test_chat_post_appends_messages_to_active_branch(
         "assistant",
     ]
     assert path[-1].content["text"] == "新的回答"
+
+
+def test_edit_api_creates_branch_and_lists_it(chat_client, seeded_chat):
+    response = chat_client.patch(
+        f"/api/chat/messages/{seeded_chat.user_message.id}",
+        json={"content": "换个说法", "version": 1},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["message"]["content"] == "换个说法"
+    assert response.json()["version"] == 2
+
+    branches = chat_client.get(
+        f"/api/chat/sessions/{seeded_chat.session.id}/branches"
+    )
+    assert branches.status_code == 200
+    assert len(branches.json()["items"]) == 2
+    assert sum(item["is_active"] for item in branches.json()["items"]) == 1
+
+
+def test_branch_activation_restores_original_history(chat_client, seeded_chat):
+    edit = chat_client.patch(
+        f"/api/chat/messages/{seeded_chat.user_message.id}",
+        json={"content": "换个说法", "version": 1},
+    )
+    assert edit.status_code == 200
+
+    activate = chat_client.post(
+        f"/api/chat/sessions/{seeded_chat.session.id}/branches/"
+        f"{seeded_chat.root_branch.id}/activate",
+        json={"version": 2},
+    )
+
+    assert activate.status_code == 200
+    history = chat_client.get(
+        "/api/chat/history",
+        params={"session_id": seeded_chat.session.id},
+    )
+    assert [item["content"] for item in history.json()] == [
+        "你好",
+        "你好，漂泊者",
+    ]
+
+
+def test_checkpoint_api_lifecycle(chat_client, seeded_chat):
+    created = chat_client.post(
+        f"/api/chat/sessions/{seeded_chat.session.id}/checkpoints",
+        json={
+            "name": "第一次见面",
+            "message_id": seeded_chat.user_message.id,
+            "version": 1,
+        },
+    )
+    assert created.status_code == 200
+    checkpoint_id = created.json()["checkpoint"]["id"]
+    assert created.json()["version"] == 2
+
+    listed = chat_client.get(
+        f"/api/chat/sessions/{seeded_chat.session.id}/checkpoints"
+    )
+    assert [item["id"] for item in listed.json()["items"]] == [checkpoint_id]
+
+    restored = chat_client.post(
+        f"/api/chat/checkpoints/{checkpoint_id}/restore",
+        json={"version": 2},
+    )
+    assert restored.status_code == 200
+    assert restored.json()["version"] == 3
+
+    deleted = chat_client.request(
+        "DELETE",
+        f"/api/chat/checkpoints/{checkpoint_id}",
+        json={"version": 3},
+    )
+    assert deleted.status_code == 200
+    assert deleted.json()["version"] == 4
+
+
+def test_delete_api_truncates_without_destroying_message(chat_client, seeded_chat):
+    response = chat_client.request(
+        "DELETE",
+        f"/api/chat/messages/{seeded_chat.assistant_message.id}",
+        json={"version": 1},
+    )
+
+    assert response.status_code == 200
+    assert response.json()["version"] == 2
+    history = chat_client.get(
+        "/api/chat/history",
+        params={"session_id": seeded_chat.session.id},
+    )
+    assert [item["role"] for item in history.json()] == ["user"]

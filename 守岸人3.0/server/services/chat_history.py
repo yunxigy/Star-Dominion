@@ -2,11 +2,18 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
+
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.attributes import flag_modified
 
-from ..models.chat_db import ChatBranch, ChatMessage, ChatSession
+from ..models.chat_db import (
+    ChatBranch,
+    ChatCheckpoint,
+    ChatMessage,
+    ChatSession,
+)
 
 
 class ChatResourceNotFound(LookupError):
@@ -195,3 +202,198 @@ class ChatHistoryService:
         self.db.commit()
         self.db.refresh(message)
         return message
+
+    def edit_message(
+        self,
+        message_id: str,
+        text: str,
+        *,
+        expected_version: int,
+    ) -> ChatMessage:
+        target = self.owned_message(message_id)
+        session = self.require_version(target.session_id, expected_version)
+        clean_text = text.strip()
+        if not clean_text:
+            raise ValueError("message content cannot be empty")
+
+        branch = ChatBranch(
+            session_id=session.id,
+            parent_branch_id=session.current_branch_id,
+            fork_message_id=target.parent_message_id,
+            name="编辑分支",
+        )
+        self.db.add(branch)
+        self.db.flush()
+        edited = ChatMessage(
+            session_id=session.id,
+            role=target.role,
+            content={**(target.content or {}), "text": clean_text},
+            swipes=[clean_text] if target.role == "assistant" else None,
+            swipe_id="0",
+            branch_id=branch.id,
+            parent_message_id=target.parent_message_id,
+            sequence=target.sequence,
+            edited_at=datetime.now(timezone.utc),
+        )
+        self.db.add(edited)
+        self.db.flush()
+        branch.head_message_id = edited.id
+        session.current_branch_id = branch.id
+        session.head_message_id = edited.id
+        session.version += 1
+        self.db.commit()
+        self.db.refresh(edited)
+        return edited
+
+    def delete_from(
+        self,
+        message_id: str,
+        *,
+        expected_version: int,
+    ) -> ChatBranch:
+        target = self.owned_message(message_id)
+        session = self.require_version(target.session_id, expected_version)
+        branch = ChatBranch(
+            session_id=session.id,
+            parent_branch_id=session.current_branch_id,
+            fork_message_id=target.parent_message_id,
+            head_message_id=target.parent_message_id,
+            name="删除分支",
+        )
+        self.db.add(branch)
+        self.db.flush()
+        session.current_branch_id = branch.id
+        session.head_message_id = target.parent_message_id
+        session.version += 1
+        self.db.commit()
+        self.db.refresh(branch)
+        return branch
+
+    def list_branches(self, session_id: str) -> list[ChatBranch]:
+        self.owned_session(session_id)
+        return list(
+            self.db.scalars(
+                select(ChatBranch)
+                .where(ChatBranch.session_id == session_id)
+                .order_by(ChatBranch.created_at, ChatBranch.id)
+            )
+        )
+
+    def activate_branch(
+        self,
+        session_id: str,
+        branch_id: str,
+        *,
+        expected_version: int,
+    ) -> ChatSession:
+        session = self.require_version(session_id, expected_version)
+        branch = self.db.scalar(
+            select(ChatBranch).where(
+                ChatBranch.id == branch_id,
+                ChatBranch.session_id == session.id,
+            )
+        )
+        if branch is None:
+            raise ChatResourceNotFound("chat branch not found")
+        session.current_branch_id = branch.id
+        session.head_message_id = branch.head_message_id
+        session.version += 1
+        self.db.commit()
+        self.db.refresh(session)
+        return session
+
+    def create_checkpoint(
+        self,
+        session_id: str,
+        name: str,
+        message_id: str | None,
+        *,
+        expected_version: int,
+    ) -> ChatCheckpoint:
+        session = self.require_version(session_id, expected_version)
+        checkpoint_name = name.strip()
+        if not checkpoint_name or len(checkpoint_name) > 120:
+            raise ValueError("checkpoint name must contain 1 to 120 characters")
+        selected_message_id = message_id or session.head_message_id
+        if selected_message_id is not None:
+            message = self.owned_message(selected_message_id)
+            if message.session_id != session.id:
+                raise ChatResourceNotFound("checkpoint message not found")
+        checkpoint = ChatCheckpoint(
+            session_id=session.id,
+            branch_id=session.current_branch_id,
+            message_id=selected_message_id,
+            name=checkpoint_name,
+        )
+        self.db.add(checkpoint)
+        session.version += 1
+        self.db.commit()
+        self.db.refresh(checkpoint)
+        return checkpoint
+
+    def list_checkpoints(self, session_id: str) -> list[ChatCheckpoint]:
+        self.owned_session(session_id)
+        return list(
+            self.db.scalars(
+                select(ChatCheckpoint)
+                .where(ChatCheckpoint.session_id == session_id)
+                .order_by(ChatCheckpoint.created_at, ChatCheckpoint.id)
+            )
+        )
+
+    def _owned_checkpoint(self, checkpoint_id: str) -> ChatCheckpoint:
+        checkpoint = self.db.scalar(
+            select(ChatCheckpoint)
+            .join(ChatSession, ChatSession.id == ChatCheckpoint.session_id)
+            .where(
+                ChatCheckpoint.id == checkpoint_id,
+                ChatSession.user_id == self.owner_id,
+            )
+        )
+        if checkpoint is None:
+            raise ChatResourceNotFound("chat checkpoint not found")
+        return checkpoint
+
+    def restore_checkpoint(
+        self,
+        checkpoint_id: str,
+        *,
+        expected_version: int,
+    ) -> ChatSession:
+        checkpoint = self._owned_checkpoint(checkpoint_id)
+        session = self.require_version(
+            checkpoint.session_id,
+            expected_version,
+        )
+        branch = ChatBranch(
+            session_id=session.id,
+            parent_branch_id=checkpoint.branch_id,
+            fork_message_id=checkpoint.message_id,
+            head_message_id=checkpoint.message_id,
+            name=f"恢复：{checkpoint.name}"[:120],
+        )
+        self.db.add(branch)
+        self.db.flush()
+        session.current_branch_id = branch.id
+        session.head_message_id = branch.head_message_id
+        session.version += 1
+        self.db.commit()
+        self.db.refresh(session)
+        return session
+
+    def delete_checkpoint(
+        self,
+        checkpoint_id: str,
+        *,
+        expected_version: int,
+    ) -> ChatSession:
+        checkpoint = self._owned_checkpoint(checkpoint_id)
+        session = self.require_version(
+            checkpoint.session_id,
+            expected_version,
+        )
+        self.db.delete(checkpoint)
+        session.version += 1
+        self.db.commit()
+        self.db.refresh(session)
+        return session
