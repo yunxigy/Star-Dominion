@@ -10,6 +10,7 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
+    site_user_id = Column(String(64), unique=True, nullable=True, index=True)
     email = Column(String(255), unique=True, nullable=False, index=True)
     username = Column(String(50), unique=True, nullable=False, index=True)
     password_hash = Column(String(255), nullable=False)
@@ -25,6 +26,7 @@ class User(Base):
     def to_dict(self):
         return {
             "id": self.id,
+            "site_user_id": self.site_user_id,
             "email": self.email,
             "username": self.username,
             "avatar_url": self.avatar_url,

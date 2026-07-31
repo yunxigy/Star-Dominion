@@ -2,12 +2,19 @@
 
 from __future__ import annotations
 
-from fastapi import HTTPException, Request, status
+from fastapi import Depends, HTTPException, Request, status
+from sqlalchemy.orm import Session
 
+from ..database import get_db
+from ..models.user import User
+from ..services.site_user_profiles import (
+    SiteUserProfileConflict,
+    ensure_site_user_profile,
+)
 from .site_auth_client import SiteAuthClient, SiteAuthRejected, SiteUser
 
 
-async def get_current_user(request: Request) -> SiteUser:
+async def get_site_identity(request: Request) -> SiteUser:
     session_token = request.cookies.get("sd_session")
     if not session_token:
         raise HTTPException(
@@ -45,8 +52,23 @@ async def get_current_user(request: Request) -> SiteUser:
         ) from exc
 
 
-async def get_current_admin(request: Request) -> SiteUser:
-    user = await get_current_user(request)
+async def get_current_user(
+    request: Request,
+    db: Session = Depends(get_db),
+) -> User:
+    identity = await get_site_identity(request)
+    try:
+        return ensure_site_user_profile(db, identity)
+    except SiteUserProfileConflict as exc:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="统一账号与本地资料冲突",
+        ) from exc
+
+
+async def get_current_admin(
+    user: User = Depends(get_current_user),
+) -> User:
     if user.role != "admin":
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

@@ -136,9 +136,33 @@ def _migrate_existing_tables() -> None:
     logger.info("开始数据库迁移检查...")
 
     # users 表迁移
+    _ensure_column("users", Column("site_user_id", String(64), nullable=True))
     _ensure_column("users", Column("failed_login_attempts", Integer, default=0))
     _ensure_column("users", Column("locked_until", DateTime(timezone=True), nullable=True))
     _ensure_column("users", Column("voice_profile", Text, nullable=True))
+    with engine.begin() as conn:
+        duplicate = conn.execute(
+            text(
+                """
+                SELECT site_user_id
+                FROM users
+                WHERE site_user_id IS NOT NULL
+                GROUP BY site_user_id
+                HAVING COUNT(*) > 1
+                LIMIT 1
+                """
+            )
+        ).scalar_one_or_none()
+        if duplicate is not None:
+            raise RuntimeError(
+                f"users.site_user_id contains duplicate value: {duplicate}"
+            )
+        conn.execute(
+            text(
+                "CREATE UNIQUE INDEX IF NOT EXISTS "
+                "ix_users_site_user_id ON users(site_user_id)"
+            )
+        )
 
     # stories 表迁移
     _ensure_column("stories", Column("outline", Text, nullable=True))
