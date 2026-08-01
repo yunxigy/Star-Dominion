@@ -9,6 +9,8 @@ import { AIAgentPage } from './pages/AIAgentPage';
 import { ShouAnRenPage } from './pages/ShouAnRenPage';
 import { LoginPage } from './pages/LoginPage';
 import { CategoryPage } from './pages/CategoryPage';
+import { ReportsPage } from './pages/ReportsPage';
+import { GitHubReportsPage } from './pages/GitHubReportsPage';
 import ToolWindow from './components/ToolWindow';
 
 export default function App() {
@@ -24,6 +26,8 @@ export default function App() {
             <Route path="/bp" element={<Stm32Page />} />
             <Route path="/ai" element={<AIAgentPage />} />
             <Route path="/wuwa" element={<ShouAnRenPage />} />
+            <Route path="/reports" element={<ReportsPage />} />
+            <Route path="/reports/github" element={<GitHubReportsPage />} />
             <Route path="/auth/login" element={<LoginPage />} />
           </Route>
 

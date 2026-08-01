@@ -25,6 +25,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path: string) => path.replace(/^\/stock-api/, ''),
       },
+      '/reports-api': {
+        target: 'http://127.0.0.1:8009',
+        changeOrigin: true,
+        rewrite: (path: string) => path.replace(/^\/reports-api/, ''),
+      },
       '/api': {
         target: 'http://localhost:8006',
         changeOrigin: true,

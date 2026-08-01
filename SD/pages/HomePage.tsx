@@ -194,6 +194,25 @@ export const HomePage: React.FC = () => {
         </motion.aside>
       </section>
 
+      <Link
+        to="/reports"
+        className="group flex flex-col gap-4 rounded-3xl border border-[#d9c8b6] bg-gradient-to-br from-[#fffaf2] via-white to-[#eef2e5] p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg sm:flex-row sm:items-center sm:justify-between"
+      >
+        <div className="flex items-center gap-4">
+          <span className="rounded-2xl bg-[#2f241b] p-3 text-white shadow-md">
+            <BarChart3 className="h-6 w-6" />
+          </span>
+          <span>
+            <span className="block text-xl font-black text-[#2f241b]">研报中心</span>
+            <span className="mt-1 block text-sm text-[#6d5a47]">每周 GitHub 热门项目扫榜与多语言榜单</span>
+          </span>
+        </div>
+        <span className="inline-flex items-center gap-2 font-bold text-[#7a431f]">
+          查看本周榜单
+          <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
+        </span>
+      </Link>
+
       <section>
         <div className="flex flex-wrap items-center gap-3 mb-5">
           <div className="p-2.5 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 shadow-lg shadow-amber-500/20">
