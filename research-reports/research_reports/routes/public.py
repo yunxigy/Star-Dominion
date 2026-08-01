@@ -1,0 +1,233 @@
+"""Public read-only research report endpoints."""
+
+from __future__ import annotations
+
+from datetime import datetime, timedelta, timezone
+
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
+from sqlalchemy import func, or_, select
+from sqlalchemy.orm import Session
+
+from ..collector.github import CATEGORIES
+from ..dependencies import get_db
+from ..models import CollectionRun, HourlyObservation, RankingEntry, Repository, WeeklyIssue
+from ..schemas import (
+    IssuePage,
+    IssueSummary,
+    RankingRepository,
+    RankingResponse,
+    RankingSummary,
+    RepositoryDetail,
+    ServiceStatus,
+)
+from ..services.rankings import EntryView, hourly_delta, summarize
+
+
+router = APIRouter(prefix="/api/v1", tags=["reports"])
+
+
+def _issue_or_404(db: Session, issue_id: str) -> WeeklyIssue:
+    issue = db.get(WeeklyIssue, issue_id)
+    if issue is None:
+        raise HTTPException(status_code=404, detail="研报期数不存在")
+    return issue
+
+
+@router.get("/issues", response_model=IssuePage)
+def list_issues(
+    limit: int = Query(default=20, ge=1, le=100),
+    cursor: str | None = None,
+    db: Session = Depends(get_db),
+) -> IssuePage:
+    statement = select(WeeklyIssue).order_by(WeeklyIssue.starts_at.desc()).limit(limit + 1)
+    if cursor:
+        cursor_issue = db.get(WeeklyIssue, cursor)
+        if cursor_issue is not None:
+            statement = statement.where(WeeklyIssue.starts_at < cursor_issue.starts_at)
+    rows = list(db.scalars(statement))
+    next_cursor = rows[limit - 1].id if len(rows) > limit else None
+    return IssuePage(items=rows[:limit], next_cursor=next_cursor)
+
+
+@router.get("/issues/current", response_model=IssueSummary)
+def current_issue(db: Session = Depends(get_db)) -> WeeklyIssue:
+    issue = db.scalar(select(WeeklyIssue).order_by(WeeklyIssue.starts_at.desc()))
+    if issue is None:
+        raise HTTPException(status_code=404, detail="当前研报尚未建立")
+    return issue
+
+
+@router.get("/issues/{issue_id}", response_model=IssueSummary)
+def issue_detail(issue_id: str, db: Session = Depends(get_db)) -> WeeklyIssue:
+    return _issue_or_404(db, issue_id)
+
+
+@router.get("/issues/{issue_id}/rankings", response_model=RankingResponse)
+def issue_rankings(
+    issue_id: str,
+    category: str = Query(default="all"),
+    query: str | None = None,
+    language: str | None = None,
+    license: str | None = None,
+    ranking_status: str | None = Query(default=None, alias="status"),
+    db: Session = Depends(get_db),
+) -> RankingResponse:
+    if category not in CATEGORIES:
+        raise HTTPException(status_code=422, detail="不支持的榜单分类")
+    issue = _issue_or_404(db, issue_id)
+    statement = (
+        select(RankingEntry, Repository)
+        .join(Repository, Repository.id == RankingEntry.repository_id)
+        .where(RankingEntry.issue_id == issue_id, RankingEntry.category == category)
+        .order_by(RankingEntry.rank)
+    )
+    if query:
+        pattern = f"%{query.strip()}%"
+        statement = statement.where(
+            or_(
+                Repository.full_name.ilike(pattern),
+                Repository.owner.ilike(pattern),
+                Repository.description.ilike(pattern),
+            )
+        )
+    if language:
+        statement = statement.where(func.lower(Repository.primary_language) == language.lower())
+    if license:
+        statement = statement.where(func.lower(Repository.license_spdx) == license.lower())
+    if ranking_status:
+        statement = statement.where(RankingEntry.status == ranking_status)
+
+    items: list[RankingRepository] = []
+    summary_entries: list[EntryView] = []
+    for entry, repository in db.execute(statement).all():
+        observations = list(
+            db.scalars(
+                select(HourlyObservation)
+                .where(
+                    HourlyObservation.issue_id == issue_id,
+                    HourlyObservation.repository_id == repository.id,
+                    HourlyObservation.category == category,
+                )
+                .order_by(HourlyObservation.observed_at.desc())
+                .limit(2)
+            )
+        )
+        rank_change = None
+        star_change = None
+        if len(observations) == 2:
+            change = hourly_delta(
+                current_rank=observations[0].rank,
+                current_stars=observations[0].stars_total,
+                previous_rank=observations[1].rank,
+                previous_stars=observations[1].stars_total,
+            )
+            rank_change = change.rank_change
+            star_change = change.star_change
+        items.append(
+            RankingRepository(
+                id=repository.id,
+                full_name=repository.full_name,
+                owner=repository.owner,
+                name=repository.name,
+                description=repository.description,
+                primary_language=repository.primary_language,
+                topics=list(repository.topics_json or []),
+                license_spdx=repository.license_spdx,
+                html_url=repository.html_url,
+                is_archived=repository.is_archived,
+                stars_total=repository.stars_total,
+                forks_total=repository.forks_total,
+                github_updated_at=repository.github_updated_at,
+                rank=entry.rank,
+                previous_issue_rank=entry.previous_issue_rank,
+                stars_since_weekly=entry.stars_since_weekly,
+                first_seen_at=entry.first_seen_at,
+                last_seen_at=entry.last_seen_at,
+                consecutive_weeks=entry.consecutive_weeks,
+                status=entry.status,
+                hourly_rank_change=rank_change,
+                hourly_star_change=star_change,
+            )
+        )
+        summary_entries.append(
+            EntryView(
+                full_name=repository.full_name,
+                rank=entry.rank,
+                stars_since_weekly=entry.stars_since_weekly,
+                status=entry.status,
+                consecutive_weeks=entry.consecutive_weeks,
+            )
+        )
+    calculated = summarize(summary_entries)
+    return RankingResponse(
+        issue=IssueSummary.model_validate(issue),
+        category=category,
+        items=items,
+        summary=RankingSummary.model_validate(calculated),
+    )
+
+
+@router.get("/repositories/{owner}/{name}", response_model=RepositoryDetail)
+def repository_detail(owner: str, name: str, db: Session = Depends(get_db)) -> RepositoryDetail:
+    repository = db.scalar(
+        select(Repository).where(
+            func.lower(Repository.full_name) == f"{owner}/{name}".lower()
+        )
+    )
+    if repository is None:
+        raise HTTPException(status_code=404, detail="仓库不存在")
+    return RepositoryDetail(
+        id=repository.id,
+        full_name=repository.full_name,
+        owner=repository.owner,
+        name=repository.name,
+        description=repository.description,
+        primary_language=repository.primary_language,
+        topics=list(repository.topics_json or []),
+        license_spdx=repository.license_spdx,
+        html_url=repository.html_url,
+        default_branch=repository.default_branch,
+        is_archived=repository.is_archived,
+        stars_total=repository.stars_total,
+        forks_total=repository.forks_total,
+        github_updated_at=repository.github_updated_at,
+    )
+
+
+@router.get("/status", response_model=ServiceStatus)
+def service_status(request: Request, db: Session = Depends(get_db)) -> ServiceStatus:
+    latest_run = db.scalar(
+        select(CollectionRun)
+        .where(CollectionRun.status.in_(("success", "partial")))
+        .order_by(CollectionRun.finished_at.desc())
+    )
+    current = db.scalar(select(WeeklyIssue).order_by(WeeklyIssue.starts_at.desc()))
+    delayed: list[str] = []
+    cutoff = datetime.now(timezone.utc) - timedelta(minutes=90)
+    if current is not None:
+        for category in CATEGORIES:
+            latest_observation = db.scalar(
+                select(func.max(HourlyObservation.observed_at)).where(
+                    HourlyObservation.issue_id == current.id,
+                    HourlyObservation.category == category,
+                )
+            )
+            if latest_observation is None or _as_utc(latest_observation) < cutoff:
+                delayed.append(category)
+    scheduler = getattr(request.app.state, "scheduler", None)
+    next_run = None
+    if scheduler is not None:
+        dates = [job.next_run_time for job in scheduler.get_jobs() if job.next_run_time]
+        next_run = min(dates) if dates else None
+    return ServiceStatus(
+        status="delayed" if delayed else "ok",
+        latest_successful_collection_at=(latest_run.finished_at if latest_run else None),
+        next_scheduled_at=next_run,
+        delayed_categories=delayed,
+    )
+
+
+def _as_utc(value: datetime) -> datetime:
+    if value.tzinfo is None:
+        return value.replace(tzinfo=timezone.utc)
+    return value.astimezone(timezone.utc)
