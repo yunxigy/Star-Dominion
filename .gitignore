@@ -54,6 +54,8 @@ stock-research-package/stock-module/data/
 stock-research-package/upstreams/
 stock-research-package/*.xlsx
 stock-research-package/*.docx
+research-reports/data/
+research-reports/cache/
 
 # SillyTavern（第三方项目，不提交）
 SillyTavern/

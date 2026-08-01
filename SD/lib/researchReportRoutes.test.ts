@@ -11,5 +11,6 @@ describe('research report module integration', () => {
     expect(source('../App.tsx')).toContain('path="/reports"');
     expect(source('../App.tsx')).toContain('path="/reports/github"');
     expect(source('../vite.config.ts')).toContain("'/reports-api':");
+    expect(source('../pages/HomePage.tsx')).toContain('to="/reports"');
   });
 });

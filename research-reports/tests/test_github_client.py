@@ -51,6 +51,34 @@ def test_fetch_trending_retries_rate_limit_then_succeeds() -> None:
     assert sleeps == [0.5]
 
 
+def test_fetch_trending_decodes_github_html_as_utf8_without_charset() -> None:
+    html = """
+    <article class="Box-row">
+      <h2><a href="/owner/utf8-repo">owner / utf8-repo</a></h2>
+      <p class="col-9">Open source — built with care 💖</p>
+      <span itemprop="programmingLanguage">Python</span>
+      <a href="/owner/utf8-repo/stargazers">1,234</a>
+      <a href="/owner/utf8-repo/forks">56</a>
+      <span class="float-sm-right">789 stars this week</span>
+    </article>
+    """
+
+    def handler(_: httpx.Request) -> httpx.Response:
+        return httpx.Response(
+            200,
+            content=html.encode("utf-8"),
+            headers={"Content-Type": "text/html"},
+        )
+
+    http = httpx.Client(transport=httpx.MockTransport(handler))
+    try:
+        rows = GitHubClient(http=http).fetch_trending("python")
+    finally:
+        http.close()
+
+    assert rows[0].description == "Open source — built with care 💖"
+
+
 def test_fetch_metadata_supports_etag_and_not_modified() -> None:
     requests: list[httpx.Request] = []
 

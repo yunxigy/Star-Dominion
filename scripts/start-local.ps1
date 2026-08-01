@@ -127,7 +127,8 @@ $services = @(
     [pscustomobject]@{ Name='stock-gateway'; WorkingDirectory='stock-research-package/stock-module/backend'; Executable='python'; Arguments=@('-m','uvicorn','app.gateway_main:app','--host','127.0.0.1','--port','8004'); Ports=@(8004) },
     [pscustomobject]@{ Name='plagiarism'; WorkingDirectory='plagiarism'; Executable='python'; Arguments=@('main.py'); Ports=@(8005) },
     [pscustomobject]@{ Name='shouanren'; WorkingDirectory=$shouDirectory; Executable='python'; Arguments=@('-m','server.main'); Ports=@(8006) },
-    [pscustomobject]@{ Name='stm32'; WorkingDirectory='4G'; Executable='python'; Arguments=@('4G.py'); Ports=@(8007,8008) }
+    [pscustomobject]@{ Name='stm32'; WorkingDirectory='4G'; Executable='python'; Arguments=@('4G.py'); Ports=@(8007,8008) },
+    [pscustomobject]@{ Name='research-reports'; WorkingDirectory='research-reports'; Executable='python'; Arguments=@('-m','uvicorn','research_reports.main:create_app','--factory','--host','127.0.0.1','--port','8009'); Ports=@(8009) }
 )
 
 if (-not $WithoutFrontends) {

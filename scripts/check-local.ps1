@@ -55,7 +55,7 @@ function Test-Http([string]$Name, [string]$Uri, [int]$ExpectedStatus, $WebSessio
 }
 
 Import-LocalEnvironment
-foreach ($port in 8000..8008) { Report "port $port" (Test-Port $port) }
+foreach ($port in 8000..8009) { Report "port $port" (Test-Port $port) }
 
 Test-Http 'site-auth health' 'http://127.0.0.1:8000/health' 200 | Out-Null
 Test-Http 'Openwrite health' 'http://127.0.0.1:8001/health' 200 | Out-Null
@@ -66,6 +66,9 @@ Test-Http 'stock analysis health' 'http://127.0.0.1:8003/api/v1/health' 200 | Ou
 Test-Http 'plagiarism health' 'http://127.0.0.1:8005/api/plagiarism/health' 200 | Out-Null
 Test-Http 'ShouAnRen health' 'http://127.0.0.1:8006/api/health' 200 | Out-Null
 Test-Http 'STM32 data' 'http://127.0.0.1:8007/data' 200 | Out-Null
+Test-Http 'research reports health' 'http://127.0.0.1:8009/health' 200 | Out-Null
+Test-Http 'research reports current issue' 'http://127.0.0.1:8009/api/v1/issues/current' 200 | Out-Null
+Test-Http 'research reports admin anonymous' 'http://127.0.0.1:8009/api/v1/admin/collections' 401 | Out-Null
 Test-Http 'stock private anonymous' 'http://127.0.0.1:8002/api/v1/model-profiles' 401 | Out-Null
 Test-Http 'ShouAnRen chat anonymous' 'http://127.0.0.1:8006/api/chat/characters' 401 | Out-Null
 
@@ -82,6 +85,7 @@ if (-not [string]::IsNullOrWhiteSpace($env:SITE_ADMIN_IDENTITY) -and
         Test-Http 'site-auth authenticated me' 'http://127.0.0.1:8000/api/v1/session/me' 200 $session | Out-Null
         Test-Http 'stock authenticated profiles' 'http://127.0.0.1:8002/api/v1/model-profiles' 200 $session | Out-Null
         Test-Http 'ShouAnRen authenticated chat' 'http://127.0.0.1:8006/api/chat/characters' 200 $session | Out-Null
+        Test-Http 'research reports admin collections' 'http://127.0.0.1:8009/api/v1/admin/collections' 200 $session | Out-Null
     } catch {
         Report 'authenticated smoke checks' $false $_.Exception.Message
     }
