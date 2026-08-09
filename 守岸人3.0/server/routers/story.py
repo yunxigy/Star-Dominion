@@ -16,6 +16,7 @@ from ..models.story import (
 from ..middleware.auth import get_current_user
 from ..services.nsfw_filter import NSFWFilter
 from ..services.llm_service import LLMService
+from ..services.resource_access import require_owned_story_session
 import json
 import os
 from pathlib import Path
@@ -409,7 +410,8 @@ async def export_story(
         data = story.to_dict(include_details=True)
         data["sessions"] = []
         sessions = db.query(StorySession).filter(
-            StorySession.story_id == story_id
+            StorySession.story_id == story_id,
+            StorySession.user_id == current_user.id,
         ).all()
         for session in sessions:
             session_data = session.to_dict()
@@ -486,9 +488,7 @@ async def generate_options(
     if not llm_service:
         raise HTTPException(status_code=500, detail="LLM服务未初始化")
 
-    session = db.query(StorySession).filter(StorySession.id == session_id).first()
-    if not session:
-        raise HTTPException(status_code=404, detail="会话不存在")
+    session = require_owned_story_session(db, current_user, session_id)
 
     story = db.query(Story).filter(Story.id == story_id).first()
     if not story:
@@ -545,11 +545,7 @@ async def get_branches(
     db: Session = Depends(get_db)
 ):
     """获取分支图数据"""
-    session = db.query(StorySession).filter(StorySession.id == session_id).first()
-    if not session:
-        raise HTTPException(status_code=404, detail="会话不存在")
-    if session.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="无权访问此会话")
+    require_owned_story_session(db, current_user, session_id)
 
     branches = db.query(StoryBranch).filter(
         StoryBranch.session_id == session_id
@@ -616,16 +612,23 @@ async def create_session(
     }
 
 @router.get("/sessions/{session_id}")
-async def get_session(session_id: str, db: Session = Depends(get_db)):
+async def get_session(
+    session_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     """获取会话详情"""
-    session = db.query(StorySession).filter(StorySession.id == session_id).first()
-    if not session:
-        raise HTTPException(status_code=404, detail="会话不存在")
+    session = require_owned_story_session(db, current_user, session_id)
     return session.to_dict()
 
 @router.get("/sessions/{session_id}/messages")
-async def get_messages(session_id: str, db: Session = Depends(get_db)):
+async def get_messages(
+    session_id: str,
+    current_user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
     """获取会话消息"""
+    require_owned_story_session(db, current_user, session_id)
     messages = db.query(StoryMessage).filter(
         StoryMessage.session_id == session_id
     ).order_by(StoryMessage.created_at).all()
@@ -657,11 +660,7 @@ async def delete_session(
     db: Session = Depends(get_db)
 ):
     """删除剧情会话"""
-    session = db.query(StorySession).filter(StorySession.id == session_id).first()
-    if not session:
-        raise HTTPException(status_code=404, detail="会话不存在")
-    if session.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="无权删除此会话")
+    session = require_owned_story_session(db, current_user, session_id)
 
     # 删除相关数据
     db.query(StoryMessage).filter(StoryMessage.session_id == session_id).delete()
@@ -680,12 +679,7 @@ async def send_message(
     db: Session = Depends(get_db)
 ):
     """发送消息/选择选项"""
-    session = db.query(StorySession).filter(StorySession.id == req.session_id).first()
-    if not session:
-        raise HTTPException(status_code=404, detail="会话不存在")
-
-    if session.user_id != current_user.id:
-        raise HTTPException(status_code=403, detail="无权访问此会话")
+    session = require_owned_story_session(db, current_user, req.session_id)
 
     story = db.query(Story).filter(Story.id == session.story_id).first()
 

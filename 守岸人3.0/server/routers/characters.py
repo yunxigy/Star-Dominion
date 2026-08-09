@@ -12,6 +12,12 @@ from ..middleware.auth import get_current_user
 from ..models.character import Character, CharacterTTSConfig
 from ..models.character_db import CharacterDB
 from ..models.user import User
+from ..services.resource_access import (
+    can_edit_character,
+    can_read_character,
+    require_editable_character,
+    require_readable_character,
+)
 
 router = APIRouter(prefix="/api/characters", tags=["characters"])
 
@@ -28,28 +34,12 @@ def init_router(chars_dir: Path, v_dir: Path):
 
 def _is_allowed_to_edit(character: CharacterDB, current_user: User) -> bool:
     """检查用户是否可以编辑角色"""
-    return (
-        current_user.role == "admin"
-        or character.creator_id == current_user.id
-        or character.user_id == current_user.id
-    )
+    return can_edit_character(character, current_user)
 
 
 def _is_allowed_to_read(character: CharacterDB, current_user: User) -> bool:
     """检查用户是否可以查看角色"""
-    # 管理员可以查看所有
-    if current_user.role == "admin":
-        return True
-    # 创建者可以查看
-    if character.creator_id == current_user.id:
-        return True
-    # 所有者可以查看
-    if character.user_id == current_user.id:
-        return True
-    # 公开角色可以查看
-    if character.is_public:
-        return True
-    return False
+    return can_read_character(character, current_user)
 
 
 def _is_nsfw_visible(character: CharacterDB, db: Session) -> bool:
@@ -132,8 +122,7 @@ async def get_character(
     """获取单个角色卡"""
     character = db.query(CharacterDB).filter(CharacterDB.id == char_id).first()
     if character:
-        if not _is_allowed_to_read(character, current_user):
-            raise HTTPException(status_code=403, detail="无权访问此角色")
+        character = require_readable_character(db, current_user, char_id)
         return JSONResponse(content=character.to_dict())
 
     return JSONResponse(content=_load_file_character(char_id).to_dict())
@@ -191,11 +180,7 @@ async def update_character(
     tts_enabled: bool = Form(True),
 ):
     """更新角色卡"""
-    character = db.query(CharacterDB).filter(CharacterDB.id == char_id).first()
-    if not character:
-        raise HTTPException(status_code=404, detail="角色卡不存在")
-    if not _is_allowed_to_edit(character, current_user):
-        raise HTTPException(status_code=403, detail="无权编辑此角色")
+    character = require_editable_character(db, current_user, char_id)
 
     character.name = name or character.name
     character.description = description or character.description
@@ -223,12 +208,13 @@ async def delete_character(
     character = db.query(CharacterDB).filter(CharacterDB.id == char_id).first()
     if not character:
         # 兼容旧版 JSON 角色卡
+        if current_user.role != "admin":
+            raise HTTPException(status_code=403, detail="旧版角色卡仅管理员可修改")
         file_char = _load_file_character(char_id)
         file_char.delete(characters_dir)
         return {"status": "ok"}
 
-    if not _is_allowed_to_edit(character, current_user):
-        raise HTTPException(status_code=403, detail="无权删除此角色")
+    character = require_editable_character(db, current_user, char_id)
 
     if character.avatar_url:
         avatar_name = character.avatar_url.replace("/avatars/", "")
@@ -251,9 +237,9 @@ async def upload_avatar(
     """上传角色头像"""
     character = db.query(CharacterDB).filter(CharacterDB.id == char_id).first()
     if not character:
+        if current_user.role != "admin":
+            raise HTTPException(status_code=403, detail="旧版角色卡仅管理员可修改")
         file_char = _load_file_character(char_id)
-        if not _is_allowed_to_edit(file_char, current_user):
-            raise HTTPException(status_code=403, detail="无权编辑此角色")
         ext = Path(file.filename or "avatar.png").suffix.lower() or ".png"
         if ext not in [".png", ".jpg", ".jpeg", ".webp"]:
             raise HTTPException(status_code=400, detail="头像仅支持 png、jpg、webp 格式")
@@ -266,8 +252,7 @@ async def upload_avatar(
         file_char.save(characters_dir)
         return {"avatar": avatar_name}
 
-    if not _is_allowed_to_edit(character, current_user):
-        raise HTTPException(status_code=403, detail="无权编辑此角色")
+    character = require_editable_character(db, current_user, char_id)
 
     ext = Path(file.filename).suffix.lower() or ".png"
     if ext not in [".png", ".jpg", ".jpeg", ".webp"]:
@@ -296,9 +281,9 @@ async def upload_voice(
     """上传角色参考音频"""
     character = db.query(CharacterDB).filter(CharacterDB.id == char_id).first()
     if not character:
+        if current_user.role != "admin":
+            raise HTTPException(status_code=403, detail="旧版角色卡仅管理员可修改")
         file_char = _load_file_character(char_id)
-        if not _is_allowed_to_edit(file_char, current_user):
-            raise HTTPException(status_code=403, detail="无权编辑此角色")
         ext = Path(file.filename).suffix or ".wav"
         voice_name = f"{char_id}{ext}"
         voices_dir.mkdir(parents=True, exist_ok=True)
@@ -309,8 +294,7 @@ async def upload_voice(
         file_char.save(characters_dir)
         return {"voice": voice_name}
 
-    if not _is_allowed_to_edit(character, current_user):
-        raise HTTPException(status_code=403, detail="无权编辑此角色")
+    character = require_editable_character(db, current_user, char_id)
 
     ext = Path(file.filename).suffix.lower() or ".wav"
     voice_name = f"{char_id}{ext}"
@@ -385,9 +369,7 @@ async def export_character_json(
     """导出角色卡为 Tavern Card V2 JSON"""
     from ..utils.character_card import card_to_tavern_v2
 
-    character = db.query(CharacterDB).filter(CharacterDB.id == char_id).first()
-    if not character:
-        raise HTTPException(status_code=404, detail="角色不存在")
+    character = require_readable_character(db, current_user, char_id)
 
     char_obj = Character(
         id=character.id,
@@ -423,9 +405,7 @@ async def export_character_png(
     from ..utils.character_card import card_to_tavern_v2, write_card_to_png
     import tempfile
 
-    character = db.query(CharacterDB).filter(CharacterDB.id == char_id).first()
-    if not character:
-        raise HTTPException(status_code=404, detail="角色不存在")
+    character = require_readable_character(db, current_user, char_id)
 
     # 查找头像作为源 PNG
     avatar_path = None

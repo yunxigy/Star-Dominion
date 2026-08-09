@@ -2,12 +2,19 @@
 """Lorebook（世界书）路由"""
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
-from typing import Optional, List
+from pydantic import BaseModel, Field
+from typing import Literal, Optional
 from ..database import get_db
 from ..models.user import User
 from ..models.lorebook import Lorebook, LorebookEntry
 from ..middleware.auth import get_current_user
+from ..services.resource_access import (
+    require_editable_character,
+    require_editable_lorebook,
+    require_editable_lorebook_entry,
+    require_readable_character,
+    require_readable_lorebook,
+)
 
 router = APIRouter(prefix="/api/lorebooks", tags=["lorebooks"])
 
@@ -21,22 +28,22 @@ class LorebookUpdate(BaseModel):
     name: Optional[str] = None
     description: Optional[str] = None
     is_enabled: Optional[bool] = None
-    scan_depth: Optional[int] = None
+    scan_depth: Optional[int] = Field(default=None, ge=0)
 
 class EntryCreate(BaseModel):
     keyword: str
     content: str
     secondary_keyword: Optional[str] = None
-    selective_logic: Optional[str] = "or"
+    selective_logic: Literal["and", "or"] = "or"
     priority: Optional[int] = 0
     constant: Optional[bool] = False
-    position: Optional[str] = "after_char"
-    depth: Optional[int] = 4
+    position: Literal["before_char", "after_char", "depth"] = "after_char"
+    depth: int = Field(default=4, ge=0)
     order: Optional[int] = 0
-    probability: Optional[float] = 1.0
-    cooldown: Optional[int] = 0
+    probability: float = Field(default=1.0, ge=0.0, le=1.0)
+    cooldown: int = Field(default=0, ge=0)
     group: Optional[str] = None
-    group_weight: Optional[int] = 100
+    group_weight: int = Field(default=100, ge=0)
     case_sensitive: Optional[bool] = False
     match_whole_words: Optional[bool] = False
     exclude_recursion: Optional[bool] = False
@@ -46,17 +53,17 @@ class EntryUpdate(BaseModel):
     keyword: Optional[str] = None
     content: Optional[str] = None
     secondary_keyword: Optional[str] = None
-    selective_logic: Optional[str] = None
+    selective_logic: Optional[Literal["and", "or"]] = None
     priority: Optional[int] = None
     is_enabled: Optional[bool] = None
     constant: Optional[bool] = None
-    position: Optional[str] = None
-    depth: Optional[int] = None
+    position: Optional[Literal["before_char", "after_char", "depth"]] = None
+    depth: Optional[int] = Field(default=None, ge=0)
     order: Optional[int] = None
-    probability: Optional[float] = None
-    cooldown: Optional[int] = None
+    probability: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+    cooldown: Optional[int] = Field(default=None, ge=0)
     group: Optional[str] = None
-    group_weight: Optional[int] = None
+    group_weight: Optional[int] = Field(default=None, ge=0)
     case_sensitive: Optional[bool] = None
     match_whole_words: Optional[bool] = None
     exclude_recursion: Optional[bool] = None
@@ -72,6 +79,7 @@ async def get_character_lorebooks(
     db: Session = Depends(get_db)
 ):
     """获取角色的所有 Lorebook"""
+    require_readable_character(db, current_user, character_id)
     lorebooks = db.query(Lorebook).filter(
         Lorebook.character_id == character_id
     ).all()
@@ -85,6 +93,7 @@ async def create_lorebook(
     db: Session = Depends(get_db)
 ):
     """创建 Lorebook"""
+    require_editable_character(db, current_user, req.character_id)
     lorebook = Lorebook(
         character_id=req.character_id,
         name=req.name,
@@ -104,9 +113,7 @@ async def update_lorebook(
     db: Session = Depends(get_db)
 ):
     """更新 Lorebook"""
-    lorebook = db.query(Lorebook).filter(Lorebook.id == lorebook_id).first()
-    if not lorebook:
-        raise HTTPException(status_code=404, detail="Lorebook 不存在")
+    lorebook = require_editable_lorebook(db, current_user, lorebook_id)
 
     if req.name is not None:
         lorebook.name = req.name
@@ -129,9 +136,7 @@ async def delete_lorebook(
     db: Session = Depends(get_db)
 ):
     """删除 Lorebook"""
-    lorebook = db.query(Lorebook).filter(Lorebook.id == lorebook_id).first()
-    if not lorebook:
-        raise HTTPException(status_code=404, detail="Lorebook 不存在")
+    lorebook = require_editable_lorebook(db, current_user, lorebook_id)
 
     # 删除所有条目
     db.query(LorebookEntry).filter(LorebookEntry.lorebook_id == lorebook_id).delete()
@@ -150,9 +155,14 @@ async def get_entries(
     db: Session = Depends(get_db)
 ):
     """获取 Lorebook 的所有条目"""
+    require_readable_lorebook(db, current_user, lorebook_id)
     entries = db.query(LorebookEntry).filter(
         LorebookEntry.lorebook_id == lorebook_id
-    ).order_by(LorebookEntry.priority.desc()).all()
+    ).order_by(
+        LorebookEntry.priority.desc(),
+        LorebookEntry.order.asc(),
+        LorebookEntry.id.asc(),
+    ).all()
     return [e.to_dict() for e in entries]
 
 
@@ -164,9 +174,7 @@ async def create_entry(
     db: Session = Depends(get_db)
 ):
     """创建条目"""
-    lorebook = db.query(Lorebook).filter(Lorebook.id == lorebook_id).first()
-    if not lorebook:
-        raise HTTPException(status_code=404, detail="Lorebook 不存在")
+    require_editable_lorebook(db, current_user, lorebook_id)
 
     entry = LorebookEntry(
         lorebook_id=lorebook_id,
@@ -202,9 +210,7 @@ async def update_entry(
     db: Session = Depends(get_db)
 ):
     """更新条目"""
-    entry = db.query(LorebookEntry).filter(LorebookEntry.id == entry_id).first()
-    if not entry:
-        raise HTTPException(status_code=404, detail="条目不存在")
+    entry = require_editable_lorebook_entry(db, current_user, entry_id)
 
     if req.keyword is not None:
         entry.keyword = req.keyword
@@ -255,9 +261,7 @@ async def delete_entry(
     db: Session = Depends(get_db)
 ):
     """删除条目"""
-    entry = db.query(LorebookEntry).filter(LorebookEntry.id == entry_id).first()
-    if not entry:
-        raise HTTPException(status_code=404, detail="条目不存在")
+    entry = require_editable_lorebook_entry(db, current_user, entry_id)
 
     db.delete(entry)
     db.commit()

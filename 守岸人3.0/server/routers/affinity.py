@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 """角色羁绊系统路由"""
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from typing import Optional, List
 from ..database import get_db
 from ..models.user import User
 from ..models.affinity import CharacterAffinity, UserPreference, get_level_name, get_next_level
-from ..middleware.auth import get_current_user
+from ..middleware.auth import get_current_admin, get_current_user
+from ..services.resource_access import require_readable_character
 
 router = APIRouter(prefix="/api/affinity", tags=["affinity"])
 
@@ -28,6 +29,7 @@ async def get_affinity(
     db: Session = Depends(get_db)
 ):
     """获取用户与角色的羁绊"""
+    require_readable_character(db, current_user, character_id)
     affinity = db.query(CharacterAffinity).filter(
         CharacterAffinity.user_id == current_user.id,
         CharacterAffinity.character_id == character_id,
@@ -64,12 +66,13 @@ async def get_all_affinities(
 @router.post("/characters/{character_id}/add-points")
 async def add_affinity_points(
     character_id: str,
-    points: int = 1,
+    points: int = Query(default=1, ge=1, le=100),
     source: str = "chat",
-    current_user: User = Depends(get_current_user),
+    current_user: User = Depends(get_current_admin),
     db: Session = Depends(get_db)
 ):
     """增加亲密度（内部调用）"""
+    require_readable_character(db, current_user, character_id)
     affinity = db.query(CharacterAffinity).filter(
         CharacterAffinity.user_id == current_user.id,
         CharacterAffinity.character_id == character_id,
@@ -82,13 +85,13 @@ async def add_affinity_points(
         )
         db.add(affinity)
 
-    affinity.affinity_points += points
+    affinity.affinity_points = (affinity.affinity_points or 0) + points
     affinity.level = get_level_name(affinity.affinity_points)
 
     if source == "chat":
-        affinity.total_messages += 1
+        affinity.total_messages = (affinity.total_messages or 0) + 1
     elif source == "voice":
-        affinity.total_voice_seconds += points
+        affinity.total_voice_seconds = (affinity.total_voice_seconds or 0) + points
 
     from datetime import datetime
     affinity.last_interaction_at = datetime.utcnow()
@@ -129,6 +132,8 @@ async def create_preference(
     db: Session = Depends(get_db)
 ):
     """创建用户偏好"""
+    if req.character_id:
+        require_readable_character(db, current_user, req.character_id)
     preference = UserPreference(
         user_id=current_user.id,
         character_id=req.character_id,

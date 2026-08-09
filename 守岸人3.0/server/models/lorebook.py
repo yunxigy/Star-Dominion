@@ -50,6 +50,7 @@ class LorebookEntry(Base):
     position = Column(String(20), default="after_char")  # before_char / after_char / depth
     depth = Column(Integer, default=4)  # 深度注入位置（position=depth 时生效）
     order = Column(Integer, default=0)  # 同位置排序权重
+    priority = Column(Integer, default=0, nullable=False)  # 跨位置的触发优先级
 
     # 高级控制
     probability = Column(Float, default=1.0)  # 触发概率 0.0-1.0
@@ -80,6 +81,7 @@ class LorebookEntry(Base):
             "position": self.position,
             "depth": self.depth,
             "order": self.order,
+            "priority": self.priority,
             "probability": self.probability,
             "cooldown": self.cooldown,
             "group": self.group,

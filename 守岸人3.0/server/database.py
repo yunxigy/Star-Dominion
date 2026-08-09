@@ -9,6 +9,8 @@ from sqlalchemy import create_engine, inspect, text, event
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
+from .migrations import run_migrations
+
 logger = logging.getLogger(__name__)
 
 # 数据库文件路径
@@ -367,6 +369,12 @@ def _migrate_existing_tables() -> None:
     _ensure_column("characters", Column("tts_ref_audio_path", String, nullable=True))
     _ensure_column("characters", Column("tts_ref_audio_filename", String, nullable=True))
 
+    # lorebook_entries 表迁移
+    _ensure_column(
+        "lorebook_entries",
+        Column("priority", Integer, nullable=False, default=0),
+    )
+
     migrate_chat_graph(engine)
 
     logger.info("数据库迁移检查完成")
@@ -382,7 +390,7 @@ def init_db():
     # 创建所有表
     Base.metadata.create_all(bind=engine)
 
-    # 执行迁移
-    _migrate_existing_tables()
+    # 执行一次性、版本化迁移
+    run_migrations(engine, _migrate_existing_tables)
 
     logger.info(f"数据库初始化完成: {'PostgreSQL' if IS_POSTGRESQL else 'SQLite'}")
