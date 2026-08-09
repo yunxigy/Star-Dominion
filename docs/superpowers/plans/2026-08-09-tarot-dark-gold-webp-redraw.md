@@ -16,7 +16,6 @@
 
 - `SD/components/tools/tarot/tarot-data.ts` — canonical card names, English labels, display numbers, and image paths.
 - `SD/components/tools/tarot/TarotCardVisual.tsx` — WebP-first rendering, SVG fallback, labels, and reversed-card rotation.
-- `SD/package.json` — tarot asset validation command.
 
 **Existing source to track without changing its content**
 
@@ -272,7 +271,6 @@ git commit -m "feat: define tarot WebP metadata"
 - Create: `SD/scripts/convert_tarot_webp.py`
 - Create: `SD/scripts/requirements-tarot.txt`
 - Create: `SD/scripts/tests/test_convert_tarot_webp.py`
-- Modify: `SD/package.json:6`
 
 - [ ] **Step 1: Pin the image dependency**
 
@@ -468,15 +466,7 @@ if __name__ == "__main__":
     raise SystemExit(main())
 ```
 
-- [ ] **Step 5: Add the project validation command**
-
-Add to `SD/package.json` scripts:
-
-```json
-"validate:tarot-assets": "python scripts/convert_tarot_webp.py validate --directory public/assets/tarot/cards"
-```
-
-- [ ] **Step 6: Run the utility tests**
+- [ ] **Step 5: Run the utility tests**
 
 Run:
 
@@ -487,21 +477,21 @@ python -m unittest discover -s scripts/tests -p "test_*.py" -v
 
 Expected: 3 tests PASS.
 
-- [ ] **Step 7: Verify strict validation fails before the deck exists**
+- [ ] **Step 6: Verify strict validation fails before the deck exists**
 
 Run:
 
 ```powershell
 cd E:\AI\gp\SD
-npm run validate:tarot-assets
+python scripts/convert_tarot_webp.py validate --directory public/assets/tarot/cards
 ```
 
 Expected: FAIL with `missing 78 expected WebP files`.
 
-- [ ] **Step 8: Commit the asset tooling**
+- [ ] **Step 7: Commit the asset tooling**
 
 ```powershell
-git add SD/scripts/convert_tarot_webp.py SD/scripts/requirements-tarot.txt SD/scripts/tests/test_convert_tarot_webp.py SD/package.json
+git add SD/scripts/convert_tarot_webp.py SD/scripts/requirements-tarot.txt SD/scripts/tests/test_convert_tarot_webp.py
 git commit -m "test: add tarot WebP asset validation"
 ```
 
@@ -736,7 +726,7 @@ Expected: `14`.
 
 ```powershell
 cd E:\AI\gp\SD
-npm run validate:tarot-assets
+python scripts/convert_tarot_webp.py validate --directory public/assets/tarot/cards
 ```
 
 Expected: `tarot WebP assets are valid` with exactly 78 expected WebP files.
@@ -956,7 +946,7 @@ git commit -m "feat: render tarot cards from WebP assets"
 
 ```powershell
 cd E:\AI\gp\SD
-npm run validate:tarot-assets
+python scripts/convert_tarot_webp.py validate --directory public/assets/tarot/cards
 npm test
 npm run lint
 npm run build
@@ -990,7 +980,7 @@ Confirm the browser requests and displays `tarot_00_fool.svg`, then restore the 
 ```powershell
 Rename-Item -LiteralPath E:\AI\gp\SD\public\assets\tarot\cards\tarot_00_fool.webp.disabled -NewName tarot_00_fool.webp
 cd E:\AI\gp\SD
-npm run validate:tarot-assets
+python scripts/convert_tarot_webp.py validate --directory public/assets/tarot/cards
 ```
 
 Expected: the card remains visible through SVG fallback; final strict validation passes after restoration.
@@ -1010,7 +1000,7 @@ Expected: no whitespace errors, `78` WebP files, and `79` SVG files including th
 If verification required changes, stage only the in-scope tarot files and commit:
 
 ```powershell
-git add SD/components/tools/tarot SD/public/assets/tarot/cards SD/scripts/convert_tarot_webp.py SD/scripts/tests/test_convert_tarot_webp.py SD/package.json
+git add SD/components/tools/tarot SD/public/assets/tarot/cards SD/scripts/convert_tarot_webp.py SD/scripts/tests/test_convert_tarot_webp.py
 git commit -m "fix: finish tarot WebP verification"
 ```
 
