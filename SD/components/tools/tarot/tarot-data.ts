@@ -1,10 +1,13 @@
 /** 塔罗牌完整数据 — 78 张牌（22 大阿卡纳 + 56 小阿卡纳） */
 
+export type TarotSuit = 'cups' | 'pentacles' | 'swords' | 'wands'
+
 export interface TarotCard {
   number: number
   name: string
+  nameEn: string
   emoji: string
-  suit?: string
+  suit?: TarotSuit
   keywords: string[]
   upright: string
   reversed: string
@@ -14,7 +17,37 @@ export interface TarotCard {
 
 // ── 大阿卡纳 (Major Arcana) ──────────────────────────────────
 
-export const MAJOR_ARCANA: TarotCard[] = [
+const MAJOR_META = [
+  ['The Fool', 'fool'],
+  ['The Magician', 'magician'],
+  ['The High Priestess', 'high_priestess'],
+  ['The Empress', 'empress'],
+  ['The Emperor', 'emperor'],
+  ['The Hierophant', 'hierophant'],
+  ['The Lovers', 'lovers'],
+  ['The Chariot', 'chariot'],
+  ['Strength', 'strength'],
+  ['The Hermit', 'hermit'],
+  ['Wheel of Fortune', 'wheel_of_fortune'],
+  ['Justice', 'justice'],
+  ['The Hanged Man', 'hanged_man'],
+  ['Death', 'death'],
+  ['Temperance', 'temperance'],
+  ['The Devil', 'devil'],
+  ['The Tower', 'tower'],
+  ['The Star', 'star'],
+  ['The Moon', 'moon'],
+  ['The Sun', 'sun'],
+  ['Judgement', 'judgement'],
+  ['The World', 'world'],
+] as const
+
+const MAJOR_ROMAN = [
+  '0', 'I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X',
+  'XI', 'XII', 'XIII', 'XIV', 'XV', 'XVI', 'XVII', 'XVIII', 'XIX', 'XX', 'XXI',
+] as const
+
+const MAJOR_ARCANA_BASE: Omit<TarotCard, 'nameEn'>[] = [
   { number: 0, name: '愚者', emoji: '🃏', keywords: ['新开始', '冒险', '自由'], upright: '新开始/冒险/自由', reversed: '鲁莽/不计后果/停滞', uprightMessage: '今天是开启新旅程的绝佳时机。保持开放的心态，勇敢地迈出第一步。', reversedMessage: '今天需要谨慎行事，避免冲动决定。' },
   { number: 1, name: '魔术师', emoji: '🎩', keywords: ['创造力', '意志力', '技能'], upright: '创造力/意志力/技能', reversed: '操控/欺骗/能力不足', uprightMessage: '你拥有实现目标所需的一切资源和能力。集中精力，化想法为现实。', reversedMessage: '今天可能会感到力不从心，重新审视自己的目标和方法。' },
   { number: 2, name: '女祭司', emoji: '🌙', keywords: ['直觉', '潜意识', '神秘'], upright: '直觉/潜意识/神秘', reversed: '忽视直觉/表面化/秘密', uprightMessage: '倾听内心的声音，你的直觉今天格外准确。', reversedMessage: '你可能忽略了内心的警告信号。' },
@@ -39,31 +72,41 @@ export const MAJOR_ARCANA: TarotCard[] = [
   { number: 21, name: '世界', emoji: '🌍', keywords: ['完成', '整合', '成就'], upright: '完成/整合/成就', reversed: '未完成/缺乏闭合/短视', uprightMessage: '一个重要的循环即将圆满完成。庆祝你的成就。', reversedMessage: '感觉差一步就能完成。审视还有什么需要收尾。' },
 ]
 
+export const MAJOR_ARCANA: TarotCard[] = MAJOR_ARCANA_BASE.map(card => ({
+  ...card,
+  nameEn: MAJOR_META[card.number][0],
+}))
+
 // ── 小阿卡纳 (Minor Arcana) ──────────────────────────────────
 
-const SUIT_DATA = {
-  cups: { name: '圣杯', emoji: '🏆', theme: '情感/直觉/关系' },
-  pentacles: { name: '金币', emoji: '🪙', theme: '物质/财富/健康' },
-  swords: { name: '宝剑', emoji: '⚔️', theme: '思维/冲突/真相' },
-  wands: { name: '权杖', emoji: '🪄', theme: '行动/创造/激情' },
+const SUIT_DATA: Record<TarotSuit, {
+  name: string
+  nameEn: string
+  emoji: string
+  theme: string
+}> = {
+  cups: { name: '圣杯', nameEn: 'Cups', emoji: '🏆', theme: '情感/直觉/关系' },
+  pentacles: { name: '金币', nameEn: 'Pentacles', emoji: '🪙', theme: '物质/财富/健康' },
+  swords: { name: '宝剑', nameEn: 'Swords', emoji: '⚔️', theme: '思维/冲突/真相' },
+  wands: { name: '权杖', nameEn: 'Wands', emoji: '🪄', theme: '行动/创造/激情' },
 }
 
 const RANK_DATA = {
-  ace:    { name: 'A',  num: 1,  keywords: ['新开始', '潜力', '机会'] },
-  two:    { name: '2',  num: 2,  keywords: ['选择', '平衡', '决定'] },
-  three:  { name: '3',  num: 3,  keywords: ['成长', '合作', '创造力'] },
-  four:   { name: '4',  num: 4,  keywords: ['稳定', '基础', '休息'] },
-  five:   { name: '5',  num: 5,  keywords: ['冲突', '变化', '挑战'] },
-  six:    { name: '6',  num: 6,  keywords: ['和谐', '给予', '平衡'] },
-  seven:  { name: '7',  num: 7,  keywords: ['反思', '选择', '内在'] },
-  eight:  { name: '8',  num: 8,  keywords: ['行动', '变化', '进展'] },
-  nine:   { name: '9',  num: 9,  keywords: ['完成', '满足', '收获'] },
-  ten:    { name: '10', num: 10, keywords: ['结束', '循环', '圆满'] },
-  page:   { name: '侍从', num: 11, keywords: ['消息', '学习', '好奇'] },
-  knight: { name: '骑士', num: 12, keywords: ['行动', '追求', '变化'] },
-  queen:  { name: '王后', num: 13, keywords: ['智慧', '关怀', '直觉'] },
-  king:   { name: '国王', num: 14, keywords: ['权威', '掌控', '成熟'] },
-}
+  ace:    { name: 'A', nameEn: 'Ace', slug: 'ace', num: 1, keywords: ['新开始', '潜力', '机会'] },
+  two:    { name: '2', nameEn: 'Two', slug: 'two', num: 2, keywords: ['选择', '平衡', '决定'] },
+  three:  { name: '3', nameEn: 'Three', slug: 'three', num: 3, keywords: ['成长', '合作', '创造力'] },
+  four:   { name: '4', nameEn: 'Four', slug: 'four', num: 4, keywords: ['稳定', '基础', '休息'] },
+  five:   { name: '5', nameEn: 'Five', slug: 'five', num: 5, keywords: ['冲突', '变化', '挑战'] },
+  six:    { name: '6', nameEn: 'Six', slug: 'six', num: 6, keywords: ['和谐', '给予', '平衡'] },
+  seven:  { name: '7', nameEn: 'Seven', slug: 'seven', num: 7, keywords: ['反思', '选择', '内在'] },
+  eight:  { name: '8', nameEn: 'Eight', slug: 'eight', num: 8, keywords: ['行动', '变化', '进展'] },
+  nine:   { name: '9', nameEn: 'Nine', slug: 'nine', num: 9, keywords: ['完成', '满足', '收获'] },
+  ten:    { name: '10', nameEn: 'Ten', slug: 'ten', num: 10, keywords: ['结束', '循环', '圆满'] },
+  page:   { name: '侍从', nameEn: 'Page', slug: 'page', num: 11, keywords: ['消息', '学习', '好奇'] },
+  knight: { name: '骑士', nameEn: 'Knight', slug: 'knight', num: 12, keywords: ['行动', '追求', '变化'] },
+  queen:  { name: '王后', nameEn: 'Queen', slug: 'queen', num: 13, keywords: ['智慧', '关怀', '直觉'] },
+  king:   { name: '国王', nameEn: 'King', slug: 'king', num: 14, keywords: ['权威', '掌控', '成熟'] },
+} as const
 
 const RANK_MESSAGES: Record<string, { upright: string; reversed: string }> = {
   ace:    { upright: '新的机会正在出现。把握当下，勇敢迈出第一步。', reversed: '机会可能被错过，或你还没准备好迎接它。' },
@@ -85,7 +128,10 @@ const RANK_MESSAGES: Record<string, { upright: string; reversed: string }> = {
 // Generate full Minor Arcana
 function generateMinorArcana(): TarotCard[] {
   const cards: TarotCard[] = []
-  const suits = Object.entries(SUIT_DATA)
+  const suits = Object.entries(SUIT_DATA) as [
+    TarotSuit,
+    (typeof SUIT_DATA)[TarotSuit],
+  ][]
   const ranks = Object.entries(RANK_DATA)
   let number = 22 // Start after Major Arcana
 
@@ -95,6 +141,7 @@ function generateMinorArcana(): TarotCard[] {
       cards.push({
         number,
         name: `${suit.name}${rank.name}`,
+        nameEn: `${rank.nameEn} of ${suit.nameEn}`,
         emoji: suit.emoji,
         suit: suitKey,
         keywords: [...rank.keywords, suit.theme.split('/')[0]],
@@ -116,36 +163,30 @@ export const MINOR_ARCANA: TarotCard[] = generateMinorArcana()
 
 export const ALL_CARDS: TarotCard[] = [...MAJOR_ARCANA, ...MINOR_ARCANA]
 
-// ── 图片路径映射 ──────────────────────────────────────────
+// ── 显示标签与图片路径 ─────────────────────────────────────
 
-const MAJOR_SLUGS: Record<number, string> = {
-  0: 'fool', 1: 'magician', 2: 'high_priestess', 3: 'empress', 4: 'emperor',
-  5: 'hierophant', 6: 'lovers', 7: 'chariot', 8: 'strength', 9: 'hermit',
-  10: 'wheel_of_fortune', 11: 'justice', 12: 'hanged_man', 13: 'death',
-  14: 'temperance', 15: 'devil', 16: 'tower', 17: 'star', 18: 'moon',
-  19: 'sun', 20: 'judgement', 21: 'world',
+export function getCardDisplayNumber(card: TarotCard): string {
+  if (card.number <= 21) return MAJOR_ROMAN[card.number]
+  const rankIndex = (card.number - 22) % 14
+  return Object.values(RANK_DATA)[rankIndex].name
 }
 
-const MINOR_SLUGS: Record<string, Record<number, string>> = {
-  cups:      { 1: 'ace', 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six', 7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten', 11: 'page', 12: 'knight', 13: 'queen', 14: 'king' },
-  pentacles: { 1: 'ace', 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six', 7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten', 11: 'page', 12: 'knight', 13: 'queen', 14: 'king' },
-  swords:    { 1: 'ace', 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six', 7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten', 11: 'page', 12: 'knight', 13: 'queen', 14: 'king' },
-  wands:     { 1: 'ace', 2: 'two', 3: 'three', 4: 'four', 5: 'five', 6: 'six', 7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten', 11: 'page', 12: 'knight', 13: 'queen', 14: 'king' },
-}
+export function getCardImagePaths(card: TarotCard): { webp: string; svg: string } {
+  let baseName: string
 
-export function getCardImagePath(card: TarotCard): string | null {
-  // Major Arcana
   if (card.number <= 21) {
-    const slug = MAJOR_SLUGS[card.number]
-    return slug ? `/assets/tarot/cards/tarot_${String(card.number).padStart(2, '0')}_${slug}.svg` : null
+    baseName = `tarot_${String(card.number).padStart(2, '0')}_${MAJOR_META[card.number][1]}`
+  } else {
+    if (!card.suit) throw new Error(`Minor Arcana card ${card.number} has no suit`)
+    const rankIndex = (card.number - 22) % 14
+    const rank = Object.values(RANK_DATA)[rankIndex]
+    baseName = `tarot_${card.suit}_${rank.slug}`
   }
-  // Minor Arcana
-  if (card.suit) {
-    const rank = Object.entries(RANK_DATA).find(([, r]) => r.num === (card.number - 22) % 14 + 1)
-    if (rank) {
-      const [rankKey] = rank
-      return `/assets/tarot/cards/tarot_${card.suit}_${rankKey}.svg`
-    }
-  }
-  return null
+
+  const root = `/assets/tarot/cards/${baseName}`
+  return { webp: `${root}.webp`, svg: `${root}.svg` }
+}
+
+export function getCardImagePath(card: TarotCard): string {
+  return getCardImagePaths(card).svg
 }
