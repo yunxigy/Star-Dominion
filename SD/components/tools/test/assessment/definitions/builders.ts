@@ -1,4 +1,4 @@
-import type { AssessmentOption } from '../types';
+import type { AssessmentOption, AssessmentQuestion } from '../types';
 
 export const AGREEMENT_LABELS = [
   '非常不同意',
@@ -49,4 +49,26 @@ export function pairedTendencyOptions(
     label,
     { [leftId]: leftScores[index], [rightId]: rightScores[index] },
   ));
+}
+
+export type ScenarioChoice = readonly [
+  label: string,
+  primaryDimensionId: string,
+  secondaryDimensionId: string,
+];
+
+export function scenarioQuestion(
+  id: string,
+  prompt: string,
+  choices: readonly ScenarioChoice[],
+): AssessmentQuestion {
+  return {
+    id,
+    prompt,
+    options: choices.map(([label, primaryDimensionId, secondaryDimensionId], index) => option(
+      `choice-${index + 1}`,
+      label,
+      { [primaryDimensionId]: 2, [secondaryDimensionId]: 1 },
+    )),
+  };
 }
