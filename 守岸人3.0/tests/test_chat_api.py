@@ -4,7 +4,9 @@ import json
 
 from server.models.character_db import CharacterDB
 from server.models.chat_db import ChatBranch, ChatMessage, ChatSession
+from server.models.lorebook import Lorebook, LorebookActivationEvent, LorebookEntry
 from server.models.user import User
+from server.utils.prompt_builder import build_messages
 
 
 def test_history_returns_message_and_swipe_metadata(chat_client, seeded_chat):
@@ -105,6 +107,66 @@ def test_chat_post_appends_messages_to_active_branch(
         "assistant",
     ]
     assert path[-1].content["text"] == "新的回答"
+
+
+def test_chat_injects_lorebook_positions_and_persists_timed_activation(
+    chat_client,
+    seeded_chat,
+    db_session,
+    fake_llm,
+):
+    book = Lorebook(
+        id="chat-lorebook",
+        character_id=seeded_chat.character.id,
+        name="Chat lorebook",
+    )
+    entries = [
+        LorebookEntry(
+            id="before-entry", lorebook_id=book.id, keyword="shore",
+            content="before knowledge", position="before_char",
+        ),
+        LorebookEntry(
+            id="after-entry", lorebook_id=book.id, keyword="shore",
+            content="after knowledge", position="after_char", sticky=2,
+        ),
+        LorebookEntry(
+            id="depth-entry", lorebook_id=book.id, keyword="shore",
+            content="depth knowledge", position="depth", depth=1,
+        ),
+    ]
+    db_session.add_all([book, *entries])
+    db_session.commit()
+
+    response = chat_client.post(
+        "/api/chat",
+        data={"session_id": seeded_chat.session.id, "text": "shore"},
+    )
+
+    assert response.status_code == 200
+    system = fake_llm.last_messages[0]["content"]
+    assert system.index("before knowledge") < system.index("你叫守岸人")
+    assert system.index("after knowledge") > system.index("你叫守岸人")
+    assert any(
+        item["content"] == "depth knowledge"
+        for item in fake_llm.last_messages[1:]
+    )
+    event = db_session.query(LorebookActivationEvent).one()
+    assert event.response_message_id == response.json()["message_id"]
+
+
+def test_depth_injection_keeps_same_depth_order_and_clamps_to_front():
+    messages = build_messages(
+        "system",
+        [{"role": "user", "content": "hello"}],
+        depth_segments=[
+            {"depth": 99, "order": 2, "content": "second", "role": "system"},
+            {"depth": 99, "order": 1, "content": "first", "role": "system"},
+        ],
+    )
+
+    assert [item["content"] for item in messages] == [
+        "system", "first", "second", "hello",
+    ]
 
 
 def test_edit_api_creates_branch_and_lists_it(chat_client, seeded_chat):

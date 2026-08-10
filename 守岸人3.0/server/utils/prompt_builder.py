@@ -167,10 +167,14 @@ def inject_at_depth(messages: list, segments: list) -> list:
     Returns:
         注入后的消息列表
     """
-    # 按 depth 排序
-    sorted_segments = sorted(segments, key=lambda s: s.get("depth", 4))
-
-    result = []
+    sorted_segments = sorted(
+        enumerate(segments),
+        key=lambda item: (
+            item[1].get("depth", 4),
+            item[1].get("order", 0),
+            item[0],
+        ),
+    )
     role_changes = []  # 记录角色切换点的索引
 
     for i, msg in enumerate(messages):
@@ -182,34 +186,20 @@ def inject_at_depth(messages: list, segments: list) -> list:
     for i, rc in enumerate(reversed(role_changes)):
         depth_map[i + 1] = rc
 
-    # 注入
-    inserted = set()
-    for seg in sorted_segments:
-        depth = seg.get("depth", 4)
-        if depth in depth_map and depth not in inserted:
-            idx = depth_map[depth]
-            result.append({
-                "role": seg.get("role", "system"),
-                "content": seg.get("content", ""),
-            })
-            inserted.add(depth)
+    insertions = {}
+    for _, segment in sorted_segments:
+        position = depth_map.get(segment.get("depth", 4), 0)
+        insertions.setdefault(position, []).append({
+            "role": segment.get("role", "system"),
+            "content": segment.get("content", ""),
+        })
 
-    # 构建最终消息
     final = []
-    seg_idx = 0
     for i, msg in enumerate(messages):
-        # 检查是否需要在此位置注入
-        for depth, pos in depth_map.items():
-            if pos == i and depth in inserted:
-                # 找到对应的 segment
-                for seg in sorted_segments:
-                    if seg.get("depth") == depth:
-                        final.append({
-                            "role": seg.get("role", "system"),
-                            "content": seg.get("content", ""),
-                        })
-                        break
+        final.extend(insertions.get(i, []))
         final.append(msg)
+    if not messages:
+        final.extend(insertions.get(0, []))
 
     return final
 

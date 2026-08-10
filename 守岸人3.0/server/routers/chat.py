@@ -5,6 +5,7 @@ import uuid
 import shutil
 import logging
 import asyncio
+import random
 from pathlib import Path
 from typing import Optional, Dict
 
@@ -28,6 +29,7 @@ from ..services.chat_backups import (
     ChatBackupService,
     MAX_BACKUP_BYTES,
 )
+from ..services.lorebook_runtime import LorebookRuntime
 from ..utils.prompt_builder import build_system_prompt, build_messages
 from ..utils.text_cleaner import clean_text
 
@@ -337,57 +339,16 @@ async def chat(
         for message in history_service.active_path(session.id)
     ]
 
-    # 获取触发的 Lorebook 条目（支持多关键词、优先级、数量限制）
-    from ..models.lorebook import Lorebook, LorebookEntry
-    import re
-
-    MAX_LOREBOOK_ENTRIES = 5  # 最多注入条数
-
-    lorebooks = db.query(Lorebook).filter(
-        Lorebook.character_id == character.id,
-        Lorebook.is_enabled == True,
-    ).all()
-
-    triggered_entries = []
-    for lb in lorebooks:
-        entries = db.query(LorebookEntry).filter(
-            LorebookEntry.lorebook_id == lb.id,
-            LorebookEntry.is_enabled == True,
-        ).all()
-
-        for e in entries:
-            # 支持多关键词（逗号分隔）
-            keywords = [k.strip() for k in e.keyword.split(",") if k.strip()]
-            matched = False
-
-            for keyword in keywords:
-                # 支持正则表达式（以 / 开头和结尾）
-                if keyword.startswith("/") and keyword.endswith("/") and len(keyword) > 2:
-                    try:
-                        pattern = keyword[1:-1]
-                        if re.search(pattern, user_input, re.IGNORECASE):
-                            matched = True
-                            break
-                    except re.error:
-                        # 正则无效，回退到普通匹配
-                        if keyword.lower() in user_input.lower():
-                            matched = True
-                            break
-                else:
-                    # 普通关键词匹配
-                    if keyword.lower() in user_input.lower():
-                        matched = True
-                        break
-
-            if matched:
-                triggered_entries.append({
-                    "content": e.content,
-                    "priority": e.priority or 0,
-                })
-
-    # 按优先级排序，限制数量
-    triggered_entries.sort(key=lambda x: x["priority"], reverse=True)
-    world_info_entries = triggered_entries[:MAX_LOREBOOK_ENTRIES]
+    lorebook_runtime = LorebookRuntime(
+        db,
+        owner_id=current_user.id,
+        random_value=random.random,
+    )
+    lorebook_evaluation = lorebook_runtime.evaluate(
+        session.id,
+        current_input=user_input,
+    )
+    world_info_entries = lorebook_evaluation.prompt_entries()
 
     # 获取用户记忆
     from ..models.memory import Memory, MemorySummary
@@ -411,7 +372,17 @@ async def chat(
         memories=memory_list,
         summary=summary,
     )
-    messages = build_messages(system_prompt, history)
+    depth_segments = [
+        {
+            "depth": item["depth"],
+            "order": item["order"],
+            "content": item["content"],
+            "role": "system",
+        }
+        for item in world_info_entries
+        if item["position"] == "depth"
+    ]
+    messages = build_messages(system_prompt, history, depth_segments=depth_segments)
     messages.append({"role": "user", "content": user_input})
 
     # 4. 调用 LLM
@@ -430,6 +401,7 @@ async def chat(
         "assistant",
         clean_response,
     )
+    lorebook_runtime.record_evaluation(session.id, ai_msg, lorebook_evaluation)
 
     # 6.5 异步记忆提取
     msg_count = _count_db_messages(db, session.id)
@@ -1143,8 +1115,42 @@ def _regenerate_message(
     character = _load_character(session.character_id, db)
     if not character:
         raise HTTPException(status_code=404, detail="角色不存在")
-    history = service.prompt_messages_before(message_id)
-    messages = build_messages(build_system_prompt(character), history)
+    context = service.context_before(message_id)
+    history = [
+        {"role": message.role, "content": service.selected_text(message)}
+        for message in context
+    ]
+    current_input = next(
+        (item["content"] for item in reversed(history) if item["role"] == "user"),
+        "",
+    )
+    runtime = LorebookRuntime(
+        db,
+        owner_id=current_user.id,
+        random_value=random.random,
+    )
+    evaluation = runtime.evaluate(
+        session.id,
+        current_input=current_input,
+        advance_sequence=False,
+        messages=context,
+    )
+    prompt_entries = evaluation.prompt_entries()
+    depth_segments = [
+        {
+            "depth": item["depth"],
+            "order": item["order"],
+            "content": item["content"],
+            "role": "system",
+        }
+        for item in prompt_entries
+        if item["position"] == "depth"
+    ]
+    messages = build_messages(
+        build_system_prompt(character, world_info_entries=prompt_entries),
+        history,
+        depth_segments=depth_segments,
+    )
     try:
         ai_response = llm_service.chat(messages, backend=backend)
     except Exception as exc:
