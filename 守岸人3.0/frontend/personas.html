@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Persona 管理</title><link rel="stylesheet" href="/css/main.css">
+  <style>.manager-grid{display:grid;grid-template-columns:minmax(260px,1fr) minmax(320px,2fr);gap:20px}.panel{padding:20px;border:1px solid rgba(255,255,255,.15);border-radius:12px}.stack{display:grid;gap:12px}.row{display:flex;gap:8px;flex-wrap:wrap}.item{padding:12px;border-bottom:1px solid rgba(255,255,255,.12)}label{display:grid;gap:6px}@media(max-width:760px){.manager-grid{grid-template-columns:1fr}}</style>
+</head>
+<body><main class="page-container">
+  <header class="page-header"><h1>Persona 管理</h1><nav><a href="/characters.html">角色库</a> · <a href="/prompt-manager.html">Prompt Manager</a></nav></header>
+  <p id="persona-status" aria-live="polite"></p>
+  <div class="manager-grid">
+    <section class="panel"><h2>我的 Persona</h2><div id="persona-list"></div></section>
+    <section class="panel stack"><h2 id="persona-form-title">新建 Persona</h2>
+      <label>名称<input id="persona-name" maxlength="120" required></label>
+      <label>头像 URL<input id="persona-avatar" maxlength="2000"></label>
+      <label>描述<textarea id="persona-description" maxlength="20000"></textarea></label>
+      <label>注入位置<select id="persona-position"><option value="before_char">角色定义前</option><option value="after_char">角色定义后</option><option value="depth">指定深度</option></select></label>
+      <label>深度<input id="persona-depth" type="number" min="0" max="100" value="4"></label>
+      <div class="row"><button id="save-persona" type="button">保存</button><button id="reset-persona" type="button">取消编辑</button></div>
+      <h2>绑定</h2><label>范围<select id="binding-scope"><option value="chat">聊天</option><option value="character">角色</option></select></label>
+      <label>资源 ID<input id="binding-scope-id"></label><button id="save-binding" type="button">绑定当前 Persona</button>
+    </section>
+  </div>
+</main><script src="/js/auth.js"></script><script src="/js/api.js"></script><script src="/js/personas.js"></script></body></html>

@@ -55,18 +55,30 @@ class LLMService:
         model: str = None,
         max_tokens: int = 1024,
         temperature: float = 0.8,
+        top_p: float = None,
+        frequency_penalty: float = None,
+        presence_penalty: float = None,
     ) -> str:
         """尝试调用单个后端"""
         cfg = self.backends.get(backend_name, {})
         model_name = model or cfg.get("model", "gpt-4o")
         client = self._get_client(backend_name)
 
+        options = {
+            "model": model_name,
+            "messages": messages,
+            "max_tokens": max_tokens,
+            "temperature": temperature,
+            "timeout": self.timeout,
+        }
+        if top_p is not None:
+            options["top_p"] = top_p
+        if frequency_penalty is not None:
+            options["frequency_penalty"] = frequency_penalty
+        if presence_penalty is not None:
+            options["presence_penalty"] = presence_penalty
         response = client.chat.completions.create(
-            model=model_name,
-            messages=messages,
-            max_tokens=max_tokens,
-            temperature=temperature,
-            timeout=self.timeout,
+            **options,
         )
         return response.choices[0].message.content
 
@@ -77,6 +89,9 @@ class LLMService:
         model: str = None,
         max_tokens: int = 1024,
         temperature: float = 0.8,
+        top_p: float = None,
+        frequency_penalty: float = None,
+        presence_penalty: float = None,
     ) -> str:
         """
         调用 LLM 生成回复（带重试和fallback）
@@ -106,7 +121,16 @@ class LLMService:
             for attempt in range(self.max_retries + 1):
                 try:
                     logger.info(f"🤖 LLM 调用: backend={backend_name}, attempt={attempt + 1}")
-                    result = self._try_chat(backend_name, messages, model, max_tokens, temperature)
+                    result = self._try_chat(
+                        backend_name,
+                        messages,
+                        model,
+                        max_tokens,
+                        temperature,
+                        top_p,
+                        frequency_penalty,
+                        presence_penalty,
+                    )
                     logger.info(f"✅ LLM 回复成功: {result[:50]}...")
                     return result
 

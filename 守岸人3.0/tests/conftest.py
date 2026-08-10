@@ -116,9 +116,11 @@ def seeded_chat(db_session):
 def fake_llm():
     class FakeLLM:
         last_messages = None
+        last_options = None
 
-        def chat(self, messages, backend=None):
+        def chat(self, messages, backend=None, **options):
             self.last_messages = messages
+            self.last_options = {"backend": backend, **options}
             return "新的回答"
 
     return FakeLLM()

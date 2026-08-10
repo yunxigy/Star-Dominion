@@ -29,6 +29,10 @@ from ..services.chat_backups import (
     ChatBackupService,
     MAX_BACKUP_BYTES,
 )
+from ..services.chat_prompt_profiles import (
+    ChatPromptProfileNotFound,
+    resolve_chat_prompt_profile,
+)
 from ..services.lorebook_runtime import LorebookRuntime
 from ..utils.prompt_builder import build_system_prompt, build_messages
 from ..utils.text_cleaner import clean_text
@@ -276,6 +280,8 @@ async def chat(
     backend: Optional[str] = Form(None),
     session_id: Optional[str] = Form(None),
     tts_mode: Optional[str] = Form("async"),
+    persona_id: Optional[str] = Form(None),
+    model_profile_id: Optional[str] = Form(None),
 ):
     """
     对话端点
@@ -349,6 +355,18 @@ async def chat(
         current_input=user_input,
     )
     world_info_entries = lorebook_evaluation.prompt_entries()
+    try:
+        prompt_profile = resolve_chat_prompt_profile(
+            db,
+            owner_id=current_user.id,
+            session=session,
+            temporary_persona_id=persona_id,
+            model_profile_id=model_profile_id,
+        )
+    except ChatPromptProfileNotFound as exc:
+        raise HTTPException(status_code=404, detail="Persona 或模型档案不存在") from exc
+    if prompt_profile.persona_entry:
+        world_info_entries.append(prompt_profile.persona_entry)
 
     # 获取用户记忆
     from ..models.memory import Memory, MemorySummary
@@ -372,6 +390,10 @@ async def chat(
         memories=memory_list,
         summary=summary,
     )
+    if prompt_profile.system_additions:
+        system_prompt = "\n\n".join(
+            [system_prompt, *prompt_profile.system_additions]
+        )
     depth_segments = [
         {
             "depth": item["depth"],
@@ -383,11 +405,13 @@ async def chat(
         if item["position"] == "depth"
     ]
     messages = build_messages(system_prompt, history, depth_segments=depth_segments)
+    messages.extend(prompt_profile.message_additions)
     messages.append({"role": "user", "content": user_input})
 
     # 4. 调用 LLM
     try:
-        ai_response = llm_service.chat(messages, backend=backend)
+        llm_options = prompt_profile.llm_options or {"backend": backend}
+        ai_response = llm_service.chat(messages, **llm_options)
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"LLM 调用失败: {e}")
 
@@ -1100,6 +1124,8 @@ def _regenerate_message(
     message_id: str,
     version: int,
     backend: Optional[str],
+    persona_id: Optional[str],
+    model_profile_id: Optional[str],
     current_user: User,
     db: Session,
 ) -> ChatMessage:
@@ -1136,6 +1162,18 @@ def _regenerate_message(
         messages=context,
     )
     prompt_entries = evaluation.prompt_entries()
+    try:
+        prompt_profile = resolve_chat_prompt_profile(
+            db,
+            owner_id=current_user.id,
+            session=session,
+            temporary_persona_id=persona_id,
+            model_profile_id=model_profile_id,
+        )
+    except ChatPromptProfileNotFound as exc:
+        raise HTTPException(status_code=404, detail="Persona 或模型档案不存在") from exc
+    if prompt_profile.persona_entry:
+        prompt_entries.append(prompt_profile.persona_entry)
     depth_segments = [
         {
             "depth": item["depth"],
@@ -1146,13 +1184,18 @@ def _regenerate_message(
         for item in prompt_entries
         if item["position"] == "depth"
     ]
+    system_prompt = build_system_prompt(character, world_info_entries=prompt_entries)
+    if prompt_profile.system_additions:
+        system_prompt = "\n\n".join([system_prompt, *prompt_profile.system_additions])
     messages = build_messages(
-        build_system_prompt(character, world_info_entries=prompt_entries),
+        system_prompt,
         history,
         depth_segments=depth_segments,
     )
+    messages.extend(prompt_profile.message_additions)
     try:
-        ai_response = llm_service.chat(messages, backend=backend)
+        llm_options = prompt_profile.llm_options or {"backend": backend}
+        ai_response = llm_service.chat(messages, **llm_options)
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"LLM 调用失败: {exc}") from exc
     clean_response = clean_text(ai_response, mode="display")
@@ -1169,6 +1212,8 @@ async def regenerate_message(
     message_id: str,
     version: int = Form(...),
     backend: Optional[str] = Form(None),
+    persona_id: Optional[str] = Form(None),
+    model_profile_id: Optional[str] = Form(None),
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
@@ -1176,6 +1221,8 @@ async def regenerate_message(
         message_id=message_id,
         version=version,
         backend=backend,
+        persona_id=persona_id,
+        model_profile_id=model_profile_id,
         current_user=current_user,
         db=db,
     )
@@ -1187,6 +1234,8 @@ async def swipe_regenerate(
     current_user: User = Depends(get_current_user),
     db: Session = Depends(get_db),
     backend: Optional[str] = Form(None),
+    persona_id: Optional[str] = Form(None),
+    model_profile_id: Optional[str] = Form(None),
 ):
     """重新生成回复（添加新的 swipe）"""
     try:
@@ -1199,6 +1248,8 @@ async def swipe_regenerate(
         message_id=message_id,
         version=session.version,
         backend=backend,
+        persona_id=persona_id,
+        model_profile_id=model_profile_id,
         current_user=current_user,
         db=db,
     )

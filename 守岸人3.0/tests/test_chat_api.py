@@ -5,6 +5,7 @@ import json
 from server.models.character_db import CharacterDB
 from server.models.chat_db import ChatBranch, ChatMessage, ChatSession
 from server.models.lorebook import Lorebook, LorebookActivationEvent, LorebookEntry
+from server.models.persona import ModelProfile, Persona, PersonaBinding, PromptBlock, PromptPreset
 from server.models.user import User
 from server.utils.prompt_builder import build_messages
 
@@ -167,6 +168,55 @@ def test_depth_injection_keeps_same_depth_order_and_clamps_to_front():
     assert [item["content"] for item in messages] == [
         "system", "first", "second", "hello",
     ]
+
+
+def test_chat_selects_bound_persona_and_temporary_override_is_request_only(
+    chat_client, seeded_chat, db_session, fake_llm,
+):
+    bound = Persona(id="bound-persona", user_id=seeded_chat.owner.id, name="Bound", description="bound persona sentinel", injection_position="before_char")
+    temporary = Persona(id="temporary-persona", user_id=seeded_chat.owner.id, name="Temporary", description="temporary persona sentinel", injection_position="after_char")
+    binding = PersonaBinding(id="persona-binding", user_id=seeded_chat.owner.id, persona_id=bound.id, scope_type="chat", scope_id=seeded_chat.session.id)
+    db_session.add_all([bound, temporary, binding]); db_session.commit()
+
+    first = chat_client.post("/api/chat", data={"session_id": seeded_chat.session.id, "text": "hello"})
+    assert first.status_code == 200
+    assert "bound persona sentinel" in fake_llm.last_messages[0]["content"]
+
+    second = chat_client.post("/api/chat", data={"session_id": seeded_chat.session.id, "text": "again", "persona_id": temporary.id})
+    assert second.status_code == 200
+    system = fake_llm.last_messages[0]["content"]
+    assert "temporary persona sentinel" in system
+    assert "bound persona sentinel" not in system
+    assert db_session.get(PersonaBinding, binding.id).persona_id == bound.id
+
+
+def test_chat_applies_owned_model_profile_and_prompt_preset(
+    chat_client, seeded_chat, db_session, fake_llm,
+):
+    preset = PromptPreset(id="chat-preset", user_id=seeded_chat.owner.id, name="Chat", token_budget=100)
+    block = PromptBlock(id="chat-block", preset_id=preset.id, kind="system", name="Rules", content="custom prompt sentinel", sort_order=0)
+    profile = ModelProfile(id="chat-profile", user_id=seeded_chat.owner.id, name="DeepSeek", provider="siliconflow", model="deepseek-v4-flash", prompt_preset_id=preset.id, parameters={"temperature": 0.3, "max_tokens": 512, "top_p": 0.9, "frequency_penalty": 0.2})
+    db_session.add_all([preset, block, profile]); db_session.commit()
+
+    response = chat_client.post("/api/chat", data={"session_id": seeded_chat.session.id, "text": "hello", "model_profile_id": profile.id})
+    assert response.status_code == 200
+    assert "custom prompt sentinel" in fake_llm.last_messages[0]["content"]
+    assert fake_llm.last_options == {"backend": "siliconflow", "model": "deepseek-v4-flash", "temperature": 0.3, "max_tokens": 512, "top_p": 0.9, "frequency_penalty": 0.2}
+
+
+def test_regeneration_uses_persistent_persona_context(
+    chat_client, seeded_chat, db_session, fake_llm,
+):
+    persona = Persona(id="regen-persona", user_id=seeded_chat.owner.id, name="Regen", description="regeneration persona sentinel")
+    binding = PersonaBinding(id="regen-binding", user_id=seeded_chat.owner.id, persona_id=persona.id, scope_type="chat", scope_id=seeded_chat.session.id)
+    db_session.add_all([persona, binding]); db_session.commit()
+
+    response = chat_client.post(
+        f"/api/chat/messages/{seeded_chat.assistant_message.id}/regenerate",
+        data={"version": "1"},
+    )
+    assert response.status_code == 200
+    assert "regeneration persona sentinel" in fake_llm.last_messages[0]["content"]
 
 
 def test_edit_api_creates_branch_and_lists_it(chat_client, seeded_chat):
