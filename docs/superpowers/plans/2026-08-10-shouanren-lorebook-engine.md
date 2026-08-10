@@ -1,6 +1,6 @@
-# ShouAnRen Lorebook Engine Implementation Plan
+﻿# ShouAnRen Lorebook Engine Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [x]`) syntax for tracking.
 
 **Goal:** Replace the inline five-entry keyword scan with a deterministic, testable Lorebook engine that supports advanced matching, recursion, timed effects, groups, token budgets, prompt positions, debugging, and branch-aware runtime history.
 
@@ -44,7 +44,7 @@ Implement this plan from the approved project specification and tests. Do not co
 - Create: `守岸人3.0/server/services/lorebook_matcher.py`
 - Create: `守岸人3.0/tests/test_lorebook_matcher.py`
 
-- [ ] **Step 1: Write failing matcher tests**
+- [x] **Step 1: Write failing matcher tests**
 
 ```python
 from server.services.lorebook_matcher import match_rule
@@ -80,13 +80,13 @@ def test_invalid_regex_is_isolated():
     assert result.error == "invalid_regular_expression"
 ```
 
-- [ ] **Step 2: Run tests and verify the missing-module failure**
+- [x] **Step 2: Run tests and verify the missing-module failure**
 
 Run: `python -m pytest -q tests/test_lorebook_matcher.py`
 
 Expected: FAIL because `server.services.lorebook_matcher` does not exist.
 
-- [ ] **Step 3: Add immutable domain types**
+- [x] **Step 3: Add immutable domain types**
 
 ```python
 # server/services/lorebook_types.py
@@ -177,7 +177,7 @@ class LorebookEvaluation:
         ]
 ```
 
-- [ ] **Step 4: Implement keyword parsing and matching**
+- [x] **Step 4: Implement keyword parsing and matching**
 
 ```python
 # server/services/lorebook_matcher.py
@@ -232,13 +232,13 @@ def match_rule(rule: LorebookRule, text: str) -> MatchResult:
     return MatchResult(matched, reason, tuple(primary_matches + secondary_matches))
 ```
 
-- [ ] **Step 5: Run matcher tests**
+- [x] **Step 5: Run matcher tests**
 
 Run: `python -m pytest -q tests/test_lorebook_matcher.py`
 
 Expected: all matcher tests PASS.
 
-- [ ] **Step 6: Commit the pure matcher**
+- [x] **Step 6: Commit the pure matcher**
 
 ```powershell
 git add -- "守岸人3.0/server/services/lorebook_types.py" "守岸人3.0/server/services/lorebook_matcher.py" "守岸人3.0/tests/test_lorebook_matcher.py"
@@ -251,7 +251,7 @@ git commit -m "feat(shouanren): add lorebook rule matcher"
 - Create: `守岸人3.0/server/services/lorebook_engine.py`
 - Create: `守岸人3.0/tests/test_lorebook_engine.py`
 
-- [ ] **Step 1: Write failing evaluation tests**
+- [x] **Step 1: Write failing evaluation tests**
 
 ```python
 from server.services.lorebook_engine import LorebookEngine
@@ -282,13 +282,13 @@ def test_scan_depth_constant_probability_delay_and_trace():
     assert reasons["rolled-out"] == "probability_rejected"
 ```
 
-- [ ] **Step 2: Run the focused test and verify RED**
+- [x] **Step 2: Run the focused test and verify RED**
 
 Run: `python -m pytest -q tests/test_lorebook_engine.py::test_scan_depth_constant_probability_delay_and_trace`
 
 Expected: FAIL because `LorebookEngine` does not exist.
 
-- [ ] **Step 3: Implement the base evaluator**
+- [x] **Step 3: Implement the base evaluator**
 
 ```python
 # server/services/lorebook_engine.py
@@ -363,13 +363,13 @@ class LorebookEngine:
         return result
 ```
 
-- [ ] **Step 4: Run base evaluator tests**
+- [x] **Step 4: Run base evaluator tests**
 
 Run: `python -m pytest -q tests/test_lorebook_engine.py`
 
 Expected: base evaluation tests PASS.
 
-- [ ] **Step 5: Commit the base evaluator**
+- [x] **Step 5: Commit the base evaluator**
 
 ```powershell
 git add -- "守岸人3.0/server/services/lorebook_engine.py" "守岸人3.0/tests/test_lorebook_engine.py"
@@ -382,7 +382,7 @@ git commit -m "feat(shouanren): evaluate lorebook rules"
 - Modify: `守岸人3.0/server/services/lorebook_engine.py`
 - Modify: `守岸人3.0/tests/test_lorebook_engine.py`
 
-- [ ] **Step 1: Add failing advanced-engine tests**
+- [x] **Step 1: Add failing advanced-engine tests**
 
 ```python
 def test_recursion_group_budget_and_timed_effects():
@@ -428,13 +428,13 @@ def test_cooldown_and_revision_change_clear_timed_state():
     assert {trace.reason for trace in current_result.trace} == {"cooldown_active"}
 ```
 
-- [ ] **Step 2: Run advanced tests and verify RED**
+- [x] **Step 2: Run advanced tests and verify RED**
 
 Run: `python -m pytest -q tests/test_lorebook_engine.py -k "recursion or cooldown"`
 
 Expected: FAIL because recursion, groups, and timed effects are not implemented.
 
-- [ ] **Step 3: Extend evaluation in a fixed order**
+- [x] **Step 3: Extend evaluation in a fixed order**
 
 Implement these pure functions in `lorebook_engine.py` and call them in this order:
 
@@ -473,13 +473,13 @@ def choose_group(items, random_value):
 
 Evaluation order must be: revision-aware timed state, delay, initial match, probability, recursive expansion, group reduction, stable sort, Token budget. Sticky entries bypass keyword and probability checks. Cooldown entries cannot activate. Recursive expansion appends activated content to the scan buffer, never activates the same entry twice, skips `exclude_recursion`, and does not append content from `prevent_recursion` entries. `recursion_only` entries are eligible only after recursion level zero.
 
-- [ ] **Step 4: Run all engine tests**
+- [x] **Step 4: Run all engine tests**
 
 Run: `python -m pytest -q tests/test_lorebook_engine.py`
 
 Expected: all engine tests PASS, including stable trace order and budget rejection reasons.
 
-- [ ] **Step 5: Commit advanced evaluation**
+- [x] **Step 5: Commit advanced evaluation**
 
 ```powershell
 git add -- "守岸人3.0/server/services/lorebook_engine.py" "守岸人3.0/tests/test_lorebook_engine.py"
@@ -495,7 +495,7 @@ git commit -m "feat(shouanren): add advanced lorebook evaluation"
 - Modify: `守岸人3.0/server/tests/test_database_migrations.py`
 - Modify: `守岸人3.0/tests/test_resource_security.py`
 
-- [ ] **Step 1: Add failing model and migration tests**
+- [x] **Step 1: Add failing model and migration tests**
 
 ```python
 def test_lorebook_advanced_fields_and_activation_event(db_session, resource_graph):
@@ -538,13 +538,13 @@ def test_lorebook_advanced_fields_and_activation_event(db_session, resource_grap
 
 Change the migration assertion to `assert version == 3` and add an inspector assertion for every new column and the `lorebook_activation_events` table.
 
-- [ ] **Step 2: Run migration/model tests and verify RED**
+- [x] **Step 2: Run migration/model tests and verify RED**
 
 Run: `python -m pytest -q server/tests/test_database_migrations.py tests/test_resource_security.py -k "migration or advanced_fields"`
 
 Expected: FAIL because schema version 3 fields and the event model do not exist.
 
-- [ ] **Step 3: Add model fields and serialization**
+- [x] **Step 3: Add model fields and serialization**
 
 Add to `Lorebook`:
 
@@ -610,7 +610,7 @@ class LorebookActivationEvent(Base):
 
 Import `CheckConstraint` and `UniqueConstraint`, include all new fields in `to_dict`, and increment `entry.revision` in the update-entry route whenever any prompt-affecting field changes. Keep the existing `Lorebook.character_id` as the owning/default character binding for backward compatibility. `LorebookBinding` adds opt-in chat and future Persona scopes without requiring the Persona table to exist in phase 1; the API must reject a `persona` binding until phase 2 can verify ownership of a real Persona.
 
-- [ ] **Step 4: Add additive migration version 3**
+- [x] **Step 4: Add additive migration version 3**
 
 Set `CURRENT_SCHEMA_VERSION = 3`. In `_migrate_existing_tables`, use `_ensure_column` for all new book and entry fields, then call:
 
@@ -623,13 +623,13 @@ LorebookActivationEvent.__table__.create(bind=engine, checkfirst=True)
 
 Do not add foreign keys to legacy tables in this migration; runtime ownership and cleanup are enforced in the service so SQLite and PostgreSQL upgrades behave consistently.
 
-- [ ] **Step 5: Run model and migration tests**
+- [x] **Step 5: Run model and migration tests**
 
 Run: `python -m pytest -q server/tests/test_database_migrations.py tests/test_resource_security.py`
 
 Expected: all selected tests PASS and a version-2 database upgrades to version 3 once, with both `lorebook_bindings` and `lorebook_activation_events` present.
 
-- [ ] **Step 6: Commit schema version 3**
+- [x] **Step 6: Commit schema version 3**
 
 ```powershell
 git add -- "守岸人3.0/server/models/lorebook.py" "守岸人3.0/server/migrations.py" "守岸人3.0/server/database.py" "守岸人3.0/server/tests/test_database_migrations.py" "守岸人3.0/tests/test_resource_security.py"
@@ -642,7 +642,7 @@ git commit -m "feat(shouanren): persist lorebook runtime settings"
 - Create: `守岸人3.0/server/services/lorebook_runtime.py`
 - Create: `守岸人3.0/tests/test_lorebook_runtime.py`
 
-- [ ] **Step 1: Write failing runtime tests**
+- [x] **Step 1: Write failing runtime tests**
 
 ```python
 def test_runtime_uses_only_events_on_active_path(db_session, seeded_chat):
@@ -704,13 +704,13 @@ def test_chat_binding_does_not_leak_to_another_session(db_session, seeded_chat):
 
 Seed a character lorebook, a second book bound to exactly one chat, a sticky entry, and one activation event in the fixture before assertions.
 
-- [ ] **Step 2: Run runtime tests and verify RED**
+- [x] **Step 2: Run runtime tests and verify RED**
 
 Run: `python -m pytest -q tests/test_lorebook_runtime.py`
 
 Expected: FAIL because `LorebookRuntime` does not exist.
 
-- [ ] **Step 3: Implement row mapping, evaluation, and persistence**
+- [x] **Step 3: Implement row mapping, evaluation, and persistence**
 
 ```python
 class LorebookRuntime:
@@ -737,13 +737,13 @@ class LorebookRuntime:
 
 Add `rules_for_context`, `_to_rule`, `evaluate`, `record_evaluation`, and `delete_events_for_session`. `rules_for_context` loads enabled books whose legacy `character_id` matches the session character plus books explicitly bound to that chat, then de-duplicates books and entries by ID. It must not load chat bindings for another session or unvalidated Persona bindings. `evaluate` calls `ChatHistoryService.owned_session`, derives active-path IDs and history from `selected_text`, loads the context rules, and combines book settings conservatively: the smallest positive Token budget, largest scan depth, recursion enabled when any active book enables it, and largest maximum recursion step count. For a new chat request, define `current_sequence` as the active-path user-message count plus one for the unsaved current input; for regeneration, use the existing active-path user-message count. Assistant Swipes never advance it. `record_evaluation` uses the assistant response message ID, persists only newly matched entries whose `sticky` or `cooldown` is positive, never persists an entry carried by `sticky_active`, and checks uniqueness before insert rather than swallowing database errors. This prevents sticky state from renewing itself forever and preserves the existing behavior that failed LLM calls do not save a half-finished user turn.
 
-- [ ] **Step 4: Run runtime and chat-history tests**
+- [x] **Step 4: Run runtime and chat-history tests**
 
 Run: `python -m pytest -q tests/test_lorebook_runtime.py tests/test_chat_history.py`
 
 Expected: all tests PASS, including branch paths that retain and discard activation events.
 
-- [ ] **Step 5: Commit the runtime adapter**
+- [x] **Step 5: Commit the runtime adapter**
 
 ```powershell
 git add -- "守岸人3.0/server/services/lorebook_runtime.py" "守岸人3.0/tests/test_lorebook_runtime.py"
@@ -756,7 +756,7 @@ git commit -m "feat(shouanren): add branch-aware lorebook runtime"
 - Modify: `守岸人3.0/server/routers/lorebook.py`
 - Create: `守岸人3.0/tests/test_lorebook_api.py`
 
-- [ ] **Step 1: Write failing API tests**
+- [x] **Step 1: Write failing API tests**
 
 ```python
 def test_owner_can_update_advanced_settings(lorebook_api, resource_graph):
@@ -805,13 +805,13 @@ def test_binding_rejects_foreign_or_wrong_character_chat(lorebook_api, resource_
 
 Extend `resource_graph` with a `ChatSession` owned by the fixture owner.
 
-- [ ] **Step 2: Run API tests and verify RED**
+- [x] **Step 2: Run API tests and verify RED**
 
 Run: `python -m pytest -q tests/test_lorebook_api.py`
 
 Expected: FAIL because advanced payload fields and `/api/lorebooks/debug` are absent.
 
-- [ ] **Step 3: Extend request models and update logic**
+- [x] **Step 3: Extend request models and update logic**
 
 Use bounded fields:
 
@@ -834,7 +834,7 @@ class LorebookBindingsUpdate(BaseModel):
 
 The PUT route requires editable access to the lorebook, removes only its existing `chat` bindings, validates every requested `ChatSession` belongs to the current user and has the same `character_id` as the lorebook, rejects duplicates before writing, and returns the sorted bound IDs. Do not expose arbitrary `scope_type` or `scope_id` writes. Persona scope remains reserved in the schema and becomes writable only after phase 2 adds an owned Persona resource.
 
-- [ ] **Step 4: Add the owned dry-run endpoint**
+- [x] **Step 4: Add the owned dry-run endpoint**
 
 ```python
 class LorebookDebugRequest(BaseModel):
@@ -860,13 +860,13 @@ async def debug_lorebook(
 
 Route order must place `/debug` before `/{lorebook_id}` routes so FastAPI does not interpret `debug` as an ID. The runtime ownership check returns 404 for another user's session.
 
-- [ ] **Step 5: Run lorebook API and resource-security tests**
+- [x] **Step 5: Run lorebook API and resource-security tests**
 
 Run: `python -m pytest -q tests/test_lorebook_api.py tests/test_resource_security.py`
 
 Expected: all selected tests PASS, including chat-binding ownership and cross-character isolation.
 
-- [ ] **Step 6: Commit the advanced API**
+- [x] **Step 6: Commit the advanced API**
 
 ```powershell
 git add -- "守岸人3.0/server/routers/lorebook.py" "守岸人3.0/tests/test_lorebook_api.py" "守岸人3.0/tests/test_resource_security.py"
@@ -881,7 +881,7 @@ git commit -m "feat(shouanren): expose advanced lorebook controls"
 - Modify: `守岸人3.0/tests/test_chat_api.py`
 - Modify: `守岸人3.0/tests/test_lorebook_api.py`
 
-- [ ] **Step 1: Write failing prompt and chat tests**
+- [x] **Step 1: Write failing prompt and chat tests**
 
 ```python
 def test_chat_injects_before_after_and_depth_entries(chat_client, fake_llm, seeded_lorebooks):
@@ -915,13 +915,13 @@ def test_regeneration_uses_lorebook_without_advancing_timed_state(chat_client, d
 
 Seed the character prompt with the literal `character sentinel`, and make the timed entry in the persistence test use a positive `sticky` or `cooldown` so an activation event is expected.
 
-- [ ] **Step 2: Run chat integration tests and verify RED**
+- [x] **Step 2: Run chat integration tests and verify RED**
 
 Run: `python -m pytest -q tests/test_chat_api.py tests/test_lorebook_api.py -k lorebook`
 
 Expected: FAIL because chat still uses its inline matcher and does not persist activation events.
 
-- [ ] **Step 3: Make prompt positions explicit**
+- [x] **Step 3: Make prompt positions explicit**
 
 Keep `build_system_prompt` responsible for `before_char` and `after_char`. Pass depth entries to `build_messages`:
 
@@ -943,7 +943,7 @@ messages = build_messages(system_prompt, history, depth_segments=depth_segments)
 
 Add prompt-builder tests proving multiple entries at the same depth retain stable `order`, and a depth larger than available history is injected immediately after the system message rather than silently discarded.
 
-- [ ] **Step 4: Replace the inline matcher with `LorebookRuntime`**
+- [x] **Step 4: Replace the inline matcher with `LorebookRuntime`**
 
 Remove the `MAX_LOREBOOK_ENTRIES`, regex loop, and fixed list slicing from `chat.py`. Evaluate before calling the LLM. After appending the assistant message, call:
 
@@ -953,13 +953,13 @@ runtime.record_evaluation(session.id, ai_msg, evaluation)
 
 For regeneration, build context from `prompt_messages_before(message_id)`, use the last user message as `current_input`, evaluate without persisting new events, and then append the new Swipe. This preserves timed state because a Swipe does not advance the active path.
 
-- [ ] **Step 5: Run chat, prompt, branch, and backup tests**
+- [x] **Step 5: Run chat, prompt, branch, and backup tests**
 
 Run: `python -m pytest -q tests/test_chat_api.py tests/test_chat_history.py tests/test_chat_backups.py tests/test_lorebook_api.py`
 
 Expected: all selected tests PASS and existing edit/delete/Swipe/checkpoint behavior remains unchanged.
 
-- [ ] **Step 6: Commit chat integration**
+- [x] **Step 6: Commit chat integration**
 
 ```powershell
 git add -- "守岸人3.0/server/routers/chat.py" "守岸人3.0/server/utils/prompt_builder.py" "守岸人3.0/tests/test_chat_api.py" "守岸人3.0/tests/test_lorebook_api.py"
@@ -974,7 +974,7 @@ git commit -m "feat(shouanren): integrate lorebooks into chat prompts"
 - Modify: `守岸人3.0/frontend/characters.html`
 - Create: `守岸人3.0/tests/test_lorebook_frontend_contract.py`
 
-- [ ] **Step 1: Write failing frontend contract tests**
+- [x] **Step 1: Write failing frontend contract tests**
 
 ```python
 from pathlib import Path
@@ -1000,13 +1000,13 @@ def test_character_page_links_owned_character_to_lorebook_manager():
     assert "lorebooks.html?character_id=" in page
 ```
 
-- [ ] **Step 2: Run the contract tests and verify RED**
+- [x] **Step 2: Run the contract tests and verify RED**
 
 Run: `python -m pytest -q tests/test_lorebook_frontend_contract.py`
 
 Expected: FAIL because the management page and script do not exist.
 
-- [ ] **Step 3: Build the authenticated management page**
+- [x] **Step 3: Build the authenticated management page**
 
 The page must load `css/main.css`, `js/auth.js`, `js/api.js`, and `js/lorebooks.js`; call `Auth.loadUser()` before private API requests; read only `character_id` from `URLSearchParams`; and render these sections:
 
@@ -1025,7 +1025,7 @@ The page must load `css/main.css`, `js/auth.js`, `js/api.js`, and `js/lorebooks.
 
 Use labels for every input, keyboard-accessible buttons, confirmation before destructive actions, disabled submit buttons while requests run, and inline error messages. Render all server strings with `textContent`, never `innerHTML`.
 
-- [ ] **Step 4: Implement API orchestration in `lorebooks.js`**
+- [x] **Step 4: Implement API orchestration in `lorebooks.js`**
 
 Keep one explicit state object and implement the orchestration functions with the existing `API` client:
 
@@ -1130,7 +1130,7 @@ function renderTrace(trace) {
 
 Populate the available chat-binding selector from `/api/chat/characters`, filtered to the selected character. `loadEntries` preserves server ordering. The editor submit handler serializes numeric controls with `Number`, booleans with `.checked`, and blank optional strings as `null` before calling `saveEntry`. `runDebug` renders status, reason, recursion level, and estimated Token count for every trace row.
 
-- [ ] **Step 5: Add the character-page action and run syntax checks**
+- [x] **Step 5: Add the character-page action and run syntax checks**
 
 Show the action only when the current user can edit the character. Link with `encodeURIComponent(character.id)`.
 
@@ -1143,7 +1143,7 @@ node --check "frontend/js/lorebooks.js"
 
 Expected: tests PASS and Node exits 0.
 
-- [ ] **Step 6: Commit the management UI**
+- [x] **Step 6: Commit the management UI**
 
 ```powershell
 git add -- "守岸人3.0/frontend/lorebooks.html" "守岸人3.0/frontend/js/lorebooks.js" "守岸人3.0/frontend/characters.html" "守岸人3.0/tests/test_lorebook_frontend_contract.py"
@@ -1156,11 +1156,11 @@ git commit -m "feat(shouanren): add worldbook management UI"
 - Modify: `守岸人3.0/README.md`
 - Modify: `docs/superpowers/plans/2026-08-10-shouanren-lorebook-engine.md`
 
-- [ ] **Step 1: Update the README to match implemented behavior**
+- [x] **Step 1: Update the README to match implemented behavior**
 
 Document the trigger pipeline, timed-effect message semantics, recursion limit, Token budget, dry-run debugger, branch inheritance, schema version 3, and the clean-room rule. State explicitly that group chat and interactive story integration belong to later stages and are not silently enabled by this phase.
 
-- [ ] **Step 2: Run the complete ShouAnRen suite**
+- [x] **Step 2: Run the complete ShouAnRen suite**
 
 Run: `python -m pytest -q`
 
@@ -1168,7 +1168,7 @@ Working directory: `守岸人3.0`
 
 Expected: zero failures.
 
-- [ ] **Step 3: Run Python and frontend syntax checks**
+- [x] **Step 3: Run Python and frontend syntax checks**
 
 Run: `python -m compileall -q server tests`
 
@@ -1176,7 +1176,7 @@ Extract each inline `<script>` from `frontend/*.html` and run `node --check -`; 
 
 Expected: zero syntax failures.
 
-- [ ] **Step 4: Inspect scope and whitespace**
+- [x] **Step 4: Inspect scope and whitespace**
 
 Run:
 
@@ -1188,7 +1188,7 @@ git diff --stat -- "守岸人3.0" "docs/superpowers/plans/2026-08-10-shouanren-l
 
 Expected: no whitespace errors. Stage only files listed in this plan; leave OpenWrite, stock, reports, SD, site-auth, and unrelated ShouAnRen frontend changes untouched.
 
-- [ ] **Step 5: Restart the complete local stack**
+- [x] **Step 5: Restart the complete local stack**
 
 Run from `E:\AI\gp`:
 
@@ -1200,7 +1200,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\check-local.ps1
 
 Allow at least 300 seconds for sequential service startup. Expected: all ports 8000–8009 and 5173–5175 pass, unified login succeeds, anonymous private endpoints return 401, and authenticated ShouAnRen chat returns 200.
 
-- [ ] **Step 6: Verify the real database migration**
+- [x] **Step 6: Verify the real database migration**
 
 Run in `守岸人3.0`:
 
@@ -1217,7 +1217,7 @@ print({"schema_version": version, "activation_events": "lorebook_activation_even
 
 Expected: `{'schema_version': 3, 'activation_events': True}`.
 
-- [ ] **Step 7: Mark completed checkboxes and commit the phase**
+- [x] **Step 7: Mark completed checkboxes and commit the phase**
 
 Update this plan's executed steps from `[ ]` to `[x]`, then stage only the documented phase files and commit:
 
@@ -1227,3 +1227,4 @@ git commit -m "docs(shouanren): document advanced lorebooks"
 ```
 
 Do not delete `SillyTavern/` or any other reference project in this phase.
+

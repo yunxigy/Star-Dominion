@@ -1,5 +1,13 @@
 # 守岸人 3.0
 
+## 高级世界书
+
+世界书触发由独立的纯规则引擎执行，支持主/次关键词 AND、OR，大小写与全词匹配、正则、常驻条目、概率、delay、sticky、cooldown、递归、互斥分组、三种 Prompt 位置和 Token 预算。管理页面为 `/lorebooks.html?character_id=<角色ID>`，调试器只返回触发 trace，不写入时效事件。
+
+世界书默认随所属角色生效，也可关闭“角色默认生效”后绑定到指定聊天。时效状态按活动分支上的用户回合计算并绑定到助手回复；切换分支会自然继承或丢弃对应状态，重新生成 Swipe 不推进回合，也不会续期 sticky。数据库 schema 版本为 3，旧库启动时执行增量迁移。
+
+本实现依据项目需求 clean-room 开发，不复制或改编 SillyTavern 的 AGPL 源码、测试、文案、资产或界面。群聊、互动故事与 Persona 的实际绑定属于后续阶段；schema 仅预留 Persona 作用域，当前 API 不允许写入未经所有权验证的 Persona 绑定。
+
 AI 角色对话与互动剧情平台。
 
 <p align="center">
