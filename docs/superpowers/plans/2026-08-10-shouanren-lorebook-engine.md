@@ -1227,4 +1227,3 @@ git commit -m "docs(shouanren): document advanced lorebooks"
 ```
 
 Do not delete `SillyTavern/` or any other reference project in this phase.
-
