@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 
-import { agreementOptions, pairedTendencyOptions, scenarioQuestion } from './builders';
+import {
+  agreementOptions,
+  agreementQuestion,
+  pairedTendencyOptions,
+  scenarioQuestion,
+} from './builders';
 
 describe('assessment option builders', () => {
   it('builds positive and reverse agreement scales without shared mutation', () => {
@@ -32,5 +37,12 @@ describe('assessment option builders', () => {
     expect(question.options).toHaveLength(4);
     expect(question.options[0].scores).toEqual({ cat: 2, deer: 1 });
     expect(question.options[3].scores).toEqual({ wolf: 2, dog: 1 });
+  });
+
+  it('builds a complete agreement question', () => {
+    const question = agreementQuestion('q1', '我能觉察情绪。', 'awareness', true);
+
+    expect(question.prompt).toBe('我能觉察情绪。');
+    expect(question.options.map((item) => item.scores.awareness)).toEqual([4, 3, 2, 1, 0]);
   });
 });

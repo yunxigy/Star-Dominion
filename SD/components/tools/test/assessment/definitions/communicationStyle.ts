@@ -1,0 +1,45 @@
+import type { AssessmentDefinition } from '../types';
+import { agreementQuestion } from './builders';
+
+export const communicationStyleDefinition: AssessmentDefinition = {
+  id: 'communication-style-test',
+  title: '沟通风格测试',
+  subtitle: '你更习惯直接表达、理性分析、共情倾听，还是协作协调？',
+  group: 'personality', questionCount: 18, estimatedMinutes: 4, mode: 'dominant', sensitive: false,
+  intro: '沟通风格会随着关系与情境变化。这份测评帮助你看见自己最常使用的表达路径，以及可以补充的另一种能力。',
+  disclaimer: '结果仅供自我探索，不构成心理诊断、能力评定或专业建议。',
+  minAnsweredRatio: 1,
+  dimensions: [
+    { id: 'direct', label: '直接表达', color: '#b7583e', description: '清晰说出结论、立场和请求' },
+    { id: 'analytical', label: '理性分析', color: '#537b98', description: '核对事实、结构与逻辑关系' },
+    { id: 'empathetic', label: '共情倾听', color: '#8c6179', description: '理解感受、语气和未说出口的信息' },
+    { id: 'collaborative', label: '协作协调', color: '#6f9364', description: '总结共识并推动多人合作' },
+  ],
+  questions: [
+    agreementQuestion('communication-01', '我会尽早说清楚自己的结论和需求。', 'direct'),
+    agreementQuestion('communication-02', '表达前，我习惯先核对事实和逻辑。', 'analytical'),
+    agreementQuestion('communication-03', '我能注意到对方没有直接说出的情绪。', 'empathetic'),
+    agreementQuestion('communication-04', '我倾向于寻找各方都能接受的方案。', 'collaborative'),
+    agreementQuestion('communication-05', '即使意见不同，我也能清楚说明立场。', 'direct'),
+    agreementQuestion('communication-06', '信息不足时，我愿意暂缓判断。', 'analytical'),
+    agreementQuestion('communication-07', '别人倾诉时，我会先理解感受再给建议。', 'empathetic'),
+    agreementQuestion('communication-08', '讨论陷入僵局时，我会主动总结共同点。', 'collaborative'),
+    agreementQuestion('communication-09', '为了避免尴尬，我常把真正想法藏起来。', 'direct', true),
+    agreementQuestion('communication-10', '我容易在没有证据时凭第一印象下结论。', 'analytical', true),
+    agreementQuestion('communication-11', '我很少留意语气和表情带来的信息。', 'empathetic', true),
+    agreementQuestion('communication-12', '只要我认为自己正确，就不太在意共识。', 'collaborative', true),
+    agreementQuestion('communication-13', '我能用简洁语言提出具体请求。', 'direct'),
+    agreementQuestion('communication-14', '面对复杂问题，我会把观点分层说明。', 'analytical'),
+    agreementQuestion('communication-15', '我会确认自己是否准确理解了对方。', 'empathetic'),
+    agreementQuestion('communication-16', '我愿意调整表达方式以推动合作。', 'collaborative'),
+    agreementQuestion('communication-17', '在压力下，我的表达容易变得含糊。', 'direct', true),
+    agreementQuestion('communication-18', '我会邀请沉默的人参与讨论。', 'collaborative'),
+  ],
+  results: [
+    { id: 'direct', title: '直接表达型', description: '你重视清晰、效率和明确行动，通常愿意把结论与需求直接说出来。你的优势是减少猜测，让事情快速进入可讨论状态。', keywords: ['清晰', '坦率', '行动导向'], suggestion: '重要观点前加一句背景或感受，直接会更容易被听见。' },
+    { id: 'analytical', title: '理性分析型', description: '你习惯先厘清事实、定义与逻辑，再形成稳定意见。复杂讨论中，你常能帮助团队减少模糊和未经验证的判断。', keywords: ['逻辑', '结构', '审慎'], suggestion: '数据之外也问一句“这对当事人意味着什么”，分析会更完整。' },
+    { id: 'empathetic', title: '共情倾听型', description: '你会留意情绪、语气与关系背景，擅长让对方感到被理解。你常能听见信息背后真正需要回应的部分。', keywords: ['倾听', '体察', '理解'], suggestion: '理解对方之后也明确表达自己的立场，关系会更平衡。' },
+    { id: 'collaborative', title: '协作协调型', description: '你善于寻找共同点、邀请参与并把不同观点组织成可合作的方案。群体中，你常是让讨论继续向前的人。', keywords: ['协调', '共识', '合作'], suggestion: '追求共识时设定决策时点，避免为了照顾所有声音而停滞。' },
+  ],
+  tieBreakOrder: ['direct', 'analytical', 'empathetic', 'collaborative'],
+};

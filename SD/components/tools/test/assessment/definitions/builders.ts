@@ -37,6 +37,15 @@ export function agreementOptions(
   ));
 }
 
+export function agreementQuestion(
+  id: string,
+  prompt: string,
+  dimensionId: string,
+  reverse = false,
+): AssessmentQuestion {
+  return { id, prompt, options: agreementOptions(dimensionId, reverse) };
+}
+
 export function pairedTendencyOptions(
   leftId: string,
   rightId: string,
