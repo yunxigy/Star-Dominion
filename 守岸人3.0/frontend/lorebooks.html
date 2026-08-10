@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>世界书管理</title><link rel="stylesheet" href="/css/main.css"></head>
+<body>
+<main class="page-container">
+  <h1>世界书管理</h1><p id="page-error" role="alert"></p>
+  <section id="book-settings"><h2>全局设置</h2>
+    <label>世界书 <select id="book-select"></select></label>
+    <label>Token 预算 <input id="token-budget" type="number" min="64" max="65536"></label>
+    <label>扫描深度 <input id="scan-depth" type="number" min="0"></label>
+    <label><input id="recursive-scan" type="checkbox">递归扫描</label>
+    <label><input id="character-default" type="checkbox">角色默认生效</label>
+    <button id="save-book" type="button">保存设置</button>
+  </section>
+  <section id="chat-bindings"><h2>聊天绑定</h2><div id="chat-bindings-list"></div></section>
+  <section><h2>条目</h2><div id="entry-list-body"></div>
+    <label>位置 <select id="entry-position"><option value="before_char">角色前</option><option value="after_char">角色后</option><option value="depth">深度</option></select></label>
+    <label>Sticky <input id="sticky" type="number" min="0"></label><label>Cooldown <input id="cooldown" type="number" min="0"></label>
+    <label>Delay <input id="delay" type="number" min="0"></label><label>分组权重 <input id="group-weight" type="number" min="0"></label>
+  </section>
+  <section><h2>触发调试器</h2><label>会话 ID <input id="debug-session"></label><label>测试文本 <textarea id="debug-input" maxlength="20000"></textarea></label><button id="run-debug" type="button">运行</button><div id="debug-trace" aria-live="polite"></div></section>
+</main>
+<script src="/js/auth.js"></script><script src="/js/api.js"></script><script src="/js/lorebooks.js"></script>
+</body></html>

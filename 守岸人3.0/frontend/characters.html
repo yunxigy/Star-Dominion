@@ -235,13 +235,13 @@
     let characters = [];
 
     // 检查登录状态
-    const token = 'central-cookie';
+    // Authentication is provided by auth.js via the site session cookie.
     let user = null;
 
     Auth.loadUser().then((current) => {
       user = current;
       if (!current) {
-        window.location.href = Auth.loginUrl('/characters.html');
+        window.location.href = Auth.loginUrl(navigateUrl('/characters.html'));
         return;
       }
       document.getElementById('user-info').style.display = 'flex';
@@ -249,22 +249,13 @@
       document.getElementById('login-link').style.display = 'none';
     });
 
-    if (user) {
-      document.getElementById('user-info').style.display = 'flex';
-      document.getElementById('username').textContent = user.username;
-      document.getElementById('login-link').style.display = 'none';
-    }
-
-    function logout() {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/';
+    async function logout() {
+      await Auth.logout();
     }
 
     async function loadCharacters() {
       try {
         const headers = {};
-        if (token) headers['Authorization'] = `Bearer ${token}`;
         const response = await fetch('/api/characters', { headers });
         if (response.ok) {
           characters = await response.json();
@@ -304,7 +295,7 @@
       grid.innerHTML = filtered.map(char => `
         <div class="character-card-wrapper">
           ${char.is_nsfw ? '<span class="nsfw-badge">R18</span>' : ''}
-          <a href="/?character=${escapeHtml(char.id)}" class="character-card">
+          <a href="${navigateUrl('/?character=' + escapeHtml(char.id))}" class="character-card">
             <div class="character-avatar" style="display:flex;align-items:center;justify-content:center;font-size:60px;">
               ${char.avatar_url ? `<img src="${escapeHtml(char.avatar_url)}" style="width:100%;height:100%;object-fit:cover;">` : '🤖'}
             </div>
@@ -318,6 +309,7 @@
               ` : ''}
             </div>
           </a>
+          ${char.user_id === Auth.getUser()?.id ? `<a href="${navigateUrl('/lorebooks.html?character_id=' + encodeURIComponent(char.id))}">管理世界书</a>` : ''}
         </div>
       `).join('');
     }
