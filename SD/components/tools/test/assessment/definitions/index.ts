@@ -5,6 +5,7 @@ import { communicationStyleDefinition } from './communicationStyle';
 import { coreValuesDefinition } from './coreValues';
 import { emotionalIntelligenceDefinition } from './emotionalIntelligence';
 import { lifeEnergyDefinition } from './lifeEnergy';
+import { mbtiDefinition } from './mbti';
 import { intimacyBoundariesDefinition } from './intimacyBoundaries';
 import { orientationSpectrumDefinition } from './orientationSpectrum';
 import { romanticOrientationDefinition } from './romanticOrientation';
@@ -16,6 +17,7 @@ export const ASSESSMENT_DEFINITIONS: Record<string, AssessmentDefinition> = {
   [emotionalIntelligenceDefinition.id]: emotionalIntelligenceDefinition,
   [coreValuesDefinition.id]: coreValuesDefinition,
   [lifeEnergyDefinition.id]: lifeEnergyDefinition,
+  [mbtiDefinition.id]: mbtiDefinition,
   [orientationSpectrumDefinition.id]: orientationSpectrumDefinition,
   [romanticOrientationDefinition.id]: romanticOrientationDefinition,
   [intimacyBoundariesDefinition.id]: intimacyBoundariesDefinition,
