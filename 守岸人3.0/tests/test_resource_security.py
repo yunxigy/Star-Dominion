@@ -79,6 +79,12 @@ def resource_graph(db_session):
         character_id=public_character.id,
         version=1,
     )
+    foreign_chat_session = ChatSession(
+        id="foreign-chat-session",
+        user_id=other.id,
+        character_id=public_character.id,
+        version=1,
+    )
     lorebook = Lorebook(
         id="resource-lorebook",
         character_id=public_character.id,
@@ -100,6 +106,7 @@ def resource_graph(db_session):
             story,
             story_session,
             chat_session,
+            foreign_chat_session,
             lorebook,
             entry,
         ]
@@ -113,6 +120,7 @@ def resource_graph(db_session):
         public_character=public_character,
         story_session=story_session,
         chat_session=chat_session,
+        foreign_chat_session=foreign_chat_session,
         lorebook=lorebook,
         entry=entry,
     )
