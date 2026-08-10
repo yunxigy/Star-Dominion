@@ -1,125 +1,139 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 
-const ROMAN: Record<number, string> = {
-  0: '0',
-  1: 'I',
-  2: 'II',
-  3: 'III',
-  4: 'IV',
-  5: 'V',
-  6: 'VI',
-  7: 'VII',
-  8: 'VIII',
-  9: 'IX',
-  10: 'X',
-  11: 'XI',
-  12: 'XII',
-  13: 'XIII',
-  14: 'XIV',
-  15: 'XV',
-  16: 'XVI',
-  17: 'XVII',
-  18: 'XVIII',
-  19: 'XIX',
-  20: 'XX',
-  21: 'XXI',
-};
-
-const CARD_IMAGE_SLUGS: Record<number, string> = {
-  0: 'fool',
-  1: 'magician',
-  2: 'high_priestess',
-  3: 'empress',
-  4: 'emperor',
-  5: 'hierophant',
-  6: 'lovers',
-  7: 'chariot',
-  8: 'strength',
-  9: 'hermit',
-  10: 'wheel_of_fortune',
-  11: 'justice',
-  12: 'hanged_man',
-  13: 'death',
-  14: 'temperance',
-  15: 'devil',
-  16: 'tower',
-  17: 'star',
-  18: 'moon',
-  19: 'sun',
-  20: 'judgement',
-  21: 'world',
-};
-
-const MINOR_RANK_SLUGS: Record<number, string> = {
-  1: 'ace', 2: 'two', 3: 'three', 4: 'four', 5: 'five',
-  6: 'six', 7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten',
-  11: 'page', 12: 'knight', 13: 'queen', 14: 'king',
-};
+import {
+  ALL_CARDS,
+  getCardDisplayNumber,
+  getCardImagePaths,
+} from './tarot-data'
 
 interface TarotCardVisualProps {
-  number: number;
-  name: string;
-  emoji: string;
-  suit?: string;
-  reversed?: boolean;
-  faceDown?: boolean;
-  size?: 'sm' | 'md' | 'lg';
-  keywords?: string[];
-  onClick?: () => void;
+  number: number
+  name: string
+  emoji: string
+  suit?: string
+  reversed?: boolean
+  faceDown?: boolean
+  size?: 'sm' | 'md' | 'lg'
+  keywords?: string[]
+  onClick?: () => void
 }
 
-const SUIT_NAMES: Record<string, string> = {
-  cups: 'cups',
-  pentacles: 'pentacles',
-  swords: 'swords',
-  wands: 'wands',
-};
+type TarotFallbackImage = Pick<HTMLImageElement, 'src' | 'dataset'>
 
-const getCardImage = (number: number, suit?: string) => {
-  // Major Arcana (0-21)
-  const slug = CARD_IMAGE_SLUGS[number];
-  if (slug) return `/assets/tarot/cards/tarot_${String(number).padStart(2, '0')}_${slug}.svg`;
+export function applyTarotImageFallback(
+  image: TarotFallbackImage,
+  fallbackSrc: string,
+): void {
+  if (image.dataset.tarotFallbackApplied === 'true') return
 
-  // Minor Arcana (22-77)
-  if (suit && SUIT_NAMES[suit]) {
-    const rankNum = ((number - 22) % 14) + 1;
-    const rankSlug = MINOR_RANK_SLUGS[rankNum];
-    if (rankSlug) return `/assets/tarot/cards/tarot_${suit}_${rankSlug}.svg`;
-  }
+  image.dataset.tarotFallbackApplied = 'true'
+  image.src = fallbackSrc
+}
 
-  return null;
-};
+const CARD_BY_NUMBER = new Map(ALL_CARDS.map(card => [card.number, card]))
 
 const sizeClasses = {
-  sm: 'w-32 h-48',
-  md: 'w-44 h-64',
-  lg: 'w-64 h-96',
-};
+  sm: 'h-48 w-32',
+  md: 'h-64 w-44',
+  lg: 'h-96 w-64',
+}
 
 const emojiSizes = {
   sm: 'text-2xl',
   md: 'text-4xl',
   lg: 'text-5xl',
-};
+}
+
+const labelSizeClasses = {
+  sm: {
+    number: 'text-[9px]',
+    name: 'text-[10px]',
+    nameEn: 'text-[7px]',
+    bottom: 'px-2 pb-2 pt-7',
+  },
+  md: {
+    number: 'text-[10px]',
+    name: 'text-xs',
+    nameEn: 'text-[9px]',
+    bottom: 'px-3 pb-3 pt-9',
+  },
+  lg: {
+    number: 'text-xs',
+    name: 'text-base',
+    nameEn: 'text-[11px]',
+    bottom: 'px-4 pb-4 pt-12',
+  },
+}
+
+interface CardFaceLabelsProps {
+  displayNumber: string
+  name: string
+  nameEn: string
+  size: 'sm' | 'md' | 'lg'
+}
+
+const CardFaceLabels: React.FC<CardFaceLabelsProps> = ({
+  displayNumber,
+  name,
+  nameEn,
+  size,
+}) => {
+  const classes = labelSizeClasses[size]
+
+  return (
+    <div
+      data-tarot-labels="true"
+      className="pointer-events-none absolute inset-0 z-10 text-[#fff4e6]"
+    >
+      <div className="absolute left-1/2 top-2 -translate-x-1/2 rounded-full border border-[#e5c28d]/45 bg-[#17100c]/75 px-2 py-0.5 shadow-md backdrop-blur-sm">
+        <span className={`${classes.number} font-serif font-semibold tracking-[0.18em]`}>
+          {displayNumber}
+        </span>
+      </div>
+      <div
+        className={`absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#120c09] via-[#17100c]/90 to-transparent text-center ${classes.bottom}`}
+      >
+        <div className={`${classes.name} font-medium tracking-[0.12em] text-[#fff7ea]`}>
+          {name}
+        </div>
+        <div className={`${classes.nameEn} mt-0.5 font-serif uppercase tracking-[0.14em] text-[#e4c89f]`}>
+          {nameEn}
+        </div>
+      </div>
+    </div>
+  )
+}
 
 export const TarotCardVisual: React.FC<TarotCardVisualProps> = ({
   number,
   name,
   emoji,
-  suit,
   reversed = false,
   faceDown = false,
   size = 'md',
   keywords,
   onClick,
 }) => {
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const imageSrc = faceDown ? '/assets/tarot/cards/tarot_back.svg' : getCardImage(number, suit);
-  const previewTitle = faceDown ? '塔罗牌背面' : `${name || ROMAN[number] || number}${reversed ? ' · 逆位' : ''}`;
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false)
+  const card = CARD_BY_NUMBER.get(number)
+  const imagePaths = card ? getCardImagePaths(card) : null
+  const imageSrc = faceDown ? '/assets/tarot/cards/tarot_back.svg' : imagePaths?.webp
+  const fallbackSrc = faceDown ? null : imagePaths?.svg
+  const displayNumber = card ? getCardDisplayNumber(card) : String(number)
+  const displayName = name || card?.name || displayNumber
+  const displayNameEn = card?.nameEn || ''
+  const previewTitle = faceDown
+    ? '塔罗牌背面'
+    : `${displayName}${displayNameEn ? ` · ${displayNameEn}` : ''}${reversed ? ' · 逆位' : ''}`
+
   const openPreview = () => {
-    if (imageSrc) setIsPreviewOpen(true);
-    onClick?.();
-  };
+    if (imageSrc) setIsPreviewOpen(true)
+    onClick?.()
+  }
+
+  const handleImageError = (event: React.SyntheticEvent<HTMLImageElement>) => {
+    if (fallbackSrc) applyTarotImageFallback(event.currentTarget, fallbackSrc)
+  }
 
   if (imageSrc) {
     return (
@@ -133,16 +147,25 @@ export const TarotCardVisual: React.FC<TarotCardVisualProps> = ({
         >
           <img
             src={imageSrc}
-            alt={faceDown ? 'Tarot card back' : `${name || ROMAN[number] || number} tarot card`}
-            className="h-full w-full object-cover"
+            alt={faceDown ? 'Tarot card back' : `${displayName} · ${displayNameEn} tarot card`}
+            className={`h-full w-full object-cover transition-transform duration-500 ${reversed && !faceDown ? 'rotate-180' : ''}`}
             draggable={false}
+            onError={handleImageError}
           />
-          <div className="pointer-events-none absolute inset-0 rounded-xl ring-1 ring-[#f1dcc2]/20 transition group-hover:ring-[#f1dcc2]/55" />
-          <div className="pointer-events-none absolute bottom-2 right-2 rounded-full border border-[#f1dcc2]/45 bg-[#2f241b]/75 px-2 py-0.5 text-[10px] font-medium tracking-wider text-[#fff4e6] opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+          {!faceDown && (
+            <CardFaceLabels
+              displayNumber={displayNumber}
+              name={displayName}
+              nameEn={displayNameEn}
+              size={size}
+            />
+          )}
+          <div className="pointer-events-none absolute inset-0 z-20 rounded-xl ring-1 ring-[#f1dcc2]/20 transition group-hover:ring-[#f1dcc2]/55" />
+          <div className="pointer-events-none absolute right-2 top-2 z-30 rounded-full border border-[#f1dcc2]/45 bg-[#2f241b]/75 px-2 py-0.5 text-[10px] font-medium tracking-wider text-[#fff4e6] opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
             放大
           </div>
           {reversed && !faceDown && (
-            <div className="absolute left-2 top-2 rounded-full border border-red-300/60 bg-red-950/70 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-red-100 shadow-lg">
+            <div className="absolute left-2 top-2 z-30 rounded-full border border-red-300/60 bg-red-950/70 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-red-100 shadow-lg">
               逆位
             </div>
           )}
@@ -156,11 +179,14 @@ export const TarotCardVisual: React.FC<TarotCardVisualProps> = ({
             aria-label={previewTitle}
             onClick={() => setIsPreviewOpen(false)}
           >
-            <div className="relative max-h-[92vh] w-full max-w-[min(78vw,520px)]" onClick={e => e.stopPropagation()}>
+            <div
+              className="relative aspect-[2/3] max-h-[92vh] w-full max-w-[min(78vw,520px)] overflow-hidden rounded-2xl border border-[#d8b58e]/70 shadow-2xl"
+              onClick={event => event.stopPropagation()}
+            >
               <button
                 type="button"
                 onClick={() => setIsPreviewOpen(false)}
-                className="absolute -right-2 -top-3 z-10 rounded-full border border-[#d8b58e] bg-[#fff4e6] px-3 py-1 text-sm font-semibold text-[#6f3714] shadow-lg hover:bg-[#f1dcc2]"
+                className="absolute right-3 top-3 z-40 rounded-full border border-[#d8b58e] bg-[#fff4e6] px-3 py-1 text-sm font-semibold text-[#6f3714] shadow-lg hover:bg-[#f1dcc2]"
                 aria-label="关闭放大卡牌"
               >
                 关闭
@@ -168,14 +194,23 @@ export const TarotCardVisual: React.FC<TarotCardVisualProps> = ({
               <img
                 src={imageSrc}
                 alt={previewTitle}
-                className="mx-auto max-h-[92vh] w-auto rounded-2xl border border-[#d8b58e]/70 object-contain shadow-2xl"
+                className={`h-full w-full object-cover ${reversed && !faceDown ? 'rotate-180' : ''}`}
                 draggable={false}
+                onError={handleImageError}
               />
+              {!faceDown && (
+                <CardFaceLabels
+                  displayNumber={displayNumber}
+                  name={displayName}
+                  nameEn={displayNameEn}
+                  size="lg"
+                />
+              )}
             </div>
           </div>
         )}
       </>
-    );
+    )
   }
 
   return (
@@ -186,12 +221,12 @@ export const TarotCardVisual: React.FC<TarotCardVisualProps> = ({
     >
       <div className="pb-1 pt-2 text-center">
         <span className="font-serif text-xs tracking-widest text-[#d8b58e]/80">
-          {ROMAN[number] || number}
+          {displayNumber}
         </span>
       </div>
       <div className="mx-3 h-px bg-gradient-to-r from-transparent via-[#d8b58e]/50 to-transparent" />
       <div className="px-2 py-1 text-center">
-        <span className="text-xs font-medium tracking-wider text-[#fff4e6]">{name}</span>
+        <span className="text-xs font-medium tracking-wider text-[#fff4e6]">{displayName}</span>
       </div>
       <div className="relative flex flex-1 items-center justify-center">
         <div className="absolute inset-0 flex items-center justify-center">
@@ -202,22 +237,26 @@ export const TarotCardVisual: React.FC<TarotCardVisualProps> = ({
       {size !== 'sm' && keywords && keywords.length > 0 && (
         <div className="px-2 py-1.5 text-center">
           <div className="flex flex-wrap justify-center gap-1">
-            {keywords.slice(0, 3).map(k => (
-              <span key={k} className="rounded bg-[#9a5a28]/30 px-1 py-0.5 text-[9px] text-[#f1dcc2]">
-                {k}
+            {keywords.slice(0, 3).map(keyword => (
+              <span key={keyword} className="rounded bg-[#9a5a28]/30 px-1 py-0.5 text-[9px] text-[#f1dcc2]">
+                {keyword}
               </span>
             ))}
           </div>
         </div>
       )}
-      {reversed && <div className="absolute left-2 top-2 rounded-full bg-red-950/70 px-2 py-0.5 text-[10px] text-red-100">逆位</div>}
+      {reversed && (
+        <div className="absolute left-2 top-2 rounded-full bg-red-950/70 px-2 py-0.5 text-[10px] text-red-100">
+          逆位
+        </div>
+      )}
     </div>
-  );
-};
+  )
+}
 
 export const TarotCardBack: React.FC<{
-  size?: 'sm' | 'md' | 'lg';
-  onClick?: () => void;
+  size?: 'sm' | 'md' | 'lg'
+  onClick?: () => void
 }> = ({ size = 'md', onClick }) => (
   <TarotCardVisual number={0} name="" emoji="" faceDown size={size} onClick={onClick} />
-);
+)
