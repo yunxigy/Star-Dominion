@@ -146,7 +146,7 @@ from .config import CONFIG
 from .services.llm_service import LLMService
 from .services.tts_service import TTSService
 from .services.stt_service import STTService
-from .routers import characters, chat, settings, admin, story, group_chat, voice_chat, lorebook, memory, affinity, slash_commands
+from .routers import characters, chat, settings, admin, story, group_chat, voice_chat, lorebook, memory, affinity, slash_commands, persona
 
 # 初始化 FastAPI
 app = FastAPI(title="守岸人 3.0", version="3.0.0")
@@ -193,6 +193,7 @@ app.include_router(lorebook.router)
 app.include_router(memory.router)
 app.include_router(affinity.router)
 app.include_router(slash_commands.router)
+app.include_router(persona.router)
 
 # 挂载静态文件
 app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR / "static")), name="static")
