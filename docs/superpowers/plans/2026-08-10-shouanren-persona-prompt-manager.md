@@ -38,7 +38,7 @@
 
 **Files:** `server/models/persona.py`, `server/models/__init__.py`, `server/database.py`, `server/migrations.py`, `server/tests/test_database_migrations.py`, `tests/test_persona_models.py`
 
-- [ ] **Step 1: Write failing model and migration tests**
+- [x] **Step 1: Write failing model and migration tests**
 
 ```python
 def test_persona_and_prompt_models_round_trip(db_session, seeded_chat):
@@ -54,18 +54,18 @@ def test_persona_and_prompt_models_round_trip(db_session, seeded_chat):
 
 Add a legacy-schema migration test asserting schema version `4` and tables `personas`, `persona_bindings`, `prompt_presets`, `prompt_blocks`, and `model_profiles`.
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 Run: `python -m pytest -q tests/test_persona_models.py server/tests/test_database_migrations.py`
 Expected: imports/tables are missing.
 
-- [ ] **Step 3: Implement models and additive migration**
+- [x] **Step 3: Implement models and additive migration**
 
 Use UUID string primary keys. `Persona` fields: `user_id`, `name` (1–120), `avatar_url`, `description`, `injection_position` (`before_char|after_char|depth`), `depth`, `is_default`, timestamps. `PersonaBinding` has a unique `(user_id, scope_type, scope_id)` and check constraint `scope_type IN ('character','chat')`. `PromptPreset` owns `token_budget`; `PromptBlock` stores `kind`, `name`, `enabled`, `sort_order`, `role`, `content`, `max_tokens`; `ModelProfile` stores provider/model/parameters JSON, preset reference, stop-sequence references, and no key field.
 
 Set `CURRENT_SCHEMA_VERSION = 4`; create the five tables with `checkfirst=True`. Do not add a plaintext secret column.
 
-- [ ] **Step 4: Run GREEN and commit**
+- [x] **Step 4: Run GREEN and commit**
 
 Run: `python -m pytest -q tests/test_persona_models.py server/tests/test_database_migrations.py`
 Expected: PASS.
@@ -76,7 +76,7 @@ Commit: `feat(shouanren): add persona and prompt schema`
 
 **Files:** `server/services/persona_service.py`, `tests/test_persona_service.py`
 
-- [ ] **Step 1: Write failing precedence tests**
+- [x] **Step 1: Write failing precedence tests**
 
 ```python
 def test_persona_selection_precedence(db_session, persona_graph):
@@ -96,7 +96,7 @@ def test_temporary_persona_does_not_replace_persistent_binding(db_session, perso
 
 Add tests that another user receives `PersonaNotFound` for reads, updates, selection, and bindings.
 
-- [ ] **Step 2: Run RED, implement, run GREEN**
+- [x] **Step 2: Run RED, implement, run GREEN**
 
 Implement `owned_persona`, `list_personas`, `set_default`, `bind`, `clear_binding`, `binding`, and `select`. Validate the chat belongs to the owner and character bindings refer to readable characters. Temporary selection is request-only and never persisted.
 
@@ -109,11 +109,11 @@ Commit: `feat(shouanren): select private personas`
 
 **Files:** `server/routers/persona.py`, `server/main.py`, `tests/test_persona_api.py`
 
-- [ ] **Step 1: Write failing API tests**
+- [x] **Step 1: Write failing API tests**
 
 Test `GET/POST /api/personas`, `PUT/DELETE /api/personas/{id}`, `PUT /api/personas/default/{id}`, `PUT/DELETE /api/personas/bindings/{scope_type}/{scope_id}`, and `GET /api/personas/selection?session_id=...`. Assert cross-user IDs return 404, duplicate defaults collapse to one, invalid injection positions return 422, and deleting a Persona removes its bindings.
 
-- [ ] **Step 2: Run RED, implement bounded Pydantic payloads, run GREEN**
+- [x] **Step 2: Run RED, implement bounded Pydantic payloads, run GREEN**
 
 Use `name` length 1–120, description max 20000, depth 0–100, and `Literal` scope/position fields. Map service `NotFound` to HTTP 404.
 
@@ -126,7 +126,7 @@ Commit: `feat(shouanren): expose persona management api`
 
 **Files:** `server/services/prompt_composer.py`, `tests/test_prompt_composer.py`
 
-- [ ] **Step 1: Write failing composition tests**
+- [x] **Step 1: Write failing composition tests**
 
 ```python
 def test_composer_orders_blocks_and_reports_budget_rejections():
@@ -140,7 +140,7 @@ def test_preview_redacts_secret_shaped_metadata():
     assert preview.metadata == {"model": "x"}
 ```
 
-- [ ] **Step 2: Run RED, implement pure types/composer, run GREEN**
+- [x] **Step 2: Run RED, implement pure types/composer, run GREEN**
 
 Define canonical kinds: `system`, `character`, `persona`, `lorebook`, `memory`, `rag`, `author_note`, `history`, `final`. Stable ordering is `(sort_order, id)`. Disabled/empty blocks receive trace reasons. Token estimation reuses `lorebook_engine.estimate_tokens`. Preview metadata allows only `provider`, `model`, `temperature`, `top_p`, `max_tokens`, and stop-sequence names.
 
@@ -153,11 +153,11 @@ Commit: `feat(shouanren): compose inspectable prompts`
 
 **Files:** `server/routers/prompt_presets.py`, `server/main.py`, `tests/test_prompt_api.py`
 
-- [ ] **Step 1: Write failing ownership and preview tests**
+- [x] **Step 1: Write failing ownership and preview tests**
 
 Cover preset/block CRUD, atomic block reordering, model profile CRUD without key fields, and `POST /api/prompt-presets/preview`. Assert another user gets 404, duplicate sort positions resolve by ID, unknown block kinds return 422, and response JSON contains no key/token/authorization fields.
 
-- [ ] **Step 2: Run RED, implement, run GREEN**
+- [x] **Step 2: Run RED, implement, run GREEN**
 
 Use one transaction for reordering. Model profile parameters allow only `temperature`, `top_p`, `max_tokens`, `frequency_penalty`, and `presence_penalty`; reject unknown keys. Preview loads only records owned by the current user.
 
@@ -170,15 +170,15 @@ Commit: `feat(shouanren): expose prompt manager api`
 
 **Files:** `server/routers/chat.py`, `server/utils/prompt_builder.py`, `frontend/personas.html`, `frontend/js/personas.js`, `frontend/prompt-manager.html`, `frontend/js/prompt-manager.js`, `frontend/index.html`, `tests/test_chat_api.py`, `tests/test_prompt_frontend_contract.py`
 
-- [ ] **Step 1: Write failing chat/frontend tests**
+- [x] **Step 1: Write failing chat/frontend tests**
 
 Verify selected Persona content is injected at its configured position; chat binding beats character/default; a temporary `persona_id` form field affects only that request; prompt preview shows ordered blocks and trace; all server strings render through `textContent`; pages load `auth.js` and `api.js`; private actions redirect through unified login.
 
-- [ ] **Step 2: Run RED and integrate services**
+- [x] **Step 2: Run RED and integrate services**
 
 Add optional `persona_id` and `model_profile_id` form fields. Build canonical blocks from current system rules, character, selected Persona, evaluated worldbook entries, memories, summary/history, and preset custom blocks. Preserve existing depth worldbook injection and branch history. Pass provider/model parameters to the existing LLM service without copying credentials.
 
-- [ ] **Step 3: Build pages and verify**
+- [x] **Step 3: Build pages and verify**
 
 Persona page supports create/edit/delete/default and character/chat binding. Prompt Manager supports preset selection, enable/disable, numeric ordering, block editor, model-profile references, and preview trace. Use confirmation for deletes, disabled submit buttons during requests, labels, `aria-live`, and no `innerHTML` for server data.
 
