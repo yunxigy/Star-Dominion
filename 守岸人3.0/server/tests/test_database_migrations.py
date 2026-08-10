@@ -51,7 +51,12 @@ def test_lorebook_engine_migration_is_additive(tmp_path: Path) -> None:
     entry_columns = {
         item["name"] for item in inspector.get_columns("lorebook_entries")
     }
-    assert {"token_budget", "recursive_scan", "max_recursion_steps"} <= book_columns
+    assert {
+        "token_budget",
+        "recursive_scan",
+        "max_recursion_steps",
+        "is_character_default",
+    } <= book_columns
     assert {
         "sticky",
         "delay",

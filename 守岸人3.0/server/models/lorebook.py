@@ -27,6 +27,7 @@ class Lorebook(Base):
     description = Column(Text, nullable=True)
     is_enabled = Column(Boolean, default=True)
     scan_depth = Column(Integer, default=2)  # 扫描最近 N 条消息
+    is_character_default = Column(Boolean, default=True, nullable=False)
     token_budget = Column(Integer, default=1024, nullable=False)
     recursive_scan = Column(Boolean, default=True, nullable=False)
     max_recursion_steps = Column(Integer, default=3, nullable=False)
@@ -41,6 +42,7 @@ class Lorebook(Base):
             "description": self.description,
             "is_enabled": self.is_enabled,
             "scan_depth": self.scan_depth,
+            "is_character_default": self.is_character_default,
             "token_budget": self.token_budget,
             "recursive_scan": self.recursive_scan,
             "max_recursion_steps": self.max_recursion_steps,

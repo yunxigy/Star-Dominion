@@ -231,6 +231,7 @@ def test_lorebook_advanced_fields_bindings_and_activation_event(
     book.token_budget = 900
     book.recursive_scan = True
     book.max_recursion_steps = 4
+    book.is_character_default = False
     entry.sticky = 3
     entry.delay = 2
     entry.revision = 5
@@ -257,6 +258,7 @@ def test_lorebook_advanced_fields_bindings_and_activation_event(
     db_session.commit()
 
     assert book.to_dict()["token_budget"] == 900
+    assert book.to_dict()["is_character_default"] is False
     assert entry.to_dict()["sticky"] == 3
     assert event.entry_revision == 5
     assert chat_binding.scope_type == "chat"

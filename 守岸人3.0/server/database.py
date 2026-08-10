@@ -264,6 +264,7 @@ def migrate_lorebook_engine(target_engine) -> None:
     inspector = inspect(target_engine)
     if inspector.has_table("lorebooks"):
         for name in (
+            "is_character_default",
             "token_budget",
             "recursive_scan",
             "max_recursion_steps",
