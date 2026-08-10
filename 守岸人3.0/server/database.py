@@ -252,6 +252,42 @@ def migrate_chat_graph(target_engine) -> None:
             )
 
 
+def migrate_lorebook_engine(target_engine) -> None:
+    """Add advanced lorebook columns and runtime tables to legacy databases."""
+    from .models.lorebook import (
+        Lorebook,
+        LorebookActivationEvent,
+        LorebookBinding,
+        LorebookEntry,
+    )
+
+    inspector = inspect(target_engine)
+    if inspector.has_table("lorebooks"):
+        for name in (
+            "token_budget",
+            "recursive_scan",
+            "max_recursion_steps",
+        ):
+            _ensure_column_on(target_engine, "lorebooks", Lorebook.__table__.c[name])
+    if inspector.has_table("lorebook_entries"):
+        for name in (
+            "sticky",
+            "delay",
+            "prevent_recursion",
+            "recursion_only",
+            "group_prioritized",
+            "revision",
+        ):
+            _ensure_column_on(
+                target_engine,
+                "lorebook_entries",
+                LorebookEntry.__table__.c[name],
+            )
+
+    LorebookBinding.__table__.create(bind=target_engine, checkfirst=True)
+    LorebookActivationEvent.__table__.create(bind=target_engine, checkfirst=True)
+
+
 def get_db():
     """获取数据库会话"""
     db = SessionLocal()
@@ -374,6 +410,7 @@ def _migrate_existing_tables() -> None:
         "lorebook_entries",
         Column("priority", Integer, nullable=False, default=0),
     )
+    migrate_lorebook_engine(engine)
 
     migrate_chat_graph(engine)
 

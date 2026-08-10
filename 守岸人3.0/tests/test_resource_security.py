@@ -9,7 +9,13 @@ from fastapi.testclient import TestClient
 from server.database import get_db
 from server.middleware.auth import get_current_user
 from server.models.character_db import CharacterDB
-from server.models.lorebook import Lorebook, LorebookEntry
+from server.models.chat_db import ChatSession
+from server.models.lorebook import (
+    Lorebook,
+    LorebookActivationEvent,
+    LorebookBinding,
+    LorebookEntry,
+)
 from server.models.story import Story, StorySession
 from server.models.user import User
 
@@ -67,6 +73,12 @@ def resource_graph(db_session):
         user_id=owner.id,
         story_id=story.id,
     )
+    chat_session = ChatSession(
+        id="resource-chat-session",
+        user_id=owner.id,
+        character_id=public_character.id,
+        version=1,
+    )
     lorebook = Lorebook(
         id="resource-lorebook",
         character_id=public_character.id,
@@ -87,6 +99,7 @@ def resource_graph(db_session):
             public_character,
             story,
             story_session,
+            chat_session,
             lorebook,
             entry,
         ]
@@ -99,6 +112,7 @@ def resource_graph(db_session):
         private_character=private_character,
         public_character=public_character,
         story_session=story_session,
+        chat_session=chat_session,
         lorebook=lorebook,
         entry=entry,
     )
@@ -206,6 +220,47 @@ def test_lorebook_entry_persists_priority(db_session, resource_graph):
 
     assert entry.priority == 7
     assert entry.to_dict()["priority"] == 7
+
+
+def test_lorebook_advanced_fields_bindings_and_activation_event(
+    db_session,
+    resource_graph,
+):
+    book = resource_graph.lorebook
+    entry = resource_graph.entry
+    book.token_budget = 900
+    book.recursive_scan = True
+    book.max_recursion_steps = 4
+    entry.sticky = 3
+    entry.delay = 2
+    entry.revision = 5
+    event = LorebookActivationEvent(
+        session_id=resource_graph.chat_session.id,
+        entry_id=entry.id,
+        response_message_id="response-1",
+        entry_revision=5,
+        trigger_sequence=8,
+        sticky=3,
+        cooldown=2,
+    )
+    chat_binding = LorebookBinding(
+        lorebook_id=book.id,
+        scope_type="chat",
+        scope_id=resource_graph.chat_session.id,
+    )
+    persona_binding = LorebookBinding(
+        lorebook_id=book.id,
+        scope_type="persona",
+        scope_id="reserved-persona-id",
+    )
+    db_session.add_all([event, chat_binding, persona_binding])
+    db_session.commit()
+
+    assert book.to_dict()["token_budget"] == 900
+    assert entry.to_dict()["sticky"] == 3
+    assert event.entry_revision == 5
+    assert chat_binding.scope_type == "chat"
+    assert persona_binding.scope_type == "persona"
 
 
 @pytest.fixture

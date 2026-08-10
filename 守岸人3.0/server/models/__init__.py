@@ -8,7 +8,12 @@ from .system_config import SystemConfig
 from .story import Story, StorySession, StoryMessage, StoryFavorite, StoryRating, StoryBranch
 from .group_chat_db import GroupSession, GroupMember, GroupMessage
 from .voice_session import VoiceSession, VoiceMessage
-from .lorebook import Lorebook, LorebookEntry
+from .lorebook import (
+    Lorebook,
+    LorebookActivationEvent,
+    LorebookBinding,
+    LorebookEntry,
+)
 from .memory import Memory, MemorySummary
 from .affinity import CharacterAffinity, UserPreference
 
@@ -33,6 +38,8 @@ __all__ = [
     "VoiceSession",
     "VoiceMessage",
     "Lorebook",
+    "LorebookActivationEvent",
+    "LorebookBinding",
     "LorebookEntry",
     "Memory",
     "MemorySummary",
