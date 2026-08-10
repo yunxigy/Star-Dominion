@@ -16,6 +16,7 @@ from .lorebook import (
 )
 from .memory import Memory, MemorySummary
 from .affinity import CharacterAffinity, UserPreference
+from .persona import ModelProfile, Persona, PersonaBinding, PromptBlock, PromptPreset
 
 __all__ = [
     "User",
@@ -45,4 +46,9 @@ __all__ = [
     "MemorySummary",
     "CharacterAffinity",
     "UserPreference",
+    "Persona",
+    "PersonaBinding",
+    "PromptPreset",
+    "PromptBlock",
+    "ModelProfile",
 ]

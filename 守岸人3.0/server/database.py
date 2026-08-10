@@ -289,6 +289,14 @@ def migrate_lorebook_engine(target_engine) -> None:
     LorebookActivationEvent.__table__.create(bind=target_engine, checkfirst=True)
 
 
+def migrate_persona_prompt(target_engine) -> None:
+    """Create private Persona and prompt-manager tables for schema version 4."""
+    from .models.persona import ModelProfile, Persona, PersonaBinding, PromptBlock, PromptPreset
+
+    for model in (Persona, PersonaBinding, PromptPreset, PromptBlock, ModelProfile):
+        model.__table__.create(bind=target_engine, checkfirst=True)
+
+
 def get_db():
     """获取数据库会话"""
     db = SessionLocal()
@@ -412,6 +420,7 @@ def _migrate_existing_tables() -> None:
         Column("priority", Integer, nullable=False, default=0),
     )
     migrate_lorebook_engine(engine)
+    migrate_persona_prompt(engine)
 
     migrate_chat_graph(engine)
 

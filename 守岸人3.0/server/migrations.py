@@ -7,7 +7,7 @@ from collections.abc import Callable
 from sqlalchemy import text
 from sqlalchemy.engine import Engine
 
-CURRENT_SCHEMA_VERSION = 3
+CURRENT_SCHEMA_VERSION = 4
 
 
 def run_migrations(target_engine: Engine, migrate_legacy_schema: Callable[[], None]) -> None:

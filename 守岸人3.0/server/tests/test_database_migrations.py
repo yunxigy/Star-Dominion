@@ -22,7 +22,7 @@ def test_schema_migrations_record_version_and_run_once(tmp_path: Path) -> None:
         version = connection.execute(
             text("SELECT version FROM schema_metadata WHERE id = 1")
         ).scalar_one()
-    assert version == 3
+    assert version == 4
     assert calls == [1]
 
 
