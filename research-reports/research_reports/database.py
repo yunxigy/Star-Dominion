@@ -30,4 +30,3 @@ def create_database(path: Path) -> Database:
     )
     Base.metadata.create_all(engine)
     return Database(engine=engine, sessions=sessionmaker(engine, expire_on_commit=False))
-

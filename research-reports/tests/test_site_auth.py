@@ -41,4 +41,3 @@ def test_site_auth_forwards_cookie_and_request_context() -> None:
     assert identity.username == "admin"
     assert identity.role == "admin"
     assert identity.is_active is True
-

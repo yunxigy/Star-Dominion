@@ -65,4 +65,3 @@ class Settings:
             host=values.get("RESEARCH_REPORTS_HOST", "127.0.0.1").strip(),
             port=port,
         )
-

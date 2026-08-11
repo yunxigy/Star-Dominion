@@ -38,4 +38,3 @@ class RepositoryMetadata:
 @dataclass(frozen=True, slots=True)
 class NotModified:
     etag: str | None
-

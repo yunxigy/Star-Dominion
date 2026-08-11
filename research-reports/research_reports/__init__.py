@@ -1,2 +1,1 @@
 """Independent research reports service."""
-

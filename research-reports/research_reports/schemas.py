@@ -118,4 +118,3 @@ class CollectionRunPublic(ApiModel):
 class CollectionRunPage(ApiModel):
     items: list[CollectionRunPublic]
     next_cursor: str | None = None
-
