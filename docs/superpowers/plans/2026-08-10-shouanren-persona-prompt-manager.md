@@ -191,12 +191,12 @@ Commit: `feat(shouanren): integrate personas and prompt manager`
 
 **Files:** `守岸人3.0/README.md`, this plan.
 
-- [ ] Update README with selection precedence, temporary selection, prompt block kinds, preview safety, schema v4, and clean-room scope.
-- [ ] Run `python -m pytest -q` in `守岸人3.0`; expected zero failures.
-- [ ] Run `python -m compileall -q server tests` and Node syntax checks for both new scripts.
-- [ ] Run `git diff --check` and stage only phase-2 files.
-- [ ] Run root `scripts/stop-local.ps1`, `start-local.ps1`, and `check-local.ps1`; expected exit code 0.
-- [ ] Inspect `schema_metadata.version == 4` and the five new tables.
-- [ ] Mark executed checkboxes and commit `docs(shouanren): document personas and prompt manager`.
+- [x] Update README with selection precedence, temporary selection, prompt block kinds, preview safety, schema v4, and clean-room scope.
+- [x] Run `python -m pytest -q` in `守岸人3.0`; expected zero failures.
+- [x] Run `python -m compileall -q server tests` and Node syntax checks for both new scripts.
+- [x] Run `git diff --check` and stage only phase-2 files.
+- [x] Run root `scripts/stop-local.ps1`, `start-local.ps1`, and `check-local.ps1`; expected exit code 0.
+- [x] Inspect `schema_metadata.version == 4` and the five new tables.
+- [x] Mark executed checkboxes and commit `docs(shouanren): document personas and prompt manager`.
 
 Do not delete reference repositories in this phase. Do not implement Character Card V3/CharX, RAG, group-chat orchestration, automation, or visual themes here.
