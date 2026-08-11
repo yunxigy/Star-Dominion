@@ -60,6 +60,19 @@ export function parseHexColor(value: string): RgbColor {
   return [Number.parseInt(match[1], 16), Number.parseInt(match[2], 16), Number.parseInt(match[3], 16)];
 }
 
+export function calculateInferenceSize(
+  width: number,
+  height: number,
+  maximumEdge = 1024,
+): { width: number; height: number } {
+  if (width <= 0 || height <= 0 || maximumEdge <= 0) throw new Error('Image dimensions must be positive');
+  const scale = Math.min(1, maximumEdge / Math.max(width, height));
+  return {
+    width: Math.max(1, Math.round(width * scale)),
+    height: Math.max(1, Math.round(height * scale)),
+  };
+}
+
 const IdPhotoBgColor: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const resultCanvasRef = useRef<HTMLCanvasElement>(null);
@@ -111,12 +124,22 @@ const IdPhotoBgColor: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       context.drawImage(image, 0, 0, width, height);
       const pixels = new Uint8ClampedArray(context.getImageData(0, 0, width, height).data);
 
+      const inferenceSize = calculateInferenceSize(width, height);
+      const inferenceCanvas = document.createElement('canvas');
+      inferenceCanvas.width = inferenceSize.width;
+      inferenceCanvas.height = inferenceSize.height;
+      const inferenceContext = inferenceCanvas.getContext('2d');
+      if (!inferenceContext) throw new Error('浏览器无法创建 AI 推理画布');
+      inferenceContext.drawImage(image, 0, 0, inferenceSize.width, inferenceSize.height);
+      sourceCanvas.width = 1;
+      sourceCanvas.height = 1;
+
       stage = 'model';
       setProcessing({ status: 'segmenting', message: 'AI 人像分割中，首次使用需加载约 16.4 MB 模型…' });
-      const nextSnapshot = await segmentPortrait(image);
+      const nextSnapshot = await segmentPortrait(inferenceCanvas);
       if (runId !== runIdRef.current) return;
 
-      setPhoto({ name: selectedFile.name, width, height, canvas: sourceCanvas, pixels });
+      setPhoto({ name: selectedFile.name, width, height, canvas: inferenceCanvas, pixels });
       setSnapshot(nextSnapshot);
       setOverrides(new Int8Array(nextSnapshot.width * nextSnapshot.height));
       setPreviewTab('result');

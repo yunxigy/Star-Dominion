@@ -2,12 +2,18 @@ import { readFileSync } from 'node:fs';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 
-import IdPhotoBgColor, { parseHexColor } from './IdPhotoBgColor';
+import IdPhotoBgColor, { calculateInferenceSize, parseHexColor } from './IdPhotoBgColor';
 
 describe('IdPhotoBgColor', () => {
   it('parses custom six-digit background colors', () => {
     expect(parseHexColor('#438edb')).toEqual([67, 142, 219]);
     expect(() => parseHexColor('#fff')).toThrow('six-digit');
+  });
+
+  it('bounds AI inference while preserving the source aspect ratio', () => {
+    expect(calculateInferenceSize(800, 600)).toEqual({ width: 800, height: 600 });
+    expect(calculateInferenceSize(4000, 3000)).toEqual({ width: 1024, height: 768 });
+    expect(calculateInferenceSize(3000, 4000)).toEqual({ width: 768, height: 1024 });
   });
 
   it('renders a private, accessible AI workflow before upload', () => {
