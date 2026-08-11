@@ -29,6 +29,43 @@ function foregroundChannel(
   return clampByte((source - (1 - alpha) * oldBackground) / alpha);
 }
 
+export function estimateCornerBackground(
+  source: Uint8ClampedArray,
+  width: number,
+  height: number,
+  sampleSize = 8,
+): RgbColor {
+  const pixelCount = width * height;
+  if (!Number.isInteger(width) || !Number.isInteger(height) || width <= 0 || height <= 0
+    || source.length !== pixelCount * 4) {
+    throw new Error('Image dimensions do not match the source buffer');
+  }
+  const size = Math.max(1, Math.min(Math.floor(sampleSize), width, height));
+  const sampled = new Set<number>();
+  let red = 0;
+  let green = 0;
+  let blue = 0;
+
+  for (const startY of [0, height - size]) {
+    for (const startX of [0, width - size]) {
+      for (let y = startY; y < startY + size; y += 1) {
+        for (let x = startX; x < startX + size; x += 1) {
+          const pixelIndex = y * width + x;
+          if (sampled.has(pixelIndex)) continue;
+          sampled.add(pixelIndex);
+          const offset = pixelIndex * 4;
+          red += source[offset];
+          green += source[offset + 1];
+          blue += source[offset + 2];
+        }
+      }
+    }
+  }
+
+  const count = sampled.size;
+  return [Math.round(red / count), Math.round(green / count), Math.round(blue / count)];
+}
+
 export function compositeRgba({
   source,
   alpha,

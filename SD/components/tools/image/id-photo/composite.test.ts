@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { compositeRgba } from './composite';
+import { compositeRgba, estimateCornerBackground } from './composite';
 
 describe('compositeRgba', () => {
   it('preserves blue clothing when model alpha marks it as foreground', () => {
@@ -62,5 +62,16 @@ describe('compositeRgba', () => {
       height: 1,
       background: { kind: 'solid', color: [255, 255, 255] },
     })).toThrow('dimensions');
+  });
+});
+
+describe('estimateCornerBackground', () => {
+  it('averages corner samples without being affected by the center portrait', () => {
+    const pixels = new Uint8ClampedArray([
+      100, 110, 120, 255, 0, 0, 0, 255, 110, 120, 130, 255,
+      0, 0, 0, 255, 255, 0, 0, 255, 0, 0, 0, 255,
+      120, 130, 140, 255, 0, 0, 0, 255, 130, 140, 150, 255,
+    ]);
+    expect(estimateCornerBackground(pixels, 3, 3, 1)).toEqual([115, 125, 135]);
   });
 });

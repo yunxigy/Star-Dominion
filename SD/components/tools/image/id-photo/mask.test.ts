@@ -6,6 +6,7 @@ import {
   buildPersonAlpha,
   paintOverride,
   pushMaskHistory,
+  resampleAlpha,
   undoMaskHistory,
 } from './mask';
 
@@ -63,6 +64,19 @@ describe('blurAlpha', () => {
   it('preserves a constant mask', () => {
     const output = blurAlpha(new Float32Array(9).fill(0.4), 3, 3, 2);
     output.forEach((value) => expect(value).toBeCloseTo(0.4));
+  });
+});
+
+describe('resampleAlpha', () => {
+  it('maps mask corners to full-resolution output without changing the source', () => {
+    const input = new Float32Array([0, 1, 0.25, 0.75]);
+    const output = resampleAlpha(input, 2, 2, 3, 3);
+    expect(Array.from(input)).toEqual([0, 1, 0.25, 0.75]);
+    expect(output[0]).toBe(0);
+    expect(output[2]).toBe(1);
+    expect(output[6]).toBe(0.25);
+    expect(output[8]).toBe(0.75);
+    expect(output[4]).toBeCloseTo(0.5);
   });
 });
 

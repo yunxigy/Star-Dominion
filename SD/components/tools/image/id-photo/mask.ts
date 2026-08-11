@@ -74,6 +74,40 @@ export function buildPersonAlpha({
   return blurAlpha(alpha, width, height, featherRadius);
 }
 
+export function resampleAlpha(
+  input: Float32Array,
+  sourceWidth: number,
+  sourceHeight: number,
+  targetWidth: number,
+  targetHeight: number,
+): Float32Array {
+  assertDimensions(input.length, sourceWidth, sourceHeight);
+  if (!Number.isInteger(targetWidth) || !Number.isInteger(targetHeight) || targetWidth <= 0 || targetHeight <= 0) {
+    throw new Error('Target mask dimensions must be positive integers');
+  }
+  if (sourceWidth === targetWidth && sourceHeight === targetHeight) return input.slice();
+
+  const output = new Float32Array(targetWidth * targetHeight);
+  for (let y = 0; y < targetHeight; y += 1) {
+    const sourceY = targetHeight === 1 ? 0 : (y / (targetHeight - 1)) * (sourceHeight - 1);
+    const top = Math.floor(sourceY);
+    const bottom = Math.min(sourceHeight - 1, top + 1);
+    const vertical = sourceY - top;
+    for (let x = 0; x < targetWidth; x += 1) {
+      const sourceX = targetWidth === 1 ? 0 : (x / (targetWidth - 1)) * (sourceWidth - 1);
+      const left = Math.floor(sourceX);
+      const right = Math.min(sourceWidth - 1, left + 1);
+      const horizontal = sourceX - left;
+      const topValue = input[top * sourceWidth + left] * (1 - horizontal)
+        + input[top * sourceWidth + right] * horizontal;
+      const bottomValue = input[bottom * sourceWidth + left] * (1 - horizontal)
+        + input[bottom * sourceWidth + right] * horizontal;
+      output[y * targetWidth + x] = clamp01(topValue * (1 - vertical) + bottomValue * vertical);
+    }
+  }
+  return output;
+}
+
 export function paintOverride(
   input: Int8Array,
   width: number,

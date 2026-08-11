@@ -202,7 +202,7 @@ export const TOOLS: ToolDef[] = [
   { id: 'split-image-grid', name: '九宫格切图', description: '图片切割为九宫格', icon: 'Grid3x3', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: SplitImageGrid },
   { id: 'favicon-generator', name: 'Favicon 生成', description: '从图片生成网站图标', icon: 'Globe', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: FaviconGenerator },
   { id: 'id-photo-resize', name: '证件照裁剪', description: '按证件照标准裁剪图片', icon: 'User', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: IdPhotoResize },
-  { id: 'id-photo-bg-color', name: '证件照换底色', description: '更换证件照背景颜色', icon: 'Palette', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: IdPhotoBgColor },
+  { id: 'id-photo-bg-color', name: '证件照换底色', description: '浏览器本地 AI 人像分割，照片不上传', icon: 'Palette', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: IdPhotoBgColor },
 
   // 格式转换
   { id: 'jpg-to-png', name: 'JPG 转 PNG', description: 'JPG 图片转为 PNG 格式', icon: 'ArrowRightLeft', category: 'converter', color: 'violet', gradient: 'from-violet-600 to-purple-600', glow: 'rgba(139,92,246,0.3)', component: JpgToPng },
