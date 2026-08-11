@@ -1,6 +1,7 @@
 import React from 'react';
 import { AlertCircle, Compass, RotateCcw, Sparkles, X } from 'lucide-react';
 
+import { AssessmentRadarChart } from './AssessmentRadarChart';
 import type { AssessmentDefinition, AssessmentScoreResult } from './types';
 
 interface AssessmentResultProps {
@@ -12,18 +13,21 @@ interface AssessmentResultProps {
 
 const groupStyles = {
   fun: {
+    chart: '#a34d24',
     eyebrow: 'text-[#a34d24]',
     wash: 'from-[#fff0d8] via-[#fff8ed] to-[#f3eadf]',
     border: 'border-[#e6bd8c]',
     button: 'bg-[#a34d24] hover:bg-[#853b1a]',
   },
   personality: {
+    chart: '#6d4c8d',
     eyebrow: 'text-[#6d4c8d]',
     wash: 'from-[#f2e9f7] via-[#fffaf2] to-[#e9eee2]',
     border: 'border-[#cbb4d8]',
     button: 'bg-[#6d4c8d] hover:bg-[#573b72]',
   },
   orientation: {
+    chart: '#8d5265',
     eyebrow: 'text-[#8d5265]',
     wash: 'from-[#f7e8eb] via-[#fffaf2] to-[#e4efea]',
     border: 'border-[#d6b3bd]',
@@ -106,6 +110,20 @@ export function AssessmentResult({
             <p className="text-sm text-[#7b6854]">分数用于比较本次回答中的相对倾向</p>
           </div>
         </div>
+
+        {definition.mode !== 'mbti' && definition.dimensions.length >= 3 && (
+          <div className="mb-7 rounded-2xl border border-[#ead9c5] bg-white/60 px-2 py-4 sm:px-4">
+            <AssessmentRadarChart
+              title={definition.title}
+              dimensions={definition.dimensions}
+              scores={score.dimensionScores}
+              accentColor={style.chart}
+            />
+            <p className="px-3 text-center text-xs leading-5 text-[#8b735c]">
+              百分比表示本次回答中的相对倾向，不是人群百分位；下方柱状图可查看准确数值与说明。
+            </p>
+          </div>
+        )}
 
         {definition.mode === 'mbti' && definition.mbtiPairs ? (
           <div className="grid gap-4 md:grid-cols-2">
