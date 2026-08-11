@@ -50,7 +50,7 @@
 - Modify: `SD/package-lock.json`
 - Create: `SD/public/vendor/mediapipe/models/selfie_multiclass_256x256.tflite`
 
-- [ ] **Step 1: Write failing asset URL and copy tests**
+- [x] **Step 1: Write failing asset URL and copy tests**
 
 ```ts
 import { describe, expect, it } from 'vitest';
@@ -71,13 +71,13 @@ describe('buildMediaPipeAssetPaths', () => {
 
 The copy-script test must create temporary source/destination directories, write the six expected runtime filenames, call `copyMediaPipeAssets`, and assert that an unexpected or missing filename rejects without leaving a partial destination.
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 Run: `npm.cmd test -- components/tools/image/id-photo/assetPaths.test.ts scripts/copy-mediapipe-assets.test.ts`
 
 Expected: FAIL because both modules are missing.
 
-- [ ] **Step 3: Implement normalized URLs and atomic asset copy**
+- [x] **Step 3: Implement normalized URLs and atomic asset copy**
 
 ```ts
 const normalizeBase = (base: string) => {
@@ -109,7 +109,7 @@ export const EXPECTED_WASM_FILES = [
 
 Install exactly `@mediapipe/tasks-vision@1.0.1`. Add `prepare:mediapipe`, `predev`, and `prebuild` scripts. Download the official model URL from the approved design, then verify its byte length and SHA-256 before placing it under `public/vendor/mediapipe/models`.
 
-- [ ] **Step 4: Run GREEN and asset verification**
+- [x] **Step 4: Run GREEN and asset verification**
 
 Run:
 
@@ -121,7 +121,7 @@ Get-FileHash public/vendor/mediapipe/models/selfie_multiclass_256x256.tflite -Al
 
 Expected: tests PASS; all six WASM runtime files exist; model hash equals the pinned uppercase SHA-256.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git add -- SD/package.json SD/package-lock.json SD/scripts/copy-mediapipe-assets.mjs SD/scripts/copy-mediapipe-assets.test.ts SD/components/tools/image/id-photo/assetPaths.ts SD/components/tools/image/id-photo/assetPaths.test.ts SD/public/vendor/mediapipe/models/selfie_multiclass_256x256.tflite
@@ -135,7 +135,7 @@ git commit -m "build(image): self-host portrait segmentation assets"
 - Create: `SD/components/tools/image/id-photo/mask.ts`
 - Test: `SD/components/tools/image/id-photo/mask.test.ts`
 
-- [ ] **Step 1: Write failing mask behavior tests**
+- [x] **Step 1: Write failing mask behavior tests**
 
 ```ts
 import { describe, expect, it } from 'vitest';
@@ -166,13 +166,13 @@ describe('buildPersonAlpha', () => {
 
 Add tests for dimension mismatch, threshold clamping, zero-radius identity, and blur preserving a constant mask.
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 Run: `npm.cmd test -- components/tools/image/id-photo/mask.test.ts`
 
 Expected: FAIL because `buildPersonAlpha` is missing.
 
-- [ ] **Step 3: Implement pure typed-array refinement**
+- [x] **Step 3: Implement pure typed-array refinement**
 
 Define:
 
@@ -191,13 +191,13 @@ export interface MaskControls {
 
 Implement `smoothstep`, a bounded separable box blur, and `buildPersonAlpha`. Validate `width * height`, clamp all outputs to `[0, 1]`, and never accept a target background color in this API.
 
-- [ ] **Step 4: Run GREEN and full mask tests**
+- [x] **Step 4: Run GREEN and full mask tests**
 
 Run: `npm.cmd test -- components/tools/image/id-photo/mask.test.ts`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git add -- SD/components/tools/image/id-photo/types.ts SD/components/tools/image/id-photo/mask.ts SD/components/tools/image/id-photo/mask.test.ts
@@ -211,7 +211,7 @@ git commit -m "feat(image): refine portrait alpha masks"
 - Modify: `SD/components/tools/image/id-photo/mask.ts`
 - Modify: `SD/components/tools/image/id-photo/mask.test.ts`
 
-- [ ] **Step 1: Write failing manual correction tests**
+- [x] **Step 1: Write failing manual correction tests**
 
 ```ts
 it('applies erase and restore strokes independently of automatic controls', () => {
@@ -230,23 +230,23 @@ it('undo returns the exact previous override snapshot', () => {
 });
 ```
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 Run: `npm.cmd test -- components/tools/image/id-photo/mask.test.ts`
 
 Expected: FAIL because manual override functions are missing.
 
-- [ ] **Step 3: Implement immutable override helpers**
+- [x] **Step 3: Implement immutable override helpers**
 
 Use `-1` for erase, `0` for automatic, and `1` for restore. `paintOverride` must clone its input, rasterize a clipped circular brush, and return the clone. `applyOverrides` must clone alpha. History is capped at 20 snapshots and never stores the large source image.
 
-- [ ] **Step 4: Run GREEN**
+- [x] **Step 4: Run GREEN**
 
 Run: `npm.cmd test -- components/tools/image/id-photo/mask.test.ts`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git add -- SD/components/tools/image/id-photo/types.ts SD/components/tools/image/id-photo/mask.ts SD/components/tools/image/id-photo/mask.test.ts
@@ -260,7 +260,7 @@ git commit -m "feat(image): edit and undo portrait masks"
 - Create: `SD/components/tools/image/id-photo/composite.ts`
 - Test: `SD/components/tools/image/id-photo/composite.test.ts`
 
-- [ ] **Step 1: Write failing solid, gradient, and edge tests**
+- [x] **Step 1: Write failing solid, gradient, and edge tests**
 
 ```ts
 it('preserves blue clothing when the model alpha marks it as foreground', () => {
@@ -291,13 +291,13 @@ it('uses one alpha blend for transparent and edge pixels', () => {
 
 Add a deterministic vertical gradient test and a partial-alpha decontamination test using an estimated original background color.
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 Run: `npm.cmd test -- components/tools/image/id-photo/composite.test.ts`
 
 Expected: FAIL because `compositeRgba` is missing.
 
-- [ ] **Step 3: Implement one compositor for preview and export**
+- [x] **Step 3: Implement one compositor for preview and export**
 
 ```ts
 export type PhotoBackground =
@@ -307,13 +307,13 @@ export type PhotoBackground =
 
 Validate RGBA and alpha lengths. Compute background color per output row, combine source alpha with mask alpha, and return an opaque `Uint8ClampedArray`. Apply spill reduction only when `0 < alpha < 1`; do not recolor fully opaque clothing or skin.
 
-- [ ] **Step 4: Run GREEN**
+- [x] **Step 4: Run GREEN**
 
 Run: `npm.cmd test -- components/tools/image/id-photo/composite.test.ts`
 
 Expected: PASS.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git add -- SD/components/tools/image/id-photo/types.ts SD/components/tools/image/id-photo/composite.ts SD/components/tools/image/id-photo/composite.test.ts
@@ -326,7 +326,7 @@ git commit -m "feat(image): composite certificate photo backgrounds"
 - Create: `SD/components/tools/image/id-photo/segmentation.ts`
 - Test: `SD/components/tools/image/id-photo/segmentation.test.ts`
 
-- [ ] **Step 1: Write failing adapter tests with a narrow injected port**
+- [x] **Step 1: Write failing adapter tests with a narrow injected port**
 
 ```ts
 it('copies the background mask and closes every MediaPipe mask', async () => {
@@ -347,13 +347,13 @@ it('copies the background mask and closes every MediaPipe mask', async () => {
 
 Add tests for mask count not equal to six, inconsistent dimensions, no confident foreground, initialization promise reuse, and failed initialization clearing the cache for retry.
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 Run: `npm.cmd test -- components/tools/image/id-photo/segmentation.test.ts`
 
 Expected: FAIL because `segmentPortrait` is missing.
 
-- [ ] **Step 3: Implement the production adapter**
+- [x] **Step 3: Implement the production adapter**
 
 Use `FilesetResolver.forVisionTasks(paths.wasmRoot)` and `ImageSegmenter.createFromOptions` with:
 
@@ -368,7 +368,7 @@ Use `FilesetResolver.forVisionTasks(paths.wasmRoot)` and `ImageSegmenter.createF
 
 Copy the background channel before closing every `MPMask` in `finally`. Cache the initialization promise, clear it after rejection, and expose `resetPortraitSegmenter()` for a retry button and test cleanup. Do not accept external model URLs.
 
-- [ ] **Step 4: Run GREEN and TypeScript check**
+- [x] **Step 4: Run GREEN and TypeScript check**
 
 Run:
 
@@ -379,7 +379,7 @@ npm.cmd run lint
 
 Expected: PASS and zero TypeScript errors.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git add -- SD/components/tools/image/id-photo/segmentation.ts SD/components/tools/image/id-photo/segmentation.test.ts
@@ -395,7 +395,7 @@ git commit -m "feat(image): segment portraits locally"
 - Test: `SD/components/tools/image/IdPhotoBgColor.test.tsx`
 - Modify: `SD/tools/registry.tsx`
 
-- [ ] **Step 1: Write failing component contracts**
+- [x] **Step 1: Write failing component contracts**
 
 Render the editor with `renderToStaticMarkup` and assert the initial screen contains:
 
@@ -408,13 +408,13 @@ expect(html).toContain('aria-live="polite"');
 
 Read the source contract and assert the old identifiers `rgbToHsl`, `isBackground`, and the misleading `灵敏度` label are absent. Add pure coordinate tests exported from `MaskEditorCanvas.tsx` for display-to-mask pointer scaling and clipping.
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 Run: `npm.cmd test -- components/tools/image/IdPhotoBgColor.test.tsx components/tools/image/id-photo/MaskEditorCanvas.test.tsx`
 
 Expected: FAIL because the new editor contract is absent.
 
-- [ ] **Step 3: Build the editor and state machine**
+- [x] **Step 3: Build the editor and state machine**
 
 Use explicit states:
 
@@ -441,7 +441,7 @@ Requirements:
 - Replace `alert` with an `aria-live` status/error panel.
 - Keep controls disabled during model loading and segmentation.
 
-- [ ] **Step 4: Run focused GREEN, full tests, and build**
+- [x] **Step 4: Run focused GREEN, full tests, and build**
 
 Run:
 
@@ -453,7 +453,7 @@ npm.cmd run build
 
 Expected: all tests PASS and production build succeeds.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git add -- SD/components/tools/image/IdPhotoBgColor.tsx SD/components/tools/image/IdPhotoBgColor.test.tsx SD/components/tools/image/id-photo/MaskEditorCanvas.tsx SD/components/tools/image/id-photo/MaskEditorCanvas.test.tsx SD/tools/registry.tsx
@@ -468,7 +468,7 @@ git commit -m "feat(image): replace certificate photo backgrounds with AI masks"
 - Modify: `nginx.conf`
 - Create: `SD/lib/idPhotoDeployment.test.ts`
 
-- [ ] **Step 1: Write failing deployment contract tests**
+- [x] **Step 1: Write failing deployment contract tests**
 
 The test must read `nginx.conf`, `SD/package.json`, the third-party notice, and the built asset script. Assert:
 
@@ -482,13 +482,13 @@ expect(notice).toContain('selfie_multiclass_256x256.tflite');
 expect(JSON.stringify(pkg.scripts)).toContain('prepare:mediapipe');
 ```
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 Run: `npm.cmd test -- lib/idPhotoDeployment.test.ts`
 
 Expected: FAIL because MIME/cache locations and notices are absent.
 
-- [ ] **Step 3: Implement production delivery rules and docs**
+- [x] **Step 3: Implement production delivery rules and docs**
 
 Add regex locations before the generic JS/CSS cache location:
 
@@ -508,7 +508,7 @@ location ~* \.tflite$ {
 
 Document the 16.4 MB model, local-only inference, build asset preparation, supported browsers, memory limit, model limitations, and troubleshooting for 404/MIME failures. Add Apache-2.0 attribution for runtime and model without relicensing first-party code.
 
-- [ ] **Step 4: Run GREEN and Nginx syntax check when available**
+- [x] **Step 4: Run GREEN and Nginx syntax check when available**
 
 Run:
 
@@ -519,7 +519,7 @@ nginx -t -c E:\AI\gp-main-integration\nginx.conf
 
 Expected: test PASS. If local Nginx is unavailable or BaoTa includes do not exist on Windows, record that limitation and validate the two isolated location blocks through the contract test; production must still run `nginx -t` before reload.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```powershell
 git add -- SD/THIRD_PARTY_NOTICES.md SD/README.md SD/lib/idPhotoDeployment.test.ts nginx.conf
@@ -531,7 +531,7 @@ git commit -m "docs(image): deploy local portrait segmentation"
 **Files:**
 - Modify: this plan only to mark executed checkboxes.
 
-- [ ] **Step 1: Run the complete automated verification**
+- [x] **Step 1: Run the complete automated verification**
 
 ```powershell
 Set-Location E:\AI\gp-main-integration\SD
@@ -544,7 +544,7 @@ git diff --check
 
 Expected: zero test failures, build exit code 0, and no diff-check errors.
 
-- [ ] **Step 2: Verify built self-hosted artifacts**
+- [x] **Step 2: Verify built self-hosted artifacts**
 
 Assert these built files exist and are non-empty:
 
@@ -558,7 +558,7 @@ SD/dist/vendor/mediapipe/wasm/vision_wasm_nosimd_internal.js
 SD/dist/vendor/mediapipe/wasm/vision_wasm_nosimd_internal.wasm
 ```
 
-Recompute the built model SHA-256 and require the pinned value. Search `SD/dist/assets`, `SD/components/tools/image`, and `SD/scripts/copy-mediapipe-assets.mjs` for `cdn.jsdelivr.net`, `storage.googleapis.com/mediapipe-models`, `rgbToHsl`, and `isBackground`; runtime code must contain none of them. Documentation and notices may retain the official source URL for provenance.
+Recompute the built model SHA-256 and require the pinned value. Search the built `IdPhotoBgColor-*` and `vision_bundle-*` chunks plus `SD/components/tools/image/IdPhotoBgColor.tsx`, `SD/components/tools/image/id-photo/`, and `SD/scripts/copy-mediapipe-assets.mjs` for external MediaPipe model/CDN URLs. Search the certificate-photo runtime sources for `rgbToHsl` and `isBackground`. Do not scan unrelated OCR or color-picker chunks, which legitimately contain their own CDN defaults or HSL utilities. Documentation and notices may retain the official source URL for provenance.
 
 - [ ] **Step 3: Run a production-like browser test**
 
@@ -573,7 +573,9 @@ Start `npm.cmd run preview -- --host 127.0.0.1 --port 5176`. In a browser:
 7. Export PNG and JPEG and compare them to the current preview.
 8. Test blue/red clothing, glasses, loose hair, and a no-person image error.
 
-- [ ] **Step 4: Mark the plan and commit**
+Execution note (2026-08-11): the production page shell, privacy copy, upload control, and responsive layout were verified at `http://127.0.0.1:5176/tool/id-photo-bg-color`. Codex In-app Browser explicitly rejected local file uploads, so the real portrait interaction checklist above remains a manual acceptance test. Automated tests cover segmentation resource cleanup, no-person errors, colored clothing preservation, mask edits, compositing, and export-buffer parity. The preview server returned HTTP 200 and `application/wasm`; Vite leaves `.tflite` without a MIME type, while the committed Nginx rule supplies `application/octet-stream` in production.
+
+- [x] **Step 4: Mark the plan and commit**
 
 Stage only this feature's files. Do not stage `node_modules`, `dist`, runtime logs, databases, `.env` files, or the dirty `E:\AI\gp` worktree.
 
