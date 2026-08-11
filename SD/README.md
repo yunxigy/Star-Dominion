@@ -50,3 +50,31 @@ npm run build        # 构建生产版本
 ## 许可证
 
 MIT License
+
+## 证件照 AI 换底色
+
+证件照换底色使用浏览器内的 MediaPipe Selfie Multiclass 模型分离人物与背景。照片、蒙版和导出结果只存在于用户当前浏览器，不会上传到本站后端，也不需要服务器 GPU 或运行时外网访问。
+
+### 构建与部署
+
+```bash
+npm ci
+npm run build
+```
+
+`prebuild` 会从固定版本的 `@mediapipe/tasks-vision@1.0.1` 复制六个 WASM 运行文件。约 16.4 MB 的固定模型已存放在仓库内。生产构建必须包含：
+
+- `dist/vendor/mediapipe/models/selfie_multiclass_256x256.tflite`
+- `dist/vendor/mediapipe/wasm/vision_wasm_internal.wasm`
+- 其余五个同目录的 JS/WASM 运行文件
+
+仓库根目录的 `nginx.conf` 已为 `.wasm` 配置 `application/wasm`，为 `.tflite` 配置 `application/octet-stream`，并对固定资源启用 30 天不可变缓存。服务器更新前应执行 `nginx -t`，确认配置通过后再 reload。
+
+如果页面提示模型加载失败，请在浏览器网络面板确认上述文件返回 HTTP 200，且没有被 SPA 回退成 `text/html`。部署在子路径时，模型和 WASM 会自动跟随 Vite 的 `BASE_URL`。
+
+### 浏览器与模型限制
+
+- 需要支持 WebAssembly、Canvas 2D 和 Pointer Events 的现代 Chrome、Edge、Firefox 或 Safari。
+- 解码后超过 4000 万像素的照片会被拒绝，以避免浏览器内存耗尽。
+- 松散发丝、透明头纱、运动模糊、多人合照和主体占满画面时可能需要使用擦除/恢复画笔修正。
+- 第三方组件和模型许可见 [THIRD_PARTY_NOTICES.md](./THIRD_PARTY_NOTICES.md)。
