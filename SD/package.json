@@ -4,6 +4,9 @@
   "version": "1.2.0",
   "type": "module",
   "scripts": {
+    "prepare:mediapipe": "node scripts/copy-mediapipe-assets.mjs",
+    "predev": "npm run prepare:mediapipe",
+    "prebuild": "npm run prepare:mediapipe",
     "dev": "vite",
     "lint": "tsc --noEmit",
     "build": "tsc && vite build",
@@ -14,6 +17,7 @@
   "dependencies": {
     "@amap/amap-jsapi-loader": "^1.0.1",
     "@google/genai": "^1.46.0",
+    "@mediapipe/tasks-vision": "1.0.1",
     "@types/qrcode": "^1.5.6",
     "clsx": "^2.1.1",
     "framer-motion": "^11.0.0",

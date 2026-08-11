@@ -4,6 +4,7 @@ node_modules/
 # Build output
 dist/
 static/
+SD/public/vendor/mediapipe/wasm/
 
 # Python
 __pycache__/
