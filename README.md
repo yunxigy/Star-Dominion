@@ -236,7 +236,6 @@ Star-Dominion/
 ├── 4G/                              # STM32/4G 服务
 ├── scripts/                         # 本地启动、检查、停止脚本
 ├── deploy/                          # 当前生产部署示例
-├── docs/superpowers/                # 设计与实施记录
 ├── .env.local.example              # 本地环境变量模板
 ├── .env.production.example         # 生产环境变量模板
 └── nginx.conf                      # Nginx 路由参考
