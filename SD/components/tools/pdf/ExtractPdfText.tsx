@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import { useFileUpload, UploadZone, Btn, TextArea, copyToClipboard } from '../shared';
+import { summarizePdfExtraction } from '../featureSupport';
 
 pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
 
@@ -42,7 +43,7 @@ const ExtractPdfText: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       }
       const result = allText.join('\n\n');
       setText(result);
-      setStatus(`提取完成，共 ${result.length} 个字符`);
+      setStatus(summarizePdfExtraction(result, doc.numPages));
     } catch (err: any) {
       setStatus(`提取失败: ${err.message}`);
     } finally {

@@ -3,6 +3,9 @@ import react from '@vitejs/plugin-react';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  // Keep the site's single environment file authoritative for local builds.
+  // Only VITE_* variables are exposed to browser code by Vite.
+  envDir: '..',
   plugins: [react()],
   server: {
     host: true,
@@ -29,6 +32,12 @@ export default defineConfig({
         target: 'http://127.0.0.1:8009',
         changeOrigin: true,
         rewrite: (path: string) => path.replace(/^\/reports-api/, ''),
+      },
+      '/document-api': {
+        target: 'http://127.0.0.1:8010',
+        changeOrigin: true,
+        rewrite: (path: string) => path.replace(/^\/document-api/, ''),
+        timeout: 900000,
       },
       '/api': {
         target: 'http://localhost:8006',
@@ -60,6 +69,26 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path: string) => path.replace(/^\/wuwa/, ''),
       },
+      '/css': {
+        target: 'http://localhost:8006',
+        changeOrigin: true,
+      },
+      '/js': {
+        target: 'http://localhost:8006',
+        changeOrigin: true,
+      },
+      '/static': {
+        target: 'http://localhost:8006',
+        changeOrigin: true,
+      },
+      '/avatars': {
+        target: 'http://localhost:8006',
+        changeOrigin: true,
+      },
+      '/audio': {
+        target: 'http://localhost:8006',
+        changeOrigin: true,
+      },
     },
   },
   build: {
@@ -77,6 +106,8 @@ export default defineConfig({
           'image-vendor': ['html2canvas'],
           // 动画库
           'motion-vendor': ['framer-motion'],
+          // PDF处理库
+          'pdflib': ['pdf-lib'],
           // 工具库
           'utils': ['jszip', 'dompurify'],
         },

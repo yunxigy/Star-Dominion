@@ -20,6 +20,6 @@ dev = ["pytest>=8,<9"]
 include = ["research_reports*"]
 
 [tool.pytest.ini_options]
-pythonpath = ["."]
+pythonpath = [".", ".."]
 testpaths = ["tests"]
 asyncio_default_fixture_loop_scope = "function"

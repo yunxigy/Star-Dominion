@@ -5,9 +5,10 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from ..dependencies import get_db
-from ..models import CollectionRun
+from ..models import CollectionRun, AICatalogRun
 from ..schemas import CollectionRunPage, CollectionRunPublic, CollectionStart
 from ..site_auth import SiteIdentity, require_admin
+from ..services.ai_catalog import persist_ai_catalog
 
 
 router = APIRouter(prefix="/api/v1/admin", tags=["reports-admin"])
@@ -74,3 +75,61 @@ def collection_detail(
     if run is None:
         raise HTTPException(status_code=404, detail="采集记录不存在")
     return _public(run)
+
+
+@router.post("/collections/news", response_model=CollectionStart, status_code=202)
+def collect_news(request: Request, _: SiteIdentity = Depends(require_admin)) -> CollectionStart:
+    news_coordinator = request.app.state.news_coordinator
+    triggered = news_coordinator.trigger(trigger="manual_news")
+    if not triggered.accepted:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="已有新闻采集任务运行中",
+        )
+    return CollectionStart(run_id=str(triggered.run_id), status=triggered.status)
+
+
+@router.post("/briefings/generate", response_model=CollectionStart, status_code=202)
+def generate_briefing(request: Request, _: SiteIdentity = Depends(require_admin)) -> CollectionStart:
+    briefing_coordinator = request.app.state.briefing_coordinator
+    triggered = briefing_coordinator.trigger(trigger="manual_briefing")
+    if not triggered.accepted:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="已有早报生成任务运行中",
+        )
+    return CollectionStart(run_id=str(triggered.run_id), status=triggered.status)
+
+
+@router.post("/ai-catalog/refresh", response_model=CollectionStart, status_code=202)
+def refresh_ai_catalog(request: Request, _: SiteIdentity = Depends(require_admin)) -> CollectionStart:
+    run_id = persist_ai_catalog(request.app.state.database, trigger="manual")
+    return CollectionStart(run_id=run_id, status="success")
+
+
+@router.get("/ai-collection-runs", response_model=CollectionRunPage)
+def list_ai_collection_runs(
+    limit: int = Query(default=20, ge=1, le=100),
+    domain: str | None = None,
+    _: SiteIdentity = Depends(require_admin),
+    db: Session = Depends(get_db),
+) -> CollectionRunPage:
+    statement = select(AICatalogRun).order_by(AICatalogRun.started_at.desc()).limit(limit + 1)
+    if domain:
+        statement = statement.where(AICatalogRun.domain == domain)
+    rows = list(db.scalars(statement))
+    next_cursor = rows[limit - 1].id if len(rows) > limit else None
+    return CollectionRunPage(
+        items=[CollectionRunPublic(
+            id=row.id,
+            trigger=row.trigger,
+            requested_by_site_user_id=None,
+            started_at=row.started_at,
+            finished_at=row.finished_at,
+            status=row.status,
+            categories=dict(row.counts_json or {}),
+            error_summary=row.error_summary,
+            duration_ms=None,
+        ) for row in rows[:limit]],
+        next_cursor=next_cursor,
+    )

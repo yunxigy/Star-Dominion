@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/immutability -- the force simulation intentionally mutates ref-owned nodes between animation frames */
 import { useEffect, useState, useRef, useCallback } from 'react'
 import { useNovelStore } from '../store/novelStore'
 import api from '../api/client'
@@ -39,6 +40,20 @@ function getTierColor(tier: string): string {
   return '#7c8aff'
 }
 
+function initializePositions(nodes: GraphNode[]): GraphNode[] {
+  const w = 800, h = 500
+  const cx = w / 2, cy = h / 2
+  nodes.forEach((node, index) => {
+    const angle = (2 * Math.PI * index) / nodes.length
+    const radius = Math.min(w, h) * 0.3
+    node.x = cx + radius * Math.cos(angle)
+    node.y = cy + radius * Math.sin(angle)
+    node.vx = 0
+    node.vy = 0
+  })
+  return [...nodes]
+}
+
 export default function GraphPage() {
   const { currentNovelId } = useNovelStore()
   const [graph, setGraph] = useState<GraphData | null>(null)
@@ -54,25 +69,11 @@ export default function GraphPage() {
     api.get(`/novels/${currentNovelId}/graph/characters`)
       .then(({ data }) => {
         setGraph(data)
-        initPositions(data.nodes)
+        nodesRef.current = initializePositions(data.nodes)
       })
       .catch(() => setGraph(null))
       .finally(() => setLoading(false))
   }, [currentNovelId])
-
-  const initPositions = (nodes: GraphNode[]) => {
-    const w = 800, h = 500
-    const cx = w / 2, cy = h / 2
-    nodes.forEach((n, i) => {
-      const angle = (2 * Math.PI * i) / nodes.length
-      const r = Math.min(w, h) * 0.3
-      n.x = cx + r * Math.cos(angle)
-      n.y = cy + r * Math.sin(angle)
-      n.vx = 0
-      n.vy = 0
-    })
-    nodesRef.current = [...nodes]
-  }
 
   const simulate = useCallback(() => {
     const nodes = nodesRef.current
@@ -146,6 +147,9 @@ export default function GraphPage() {
     }
     animRef.current = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(animRef.current)
+  // The graph object changes every animation frame; only a node-count change
+  // should restart the simulation lifecycle.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [graph?.nodes.length])
 
   const handleDragStart = (node: GraphNode, e: React.MouseEvent) => {

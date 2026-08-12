@@ -6,6 +6,7 @@ import { getIcon } from '../lib/iconMap';
 import { MouseParticles } from '../components/MouseParticles';
 import { AccountMenu } from '../components/AccountMenu';
 import { PROJECT_LINKS } from '../lib/projectLinks';
+import { useAuth } from '../context/AuthContext';
 
 // 侧边栏时钟组件
 const SidebarClock: React.FC = () => {
@@ -50,6 +51,7 @@ const BackToTop: React.FC = () => {
 export const AppLayout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { user, loading: authLoading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -203,7 +205,13 @@ export const AppLayout: React.FC = () => {
                 href={project.path}
                 target="_blank"
                 rel="noopener noreferrer"
-                onClick={() => setSidebarOpen(false)}
+                onClick={(event) => {
+                  setSidebarOpen(false);
+                  if (project.requiresAuth && !authLoading && !user) {
+                    event.preventDefault();
+                    navigate(`/auth/login?next=${encodeURIComponent(project.path)}`);
+                  }
+                }}
                 className={className}
               >
                 {content}

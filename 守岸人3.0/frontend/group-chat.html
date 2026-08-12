@@ -699,28 +699,18 @@
       return div.innerHTML;
     }
 
-    const token = 'central-cookie';
+    // Authentication is provided by auth.js via the site session cookie.
     let user = null;
 
     Auth.loadUser().then((current) => {
       user = current;
       if (!current) {
-        window.location.href = Auth.loginUrl('/group-chat.html');
+        window.location.href = Auth.loginUrl(navigateUrl('/group-chat.html'));
         return;
       }
       document.getElementById('user-name').textContent = current.username;
       document.getElementById('user-role').textContent = current.role === 'admin' ? '管理员' : '用户';
     });
-
-    if (!token) {
-      window.location.href = '/login.html';
-    }
-
-    // 显示用户信息
-    if (user) {
-      document.getElementById('user-name').textContent = user.username;
-      document.getElementById('user-role').textContent = user.role === 'admin' ? '管理员' : '用户';
-    }
 
     let groups = [];
     let characters = [];
@@ -731,7 +721,7 @@
     async function loadGroups() {
       try {
         const res = await fetch('/api/group-chat', {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         if (res.ok) {
           groups = await res.json();
@@ -762,7 +752,7 @@
     async function loadCharacters() {
       try {
         const res = await fetch('/api/characters', {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         if (res.ok) {
           characters = await res.json();
@@ -776,7 +766,7 @@
     async function selectGroup(groupId) {
       try {
         const res = await fetch(`/api/group-chat/${groupId}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         if (res.ok) {
           currentGroup = await res.json();
@@ -807,7 +797,7 @@
       if (!currentGroup) return;
       try {
         const res = await fetch(`/api/group-chat/${currentGroup.id}/messages`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         if (res.ok) {
           const messages = await res.json();
@@ -874,7 +864,6 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
             text: text,
@@ -954,7 +943,6 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
             name: name,
@@ -1019,7 +1007,6 @@
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
             name: name,
@@ -1053,7 +1040,6 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({ character_id: character.id })
         });
@@ -1074,7 +1060,7 @@
       try {
         const res = await fetch(`/api/group-chat/${currentGroup.id}/members/${characterId}`, {
           method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         if (res.ok) {
           await selectGroup(currentGroup.id);

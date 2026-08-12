@@ -18,5 +18,10 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      // Data pages intentionally start API loads and reset local view state when
+      // the selected novel changes. Those effects are synchronization points.
+      'react-hooks/set-state-in-effect': 'off',
+    },
   },
 ])

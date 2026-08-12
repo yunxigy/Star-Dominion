@@ -4,6 +4,7 @@ import { X, Loader2, Shield, HelpCircle, ArrowRight, BookOpen, Lightbulb } from 
 import { getToolById, getToolsByCategory, CATEGORIES } from '../tools/registry';
 import { getIcon } from '../lib/iconMap';
 import { AdSlot } from './AdSlot';
+import { TOOL_WINDOW_AD_CLASS, TOOL_WINDOW_CONTENT_CLASS } from '../pages/toolUiLayout';
 
 class ToolErrorBoundary extends Component<
   { children: ReactNode; toolName: string },
@@ -208,7 +209,7 @@ export default function ToolWindow() {
     '@type': 'WebApplication',
     name: tool.name,
     description: tool.description,
-    url: `https://tools.example.com/tool/${tool.id}`,
+    url: new URL(`/tool/${tool.id}`, window.location.origin).toString(),
     applicationCategory: 'UtilitiesApplication',
     operatingSystem: 'Web Browser',
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'CNY' },
@@ -253,7 +254,7 @@ export default function ToolWindow() {
 
       {/* Content */}
       <main className="flex-1 overflow-auto">
-        <div className="max-w-5xl mx-auto p-6">
+        <div className={TOOL_WINDOW_CONTENT_CLASS}>
           {/* Tool Component */}
           <div className="glass-card rounded-2xl p-6 mb-6">
             <ToolErrorBoundary toolName={tool.name}>
@@ -381,7 +382,7 @@ export default function ToolWindow() {
         </div>
 
         {/* 结果页广告位 */}
-        <div className="max-w-5xl mx-auto px-6 pb-4">
+        <div className={TOOL_WINDOW_AD_CLASS}>
           <AdSlot name="tool-result" />
         </div>
       </main>

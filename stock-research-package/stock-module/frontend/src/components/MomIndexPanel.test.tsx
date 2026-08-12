@@ -119,7 +119,7 @@ it("shows administrator refresh and login actions", () => {
   );
 
   fireEvent.click(screen.getByRole("button", { name: "立即刷新宝妈指数" }));
-  fireEvent.click(screen.getByRole("button", { name: "重新登录小红书" }));
+  fireEvent.click(screen.getByRole("button", { name: "打开小红书登录窗口" }));
   expect(onRefresh).toHaveBeenCalledOnce();
   expect(onLogin).toHaveBeenCalledOnce();
 });

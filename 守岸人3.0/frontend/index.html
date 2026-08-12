@@ -202,13 +202,13 @@
     }, { once: true });
 
     // 用户状态检查
-    const token = 'central-cookie';
+    // Authentication is provided by auth.js via the site session cookie.
     let user = null;
 
     Auth.loadUser().then((current) => {
       user = current;
       if (!current) {
-        window.location.href = Auth.loginUrl('/wuwa/');
+        window.location.href = Auth.loginUrl(navigateUrl('/'));
         return;
       }
       document.getElementById('user-section').style.display = 'block';
@@ -216,15 +216,6 @@
       document.getElementById('sidebar-username').textContent = current.username;
       if (current.role === 'admin') document.getElementById('admin-link').style.display = 'block';
     });
-
-    if (user) {
-      document.getElementById('user-section').style.display = 'block';
-      document.getElementById('login-section').style.display = 'none';
-      document.getElementById('sidebar-username').textContent = user.username;
-      if (user.role === 'admin') {
-        document.getElementById('admin-link').style.display = 'block';
-      }
-    }
 
     function logout() {
       void Auth.logout();

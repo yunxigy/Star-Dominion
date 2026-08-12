@@ -48,3 +48,21 @@ python -m pytest tests -q
 python -m compileall -q research_reports
 Pop-Location
 ```
+
+## AI 早报与统一模型配置
+
+研报服务优先复用股票模块的 `STOCK_PLATFORM_MODEL_PROFILES_JSON`：选择指定的
+`RESEARCH_REPORTS_AI_PROFILE_ID`，或自动选择第一个启用的 SiliconFlow 平台档案，
+并从档案的 `api_key_env` 读取同一份服务端 Key。未配置平台档案时，兼容读取
+`SILICONFLOW_API_KEY`、`RESEARCH_REPORTS_AI_BASE_URL` 和 `RESEARCH_REPORTS_AI_MODEL`。
+
+```powershell
+$env:STOCK_PLATFORM_MODEL_PROFILES_JSON='[{"id":"platform-sf","name":"硅基流动","provider":"siliconflow","base_url":"https://api.siliconflow.cn/v1","api_key_env":"STOCK_SILICONFLOW_API_KEY"}]'
+$env:STOCK_SILICONFLOW_API_KEY='<server-only-key>'
+$env:RESEARCH_REPORTS_AI_PROFILE_ID='platform-sf'
+$env:RESEARCH_REPORTS_AI_MODEL='deepseek-v4-flash'
+```
+
+`GET /models` 的模型目录校验由 `SiliconFlowClient.list_models()` 提供。没有 Key 时不会伪造早报，服务会保存 `ai_unavailable` 候选摘要并保留来源 ID。
+
+调度规则：GitHub 榜单每小时整点采集；每周一 08:30 换榜；公开新闻每 30 分钟采集；AI 早报每天 08:30 生成。新闻和早报使用独立锁与运行记录，重复触发会被安全跳过。

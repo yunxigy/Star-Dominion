@@ -15,6 +15,7 @@ export function ReportsPage() {
           <span className="inline-flex items-center gap-2 font-bold text-[#f6d2ae]">查看最新一期<ArrowRight className="h-5 w-5 transition group-hover:translate-x-1" /></span>
         </div>
       </Link>
+      <div className="grid gap-4 md:grid-cols-3"><Link to="/reports/ai" className="rounded-2xl border border-[#decbb5] bg-white p-5"><h2 className="text-xl font-black">AI 生态榜</h2><p className="mt-2 text-sm text-[#705d4b]">Agent、Skill、MCP、RAG 和 AI Infra。</p></Link><Link to="/reports/news" className="rounded-2xl border border-[#decbb5] bg-white p-5"><h2 className="text-xl font-black">AI 圈大事</h2><p className="mt-2 text-sm text-[#705d4b]">过去 24 小时公开新闻与社交动态。</p></Link><Link to="/reports/briefing" className="rounded-2xl border border-[#decbb5] bg-white p-5"><h2 className="text-xl font-black">AI 早报</h2><p className="mt-2 text-sm text-[#705d4b]">DeepSeek V4 Flash 自动整理。</p></Link></div>
     </div>
   );
 }

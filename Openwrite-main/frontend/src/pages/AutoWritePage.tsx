@@ -72,6 +72,7 @@ export default function AutoWritePage() {
   const [showConfig, setShowConfig] = useState(true)
 
   const wsRef = useRef<WebSocket | null>(null)
+  const handleMessageRef = useRef<(msg: Record<string, unknown>) => void>(() => undefined)
   const logIdRef = useRef(logs.length > 0 ? Math.max(...logs.map(l => l.id)) : 0)
   const logsEndRef = useRef<HTMLDivElement>(null)
 
@@ -129,7 +130,7 @@ export default function AutoWritePage() {
     ws.onmessage = (event) => {
       try {
         const msg = JSON.parse(event.data)
-        handleMessage(msg)
+        handleMessageRef.current(msg)
       } catch {
         addLog(`收到无法解析的消息: ${event.data}`, 'error')
       }
@@ -253,6 +254,10 @@ export default function AutoWritePage() {
         addLog(`未知消息类型: ${msg.type}`, 'warning')
     }
   }, [addLog])
+
+  useEffect(() => {
+    handleMessageRef.current = handleMessage
+  }, [handleMessage])
 
   const handleStart = () => {
     setLogs([])

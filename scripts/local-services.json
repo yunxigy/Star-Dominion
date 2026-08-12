@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "services": [
+    {"name":"site-auth","working_directory":"site-auth","executable":"python","arguments":["-m","uvicorn","site_auth.main:create_app","--factory","--host","127.0.0.1","--port","8000"],"ports":[8000],"health_url":"http://127.0.0.1:8000/health"},
+    {"name":"openwrite","working_directory":"Openwrite-main","executable":"python","arguments":["start.py"],"ports":[8001],"health_url":"http://127.0.0.1:8001/health"},
+    {"name":"stock-hub","working_directory":"stock-research-package/stock-module/backend","executable":"python","arguments":["-m","uvicorn","app.main:app","--host","127.0.0.1","--port","8002"],"ports":[8002],"health_url":"http://127.0.0.1:8002/api/v1/health"},
+    {"name":"stock-analysis","working_directory":"stock-research-package/stock-module/analysis-service","executable":"python","arguments":["-m","uvicorn","analysis_service.main:app","--host","127.0.0.1","--port","8003"],"ports":[8003],"health_url":"http://127.0.0.1:8003/api/v1/health"},
+    {"name":"stock-gateway","working_directory":"stock-research-package/stock-module/backend","executable":"python","arguments":["-m","uvicorn","app.gateway_main:app","--host","127.0.0.1","--port","8004"],"ports":[8004],"tcp_only":true},
+    {"name":"plagiarism","working_directory":"plagiarism","executable":"python","arguments":["main.py"],"ports":[8005],"health_url":"http://127.0.0.1:8005/api/plagiarism/health"},
+    {"name":"shouanren","working_directory":"守岸人3.0","executable":"python","arguments":["-m","server.main"],"ports":[8006],"health_url":"http://127.0.0.1:8006/api/health"},
+    {"name":"stm32","working_directory":"4G","executable":"python","arguments":["4G.py"],"ports":[8007,8008],"tcp_only":true},
+    {"name":"research-reports","working_directory":"research-reports","executable":"python","arguments":["-m","uvicorn","research_reports.main:create_app","--factory","--host","127.0.0.1","--port","8009"],"ports":[8009],"health_url":"http://127.0.0.1:8009/health"},
+    {"name":"document-converter","working_directory":"document-converter","executable":"python","arguments":["-m","uvicorn","document_converter.app:app","--host","127.0.0.1","--port","8010"],"ports":[8010],"health_url":"http://127.0.0.1:8010/health"},
+    {"name":"sd-frontend","working_directory":"SD","executable":"node","arguments":["node_modules/vite/bin/vite.js","--host","127.0.0.1","--port","5173"],"ports":[5173],"health_url":"http://127.0.0.1:5173/" ,"frontend":true},
+    {"name":"openwrite-frontend","working_directory":"Openwrite-main/frontend","executable":"node","arguments":["node_modules/vite/bin/vite.js","--host","127.0.0.1","--port","5174"],"ports":[5174],"health_url":"http://127.0.0.1:5174/", "frontend":true},
+    {"name":"stock-frontend","working_directory":"stock-research-package/stock-module/frontend","executable":"node","arguments":["node_modules/vite/bin/vite.js","--host","127.0.0.1","--port","5175"],"ports":[5175],"health_url":"http://127.0.0.1:5175/", "frontend":true}
+  ]
+}

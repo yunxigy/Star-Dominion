@@ -390,11 +390,10 @@
 
   <script src="/js/auth.js"></script>
   <script>
-    const token = 'central-cookie';
+    // Authentication is provided by auth.js via the site session cookie.
     Auth.loadUser().then((current) => {
-      if (!current) window.location.href = Auth.loginUrl('/memory.html');
+      if (!current) window.location.href = Auth.loginUrl(navigateUrl('/memory.html'));
     });
-    if (!token) window.location.href = '/login.html';
 
     let characters = [];
     let currentCharId = null;
@@ -404,7 +403,7 @@
     async function loadCharacters() {
       try {
         const res = await fetch('/api/characters', {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         characters = await res.json();
         renderCharacterList();
@@ -440,7 +439,7 @@
     async function loadAffinity() {
       try {
         const res = await fetch(`/api/affinity/characters/${currentCharId}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         currentAffinity = await res.json();
       } catch (err) {
@@ -451,14 +450,14 @@
     async function loadMemories() {
       try {
         const res = await fetch(`/api/memories/${currentCharId}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         if (res.ok) {
           currentMemories = await res.json();
         } else {
           // fallback: 尝试旧接口
           const res2 = await fetch(`/api/affinity/preferences?character_id=${currentCharId}`, {
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: {}
           });
           currentMemories = await res2.json();
         }
@@ -577,7 +576,6 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
             character_id: currentCharId,
@@ -606,7 +604,7 @@
       try {
         const res = await fetch(`/api/affinity/preferences/${memoryId}`, {
           method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
 
         if (res.ok) {

@@ -4,6 +4,9 @@ param()
 $ErrorActionPreference = 'Stop'
 $workspaceRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
 $envFile = Join-Path $workspaceRoot '.env.local'
+$manifestPath = Join-Path $PSScriptRoot 'local-services.json'
+. (Join-Path $PSScriptRoot 'local-services.ps1')
+$manifest = Get-LocalServiceManifest -Path $manifestPath
 $failures = 0
 
 function Import-LocalEnvironment {
@@ -55,7 +58,13 @@ function Test-Http([string]$Name, [string]$Uri, [int]$ExpectedStatus, $WebSessio
 }
 
 Import-LocalEnvironment
-foreach ($port in 8000..8009) { Report "port $port" (Test-Port $port) }
+$manifestPorts = @($manifest.services | ForEach-Object { @($_.ports) })
+foreach ($port in $manifestPorts) { Report "port $port" (Test-Port $port) }
+foreach ($service in @($manifest.services)) {
+    if ($service.PSObject.Properties['health_url'] -and -not [string]::IsNullOrWhiteSpace([string]$service.health_url)) {
+        Test-Http "$($service.name) health contract" ([string]$service.health_url) 200 | Out-Null
+    }
+}
 
 Test-Http 'site-auth health' 'http://127.0.0.1:8000/health' 200 | Out-Null
 Test-Http 'Openwrite health' 'http://127.0.0.1:8001/health' 200 | Out-Null
@@ -68,6 +77,8 @@ Test-Http 'ShouAnRen health' 'http://127.0.0.1:8006/api/health' 200 | Out-Null
 Test-Http 'STM32 data' 'http://127.0.0.1:8007/data' 200 | Out-Null
 Test-Http 'research reports health' 'http://127.0.0.1:8009/health' 200 | Out-Null
 Test-Http 'research reports current issue' 'http://127.0.0.1:8009/api/v1/issues/current' 200 | Out-Null
+Test-Http 'document converter health' 'http://127.0.0.1:8010/health' 200 | Out-Null
+Test-Http 'document converter capabilities' 'http://127.0.0.1:8010/api/v1/capabilities' 200 | Out-Null
 Test-Http 'research reports admin anonymous' 'http://127.0.0.1:8009/api/v1/admin/collections' 401 | Out-Null
 Test-Http 'stock private anonymous' 'http://127.0.0.1:8002/api/v1/model-profiles' 401 | Out-Null
 Test-Http 'ShouAnRen chat anonymous' 'http://127.0.0.1:8006/api/chat/characters' 401 | Out-Null

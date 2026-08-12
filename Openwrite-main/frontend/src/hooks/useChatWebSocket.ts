@@ -7,6 +7,7 @@ import type { WsServerMessage } from '../types/ws'
 export function useChatWebSocket(agentType: AgentType) {
   const wsRef = useRef<WebSocket | null>(null)
   const reconnectTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const connectRef = useRef<() => void>(() => undefined)
   const { currentNovelId } = useNovelStore()
   const {
     startStreaming,
@@ -19,6 +20,7 @@ export function useChatWebSocket(agentType: AgentType) {
     setStateInfo,
     setTurnsProcessed,
     setConnected,
+    isConnected,
   } = useChatStore()
 
   const connect = useCallback(() => {
@@ -97,12 +99,13 @@ export function useChatWebSocket(agentType: AgentType) {
       // Auto-reconnect after 3s
       reconnectTimer.current = setTimeout(() => {
         reconnectTimer.current = null
-        connect()
+        connectRef.current()
       }, 3000)
     }
   }, [agentType, currentNovelId, appendDelta, addToolCall, completeToolCall, completeStreaming, failStreaming, addSystemMessage, setStateInfo, setTurnsProcessed, setConnected])
 
   useEffect(() => {
+    connectRef.current = connect
     connect()
     return () => {
       if (reconnectTimer.current) clearTimeout(reconnectTimer.current)
@@ -131,6 +134,6 @@ export function useChatWebSocket(agentType: AgentType) {
   return {
     sendMessage,
     cancel,
-    isConnected: wsRef.current?.readyState === WebSocket.OPEN,
+    isConnected,
   }
 }

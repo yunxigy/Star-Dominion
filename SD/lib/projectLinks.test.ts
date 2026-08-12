@@ -9,6 +9,7 @@ describe('project links', () => {
         path: '/stock/',
         name: '股票研究',
         external: true,
+        requiresAuth: true,
       }),
     );
   });

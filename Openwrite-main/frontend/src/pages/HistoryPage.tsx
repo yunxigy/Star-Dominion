@@ -32,8 +32,8 @@ export default function HistoryPage() {
   const [loading, setLoading] = useState(false)
   const [diffResult, setDiffResult] = useState<DiffResult | null>(null)
   const [diffLoading, setDiffLoading] = useState(false)
-  const [_selectedV1, setSelectedV1] = useState<number | null>(null)
-  const [_selectedV2, setSelectedV2] = useState<number | null>(null)
+  const [, setSelectedV1] = useState<number | null>(null)
+  const [, setSelectedV2] = useState<number | null>(null)
 
   const loadVersions = async () => {
     if (!currentNovelId || !chapterId.trim()) return

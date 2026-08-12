@@ -20,7 +20,7 @@
 - 正式接入主站后可同时提供“平台配置”和“个人配置”；每次分析都必须重新选择配置和模型，不设默认值。
 - 个股分析任务、状态和报告缓存持久化在 SQLite，页面轮询展示采集、分析、整理和完成状态。
 - 宝妈指数保持独立，只作反向情绪温度计，不读取或改变候选评分；展示纳斯达克、黄金、CPO 通信、半导体四个板块及历史趋势。
-- 宝妈指数只使用东方财富真实公开帖子和小红书登录态真实搜索结果；每天 08:30 自动采集，管理员可在页面刷新或扫码恢复小红书登录态。
+- 宝妈指数只使用东方财富真实公开帖子和小红书登录态真实搜索结果；每天 08:30 自动采集，管理员可在页面刷新或打开 Playwright 登录窗口恢复小红书登录态。
 
 三个上游仓库位于 `../upstreams/`，适配层不修改它们的工作树。
 
@@ -106,7 +106,7 @@ npm.cmd install
 它也包含股票目录与宝妈指数所需的 AKShare、APScheduler、拼音索引和 Python MCP 客户端。小红书采集器由 Node.js 按固定版本启动：
 
 ```text
-@sillyl12324/xhs-mcp@2.7.0
+rednote-mcp (Playwright MCP，stdio 模式)
 ```
 
 该集成只允许认证状态、账号登录、登录轮询、搜索和帖子详情工具，所有写操作均被后端白名单拒绝。
@@ -119,13 +119,13 @@ npm.cmd install
 
 ```dotenv
 STOCK_XHS_DATA_DIR=stock-research-package/stock-module/data/xhs-mcp
-STOCK_XHS_MCP_COMMAND=npx.cmd -y @sillyl12324/xhs-mcp@2.7.0
+STOCK_XHS_MCP_COMMAND=npx.cmd -y rednote-mcp@0.2.3 --stdio
 STOCK_MARKET_PROXY=
 STOCK_MOM_REFRESH_TIME=08:30
 STOCK_TIMEZONE=Asia/Shanghai
 ```
 
-Windows 使用 `npx.cmd`；Linux/宝塔使用 `npx`。`STOCK_MARKET_PROXY` 仅在部署网络确有需要时填写。启动后管理员在宝妈指数卡片点击“重新登录小红书”并扫码，登录态只保存在 `STOCK_XHS_DATA_DIR`。东方财富或小红书其中一个失败时会保存部分成功快照；两个来源均失败时不会用模拟数据覆盖最近真实快照。
+Windows 使用 `npx.cmd`；Linux/宝塔使用 `npx`。`STOCK_MARKET_PROXY` 仅在部署网络确有需要时填写。启动后管理员在宝妈指数卡片点击“打开小红书登录窗口”，在 Playwright 浏览器窗口完成登录，登录态只保存在 `STOCK_XHS_DATA_DIR`。东方财富或小红书其中一个失败时会保存部分成功快照；两个来源均失败时不会用模拟数据覆盖最近真实快照。
 
 ### 开发密钥
 
@@ -329,7 +329,7 @@ $env:STOCK_GATEWAY_SERVICE_TOKEN="<long-random-service-token>"
 | 页面提示晨报暂不可用 | 检查 `CATALYST_REPORT_PATH`；目录模式下是否存在 `*-morning.json`；可先运行九点猫研刷新任务 |
 | 页面显示“当前展示最近成功晨报” | 本次晨报刷新失败，系统正在使用 SQLite 中最近成功快照；检查九研 Worker 与报告路径后重新刷新 |
 | 股票搜索为空 | 管理员先触发股票目录刷新；检查 AKShare 网络访问和 `STOCK_MARKET_PROXY` |
-| 小红书提示重新登录 | 管理员在宝妈指数卡片重新扫码；检查 `STOCK_XHS_DATA_DIR` 权限及 Node.js/npm |
+| 小红书提示重新登录 | 管理员在宝妈指数卡片打开登录窗口；检查 `STOCK_XHS_DATA_DIR` 权限及 Node.js/npm |
 | 宝妈指数显示部分可用 | 查看来源状态；单源失败不会生成模拟数据，也不会影响另一真实来源 |
 | 个人策略可用但九研不可用 | 两个来源故障隔离，属于预期降级；个人策略仍可独立使用 |
 | 模型列表加载失败 | Base URL 是否以 `/v1` 结尾、Key 是否有效、服务是否允许 `/models`；可切换手动模型 ID |

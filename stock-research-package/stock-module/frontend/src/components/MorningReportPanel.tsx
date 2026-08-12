@@ -1,5 +1,6 @@
 import type { MorningReport } from "../types";
 import { MarketSummary } from "./MarketSummary";
+import { filterCatalystCandidates } from "../viewRules";
 
 type Props = {
   report: MorningReport | null;
@@ -10,6 +11,7 @@ type Props = {
 };
 
 export function MorningReportPanel({ report, error, refreshing, onOpenDetail, onRefresh }: Props) {
+  const candidates = report ? filterCatalystCandidates(report.catalyst_candidates) : [];
   return (
     <section className="panel morning-panel" aria-labelledby="morning-title">
       <div className="panel-heading">
@@ -22,6 +24,7 @@ export function MorningReportPanel({ report, error, refreshing, onOpenDetail, on
         </button>
       </div>
 
+      <div className="research-panel-body">
       {error && <p className="source-alert" role="alert">{error}</p>}
       {!report && !error && <p className="panel-empty">正在载入今日晨报…</p>}
       {!report && error && <p className="panel-empty">晨报暂不可用，右侧个人策略不受影响。</p>}
@@ -47,7 +50,7 @@ export function MorningReportPanel({ report, error, refreshing, onOpenDetail, on
                 <tr><th>股票</th><th>主题</th><th>九研分</th><th>选股依据</th><th /></tr>
               </thead>
               <tbody>
-                {report.catalyst_candidates.map((candidate) => (
+                {candidates.map((candidate) => (
                   <tr key={candidate.symbol}>
                     <td><strong>{candidate.name}</strong><span>{candidate.symbol} · {candidate.exchange}</span></td>
                     <td><span className="theme-chip">{candidate.theme}</span></td>
@@ -56,11 +59,13 @@ export function MorningReportPanel({ report, error, refreshing, onOpenDetail, on
                     <td><button type="button" aria-label={`查看 ${candidate.name} 详情`} onClick={(event) => onOpenDetail(candidate.symbol, event.currentTarget)}>详情</button></td>
                   </tr>
                 ))}
+                {candidates.length === 0 && <tr><td colSpan={5}><p className="panel-empty">当前没有得分大于 55 的九点猫研候选股。</p></td></tr>}
               </tbody>
             </table>
           </div>
         </>
       )}
+      </div>
     </section>
   );
 }

@@ -1,5 +1,6 @@
 import type { MorningReport } from "../types";
 import { MarketSummary } from "./MarketSummary";
+import { filterCatalystCandidates } from "../viewRules";
 
 type Props = {
   report: MorningReport | null;
@@ -10,6 +11,7 @@ type Props = {
 };
 
 export function MorningNewspaper({ report, loading, error, onBack, onOpenDetail }: Props) {
+  const candidates = report ? filterCatalystCandidates(report.catalyst_candidates) : [];
   return (
     <main className="newspaper-page">
       <button className="newspaper-back" type="button" aria-label="返回晨报工作台" onClick={onBack}>← 返回晨报工作台</button>
@@ -57,7 +59,7 @@ export function MorningNewspaper({ report, loading, error, onBack, onOpenDetail 
           <section className="newspaper-section" aria-labelledby="candidate-evidence-title">
             <div className="newspaper-section-heading"><span className="newspaper-number">04</span><h2 id="candidate-evidence-title">九点猫研主板候选与完整依据</h2></div>
             <div className="newspaper-candidates">
-              {report.catalyst_candidates.map((candidate) => (
+              {candidates.map((candidate) => (
                 <article key={candidate.symbol}>
                   <header><div><span>{candidate.symbol} · {candidate.exchange}</span><h3>{candidate.name}</h3><small>{candidate.industry} / {candidate.theme}</small></div><strong>{candidate.total_score.toFixed(0)}</strong></header>
                   <p>{candidate.rationale}</p>
@@ -68,6 +70,7 @@ export function MorningNewspaper({ report, loading, error, onBack, onOpenDetail 
                   <button type="button" onClick={(event) => onOpenDetail(candidate.symbol, event.currentTarget)}>查看个股详情与分析入口</button>
                 </article>
               ))}
+              {candidates.length === 0 && <p className="panel-empty">当前没有得分大于 55 的九点猫研候选股。</p>}
             </div>
           </section>
 

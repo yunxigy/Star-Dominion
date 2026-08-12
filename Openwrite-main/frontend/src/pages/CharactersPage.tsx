@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNovelStore } from '../store/novelStore'
 import api from '../api/client'
 
@@ -16,16 +16,16 @@ export default function CharactersPage() {
   const [loading, setLoading] = useState(false)
   const [deleting, setDeleting] = useState<string | null>(null)
 
-  const loadCharacters = () => {
+  const loadCharacters = useCallback(() => {
     if (!currentNovelId) return
     setLoading(true)
     api.get(`/novels/${currentNovelId}/characters`)
       .then(({ data }) => setCharacters(data.characters || []))
       .catch(() => setCharacters([]))
       .finally(() => setLoading(false))
-  }
+  }, [currentNovelId])
 
-  useEffect(() => { loadCharacters() }, [currentNovelId])
+  useEffect(() => { loadCharacters() }, [loadCharacters])
 
   const handleSelect = async (ch: Character) => {
     if (!currentNovelId) return

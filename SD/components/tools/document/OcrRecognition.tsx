@@ -1,5 +1,8 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { Upload, Loader2, Copy, Download, Trash2, ImageIcon } from 'lucide-react';
+import { localOcrOptions, withTimeout } from '../featureSupport';
+
+const OCR_TIMEOUT_MS = 60_000;
 
 export default function OcrRecognition({ onClose }: { onClose: () => void }) {
   const [image, setImage] = useState<string | null>(null);
@@ -24,18 +27,31 @@ export default function OcrRecognition({ onClose }: { onClose: () => void }) {
     if (!image) return;
 
     setLoading(true);
+    setResult('');
+    let worker: { recognize: (source: string) => Promise<{ data: { text: string } }>; terminate: () => Promise<unknown> } | null = null;
     try {
       const Tesseract = await import('tesseract.js');
-      const { data: { text } } = await Tesseract.recognize(image, language, {
-        logger: (info) => {
-          console.log(info);
-        },
-      });
-      setResult(text);
+      setResult('正在加载本地 OCR 模型…');
+      worker = await withTimeout(
+        Tesseract.createWorker(language, 1, {
+          ...localOcrOptions(),
+          logger: ({ status, progress }: { status: string; progress: number }) => {
+            if (status) setResult(`正在识别：${status}${Number.isFinite(progress) ? ` ${Math.round(progress * 100)}%` : ''}`);
+          },
+        }),
+        OCR_TIMEOUT_MS,
+        'OCR 模型加载超时，请检查本地模型资源',
+      );
+      const { data: { text } } = await withTimeout(
+        worker.recognize(image),
+        OCR_TIMEOUT_MS,
+        'OCR 识别超时，请缩小图片后重试',
+      );
+      setResult(text || '未识别到文字');
     } catch (err) {
-      console.error('OCR failed:', err);
-      setResult('识别失败，请重试');
+      setResult(`识别失败：${err instanceof Error ? err.message : '未知错误'}`);
     } finally {
+      if (worker) await worker.terminate();
       setLoading(false);
     }
   }, [image, language]);
@@ -75,8 +91,6 @@ export default function OcrRecognition({ onClose }: { onClose: () => void }) {
           <option value="chi_sim+eng">中文+英文</option>
           <option value="chi_sim">中文</option>
           <option value="eng">英文</option>
-          <option value="jpn">日文</option>
-          <option value="kor">韩文</option>
         </select>
       </div>
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNovelStore } from '../store/novelStore'
 import api from '../api/client'
 
@@ -25,7 +25,7 @@ export default function ForeshadowingPage() {
   const [loading, setLoading] = useState(false)
   const [deleting, setDeleting] = useState<string | null>(null)
 
-  const loadData = () => {
+  const loadData = useCallback(() => {
     if (!currentNovelId) return
     setLoading(true)
     api.get(`/novels/${currentNovelId}/foreshadowing`)
@@ -35,9 +35,9 @@ export default function ForeshadowingPage() {
       })
       .catch(() => {})
       .finally(() => setLoading(false))
-  }
+  }, [currentNovelId])
 
-  useEffect(() => { loadData() }, [currentNovelId])
+  useEffect(() => { loadData() }, [loadData])
 
   const handleDelete = async (nodeId: string) => {
     if (!currentNovelId) return
