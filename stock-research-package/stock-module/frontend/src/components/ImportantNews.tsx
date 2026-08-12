@@ -14,6 +14,7 @@ export function ImportantNews({ items, onReadNewspaper }: { items: ImportantNews
         </div>
         <button className="text-action" type="button" onClick={onReadNewspaper}>阅读每日报纸 <span aria-hidden="true">→</span></button>
       </div>
+      <div className="research-panel-body">
       <div className="news-list">
         {items.slice(0, 8).map((item, index) => (
           <article className={`news-item tone-${item.tone}`} data-testid="news-summary" key={item.id}>
@@ -30,6 +31,7 @@ export function ImportantNews({ items, onReadNewspaper }: { items: ImportantNews
           </article>
         ))}
         {items.length === 0 && <p className="panel-empty">当前时间窗内暂无达到阈值的重要消息。</p>}
+      </div>
       </div>
     </section>
   );

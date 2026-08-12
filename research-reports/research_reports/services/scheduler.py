@@ -13,7 +13,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from sqlalchemy import select
 
 from ..database import Database
-from ..models import CollectionRun, WeeklyIssue
+from ..models import AICollectionRun, CollectionRun, WeeklyIssue
 
 
 @dataclass(frozen=True, slots=True)
@@ -157,9 +157,206 @@ class CollectionCoordinator:
             return run.id
 
 
+class NewsCoordinator:
+    """Independent coordinator for scheduled news collection with lock and run tracking."""
+
+    def __init__(
+        self,
+        *,
+        database: Database,
+        timezone: ZoneInfo,
+        executor: Callable[[Callable[[], None]], object] = _thread_executor,
+    ) -> None:
+        self._database = database
+        self._timezone = timezone
+        self._executor = executor
+        self._lock = Lock()
+
+    def trigger(self, *, trigger: str = "scheduled_news") -> TriggerResult:
+        if not self._lock.acquire(blocking=False):
+            skipped_id = self._record_skipped(trigger)
+            return TriggerResult(accepted=False, status="running", run_id=skipped_id)
+        run_id = str(uuid.uuid4())
+
+        def job() -> None:
+            import httpx
+            from .news_collection import collect_public_news
+            now = datetime.now(timezone.utc)
+            try:
+                with self._database.sessions() as session:
+                    run = AICollectionRun(
+                        id=run_id,
+                        domain="news",
+                        trigger=trigger,
+                        started_at=now,
+                        status="running",
+                    )
+                    session.add(run)
+                    session.commit()
+                with httpx.Client() as http:
+                    counts = collect_public_news(self._database, http=http, now=now)
+                success_count = sum(1 for v in counts.values() if v > 0)
+                total_sources = len(counts)
+                status = "success" if success_count == total_sources else ("partial" if success_count > 0 else "failed")
+                with self._database.sessions() as session:
+                    run = session.get(AICollectionRun, run_id)
+                    if run is not None:
+                        run.status = status
+                        run.finished_at = datetime.now(timezone.utc)
+                        run.counts_json = counts
+                        session.commit()
+            except Exception as exc:
+                with self._database.sessions() as session:
+                    run = session.get(AICollectionRun, run_id)
+                    if run is not None:
+                        run.status = "failed"
+                        run.finished_at = datetime.now(timezone.utc)
+                        run.error_summary = type(exc).__name__
+                        session.commit()
+            finally:
+                self._lock.release()
+
+        try:
+            self._executor(job)
+        except Exception:
+            self._lock.release()
+            raise
+        return TriggerResult(accepted=True, status="running", run_id=run_id)
+
+    def _record_skipped(self, trigger: str) -> str:
+        with self._database.sessions() as session:
+            run = AICollectionRun(
+                domain="news",
+                trigger=trigger,
+                status="skipped_overlap",
+                started_at=datetime.now(timezone.utc),
+                finished_at=datetime.now(timezone.utc),
+                counts_json={},
+            )
+            session.add(run)
+            session.commit()
+            return run.id
+
+
+class BriefingCoordinator:
+    """Independent coordinator for scheduled AI briefing generation with lock and run tracking."""
+
+    def __init__(
+        self,
+        *,
+        database: Database,
+        ai_client,
+        timezone: ZoneInfo,
+        executor: Callable[[Callable[[], None]], object] = _thread_executor,
+    ) -> None:
+        self._database = database
+        self._ai_client = ai_client
+        self._timezone = timezone
+        self._executor = executor
+        self._lock = Lock()
+
+    def trigger(self, *, trigger: str = "scheduled_briefing") -> TriggerResult:
+        if not self._lock.acquire(blocking=False):
+            skipped_id = self._record_skipped(trigger)
+            return TriggerResult(accepted=False, status="running", run_id=skipped_id)
+        run_id = str(uuid.uuid4())
+
+        def job() -> None:
+            from .briefings import BriefingService
+            from ..models import AIReport, NewsItem
+            now = datetime.now(timezone.utc)
+            cutoff = now - timedelta(hours=24)
+            try:
+                with self._database.sessions() as session:
+                    run = AICollectionRun(
+                        id=run_id,
+                        domain="briefing",
+                        trigger=trigger,
+                        started_at=now,
+                        status="running",
+                    )
+                    session.add(run)
+                    session.commit()
+                # Gather news items for briefing
+                with self._database.sessions() as session:
+                    rows = list(session.scalars(
+                        select(NewsItem)
+                        .where(NewsItem.published_at >= cutoff)
+                        .order_by(NewsItem.importance_score.desc(), NewsItem.published_at.desc())
+                        .limit(50)
+                    ))
+                from ..collector.rss import RSSItem
+                items = [RSSItem(row.source_id, row.canonical_url, row.title, row.summary, row.published_at, row.author_or_publisher, row.content_hash) for row in rows]
+                ai_client = self._ai_client
+                if ai_client is None:
+                    class MissingAI:
+                        def generate(self, **kwargs):
+                            raise RuntimeError("AI provider is not configured")
+                    ai_client = MissingAI()
+                result = BriefingService(ai_client=ai_client).generate(items, now=now)
+                with self._database.sessions() as session:
+                    report = session.scalar(select(AIReport).where(AIReport.report_date == now.date().isoformat()))
+                    if report is None:
+                        report = AIReport(report_date=now.date().isoformat(), window_start=cutoff, window_end=now, status=result.status)
+                        session.add(report)
+                    report.window_start = cutoff
+                    report.window_end = now
+                    report.status = result.status
+                    report.model_provider = "siliconflow" if result.model else None
+                    report.model_name = result.model
+                    report.title = result.title
+                    report.summary_markdown = result.summary
+                    report.events_json = [dict(e) if isinstance(e, dict) else {"data": str(e)} for e in result.events]
+                    report.risks_json = list(result.risks)
+                    report.source_ids_json = list(result.source_ids)
+                    report.generated_at = now
+                    report.error_message = None if result.status == "success" else "AI provider unavailable"
+                    session.commit()
+                with self._database.sessions() as session:
+                    run = session.get(AICollectionRun, run_id)
+                    if run is not None:
+                        run.status = result.status
+                        run.finished_at = datetime.now(timezone.utc)
+                        run.counts_json = {"items_used": len(items), "events": len(result.events)}
+                        session.commit()
+            except Exception as exc:
+                with self._database.sessions() as session:
+                    run = session.get(AICollectionRun, run_id)
+                    if run is not None:
+                        run.status = "failed"
+                        run.finished_at = datetime.now(timezone.utc)
+                        run.error_summary = type(exc).__name__
+                        session.commit()
+            finally:
+                self._lock.release()
+
+        try:
+            self._executor(job)
+        except Exception:
+            self._lock.release()
+            raise
+        return TriggerResult(accepted=True, status="running", run_id=run_id)
+
+    def _record_skipped(self, trigger: str) -> str:
+        with self._database.sessions() as session:
+            run = AICollectionRun(
+                domain="briefing",
+                trigger=trigger,
+                status="skipped_overlap",
+                started_at=datetime.now(timezone.utc),
+                finished_at=datetime.now(timezone.utc),
+                counts_json={},
+            )
+            session.add(run)
+            session.commit()
+            return run.id
+
+
 def build_scheduler(
     coordinator: CollectionCoordinator,
     timezone_value: ZoneInfo,
+    news_coordinator: NewsCoordinator | None = None,
+    briefing_coordinator: BriefingCoordinator | None = None,
 ) -> BackgroundScheduler:
     scheduler = BackgroundScheduler(timezone=timezone_value)
     scheduler.add_job(
@@ -180,4 +377,23 @@ def build_scheduler(
         max_instances=1,
         replace_existing=True,
     )
+    if news_coordinator is not None:
+        scheduler.add_job(
+            news_coordinator.trigger,
+            "cron",
+            minute="0,30",
+            id="news-collection",
+            max_instances=1,
+            replace_existing=True,
+        )
+    if briefing_coordinator is not None:
+        scheduler.add_job(
+            briefing_coordinator.trigger,
+            "cron",
+            hour=8,
+            minute=30,
+            id="daily-briefing",
+            max_instances=1,
+            replace_existing=True,
+        )
     return scheduler

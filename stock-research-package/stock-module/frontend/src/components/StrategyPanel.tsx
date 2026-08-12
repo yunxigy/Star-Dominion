@@ -27,6 +27,7 @@ export function StrategyPanel({ items, sources, catalystSymbols, refreshing, onO
           {refreshing ? "运行中…" : "运行策略"}
         </button>
       </div>
+      <div className="research-panel-body">
       {status && status.status !== "ok" && (
         <p className="source-alert">{status.status === "stale" ? "当前使用最近成功策略快照" : "策略尚无可用快照"}</p>
       )}
@@ -47,6 +48,7 @@ export function StrategyPanel({ items, sources, catalystSymbols, refreshing, onO
           </article>
         ))}
         {strategyItems.length === 0 && <p className="panel-empty">暂未生成个人策略候选。</p>}
+      </div>
       </div>
     </aside>
   );

@@ -2,7 +2,7 @@
 
 import asyncio
 from collections.abc import Callable, Mapping
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 import html as html_module
 import re
 from typing import Any, Literal
@@ -144,6 +144,56 @@ def _parse_time(value: Any) -> datetime | None:
         return None
 
 
+def _extract_xhs_note_id(value: Any) -> str | None:
+    if not value:
+        return None
+    match = re.search(
+        r"/(?:explore|discovery/item)/([0-9a-f]{24})(?:[/?#]|$)",
+        str(value),
+        flags=re.IGNORECASE,
+    )
+    return match.group(1) if match else None
+
+
+def _parse_xhs_time(value: Any, platform_id: str, collected_at: datetime) -> datetime | None:
+    """Use the provider time, or the timestamp prefix in an XHS ObjectId-like note id.
+
+    The pinned local RedNote MCP returns note URLs but omits publication time. XHS
+    note ids are 24-character ObjectId-like values whose first four bytes encode
+    creation time, so this fallback keeps those live results chronologically
+    sortable without inventing a time for arbitrary ids.
+    """
+    explicit = _parse_time(value)
+    if explicit is not None:
+        return explicit
+    if not re.fullmatch(r"[0-9a-f]{24}", platform_id, flags=re.IGNORECASE):
+        return None
+    try:
+        candidate = datetime.fromtimestamp(int(platform_id[:8], 16), UTC)
+    except (OverflowError, OSError, ValueError):
+        return None
+    collected_utc = collected_at
+    if collected_utc.tzinfo is None:
+        collected_utc = collected_utc.replace(tzinfo=UTC)
+    else:
+        collected_utc = collected_utc.astimezone(UTC)
+    if candidate < datetime(2020, 1, 1, tzinfo=UTC):
+        return None
+    if candidate > collected_utc + timedelta(days=1):
+        return None
+    return candidate
+
+
+def _newest_first_key(post: MomCollectedPost) -> tuple[int, datetime]:
+    """Sort posts by publication time, keeping undated posts after dated ones."""
+    if post.published_at is None:
+        return (0, datetime.min.replace(tzinfo=UTC))
+    published_at = post.published_at
+    if published_at.tzinfo is None:
+        published_at = published_at.replace(tzinfo=UTC)
+    return (1, published_at)
+
+
 class XiaohongshuMomSource:
     def __init__(
         self,
@@ -169,9 +219,10 @@ class XiaohongshuMomSource:
                     },
                 )
                 for raw in _items(payload):
-                    platform_id = str(raw.get("id") or raw.get("note_id") or "").strip()
-                    title = str(raw.get("title") or raw.get("display_title") or "").strip()
                     url = raw.get("url")
+                    platform_id = str(raw.get("id") or raw.get("note_id") or "").strip()
+                    platform_id = platform_id or _extract_xhs_note_id(url) or ""
+                    title = str(raw.get("title") or raw.get("display_title") or "").strip()
                     dedupe_key = platform_id or str(url) or title
                     if not dedupe_key or not title or dedupe_key in seen:
                         continue
@@ -183,11 +234,18 @@ class XiaohongshuMomSource:
                             platform_id=platform_id or dedupe_key,
                             title=title,
                             url=url,
-                            published_at=_parse_time(raw.get("publish_time") or raw.get("published_at")),
+                            published_at=_parse_xhs_time(
+                                raw.get("publish_time")
+                                or raw.get("published_at")
+                                or raw.get("created_at")
+                                or raw.get("time"),
+                                platform_id,
+                                collected_at,
+                            ),
                             collected_at=collected_at,
                         )
                     )
-        return posts
+        return sorted(posts, key=_newest_first_key, reverse=True)
 
     def collect(self) -> SourceCollection:
         collected_at = self._clock()

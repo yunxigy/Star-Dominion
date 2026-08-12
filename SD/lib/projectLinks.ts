@@ -8,6 +8,7 @@ export interface ProjectLink {
   textColor: string;
   arrowColor: string;
   external?: boolean;
+  requiresAuth?: boolean;
 }
 
 export const PROJECT_LINKS: ProjectLink[] = [
@@ -62,5 +63,6 @@ export const PROJECT_LINKS: ProjectLink[] = [
     textColor: 'group-hover:text-[#4d5b33]',
     arrowColor: 'text-[#5f6f42]',
     external: true,
+    requiresAuth: true,
   },
 ];

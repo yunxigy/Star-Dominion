@@ -540,19 +540,15 @@
       return div.innerHTML;
     }
 
-    const token = 'central-cookie';
+    // Authentication is provided by auth.js via the site session cookie.
     Auth.loadUser().then((current) => {
       if (!current) window.location.href = Auth.loginUrl(window.location.pathname + window.location.search);
     });
-    if (!token) {
-      window.location.href = '/login.html';
-    }
-
     const urlParams = new URLSearchParams(window.location.search);
     const sessionId = urlParams.get('session');
 
     if (!sessionId) {
-      window.location.href = '/stories.html';
+      window.location.href = navigateUrl('/stories.html');
     }
 
     let sessionData = null;
@@ -567,13 +563,13 @@
       try {
         // 加载会话
         const sessionRes = await fetch(`/api/stories/sessions/${sessionId}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         sessionData = await sessionRes.json();
 
         // 加载故事
         const storyRes = await fetch(`/api/stories/${sessionData.story_id}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         storyData = await storyRes.json();
 
@@ -601,7 +597,7 @@
     async function checkFavorite() {
       try {
         const res = await fetch(`/api/stories/${sessionData.story_id}/favorite`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         const data = await res.json();
         isFavorited = data.favorited;
@@ -616,7 +612,7 @@
       try {
         const res = await fetch(`/api/stories/${sessionData.story_id}/favorite`, {
           method: 'POST',
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         const data = await res.json();
         isFavorited = data.favorited;
@@ -636,7 +632,7 @@
     async function loadRating() {
       try {
         const res = await fetch(`/api/stories/${sessionData.story_id}/rate`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         const data = await res.json();
         userRating = data.rating || 0;
@@ -675,7 +671,6 @@
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
             },
             body: JSON.stringify({ rating })
           });
@@ -696,7 +691,7 @@
       try {
         const res = await fetch(`/api/stories/${sessionData.story_id}/share`, {
           method: 'POST',
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         const data = await res.json();
         document.getElementById('share-code').textContent = data.share_code;
@@ -721,7 +716,7 @@
       toggleExportMenu();
       try {
         const res = await fetch(`/api/stories/${sessionData.story_id}/export?format=${format}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         const data = await res.json();
 
@@ -758,7 +753,7 @@
     async function loadBranches() {
       try {
         const res = await fetch(`/api/stories/sessions/${sessionId}/branches`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         branches = await res.json();
         renderBranches();
@@ -827,7 +822,7 @@
     async function loadMessages() {
       try {
         const response = await fetch(`/api/stories/sessions/${sessionId}/messages`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         const messages = await response.json();
 
@@ -904,7 +899,6 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
             session_id: sessionId,
@@ -948,7 +942,6 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
             session_id: sessionId,

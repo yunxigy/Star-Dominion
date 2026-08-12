@@ -33,7 +33,8 @@ class Settings:
     xhs_mcp_command: tuple[str, ...] = (
         "npx.cmd" if os.name == "nt" else "npx",
         "-y",
-        "@sillyl12324/xhs-mcp@2.7.0",
+        "rednote-mcp@0.2.3",
+        "--stdio",
     )
     market_proxy: str | None = None
     mom_refresh_time: str = "08:30"
@@ -83,7 +84,7 @@ class Settings:
         default_xhs_executable = "npx.cmd" if os.name == "nt" else "npx"
         xhs_command_text = os.environ.get(
             "STOCK_XHS_MCP_COMMAND",
-            f"{default_xhs_executable} -y @sillyl12324/xhs-mcp@2.7.0",
+            f"{default_xhs_executable} -y rednote-mcp@0.2.3 --stdio",
         )
         catalyst_command = _worker_command_from_env(
             "CATALYST_WORKER_COMMAND_JSON",

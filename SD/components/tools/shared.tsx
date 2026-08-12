@@ -55,9 +55,10 @@ export const UploadZone: React.FC<{
   accept?: string;
   label?: string;
   sublabel?: string;
-}> = ({ onUpload, onDropFiles, accept, label = '拖拽或点击上传文件', sublabel }) => (
+  compact?: boolean;
+}> = ({ onUpload, onDropFiles, accept, label = '拖拽或点击上传文件', sublabel, compact }) => (
   <div
-    className="border-2 border-dashed border-[#c79f72] bg-[#fff4e6]/70 rounded-xl p-10 text-center cursor-pointer hover:border-[#9a5a28] hover:bg-[#f1dcc2]/70 transition-colors"
+    className={`border-2 border-dashed border-[#c79f72] bg-[#fff4e6]/70 rounded-xl text-center cursor-pointer hover:border-[#9a5a28] hover:bg-[#f1dcc2]/70 transition-colors ${compact ? 'p-4' : 'p-10'}`}
     onClick={onUpload}
     onDragOver={e => { e.preventDefault(); e.stopPropagation(); }}
     onDrop={e => { e.preventDefault(); e.stopPropagation(); if (e.dataTransfer.files.length && onDropFiles) onDropFiles(e.dataTransfer.files); }}
@@ -77,16 +78,18 @@ export const UploadZone: React.FC<{
 export const Btn: React.FC<{
   onClick: () => void;
   disabled?: boolean;
-  variant?: 'primary' | 'danger' | 'ghost';
+  variant?: 'primary' | 'danger' | 'ghost' | 'secondary';
   children: React.ReactNode;
-}> = ({ onClick, disabled, variant = 'primary', children }) => {
+  className?: string;
+}> = ({ onClick, disabled, variant = 'primary', children, className = '' }) => {
   const base = 'px-4 py-2 rounded-lg text-sm font-medium transition-all disabled:opacity-50';
   const styles = {
     primary: 'bg-[#7a421b] text-[#fff8ef] hover:bg-[#5f3214]',
     danger: 'bg-red-600/15 border border-red-500/30 text-red-700 hover:bg-red-600/25',
     ghost: 'bg-[#f1dcc2] text-[#6f3714] hover:bg-[#ead0ad]',
+    secondary: 'bg-[#ead0ad] text-[#5f3214] hover:bg-[#d8b58e]',
   };
-  return <button onClick={onClick} disabled={disabled} className={`${base} ${styles[variant]}`}>{children}</button>;
+  return <button onClick={onClick} disabled={disabled} className={`${base} ${styles[variant]} ${className}`}>{children}</button>;
 };
 
 // ── 通用 textarea/input ───────────────────────────────────

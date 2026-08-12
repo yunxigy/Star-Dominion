@@ -1,10 +1,12 @@
 from pathlib import Path
+from datetime import datetime, timezone
 
 from fastapi.testclient import TestClient
 
 from research_reports.collector.types import TrendingRepository
 from research_reports.config import Settings
 from research_reports.main import create_app
+from research_reports.models import ContentSource, NewsItem
 from research_reports.site_auth import SiteIdentity, SiteAuthRejected
 
 
@@ -122,3 +124,40 @@ def test_overlapping_manual_collection_returns_conflict(tmp_path: Path) -> None:
 
     assert first.status_code == 202
     assert second.status_code == 409
+
+
+def test_social_events_joins_news_to_indexed_x_source(tmp_path: Path) -> None:
+    app = _application(tmp_path)
+    now = datetime.now(timezone.utc)
+    with app.state.database.sessions() as session:
+        indexed = ContentSource(kind="x_indexed", name="Indexed X", url="https://example.test/x")
+        regular = ContentSource(kind="news_report", name="Regular News", url="https://example.test/news")
+        session.add_all([indexed, regular])
+        session.flush()
+        session.add_all(
+            [
+                NewsItem(
+                    source_id=indexed.id,
+                    canonical_url="https://x.com/post/1",
+                    title="Indexed social event",
+                    summary="A public post",
+                    published_at=now,
+                    content_hash="x" * 64,
+                ),
+                NewsItem(
+                    source_id=regular.id,
+                    canonical_url="https://news.example/story/1",
+                    title="Regular news",
+                    summary="A regular story",
+                    published_at=now,
+                    content_hash="n" * 64,
+                ),
+            ]
+        )
+        session.commit()
+
+    with TestClient(app) as client:
+        response = client.get("/api/v1/news/social-events")
+
+    assert response.status_code == 200
+    assert [item["title"] for item in response.json()["items"]] == ["Indexed social event"]

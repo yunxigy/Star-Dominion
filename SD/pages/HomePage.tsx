@@ -7,6 +7,13 @@ import { CATEGORIES, TOOLS } from '../tools/registry';
 import { getIcon } from '../lib/iconMap';
 import { AdSlot } from '../components/AdSlot';
 import { PROJECT_LINKS } from '../lib/projectLinks';
+import { useAuth } from '../context/AuthContext';
+import {
+  HOME_CATEGORY_DESCRIPTION_CLASS,
+  HOME_CATEGORY_TITLE_CLASS,
+  HOME_HOT_TOOL_DESCRIPTION_CLASS,
+  HOME_HOT_TOOL_TITLE_CLASS,
+} from './toolUiLayout';
 
 const HOT_TOOLS = [
   'merge-pdf', 'compress-image', 'json-format', 'bmi-calculator',
@@ -76,6 +83,7 @@ const TypewriterText: React.FC<{ texts: string[] }> = ({ texts }) => {
 };
 
 export const HomePage: React.FC = () => {
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { openTool } = useToolRunner();
   const [searchQuery, setSearchQuery] = useState('');
@@ -145,8 +153,8 @@ export const HomePage: React.FC = () => {
 
           <div className="flex gap-3 flex-wrap">
             {[
-              { icon: Sparkles, value: '128+', label: '在线工具', color: 'text-[#9a5a28]' },
-              { icon: BarChart3, value: '11', label: '工具分类', color: 'text-[#5f6f42]' },
+              { icon: Sparkles, value: `${TOOLS.length}+`, label: '在线工具', color: 'text-[#9a5a28]' },
+              { icon: BarChart3, value: `${CATEGORIES.length}`, label: '工具分类', color: 'text-[#5f6f42]' },
               { icon: Star, value: '常用', label: '快捷访问', color: 'text-[#b77932]' },
               { icon: Shield, value: '本地优先', label: '隐私保护', color: 'text-[#9f4b5f]' },
             ].map((stat, index) => (
@@ -237,10 +245,10 @@ export const HomePage: React.FC = () => {
                 <div className={`tool-icon inline-flex p-3 rounded-lg bg-gradient-to-br ${tool.gradient} mb-3`}>
                   <IconComponent className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="tool-name text-lg font-bold text-[#2f241b] truncate">
+                <h3 className={`tool-name ${HOME_HOT_TOOL_TITLE_CLASS} truncate`}>
                   {tool.name}
                 </h3>
-                <p className="text-base text-[#6d5a47] mt-1.5 line-clamp-2">
+                <p className={HOME_HOT_TOOL_DESCRIPTION_CLASS}>
                   {tool.description}
                 </p>
               </motion.button>
@@ -278,7 +286,7 @@ export const HomePage: React.FC = () => {
                         <IconComponent className="w-6 h-6 text-white" />
                       </div>
                       <div>
-                        <h3 className="text-xl font-bold text-[#2f241b] group-hover:text-[#6f3714] transition-colors">
+                        <h3 className={`${HOME_CATEGORY_TITLE_CLASS} group-hover:text-[#6f3714] transition-colors`}>
                           {category.name}
                         </h3>
                         <span className="text-sm text-[#6d5a47]">{toolCount} 个工具</span>
@@ -286,7 +294,7 @@ export const HomePage: React.FC = () => {
                     </div>
                     <ArrowRight className="w-5 h-5 text-[#9d8268] group-hover:text-[#8a4b1f] group-hover:translate-x-1 transition-all" />
                   </div>
-                  <p className="text-base text-[#6d5a47] line-clamp-2">
+                  <p className={HOME_CATEGORY_DESCRIPTION_CLASS}>
                     {category.description}
                   </p>
                 </Link>
@@ -325,7 +333,19 @@ export const HomePage: React.FC = () => {
             );
 
             return project.external ? (
-              <a key={project.path} href={project.path} target="_blank" rel="noopener noreferrer" className={className}>
+              <a
+                key={project.path}
+                href={project.path}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={(event) => {
+                  if (project.requiresAuth && !authLoading && !user) {
+                    event.preventDefault();
+                    navigate(`/auth/login?next=${encodeURIComponent(project.path)}`);
+                  }
+                }}
+                className={className}
+              >
                 {content}
               </a>
             ) : (

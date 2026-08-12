@@ -5,7 +5,7 @@ export interface ToolDef {
   name: string;
   description: string;
   icon: string;
-  category: 'pdf' | 'image' | 'converter' | 'dev' | 'calc' | 'fun' | 'image-enhance' | 'test' | 'tarot' | 'mouse' | 'document' | 'audio';
+  category: 'pdf' | 'image' | 'converter' | 'dev' | 'calc' | 'fun' | 'image-enhance' | 'test' | 'tarot' | 'mouse' | 'document' | 'audio' | 'office' | 'academic' | 'general' | 'data';
   color: 'red' | 'emerald' | 'violet' | 'amber' | 'cyan' | 'pink' | 'blue' | 'lime' | 'indigo';
   gradient: string;
   glow: string;
@@ -16,6 +16,14 @@ export interface ToolDef {
   status?: 'stable' | 'beta' | 'experimental';
   /** 搜索标签（拼音、别名） */
   tags?: string[];
+  /** 测评二级分组 */
+  assessmentGroup?: 'fun' | 'personality' | 'orientation';
+  /** 测评题量 */
+  questionCount?: number;
+  /** 预计完成分钟数 */
+  estimatedMinutes?: number;
+  /** 是否属于需要额外提示与可跳题的敏感主题 */
+  sensitive?: boolean;
 }
 
 // ── PDF 工具 ──────────────────────────────────────────────
@@ -131,6 +139,15 @@ const ProcrastinationTest = React.lazy(() => import('../components/tools/test/Pr
 const SocialAnxietyTest = React.lazy(() => import('../components/tools/test/SocialAnxietyTest'));
 const LearningStyleTest = React.lazy(() => import('../components/tools/test/LearningStyleTest'));
 const EmotionalStabilityTest = React.lazy(() => import('../components/tools/test/EmotionalStabilityTest'));
+const AnimalPersonalityTest = React.lazy(() => import('../components/tools/test/AnimalPersonalityTest'));
+const ColorPersonalityTest = React.lazy(() => import('../components/tools/test/ColorPersonalityTest'));
+const LifeEnergyTest = React.lazy(() => import('../components/tools/test/LifeEnergyTest'));
+const CommunicationStyleTest = React.lazy(() => import('../components/tools/test/CommunicationStyleTest'));
+const EmotionalIntelligenceTest = React.lazy(() => import('../components/tools/test/EmotionalIntelligenceTest'));
+const CoreValuesTest = React.lazy(() => import('../components/tools/test/CoreValuesTest'));
+const OrientationSpectrumTest = React.lazy(() => import('../components/tools/test/OrientationSpectrumTest'));
+const RomanticOrientationTest = React.lazy(() => import('../components/tools/test/RomanticOrientationTest'));
+const IntimacyBoundariesTest = React.lazy(() => import('../components/tools/test/IntimacyBoundariesTest'));
 
 // ── 塔罗/星座 ──────────────────────────────────────────────
 const DailyTarot = React.lazy(() => import('../components/tools/tarot/DailyTarot'));
@@ -167,15 +184,75 @@ const TextToSpeech = React.lazy(() => import('../components/tools/document/TextT
 const CaseConverter = React.lazy(() => import('../components/tools/document/CaseConverter'));
 const WordCount = React.lazy(() => import('../components/tools/document/WordCount'));
 const TextDiff = React.lazy(() => import('../components/tools/document/TextDiff'));
+const DocumentConversionCenter = React.lazy(() => import('../components/tools/document/DocumentConversionCenter'));
 
 // ── 音频处理 ───────────────────────────────────────────────
 const AudioConverter = React.lazy(() => import('../components/tools/audio/AudioConverter'));
 const NcmConverter = React.lazy(() => import('../components/tools/audio/NcmConverter'));
 const VoiceChanger = React.lazy(() => import('../components/tools/audio/VoiceChanger'));
 
+// ── 数据处理（新） ────────────────────────────────────────
+const ExcelCsvWorkbench = React.lazy(() => import('../components/tools/data/ExcelCsvWorkbench'));
+const BatchFileProcessor = React.lazy(() => import('../components/tools/data/BatchFileProcessor'));
+const FileChecksum = React.lazy(() => import('../components/tools/data/FileChecksum'));
+const PrivacyCleaner = React.lazy(() => import('../components/tools/data/PrivacyCleaner'));
+
+// ── 办公工具（新） ────────────────────────────────────────
+const InvoiceOrganizer = React.lazy(() => import('../components/tools/office/InvoiceOrganizer'));
+const SpreadsheetDiff = React.lazy(() => import('../components/tools/office/SpreadsheetDiff'));
+const SmartCleaner = React.lazy(() => import('../components/tools/office/SmartCleaner'));
+const WordFormatChecker = React.lazy(() => import('../components/tools/office/WordFormatChecker'));
+const ContractReviewer = React.lazy(() => import('../components/tools/office/ContractReviewer'));
+const FormatConverter = React.lazy(() => import('../components/tools/office/FormatConverter'));
+const EmailAttachmentSorter = React.lazy(() => import('../components/tools/office/EmailAttachmentSorter'));
+const CalendarTool = React.lazy(() => import('../components/tools/office/CalendarTool'));
+
+// ── 学术工具（新） ────────────────────────────────────────
+const ThesisFormatChecker = React.lazy(() => import('../components/tools/academic/ThesisFormatChecker'));
+const ReferenceWorkbench = React.lazy(() => import('../components/tools/academic/ReferenceWorkbench'));
+const FormulaEditor = React.lazy(() => import('../components/tools/academic/FormulaEditor'));
+const ImageTableToExcel = React.lazy(() => import('../components/tools/academic/ImageTableToExcel'));
+const LiteratureNotes = React.lazy(() => import('../components/tools/academic/LiteratureNotes'));
+const PdfAnnotationSummary = React.lazy(() => import('../components/tools/academic/PdfAnnotationSummary'));
+const QuestionScanner = React.lazy(() => import('../components/tools/academic/QuestionScanner'));
+const TermConsistency = React.lazy(() => import('../components/tools/academic/TermConsistency'));
+
+// ── 新增开发者工具 ─────────────────────────────────────────
+const StructDataConverter = React.lazy(() => import('../components/tools/dev/StructDataConverter'));
+const ApiDebugger = React.lazy(() => import('../components/tools/dev/ApiDebugger'));
+const OpenApiTool = React.lazy(() => import('../components/tools/dev/OpenApiTool'));
+const NetworkDiagnostics = React.lazy(() => import('../components/tools/dev/NetworkDiagnostics'));
+const CronTool = React.lazy(() => import('../components/tools/dev/CronTool'));
+const CidrCalculator = React.lazy(() => import('../components/tools/dev/CidrCalculator'));
+const LogAnalyzer = React.lazy(() => import('../components/tools/dev/LogAnalyzer'));
+const EnvDiff = React.lazy(() => import('../components/tools/dev/EnvDiff'));
+const SqlWorkbench = React.lazy(() => import('../components/tools/dev/SqlWorkbench'));
+const EncodingFixer = React.lazy(() => import('../components/tools/dev/EncodingFixer'));
+
+// ── 生活工具（新） ────────────────────────────────────────
+const IdPhoto = React.lazy(() => import('../components/tools/general/IdPhoto'));
+const BarcodeQr = React.lazy(() => import('../components/tools/general/BarcodeQr'));
+const ArchiveViewer = React.lazy(() => import('../components/tools/general/ArchiveViewer'));
+const SubtitleTool = React.lazy(() => import('../components/tools/general/SubtitleTool'));
+const ColorTool = React.lazy(() => import('../components/tools/general/ColorTool'));
+const GeneralUnitConverter = React.lazy(() => import('../components/tools/general/UnitConverter'));
+const PasswordGen = React.lazy(() => import('../components/tools/general/PasswordGen'));
+const GeneralTextDiff = React.lazy(() => import('../components/tools/general/TextDiff'));
+const MarkdownEditor = React.lazy(() => import('../components/tools/general/MarkdownEditor'));
+const VcardQr = React.lazy(() => import('../components/tools/general/VcardQr'));
+
+// ── 新增PDF/文档/图片增强工具 ──────────────────────────────
+const PdfPageEditor = React.lazy(() => import('../components/tools/pdf/PdfPageEditor'));
+const SearchablePdfOcr = React.lazy(() => import('../components/tools/pdf/SearchablePdfOcr'));
+const ScanProcessor = React.lazy(() => import('../components/tools/image-enhance/ScanProcessor'));
+const DocumentDiff = React.lazy(() => import('../components/tools/document/DocumentDiff'));
+
 // ── 注册表 ───────────────────────────────────────────────
 
-export const TOOLS: ToolDef[] = [
+type ToolDefinition = Omit<ToolDef, 'privacy' | 'status'> &
+  Partial<Pick<ToolDef, 'privacy' | 'status'>>;
+
+const TOOL_DEFINITIONS: ToolDefinition[] = [
   // PDF 工具
   { id: 'merge-pdf', name: 'PDF 合并', description: '多个 PDF 合并为一个文件', icon: 'Merge', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: MergePdf, tags: ['hebing', 'merge', 'combine', '拼接'] },
   { id: 'split-pdf', name: 'PDF 拆分', description: '按页码拆分 PDF 文件', icon: 'Scissors', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: SplitPdf, tags: ['chaifen', 'split', '拆开', '分割'] },
@@ -278,7 +355,7 @@ export const TOOLS: ToolDef[] = [
   { id: 'social-media-cover', name: '社交媒体封面', description: '生成社交媒体封面图片', icon: 'Share2', category: 'image-enhance', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: SocialMediaCover },
 
   // 测评中心
-  { id: 'mbti-test', name: 'MBTI 趣味测试', description: 'MBTI 16 型人格趣味测试', icon: 'Brain', category: 'test', color: 'violet', gradient: 'from-violet-600 to-purple-600', glow: 'rgba(139,92,246,0.3)', component: MbtiTest },
+  { id: 'mbti-test', name: 'MBTI 40 题扩展版', description: '从四个偏好维度了解你的性格倾向', icon: 'Brain', category: 'test', color: 'violet', gradient: 'from-violet-600 to-purple-600', glow: 'rgba(139,92,246,0.3)', component: MbtiTest, assessmentGroup: 'personality', questionCount: 40, estimatedMinutes: 8, sensitive: false, tags: ['mbti', '人格', '性格', '40题', '四维偏好'] },
   { id: 'big-five-test', name: '大五人格测试', description: '开放性尽责性外向性宜人性神经质', icon: 'Brain', category: 'test', color: 'violet', gradient: 'from-violet-600 to-purple-600', glow: 'rgba(139,92,246,0.3)', component: BigFiveTest },
   { id: 'enneagram-test', name: '九型人格测试', description: '九型人格类型测试', icon: 'Pentagon', category: 'test', color: 'violet', gradient: 'from-violet-600 to-purple-600', glow: 'rgba(139,92,246,0.3)', component: EnneagramTest },
   { id: 'attachment-style-test', name: '恋爱依恋类型', description: '安全型焦虑型回避型依恋测试', icon: 'HeartHandshake', category: 'test', color: 'violet', gradient: 'from-violet-600 to-purple-600', glow: 'rgba(139,92,246,0.3)', component: AttachmentStyleTest },
@@ -289,6 +366,15 @@ export const TOOLS: ToolDef[] = [
   { id: 'social-anxiety-test', name: '社恐指数测试', description: '社交恐惧程度自测', icon: 'Eye', category: 'test', color: 'violet', gradient: 'from-violet-600 to-purple-600', glow: 'rgba(139,92,246,0.3)', component: SocialAnxietyTest },
   { id: 'learning-style-test', name: '学习风格测试', description: '你是视觉型还是听觉型学习者', icon: 'BookOpen', category: 'test', color: 'violet', gradient: 'from-violet-600 to-purple-600', glow: 'rgba(139,92,246,0.3)', component: LearningStyleTest },
   { id: 'emotional-stability-test', name: '情绪稳定性测试', description: '评估你的情绪稳定程度', icon: 'Activity', category: 'test', color: 'violet', gradient: 'from-violet-600 to-purple-600', glow: 'rgba(139,92,246,0.3)', component: EmotionalStabilityTest },
+  { id: 'animal-personality-test', name: '动物人格测试', description: '18 个生活场景，看看你更像哪种动物伙伴', icon: 'Brain', category: 'test', color: 'pink', gradient: 'from-orange-500 to-pink-500', glow: 'rgba(236,72,153,0.3)', component: AnimalPersonalityTest, privacy: 'local', status: 'stable', assessmentGroup: 'fun', questionCount: 18, estimatedMinutes: 4, sensitive: false, tags: ['动物人格', '趣味测试', 'animal', '性格'] },
+  { id: 'color-personality-test', name: '色彩人格测试', description: '从情境选择中发现你的代表色与行动气质', icon: 'Palette', category: 'test', color: 'pink', gradient: 'from-rose-500 to-orange-500', glow: 'rgba(244,114,182,0.3)', component: ColorPersonalityTest, privacy: 'local', status: 'stable', assessmentGroup: 'fun', questionCount: 18, estimatedMinutes: 4, sensitive: false, tags: ['色彩人格', '颜色测试', '趣味', 'color'] },
+  { id: 'life-energy-test', name: '生活能量类型', description: '探索你补充能量、投入行动和恢复节奏的方式', icon: 'Activity', category: 'test', color: 'pink', gradient: 'from-amber-500 to-rose-500', glow: 'rgba(251,146,60,0.3)', component: LifeEnergyTest, privacy: 'local', status: 'stable', assessmentGroup: 'fun', questionCount: 18, estimatedMinutes: 4, sensitive: false, tags: ['生活能量', '恢复方式', '趣味', 'energy'] },
+  { id: 'communication-style-test', name: '沟通风格测试', description: '了解你的直接、分析、共情与协作倾向', icon: 'MessageSquare', category: 'test', color: 'violet', gradient: 'from-violet-600 to-fuchsia-600', glow: 'rgba(139,92,246,0.3)', component: CommunicationStyleTest, privacy: 'local', status: 'stable', assessmentGroup: 'personality', questionCount: 18, estimatedMinutes: 4, sensitive: false, tags: ['沟通风格', '表达', '协作', 'communication'] },
+  { id: 'emotional-intelligence-test', name: '情绪智力测试', description: '观察自我觉察、调节、共情与关系管理', icon: 'Heart', category: 'test', color: 'violet', gradient: 'from-fuchsia-600 to-violet-600', glow: 'rgba(168,85,247,0.3)', component: EmotionalIntelligenceTest, privacy: 'local', status: 'stable', assessmentGroup: 'personality', questionCount: 18, estimatedMinutes: 4, sensitive: false, tags: ['情绪智力', '情商', '共情', 'eq'] },
+  { id: 'core-values-test', name: '核心价值观测试', description: '发现自主、稳定、成就、连接、探索与贡献偏好', icon: 'Brain', category: 'test', color: 'violet', gradient: 'from-indigo-600 to-violet-600', glow: 'rgba(99,102,241,0.3)', component: CoreValuesTest, privacy: 'local', status: 'stable', assessmentGroup: 'personality', questionCount: 18, estimatedMinutes: 4, sensitive: false, tags: ['核心价值观', '人生选择', '价值排序', 'values'] },
+  { id: 'orientation-spectrum-test', name: '吸引倾向光谱探索', description: '温和观察性吸引方向、低频体验与探索状态', icon: 'Eye', category: 'test', color: 'indigo', gradient: 'from-rose-500 to-indigo-600', glow: 'rgba(99,102,241,0.3)', component: OrientationSpectrumTest, privacy: 'local', status: 'stable', assessmentGroup: 'orientation', questionCount: 18, estimatedMinutes: 4, sensitive: true, tags: ['吸引倾向', '性取向探索', '光谱', 'orientation'] },
+  { id: 'romantic-orientation-test', name: '浪漫倾向探索', description: '分开观察浪漫心动、深度连接与低频体验', icon: 'Heart', category: 'test', color: 'indigo', gradient: 'from-pink-500 to-indigo-600', glow: 'rgba(99,102,241,0.3)', component: RomanticOrientationTest, privacy: 'local', status: 'stable', assessmentGroup: 'orientation', questionCount: 18, estimatedMinutes: 4, sensitive: true, tags: ['浪漫倾向', '浪漫吸引', '关系探索', 'romantic'] },
+  { id: 'intimacy-boundaries-test', name: '亲密边界风格', description: '了解自主、靠近、透明沟通与渐进节奏偏好', icon: 'ShieldCheck', category: 'test', color: 'indigo', gradient: 'from-teal-600 to-indigo-600', glow: 'rgba(79,70,229,0.3)', component: IntimacyBoundariesTest, privacy: 'local', status: 'stable', assessmentGroup: 'orientation', questionCount: 18, estimatedMinutes: 4, sensitive: true, tags: ['亲密边界', '关系边界', '沟通', 'intimacy'] },
 
   // 塔罗/星座
   { id: 'daily-tarot', name: '每日塔罗', description: '抽取今日塔罗牌运势', icon: 'Sparkles', category: 'tarot', color: 'blue', gradient: 'from-blue-600 to-indigo-600', glow: 'rgba(59,130,246,0.3)', component: DailyTarot },
@@ -325,12 +411,73 @@ export const TOOLS: ToolDef[] = [
   { id: 'case-converter', name: '大小写转换', description: '英文文本大小写批量转换', icon: 'CaseSensitive', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: CaseConverter },
   { id: 'word-count', name: '字数统计', description: '统计文本字数、词数、行数', icon: 'FileText', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: WordCount },
   { id: 'text-diff', name: '文本对比', description: '对比两段文本的差异之处', icon: 'GitCompare', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: TextDiff },
+  { id: 'document-conversion-center', name: '文档转换中心', description: 'PDF、Office、Markdown、HTML、OCR 真实转换与批量打包', icon: 'FileArchive', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: DocumentConversionCenter, privacy: 'backend-upload', status: 'beta', tags: ['文档', '转换', 'word', 'pdf', 'excel', 'ppt', 'ocr', '批量', 'zip'] },
 
   // ── 音频处理 ───────────────────────────────────────────
   { id: 'audio-converter', name: '音频格式转换', description: 'MP3/WAV/OGG/WebM 格式互转', icon: 'AudioLines', category: 'audio', color: 'pink', gradient: 'from-pink-600 to-rose-600', glow: 'rgba(236,72,153,0.3)', component: AudioConverter, privacy: 'local', status: 'stable', tags: ['yinpin', 'mp3', 'wav', 'ogg', 'webm', 'geishi', '音频', '格式'] },
   { id: 'ncm-converter', name: 'NCM 转换器', description: '网易云音乐 NCM 解密为 MP3/FLAC', icon: 'Headphones', category: 'audio', color: 'pink', gradient: 'from-pink-600 to-rose-600', glow: 'rgba(236,72,153,0.3)', component: NcmConverter, privacy: 'local', status: 'stable', tags: ['ncm', 'wangyiyun', 'netease', 'jiami', 'jiemi', '网易云', '解密', '音乐'] },
   { id: 'voice-changer', name: '音频变声器', description: '调节音调速度实现变声效果', icon: 'Music', category: 'audio', color: 'pink', gradient: 'from-pink-600 to-rose-600', glow: 'rgba(236,72,153,0.3)', component: VoiceChanger, privacy: 'local', status: 'stable', tags: ['biansheng', 'yin调', 'sudi', '变声', '音调', '速度'] },
+
+  // ── 数据处理（新） ──────────────────────────────────────
+  { id: 'excel-csv-workbench', name: 'Excel/CSV 工作台', description: 'Excel/CSV 数据查看、筛选、排序、统计', icon: 'Table', category: 'data', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: ExcelCsvWorkbench, privacy: 'local', status: 'stable', tags: ['excel', 'csv', 'shuju', '数据', '表格', 'shaixuan', '筛选'] },
+  { id: 'pdf-page-editor', name: 'PDF 页面编辑器', description: 'PDF 页面预览、排序、旋转、删除', icon: 'FileInput', category: 'data', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: PdfPageEditor, privacy: 'local', status: 'stable', tags: ['pdf', 'yemian', '页面', '编辑', 'paixu', '排序'] },
+  { id: 'scan-processor', name: '扫描件处理中心', description: '扫描件增强、裁剪、纠偏、灰度化', icon: 'Scan', category: 'data', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: ScanProcessor, privacy: 'local', status: 'stable', tags: ['saomiao', '扫描', 'zengqiang', '增强', 'jiaopian', '纠偏'] },
+  { id: 'searchable-pdf-ocr', name: 'PDF OCR 文字提取', description: '识别普通或扫描PDF并按页导出文字', icon: 'FileSearch', category: 'data', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: SearchablePdfOcr, privacy: 'local', status: 'beta', tags: ['ocr', 'shibie', '识别', 'pdf', 'sousuo', '搜索'] },
+  { id: 'document-diff', name: 'Word/PDF 文档对比', description: '对比两份文档内容差异', icon: 'GitCompare', category: 'data', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: DocumentDiff, privacy: 'local', status: 'stable', tags: ['duibi', '对比', 'word', 'pdf', 'chayi', '差异'] },
+  { id: 'batch-file-processor', name: '批量文件处理', description: '批量重命名、格式转换、压缩', icon: 'Files', category: 'data', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: BatchFileProcessor, privacy: 'local', status: 'stable', tags: ['piliang', '批量', 'chongmingming', '重命名', 'geshi', '格式'] },
+  { id: 'file-checksum', name: '文件校验中心', description: '计算文件 MD5/SHA 哈希校验值', icon: 'ShieldCheck', category: 'data', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: FileChecksum, privacy: 'local', status: 'stable', tags: ['jiaoyan', '校验', 'hash', 'md5', 'sha', 'wajian', '文件'] },
+  { id: 'privacy-cleaner', name: '隐私清理中心', description: '清除文件元数据和隐私信息', icon: 'ShieldOff', category: 'data', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: PrivacyCleaner, privacy: 'local', status: 'stable', tags: ['yinsi', '隐私', 'qingli', '清理', 'exif', 'yuanjushuju', '元数据'] },
+
+  // ── 办公工具（新） ──────────────────────────────────────
+  { id: 'invoice-organizer', name: '发票整理助手', description: '本地OCR提取发票字段、分类并导出CSV', icon: 'Receipt', category: 'office', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: InvoiceOrganizer, privacy: 'local', status: 'beta', tags: ['fapiao', '发票', 'zhengli', '整理', 'guilei', '归类'] },
+  { id: 'spreadsheet-diff', name: '表格差异对比', description: '对比两个 Excel/CSV 表格差异', icon: 'GitCompare', category: 'office', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: SpreadsheetDiff, privacy: 'local', status: 'stable', tags: ['biaoge', '表格', 'duibi', '对比', 'chayi', '差异', 'excel'] },
+  { id: 'smart-cleaner', name: '表格智能清洗', description: '去重、补空、格式化、异常值处理', icon: 'Sparkles', category: 'office', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: SmartCleaner, privacy: 'local', status: 'stable', tags: ['qingxi', '清洗', 'quchong', '去重', 'bukong', '补空'] },
+  { id: 'word-format-check', name: 'Word 格式检查', description: '检查 Word 文档格式规范性', icon: 'FileCheck', category: 'office', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: WordFormatChecker, privacy: 'local', status: 'stable', tags: ['word', 'geshi', '格式', 'jiancha', '检查', 'guifan', '规范'] },
+  { id: 'contract-reviewer', name: '合同审阅辅助', description: '基于规则的合同关键条款检测（基础版，非AI分析）', icon: 'FileText', category: 'office', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: ContractReviewer, privacy: 'local', status: 'beta', tags: ['hetong', '合同', 'shenyue', '审阅', 'tiaokuan', '条款', 'fengxian', '风险'] },
+  { id: 'format-converter', name: 'Markdown/HTML 转换', description: 'Markdown与HTML格式互转（暂不支持Word）', icon: 'ArrowRightLeft', category: 'office', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: FormatConverter, privacy: 'local', status: 'beta', tags: ['markdown', 'html', 'zhuanhuan', '转换', 'geshi', '格式'] },
+  { id: 'email-attachment-sorter', name: '邮件附件整理', description: '批量提取、归类邮件附件', icon: 'Mail', category: 'office', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: EmailAttachmentSorter, privacy: 'local', status: 'stable', tags: ['youjian', '邮件', 'fujian', '附件', 'zhengli', '整理'] },
+  { id: 'calendar-file-tool', name: '日历文件工具', description: 'ICS 日历文件生成与解析', icon: 'Calendar', category: 'office', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: CalendarTool, privacy: 'local', status: 'stable', tags: ['rili', '日历', 'ics', 'ical', 'richeng', '日程'] },
+
+  // ── 学术工具（新） ──────────────────────────────────────
+  { id: 'thesis-format-checker', name: '论文格式检查器', description: '检查论文格式是否符合规范要求', icon: 'GraduationCap', category: 'academic', color: 'violet', gradient: 'from-violet-600 to-purple-600', glow: 'rgba(139,92,246,0.3)', component: ThesisFormatChecker, privacy: 'local', status: 'stable', tags: ['lunwen', '论文', 'geshi', '格式', 'jiancha', '检查', 'guifan', '规范'] },
+  { id: 'reference-workbench', name: '参考文献工作台', description: 'GB/T 7714/APA/MLA 格式生成与管理', icon: 'BookOpen', category: 'academic', color: 'violet', gradient: 'from-violet-600 to-purple-600', glow: 'rgba(139,92,246,0.3)', component: ReferenceWorkbench, privacy: 'local', status: 'stable', tags: ['cankao', '参考', 'wenxian', '文献', 'geishi', '格式', 'gbt7714', 'apa', 'mla'] },
+  { id: 'formula-editor', name: '公式编辑与转换', description: 'LaTeX 公式编辑、预览与格式转换', icon: 'Sigma', category: 'academic', color: 'violet', gradient: 'from-violet-600 to-purple-600', glow: 'rgba(139,92,246,0.3)', component: FormulaEditor, privacy: 'local', status: 'stable', tags: ['gongshi', '公式', 'latex', 'bianji', '编辑', 'zhuanhuan', '转换'] },
+  { id: 'image-table-to-excel', name: '图片表格转 Excel', description: '识别图片中的表格并转为 Excel', icon: 'Table', category: 'academic', color: 'violet', gradient: 'from-violet-600 to-purple-600', glow: 'rgba(139,92,246,0.3)', component: ImageTableToExcel, privacy: 'local', status: 'beta', tags: ['tupian', '图片', 'biaoge', '表格', 'excel', 'shibie', '识别', 'ocr'] },
+  { id: 'literature-notes', name: '文献阅读笔记', description: '文献摘录、笔记管理与导出', icon: 'NotebookPen', category: 'academic', color: 'violet', gradient: 'from-violet-600 to-purple-600', glow: 'rgba(139,92,246,0.3)', component: LiteratureNotes, privacy: 'local', status: 'stable', tags: ['wenxian', '文献', 'biji', '笔记', 'zhailu', '摘录', 'daochu', '导出'] },
+  { id: 'pdf-annotation-summary', name: 'PDF 批注汇总', description: '提取 PDF 中所有批注和高亮', icon: 'MessageSquare', category: 'academic', color: 'violet', gradient: 'from-violet-600 to-purple-600', glow: 'rgba(139,92,246,0.3)', component: PdfAnnotationSummary, privacy: 'local', status: 'stable', tags: ['pdf', 'pizhu', '批注', 'gaoliang', '高亮', 'huizong', '汇总'] },
+  { id: 'question-scanner', name: '题目扫描整理', description: '扫描试卷提取题目并分类整理', icon: 'ClipboardList', category: 'academic', color: 'violet', gradient: 'from-violet-600 to-purple-600', glow: 'rgba(139,92,246,0.3)', component: QuestionScanner, privacy: 'local', status: 'stable', tags: ['timu', '题目', 'saomiao', '扫描', 'shijuan', '试卷', 'zhengli', '整理'] },
+  { id: 'term-consistency-checker', name: '中英文术语一致性检查', description: '检查文档中术语翻译的一致性', icon: 'Languages', category: 'academic', color: 'violet', gradient: 'from-violet-600 to-purple-600', glow: 'rgba(139,92,246,0.3)', component: TermConsistency, privacy: 'local', status: 'stable', tags: ['shuyu', '术语', 'yizhixing', '一致性', 'fanyi', '翻译', 'zhongying', '中英'] },
+
+  // ── 新增开发者工具 ──────────────────────────────────────
+  { id: 'struct-data-converter', name: '结构化数据转换器', description: 'JSON/YAML/TOML/CSV 格式互转', icon: 'ArrowRightLeft', category: 'dev', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: StructDataConverter, privacy: 'local', status: 'stable', tags: ['json', 'yaml', 'toml', 'csv', 'zhuanhuan', '转换', 'jiegou', '结构'] },
+  { id: 'api-debugger', name: 'API 调试工作台', description: 'HTTP 请求调试与响应查看', icon: 'Globe', category: 'dev', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: ApiDebugger, privacy: 'local', status: 'stable', tags: ['api', 'http', 'qingqiu', '请求', 'xiangying', '响应', 'tiaoshi', '调试'] },
+  { id: 'open-api-tool', name: 'OpenAPI 文档工具', description: '解析JSON/YAML格式的OpenAPI与Swagger文档', icon: 'BookOpen', category: 'dev', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: OpenApiTool, privacy: 'local', status: 'beta', tags: ['openapi', 'swagger', 'api', 'wendang', '文档', 'jiexi', '解析'] },
+  { id: 'network-diagnostics', name: '网络诊断中心', description: 'DNS/Ping/端口/SSL 诊断工具', icon: 'Wifi', category: 'dev', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: NetworkDiagnostics, privacy: 'local', status: 'stable', tags: ['wangluo', '网络', 'dns', 'ping', 'duankou', '端口', 'ssl', 'zhenduan', '诊断'] },
+  { id: 'cron-tool', name: 'Cron 表达式工具', description: 'Cron 表达式生成、解析与下次执行时间', icon: 'Clock', category: 'dev', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: CronTool, privacy: 'local', status: 'stable', tags: ['cron', 'biaodashi', '表达式', 'dingshi', '定时', 'renwu', '任务'] },
+  { id: 'cidr-calculator', name: 'CIDR/子网计算器', description: 'IP 子网划分与 CIDR 计算', icon: 'Network', category: 'dev', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: CidrCalculator, privacy: 'local', status: 'stable', tags: ['cidr', 'ziwang', '子网', 'ip', 'jisuan', '计算', 'wangluo', '网络'] },
+  { id: 'log-analyzer', name: '日志分析器', description: '日志文件解析、过滤与统计', icon: 'FileSearch', category: 'dev', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: LogAnalyzer, privacy: 'local', status: 'stable', tags: ['rizhi', '日志', 'fenxi', '分析', 'guolv', '过滤', 'tongji', '统计'] },
+  { id: 'env-diff', name: '环境变量对比', description: '对比两个 .env 文件的差异', icon: 'GitCompare', category: 'dev', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: EnvDiff, privacy: 'local', status: 'stable', tags: ['env', 'huanjing', '环境', 'bianliang', '变量', 'duibi', '对比'] },
+  { id: 'sql-workbench', name: 'SQL 数据工作台', description: 'SQL 语句编写、执行与结果查看', icon: 'Database', category: 'dev', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: SqlWorkbench, privacy: 'local', status: 'beta', tags: ['sql', 'shuju', '数据', 'chaxun', '查询', 'gongzuotai', '工作台'] },
+  { id: 'encoding-fixer', name: '编码与乱码修复', description: '检测文件编码并修复乱码问题', icon: 'Code', category: 'dev', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: EncodingFixer, privacy: 'local', status: 'stable', tags: ['bianma', '编码', 'luanma', '乱码', 'xiufu', '修复', 'gbk', 'utf8'] },
+
+  // ── 生活工具（新） ──────────────────────────────────────
+  { id: 'id-photo', name: '证件照处理', description: '证件照裁剪、换底色、排版', icon: 'User', category: 'general', color: 'cyan', gradient: 'from-cyan-600 to-sky-600', glow: 'rgba(6,182,212,0.3)', component: IdPhoto, privacy: 'local', status: 'stable', tags: ['zhengjianzhao', '证件照', 'caijian', '裁剪', 'dise', '底色', 'paiban', '排版'] },
+  { id: 'barcode-qr', name: '条码/二维码生成与扫描', description: '生成条形码、二维码及扫码识别', icon: 'QrCode', category: 'general', color: 'cyan', gradient: 'from-cyan-600 to-sky-600', glow: 'rgba(6,182,212,0.3)', component: BarcodeQr, privacy: 'local', status: 'stable', tags: ['tiaoma', '条码', 'qrcode', 'erweima', '二维码', 'shengcheng', '生成', 'saomiao', '扫描'] },
+  { id: 'archive-viewer', name: '压缩包预览与处理', description: '预览 ZIP 压缩包内容与文件列表', icon: 'Archive', category: 'general', color: 'cyan', gradient: 'from-cyan-600 to-sky-600', glow: 'rgba(6,182,212,0.3)', component: ArchiveViewer, privacy: 'local', status: 'stable', tags: ['yasuo', '压缩', 'zip', 'yulan', '预览', 'jieya', '解压'] },
+  { id: 'subtitle-tool', name: '字幕文件工具', description: 'SRT/VTT/ASS 字幕格式转换与时间调整', icon: 'Subtitles', category: 'general', color: 'cyan', gradient: 'from-cyan-600 to-sky-600', glow: 'rgba(6,182,212,0.3)', component: SubtitleTool, privacy: 'local', status: 'stable', tags: ['zimu', '字幕', 'srt', 'vtt', 'ass', 'zhuanhuan', '转换', 'shijian', '时间'] },
+  { id: 'color-tool', name: '颜色工具', description: 'HEX/RGB/HSL 转换与 WCAG 对比度检查', icon: 'Palette', category: 'general', color: 'cyan', gradient: 'from-cyan-600 to-sky-600', glow: 'rgba(6,182,212,0.3)', component: ColorTool, privacy: 'local', status: 'stable', tags: ['yanse', '颜色', 'hex', 'rgb', 'hsl', 'duibidu', '对比度', 'wcag'] },
+  { id: 'unit-converter-full', name: '全能单位换算器', description: '10 大分类完整单位换算工具', icon: 'ArrowLeftRight', category: 'general', color: 'cyan', gradient: 'from-cyan-600 to-sky-600', glow: 'rgba(6,182,212,0.3)', component: GeneralUnitConverter, privacy: 'local', status: 'stable', tags: ['danwei', '单位', 'huansuan', '换算', 'changdu', '长度', 'zhongliang', '重量', 'wendu', '温度'] },
+  { id: 'password-gen', name: '密码生成器', description: '安全随机密码生成与强度评估', icon: 'Key', category: 'general', color: 'cyan', gradient: 'from-cyan-600 to-sky-600', glow: 'rgba(6,182,212,0.3)', component: PasswordGen, privacy: 'local', status: 'stable', tags: ['mima', '密码', 'shengcheng', '生成', 'anquan', '安全', 'qiangdu', '强度'] },
+  { id: 'text-diff-advanced', name: '文本差异对比', description: 'LCS 算法精确对比与字符级高亮', icon: 'GitCompare', category: 'general', color: 'cyan', gradient: 'from-cyan-600 to-sky-600', glow: 'rgba(6,182,212,0.3)', component: GeneralTextDiff, privacy: 'local', status: 'stable', tags: ['wenben', '文本', 'duibi', '对比', 'chayi', '差异', 'diff'] },
+  { id: 'markdown-editor', name: 'Markdown 编辑器', description: 'Markdown 编辑、预览与导出', icon: 'FileCode', category: 'general', color: 'cyan', gradient: 'from-cyan-600 to-sky-600', glow: 'rgba(6,182,212,0.3)', component: MarkdownEditor, privacy: 'local', status: 'stable', tags: ['markdown', 'bianji', '编辑', 'yulan', '预览', 'daochu', '导出'] },
+  { id: 'vcard-qr', name: '二维码名片生成', description: 'vCard 名片生成与二维码编码', icon: 'Contact', category: 'general', color: 'cyan', gradient: 'from-cyan-600 to-sky-600', glow: 'rgba(6,182,212,0.3)', component: VcardQr, privacy: 'local', status: 'stable', tags: ['vcard', 'mingpian', '名片', 'erweima', '二维码', 'lianxifangshi', '联系方式'] },
 ];
+
+export const TOOLS: ToolDef[] = TOOL_DEFINITIONS.map((tool) => ({
+  privacy: 'local',
+  status: 'stable',
+  ...tool,
+}));
 
 export const CATEGORIES = [
   { id: 'pdf', name: 'PDF 工具', description: 'PDF 处理、转换、编辑', icon: 'FileText', color: 'red', gradient: 'from-red-600 to-rose-600' },
@@ -345,6 +492,10 @@ export const CATEGORIES = [
   { id: 'mouse', name: '鼠标测试', description: 'CPS、DPI、反应速度、抖动', icon: 'MousePointerClick', color: 'lime', gradient: 'from-lime-600 to-green-600' },
   { id: 'document', name: '文档处理', description: 'OCR、翻译、查重、语法检查', icon: 'FileEdit', color: 'indigo', gradient: 'from-indigo-600 to-blue-600' },
   { id: 'audio', name: '音频处理', description: '格式转换、NCM解密、变声', icon: 'AudioLines', color: 'pink', gradient: 'from-pink-600 to-rose-600' },
+  { id: 'data', name: '数据处理', description: 'Excel/CSV处理、文件校验、批量操作', icon: 'Table', color: 'red', gradient: 'from-red-600 to-rose-600' },
+  { id: 'office', name: '办公工具', description: '发票整理、表格对比、合同审阅', icon: 'Briefcase', color: 'amber', gradient: 'from-amber-600 to-orange-600' },
+  { id: 'academic', name: '学术工具', description: '论文检查、参考文献、公式编辑', icon: 'GraduationCap', color: 'violet', gradient: 'from-violet-600 to-purple-600' },
+  { id: 'general', name: '生活工具', description: '证件照、条码、压缩包、字幕', icon: 'Home', color: 'cyan', gradient: 'from-cyan-600 to-sky-600' },
 ] as const;
 
 export function getToolsByCategory(category: string): ToolDef[] {

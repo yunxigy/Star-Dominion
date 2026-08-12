@@ -119,3 +119,57 @@ class CollectionRunPage(ApiModel):
     items: list[CollectionRunPublic]
     next_cursor: str | None = None
 
+
+
+class AICatalogRepository(ApiModel):
+    id: str
+    full_name: str
+    html_url: str
+    description: str | None
+    primary_language: str | None
+    category: str
+    score: int
+    reasons: list[str]
+    stars_total: int
+    stars_since_weekly: int
+
+
+class AICatalogResponse(ApiModel):
+    category: str
+    items: list[AICatalogRepository]
+    updated_at: datetime | None
+
+
+class NewsItemPublic(ApiModel):
+    id: str
+    source_id: str
+    canonical_url: str
+    title: str
+    summary: str | None
+    published_at: datetime
+    author_or_publisher: str | None
+    topics: list[str]
+    importance_score: int
+    status: str
+
+
+class NewsPage(ApiModel):
+    items: list[NewsItemPublic]
+    next_cursor: str | None = None
+
+
+class BriefingPublic(ApiModel):
+    id: str
+    report_date: str
+    window_start: datetime
+    window_end: datetime
+    status: str
+    model_provider: str | None
+    model_name: str | None
+    title: str | None
+    summary_markdown: str | None
+    events: list[dict[str, Any]] = []
+    risks: list[str] = []
+    source_ids: list[str]
+    generated_at: datetime | None
+    error_message: str | None

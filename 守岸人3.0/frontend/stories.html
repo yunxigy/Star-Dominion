@@ -394,31 +394,23 @@
       return div.innerHTML;
     }
 
-    const token = 'central-cookie';
+    // Authentication is provided by auth.js via the site session cookie.
     let user = null;
 
     Auth.loadUser().then((current) => {
       user = current;
       if (!current) {
-        window.location.href = Auth.loginUrl('/stories.html');
+        window.location.href = Auth.loginUrl(navigateUrl('/stories.html'));
+        return;
       }
+      document.getElementById('user-info').style.display = 'flex';
+      document.getElementById('username').textContent = current.username;
+      document.getElementById('login-link').style.display = 'none';
+      loadMySessions();
     });
 
-    console.log('Token:', token ? token.substring(0, 20) + '...' : 'null');
-    console.log('User:', user);
-
-    if (user) {
-      document.getElementById('user-info').style.display = 'flex';
-      document.getElementById('username').textContent = user.username;
-      document.getElementById('login-link').style.display = 'none';
-    } else {
-      console.log('User not logged in');
-    }
-
-    function logout() {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.reload();
+    async function logout() {
+      await Auth.logout();
     }
 
     let stories = [];
@@ -461,10 +453,10 @@
 
     // 加载我的剧情会话
     async function loadMySessions() {
-      if (!token) return;
+      if (!Auth.isLoggedIn()) return;
       try {
         const response = await fetch('/api/stories/user/sessions', {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         const sessions = await response.json();
 
@@ -472,7 +464,7 @@
           document.getElementById('my-sessions').style.display = 'block';
           document.getElementById('sessions-list').innerHTML = sessions.map(s => `
             <div class="session-card" style="position:relative;">
-              <div onclick="window.location.href='/story-play.html?session=${escapeHtml(s.id)}'" style="cursor:pointer;">
+              <div onclick="window.location.href=navigateUrl('/story-play.html?session=${escapeHtml(s.id)}')" style="cursor:pointer;">
                 <div class="session-title">${escapeHtml(s.story_title)}</div>
                 <div class="session-meta">
                   ${s.protagonist_name ? `主角：${escapeHtml(s.protagonist_name)}` : ''}
@@ -497,7 +489,7 @@
       try {
         const response = await fetch(`/api/stories/sessions/${sessionId}`, {
           method: 'DELETE',
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
 
         if (response.ok) {
@@ -539,12 +531,11 @@
     // 开始剧情
     async function startStory() {
       console.log('startStory called');
-      console.log('token:', token ? 'exists' : 'null');
       console.log('selectedStory:', selectedStory);
 
-      if (!token) {
+      if (!Auth.isLoggedIn()) {
         alert('请先登录');
-        window.location.href = '/login.html';
+        window.location.href = navigateUrl('/login.html');
         return;
       }
 
@@ -567,7 +558,6 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
             story_id: selectedStory.id,
@@ -579,7 +569,7 @@
         const data = await response.json();
 
         if (response.ok) {
-          window.location.href = `/story-play.html?session=${data.session.id}`;
+          window.location.href = navigateUrl(`/story-play.html?session=${data.session.id}`);
         } else {
           alert(data.detail || '开始失败');
           btn.textContent = originalText;
@@ -595,8 +585,8 @@
 
     // 打开创建故事弹窗
     function openCreateModal() {
-      if (!token) {
-        window.location.href = '/login.html';
+      if (!Auth.isLoggedIn()) {
+        window.location.href = navigateUrl('/login.html');
         return;
       }
       document.getElementById('create-modal').classList.add('active');
@@ -625,7 +615,6 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({
             title,
@@ -652,7 +641,6 @@
 
     // 初始化
     loadStories();
-    loadMySessions();
   </script>
 </body>
 </html>

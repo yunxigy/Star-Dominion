@@ -164,6 +164,7 @@ const defaultKline = {
 };
 
 beforeEach(() => {
+  vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ status: 200 }));
   mocks.loadCurrentMorningReport.mockResolvedValue(structuredClone(currentReport));
   mocks.loadMorningReportHistory.mockResolvedValue({
     items: [{ report_date: "2026-07-22", generated_at: "2026-07-22T09:02:00+08:00" }],
@@ -190,13 +191,23 @@ beforeEach(() => {
 
 afterEach(() => {
   cleanup();
+  vi.unstubAllGlobals();
   Object.values(mocks).forEach((mock) => mock.mockReset());
+});
+
+test("blocks the stock workspace when the unified site session is missing", async () => {
+  vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ status: 401 }));
+  render(<App />);
+
+  expect(await screen.findByRole("heading", { name: "请先登录" })).toBeInTheDocument();
+  expect(screen.getByRole("link", { name: "前往统一登录" })).toHaveAttribute("href", expect.stringContaining("/auth/login"));
+  expect(screen.queryByRole("heading", { name: "九点猫研 · 今日晨报" })).not.toBeInTheDocument();
 });
 
 test("keeps API configuration visible in the workspace header", async () => {
   render(<App />);
 
-  fireEvent.click(screen.getByRole("button", { name: "API 配置" }));
+  fireEvent.click(await screen.findByRole("button", { name: "API 配置" }));
   expect(await screen.findByRole("heading", { name: "模型与 API 设置" })).toBeInTheDocument();
 });
 
@@ -207,6 +218,28 @@ test("shows 九点猫研 as the primary workspace and removes anchor navigation"
   expect(screen.getByText("昨夜美股 → 今日 A 股")).toBeInTheDocument();
   expect(screen.getByRole("heading", { name: "我的选股策略" })).toBeInTheDocument();
   expect(screen.queryByRole("link", { name: "候选雷达" })).not.toBeInTheDocument();
+});
+
+test("uses a dedicated fixed-height shell for the stock workspace", async () => {
+  render(<App />);
+
+  await screen.findByRole("button", { name: /API/ });
+  expect(document.querySelector("main.stock-workbench-shell")).toBeInTheDocument();
+  expect(document.querySelector(".research-main-grid")).toBeInTheDocument();
+});
+
+test("keeps the full mom index row at its natural height", async () => {
+  render(<App />);
+
+  await screen.findByRole("heading", { name: "宝妈指数" });
+  expect(document.querySelector(".dashboard-top-grid")).toHaveClass("dashboard-top-grid--natural");
+});
+
+test("does not render the retired 九研与策略交叉命中 panel", async () => {
+  render(<App />);
+
+  await screen.findByRole("heading", { name: "我的选股策略" });
+  expect(screen.queryByRole("heading", { name: /\u4ea4\u53c9\u547d\u4e2d/ })).not.toBeInTheDocument();
 });
 
 test("renders every market theme summary on its own row", async () => {
@@ -221,7 +254,7 @@ test("shows no more than eight important news summaries", async () => {
   render(<App />);
 
   await screen.findByRole("heading", { name: "盘后至开盘前重要消息" });
-  expect(screen.getAllByTestId("news-summary")).toHaveLength(6);
+  expect(await screen.findAllByTestId("news-summary")).toHaveLength(6);
   expect(screen.getByRole("button", { name: "阅读每日报纸" })).toBeInTheDocument();
 });
 
@@ -252,7 +285,7 @@ test("keeps personal strategy visible when the morning report fails", async () =
   render(<App />);
 
   expect(await screen.findByRole("heading", { name: "我的选股策略" })).toBeInTheDocument();
-  expect(screen.getByText("海康威视")).toBeInTheDocument();
+  expect(await screen.findByText("海康威视")).toBeInTheDocument();
   expect(screen.getByText("晨报暂不可用")).toBeInTheDocument();
 });
 
@@ -312,6 +345,7 @@ test("closes the research modal with Escape and restores trigger focus", async (
 test("renders the full report and returns without losing the workbench", async () => {
   render(<App />);
 
+  await screen.findByRole("heading", { name: "九点猫研 · 今日晨报" });
   fireEvent.click(await screen.findByRole("button", { name: "阅读每日报纸" }));
 
   expect(await screen.findByRole("heading", { name: "九点猫研每日报纸" })).toBeInTheDocument();

@@ -4,9 +4,9 @@
 
 **Goal:** Replace the three-stock search stub with a persisted full Shanghai/Shenzhen main-board directory and turn the Mom Index placeholder into a real Eastmoney plus Xiaohongshu dashboard with scheduled and administrator-triggered refresh.
 
-**Architecture:** FastAPI remains the only public stock API. Network and browser collection run behind focused adapters and background coordinators; SQLite repositories atomically retain the last valid stock directory and real Mom Index snapshots. Xiaohongshu runs through pinned `@sillyl12324/xhs-mcp@2.7.0` over local stdio, with read-only tool allowlisting and a private persistent data directory.
+**Architecture:** FastAPI remains the only public stock API. Network and browser collection run behind focused adapters and background coordinators; SQLite repositories atomically retain the last valid stock directory and real Mom Index snapshots. Xiaohongshu runs through the Playwright `rednote-mcp` package over local stdio, with a stable `xhs_*` adapter, read-only tool allowlisting and a private persistent data directory.
 
-**Tech Stack:** Python 3.11, FastAPI, SQLite, AKShare, pypinyin, APScheduler, Python MCP client, `@sillyl12324/xhs-mcp@2.7.0`, Playwright, React 19, TypeScript, Vitest.
+**Tech Stack:** Python 3.11, FastAPI, SQLite, AKShare, pypinyin, APScheduler, Python MCP client, `rednote-mcp`, Playwright, React 19, TypeScript, Vitest.
 
 ---
 
@@ -455,7 +455,7 @@ git commit -m "feat(stock): display real mom index dashboard"
 
 ```dotenv
 STOCK_XHS_DATA_DIR=../data/xhs-mcp
-STOCK_XHS_MCP_COMMAND=npx.cmd -y @sillyl12324/xhs-mcp@2.7.0
+STOCK_XHS_MCP_COMMAND=npx.cmd -y rednote-mcp@0.2.3 --stdio
 STOCK_MARKET_PROXY=
 STOCK_MOM_REFRESH_TIME=08:30
 STOCK_TIMEZONE=Asia/Shanghai

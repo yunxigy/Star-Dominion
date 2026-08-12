@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { ReactNode } from "react";
 
 import {
   loadCandidates,
@@ -17,7 +18,6 @@ import {
   startXhsLogin,
 } from "./api";
 import { AnalysisReport } from "./components/AnalysisReport";
-import { CrossHitSummary } from "./components/CrossHitSummary";
 import { HistoryEvidence } from "./components/HistoryEvidence";
 import { ImportantNews } from "./components/ImportantNews";
 import { ModelSettingsPanel } from "./components/ModelSettingsPanel";
@@ -28,6 +28,7 @@ import { QuickStockLookup } from "./components/QuickStockLookup";
 import { StrategyPanel } from "./components/StrategyPanel";
 import { StockResearchModal } from "./components/StockResearchModal";
 import { WorkspaceHeader } from "./components/WorkspaceHeader";
+import { filterCatalystCandidates, isAuthenticatedResponse } from "./viewRules";
 import type {
   AnalysisTask,
   CandidateResponse,
@@ -44,7 +45,38 @@ type AppView =
 
 const emptyCandidates: CandidateResponse = { items: [], sources: [] };
 
+function StockAccessGate({ children }: { children: ReactNode }) {
+  const [state, setState] = useState<"checking" | "allowed" | "denied">("checking");
+
+  useEffect(() => {
+    let active = true;
+    void fetch("/auth-api/api/v1/session/me", { credentials: "include" })
+      .then((response) => {
+        if (active) setState(isAuthenticatedResponse(response.status) ? "allowed" : "denied");
+      })
+      .catch(() => {
+        if (active) setState("denied");
+      });
+    return () => { active = false; };
+  }, []);
+
+  if (state === "checking") {
+    return <main className="stock-access-gate"><div className="stock-access-card"><span className="section-kicker">股票研究</span><h1>正在验证登录状态</h1><p>股票研究包含个人策略、模型配置和分析结果，正在确认当前账号。</p></div></main>;
+  }
+  if (state === "denied") {
+    const loginUrl = window.location.port === "5175"
+      ? `${window.location.protocol}//${window.location.hostname}:5173/auth/login?next=%2Fstock%2F`
+      : "/auth/login?next=%2Fstock%2F";
+    return <main className="stock-access-gate"><div className="stock-access-card"><span className="section-kicker">股票研究</span><h1>请先登录</h1><p>登录后才能查看九点猫研、宝妈指数、个人策略和个股分析。</p><a className="primary-button" href={loginUrl}>前往统一登录</a></div></main>;
+  }
+  return <>{children}</>;
+}
+
 export default function App() {
+  return <StockAccessGate><StockWorkspace /></StockAccessGate>;
+}
+
+function StockWorkspace() {
   const [view, setView] = useState<AppView>({ kind: "workbench" });
   const [detailSymbol, setDetailSymbol] = useState<string | null>(null);
   const [morningReport, setMorningReport] = useState<MorningReport | null>(null);
@@ -190,14 +222,14 @@ export default function App() {
   };
 
   const loginXhs = async () => {
-    setXhsLoginStatus("正在生成小红书登录二维码…");
+    setXhsLoginStatus("正在打开小红书登录窗口…");
     setXhsQrCode("");
     try {
       let session = await startXhsLogin();
       const qrCode = session.qr_code ?? session.qrCode ?? session.qrCodeUrl ?? "";
       const sessionId = session.session_id ?? session.sessionId;
       setXhsQrCode(qrCode);
-      setXhsLoginStatus(qrCode ? "请使用小红书扫码" : session.message ?? "等待小红书登录");
+      setXhsLoginStatus(qrCode ? "请使用小红书扫码" : session.message ?? "请在打开的浏览器窗口完成登录");
       if (!sessionId) return;
       for (let attempt = 0; attempt < 120; attempt += 1) {
         await new Promise((resolve) => window.setTimeout(resolve, 1500));
@@ -218,10 +250,9 @@ export default function App() {
   };
 
   const catalystSymbols = useMemo(
-    () => new Set(morningReport?.catalyst_candidates.map((item) => item.symbol) ?? []),
+    () => new Set(filterCatalystCandidates(morningReport?.catalyst_candidates ?? []).map((item) => item.symbol)),
     [morningReport],
   );
-
   const openDetail = (symbol: string, trigger?: HTMLElement) => {
     detailTrigger.current = trigger ?? (document.activeElement instanceof HTMLElement ? document.activeElement : null);
     setDetailSymbol(symbol);
@@ -255,10 +286,28 @@ export default function App() {
           onOpenDetail={openDetail}
         />
       ) : (
-        <main className="workbench-shell">
+        <main className="workbench-shell stock-workbench-shell">
           <QuickStockLookup onOpenDetail={openDetail} />
           {refreshMessage && <p className="refresh-message" role="status">{refreshMessage}</p>}
-          <div className="primary-workbench-grid">
+          <div className="dashboard-top-grid dashboard-top-grid--natural">
+            <MomIndexPanel
+              snapshot={momSnapshot}
+              history={momHistory}
+              error={momError}
+              admin={momAdmin ? {
+                refreshing: momRefreshing,
+                onRefresh: () => void refreshMom(),
+                onLogin: () => void loginXhs(),
+                loginStatus: xhsLoginStatus,
+                qrCode: xhsQrCode,
+              } : undefined}
+            />
+            <HistoryEvidence
+              items={morningHistory.items}
+              onOpenReport={openNewspaper}
+            />
+          </div>
+          <div className="research-main-grid">
             <MorningReportPanel
               report={morningReport}
               error={morningError}
@@ -274,33 +323,9 @@ export default function App() {
               onOpenDetail={openDetail}
               onRefresh={() => void refreshAll()}
             />
+            <ImportantNews items={morningReport?.important_news ?? []} onReadNewspaper={() => openNewspaper()} />
           </div>
           {candidateError && <p className="source-alert strategy-source-error" role="alert">个人策略：{candidateError}</p>}
-          <ImportantNews items={morningReport?.important_news ?? []} onReadNewspaper={() => openNewspaper()} />
-          <div className="evidence-grid">
-            <CrossHitSummary
-              catalystCandidates={morningReport?.catalyst_candidates ?? []}
-              candidateItems={candidates.items}
-              onOpenDetail={openDetail}
-            />
-            <HistoryEvidence
-              items={morningHistory.items}
-              candidates={morningReport?.catalyst_candidates ?? []}
-              onOpenReport={openNewspaper}
-            />
-          </div>
-          <MomIndexPanel
-            snapshot={momSnapshot}
-            history={momHistory}
-            error={momError}
-            admin={momAdmin ? {
-              refreshing: momRefreshing,
-              onRefresh: () => void refreshMom(),
-              onLogin: () => void loginXhs(),
-              loginStatus: xhsLoginStatus,
-              qrCode: xhsQrCode,
-            } : undefined}
-          />
           <footer className="research-footer">本模块仅用于研究，不构成投资建议 · 仅覆盖 A 股主板</footer>
         </main>
       )}

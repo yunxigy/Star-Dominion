@@ -5,6 +5,8 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $workspaceRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
+$manifestPath = Join-Path $PSScriptRoot 'local-services.json'
+. (Join-Path $PSScriptRoot 'local-services.ps1')
 $runtimeRoot = Join-Path $workspaceRoot '.runtime'
 $logRoot = Join-Path $runtimeRoot 'logs'
 $envFile = Join-Path $workspaceRoot '.env.local'
@@ -53,27 +55,28 @@ function Wait-ServicePort([int[]]$Ports, $Process, [int]$TimeoutSeconds=30) {
 }
 
 function Start-ManagedService($Service) {
-    $directoryCandidate = if ([System.IO.Path]::IsPathRooted($Service.WorkingDirectory)) {
-        $Service.WorkingDirectory
+    $directoryCandidate = if ([System.IO.Path]::IsPathRooted($Service.working_directory)) {
+        $Service.working_directory
     } else {
-        Join-Path $workspaceRoot $Service.WorkingDirectory
+        Join-Path $workspaceRoot $Service.working_directory
     }
     $workingDirectory = (Resolve-Path -LiteralPath $directoryCandidate).Path
-    $executable = (Get-Command $Service.Executable -ErrorAction Stop).Source
-    $metadataPath = Join-Path $runtimeRoot ($Service.Name + '.json')
+    $executable = (Get-Command $Service.executable -ErrorAction Stop).Source
+    $commandFingerprint = "{0} {1}" -f $Service.executable, ($Service.arguments -join ' ')
+    $metadataPath = Join-Path $runtimeRoot ($Service.name + '.json')
     $existingMetadata = $null
     if (Test-Path -LiteralPath $metadataPath -PathType Leaf) {
         $existingMetadata = Get-Content -Raw -LiteralPath $metadataPath -Encoding utf8 | ConvertFrom-Json
     }
 
-    foreach ($port in $Service.Ports) {
+    foreach ($port in $Service.ports) {
         $listenerPid = Get-ListeningProcessId $port
         if ($null -eq $listenerPid) { continue }
         if ($null -ne $existingMetadata -and $listenerPid -eq [int]$existingMetadata.pid) {
-            Write-Host ("SKIP {0,-18} already running on {1}" -f $Service.Name, $port)
+            Write-Host ("SKIP {0,-18} already running on {1}" -f $Service.name, $port)
             return
         }
-        throw "Port $port is already owned by unrelated PID $listenerPid; $($Service.Name) was not started."
+        throw "Port $port is already owned by unrelated PID $listenerPid; $($Service.name) was not started."
     }
 
     if ($null -ne $existingMetadata) {
@@ -81,10 +84,10 @@ function Start-ManagedService($Service) {
         if ($null -eq $stale) { Remove-Item -LiteralPath $metadataPath -Force }
     }
 
-    $stdout = Join-Path $logRoot ($Service.Name + '.out.log')
-    $stderr = Join-Path $logRoot ($Service.Name + '.err.log')
+    $stdout = Join-Path $logRoot ($Service.name + '.out.log')
+    $stderr = Join-Path $logRoot ($Service.name + '.err.log')
     $process = Start-Process -FilePath $executable `
-        -ArgumentList $Service.Arguments `
+        -ArgumentList $Service.arguments `
         -WorkingDirectory $workingDirectory `
         -WindowStyle Hidden `
         -RedirectStandardOutput $stdout `
@@ -92,21 +95,28 @@ function Start-ManagedService($Service) {
         -PassThru
     $process.Refresh()
     [ordered]@{
-        name = $Service.Name
+        name = $Service.name
         pid = $process.Id
         process_start_utc = $process.StartTime.ToUniversalTime().ToString('o')
         working_directory = $workingDirectory
         executable = $executable
-        ports = @($Service.Ports)
+        command_fingerprint = $commandFingerprint
+        ports = @($Service.ports)
+        health_url = if ($Service.PSObject.Properties['health_url']) { [string]$Service.health_url } else { $null }
     } | ConvertTo-Json | Set-Content -LiteralPath $metadataPath -Encoding utf8
-    Wait-ServicePort -Ports $Service.Ports -Process $process
-    Write-Host ("START {0,-17} PID {1}" -f $Service.Name, $process.Id)
+    Wait-ServicePort -Ports $Service.ports -Process $process
+    Write-Host ("START {0,-17} PID {1}" -f $Service.name, $process.Id)
 }
 
 Import-LocalEnvironment
+$env:PYTHONPATH = if ([string]::IsNullOrWhiteSpace($env:PYTHONPATH)) {
+    $workspaceRoot
+} else {
+    "$workspaceRoot;$($env:PYTHONPATH)"
+}
 New-Item -ItemType Directory -Force -Path $runtimeRoot, $logRoot | Out-Null
 if ([string]::IsNullOrWhiteSpace($env:STOCK_XHS_MCP_COMMAND)) {
-    $env:STOCK_XHS_MCP_COMMAND = 'npx.cmd -y @sillyl12324/xhs-mcp@2.7.0'
+    $env:STOCK_XHS_MCP_COMMAND = 'npx.cmd -y rednote-mcp@0.2.3 --stdio'
 }
 if ([string]::IsNullOrWhiteSpace($env:STOCK_XHS_DATA_DIR)) {
     $env:STOCK_XHS_DATA_DIR = Join-Path $workspaceRoot 'stock-research-package\stock-module\data\xhs-mcp'
@@ -119,25 +129,14 @@ if ([string]::IsNullOrWhiteSpace($shouDirectory)) {
     throw 'ShouAnRen service directory was not found.'
 }
 
-$services = @(
-    [pscustomobject]@{ Name='site-auth'; WorkingDirectory='site-auth'; Executable='python'; Arguments=@('-m','uvicorn','site_auth.main:create_app','--factory','--host','127.0.0.1','--port','8000'); Ports=@(8000) },
-    [pscustomobject]@{ Name='openwrite'; WorkingDirectory='Openwrite-main'; Executable='python'; Arguments=@('start.py'); Ports=@(8001) },
-    [pscustomobject]@{ Name='stock-hub'; WorkingDirectory='stock-research-package/stock-module/backend'; Executable='python'; Arguments=@('-m','uvicorn','app.main:app','--host','127.0.0.1','--port','8002'); Ports=@(8002) },
-    [pscustomobject]@{ Name='stock-analysis'; WorkingDirectory='stock-research-package/stock-module/analysis-service'; Executable='python'; Arguments=@('-m','uvicorn','analysis_service.main:app','--host','127.0.0.1','--port','8003'); Ports=@(8003) },
-    [pscustomobject]@{ Name='stock-gateway'; WorkingDirectory='stock-research-package/stock-module/backend'; Executable='python'; Arguments=@('-m','uvicorn','app.gateway_main:app','--host','127.0.0.1','--port','8004'); Ports=@(8004) },
-    [pscustomobject]@{ Name='plagiarism'; WorkingDirectory='plagiarism'; Executable='python'; Arguments=@('main.py'); Ports=@(8005) },
-    [pscustomobject]@{ Name='shouanren'; WorkingDirectory=$shouDirectory; Executable='python'; Arguments=@('-m','server.main'); Ports=@(8006) },
-    [pscustomobject]@{ Name='stm32'; WorkingDirectory='4G'; Executable='python'; Arguments=@('4G.py'); Ports=@(8007,8008) },
-    [pscustomobject]@{ Name='research-reports'; WorkingDirectory='research-reports'; Executable='python'; Arguments=@('-m','uvicorn','research_reports.main:create_app','--factory','--host','127.0.0.1','--port','8009'); Ports=@(8009) }
-)
-
-if (-not $WithoutFrontends) {
-    $services += @(
-        [pscustomobject]@{ Name='sd-frontend'; WorkingDirectory='SD'; Executable='node'; Arguments=@('node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','5173'); Ports=@(5173) },
-        [pscustomobject]@{ Name='openwrite-frontend'; WorkingDirectory='Openwrite-main/frontend'; Executable='node'; Arguments=@('node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','5174'); Ports=@(5174) },
-        [pscustomobject]@{ Name='stock-frontend'; WorkingDirectory='stock-research-package/stock-module/frontend'; Executable='node'; Arguments=@('node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','5175'); Ports=@(5175) }
-    )
-}
+$manifest = Get-LocalServiceManifest -Path $manifestPath
+$shouService = @($manifest.services | Where-Object { $_.name -eq 'shouanren' }) | Select-Object -First 1
+if ($null -ne $shouService) { $shouService.working_directory = $shouDirectory }
+$services = @($manifest.services | Where-Object {
+    -not $WithoutFrontends -or
+    -not $_.PSObject.Properties['frontend'] -or
+    $_.frontend -ne $true
+})
 
 foreach ($service in $services) { Start-ManagedService $service }
 Write-Host 'Local services launched. Run scripts/check-local.ps1 after startup completes.'

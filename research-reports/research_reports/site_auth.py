@@ -7,6 +7,13 @@ from dataclasses import dataclass
 from fastapi import HTTPException, Request, status
 import httpx
 
+from shared.site_auth_contract import (
+    FORWARDED_CSRF_HEADER,
+    REQUEST_METHOD_HEADER,
+    SERVICE_KEY_HEADER,
+    build_forwarded_context,
+)
+
 
 @dataclass(frozen=True, slots=True)
 class SiteIdentity:
@@ -48,17 +55,18 @@ class SiteAuthClient:
         origin: str | None = None,
         csrf_header: str | None = None,
     ) -> SiteIdentity:
+        forwarded_headers, cookies = build_forwarded_context(
+            origin=origin,
+            csrf=csrf_cookie,
+            session=session_token,
+        )
         headers = {
-            "X-Site-Service-Key": self._service_key,
-            "X-Site-Request-Method": method.upper(),
+            SERVICE_KEY_HEADER: self._service_key,
+            REQUEST_METHOD_HEADER: method.upper(),
+            **forwarded_headers,
         }
-        if origin:
-            headers["X-Site-Request-Origin"] = origin
         if csrf_header:
-            headers["X-Site-CSRF"] = csrf_header
-        cookies = {"sd_session": session_token}
-        if csrf_cookie:
-            cookies["sd_csrf"] = csrf_cookie
+            headers[FORWARDED_CSRF_HEADER] = csrf_header
         try:
             async with httpx.AsyncClient(
                 base_url=self._base_url,
@@ -116,4 +124,3 @@ async def require_admin(request: Request) -> SiteIdentity:
     if identity.role != "admin":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="需要管理员权限")
     return identity
-

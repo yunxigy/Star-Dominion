@@ -2,6 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Base body styles (moved from index.html inline) */
+body {
+  background-color: #0f172a;
+  color: #e2e8f0;
+  margin: 0;
+  padding: 0;
+}
+
 :root {
   --app-bg: #f4eadc;
   --app-bg-deep: #ead8c2;
@@ -22,14 +30,6 @@
   --berry: #9f4b5f;
   --berry-soft: #f0d2d9;
   --shadow: rgba(91, 56, 25, 0.12);
-}
-
-@font-face {
-  font-family: 'STXinwei';
-  src: url('/STXINWEI.TTF') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
 }
 
 @layer base {
@@ -86,7 +86,14 @@
     linear-gradient(180deg, rgba(250, 239, 222, 0.96) 0%, rgba(244, 230, 211, 0.98) 46%, #ead8c2 100%),
     linear-gradient(135deg, rgba(154, 90, 40, 0.12) 0%, rgba(95, 111, 66, 0.10) 45%, rgba(159, 75, 95, 0.08) 100%);
   color: var(--text);
+  font-size: 1.0625rem;
 }
+
+/* Tool internals use compact utility classes by default; enlarge readable copy in the standalone workspace. */
+.tool-window-bg .text-xs { font-size: .8125rem; }
+.tool-window-bg .text-sm { font-size: .9375rem; }
+.tool-window-bg .text-base { font-size: 1.0625rem; }
+.tool-window-bg .text-lg { font-size: 1.25rem; }
 
 .tool-window-bg .glass-card {
   background: rgba(255, 247, 236, 0.90);

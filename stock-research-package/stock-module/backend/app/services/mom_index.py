@@ -9,7 +9,12 @@ from app.domain.mom_index import (
     MomPostEvidence,
     MomSectorIndex,
 )
-from app.integrations.mom_sources import MomCollectedPost, SECTORS
+from app.integrations.mom_sources import (
+    MomCollectedPost,
+    SECTORS,
+    _extract_xhs_note_id,
+    _parse_xhs_time,
+)
 from app.repositories.mom_index import MomIndexRepository
 
 
@@ -27,6 +32,48 @@ NEWBIE_SIGNALS = (
     (("听博主", "朋友推荐", "听说"), 6),
     (("梭哈", "满仓", "稳赚"), 4),
 )
+
+
+def _evidence_sort_key(item: tuple[MomCollectedPost, float, str, str]) -> tuple[int, datetime, float]:
+    published_at = item[0].published_at
+    if published_at is None:
+        return (0, datetime.min.replace(tzinfo=UTC), item[1])
+    if published_at.tzinfo is None:
+        published_at = published_at.replace(tzinfo=UTC)
+    return (1, published_at, item[1])
+
+
+def _stored_evidence_time(evidence: MomPostEvidence) -> datetime | None:
+    published_at = evidence.published_at
+    if published_at is not None:
+        return published_at
+    if evidence.platform != "xiaohongshu":
+        return None
+    note_id = _extract_xhs_note_id(str(evidence.url)) or evidence.platform_id
+    return _parse_xhs_time(None, note_id, evidence.collected_at)
+
+
+def _stored_evidence_sort_key(evidence: MomPostEvidence) -> tuple[int, datetime]:
+    published_at = _stored_evidence_time(evidence)
+    if published_at is None:
+        return (0, datetime.min.replace(tzinfo=UTC))
+    if published_at.tzinfo is None:
+        published_at = published_at.replace(tzinfo=UTC)
+    return (1, published_at)
+
+
+def _normalise_snapshot(snapshot: MomIndexSnapshot) -> MomIndexSnapshot:
+    """Repair ordering in snapshots written before XHS timestamps were available."""
+    for sector in snapshot.sectors.values():
+        for evidence in sector.top_posts:
+            if evidence.published_at is None:
+                evidence.published_at = _stored_evidence_time(evidence)
+        sector.top_posts = sorted(
+            sector.top_posts,
+            key=_stored_evidence_sort_key,
+            reverse=True,
+        )
+    return snapshot
 
 
 def _classification(title: str) -> tuple[float, str, str]:
@@ -77,7 +124,7 @@ def _sector_index(sector_id: str, posts: list[MomCollectedPost]) -> MomSectorInd
             reasoning=reasoning,
             intent=intent,
         )
-        for post, _, intent, reasoning in sorted(newbies, key=lambda item: item[1], reverse=True)[:3]
+        for post, _, intent, reasoning in sorted(newbies, key=_evidence_sort_key, reverse=True)[:3]
     ]
     return MomSectorIndex(
         sector_id=sector_id,
@@ -135,7 +182,8 @@ class MomIndexService:
         return snapshot
 
     def current(self) -> MomIndexSnapshot | None:
-        return self._repository.current()
+        snapshot = self._repository.current()
+        return _normalise_snapshot(snapshot) if snapshot is not None else None
 
     def history(self, limit: int = 30) -> list[MomIndexSnapshot]:
-        return self._repository.history(limit)
+        return [_normalise_snapshot(snapshot) for snapshot in self._repository.history(limit)]

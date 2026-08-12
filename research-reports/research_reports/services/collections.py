@@ -20,6 +20,7 @@ from ..models import (
     WeeklyIssue,
 )
 from .rankings import classify_status
+from .ai_catalog import persist_ai_catalog
 
 
 class TrendingCollector(Protocol):
@@ -48,6 +49,7 @@ class CollectionService:
         database: Database,
         collector: TrendingCollector,
         categories: tuple[str, ...] = CATEGORIES,
+        metadata_enabled: bool = True,
     ) -> None:
         unknown = set(categories) - set(CATEGORIES)
         if unknown:
@@ -55,6 +57,7 @@ class CollectionService:
         self._database = database
         self._collector = collector
         self._categories = categories
+        self._metadata_enabled = metadata_enabled
 
     def collect_all(
         self,
@@ -103,7 +106,11 @@ class CollectionService:
                 if not rows:
                     raise ValueError("collector returned an empty ranking")
                 self._write_category(issue_id, category, rows, observed)
-                metadata_delayed = self._enrich_metadata(rows, observed)
+                metadata_delayed = (
+                    self._enrich_metadata(rows, observed)
+                    if self._metadata_enabled
+                    else False
+                )
                 results[category] = CategoryCollectionResult(
                     status="success",
                     count=len(rows),
@@ -143,6 +150,12 @@ class CollectionService:
                 }
                 run.error_summary = ", ".join(failed_types) or None
                 session.commit()
+        # Persist AI catalog classification after successful collection
+        if status in ("success", "partial"):
+            try:
+                persist_ai_catalog(self._database, trigger=trigger)
+            except Exception:
+                pass  # AI catalog persistence must not block collection
         return CollectionResult(run_id=run_id, status=status, categories=results)
 
     def _write_category(

@@ -185,6 +185,42 @@ def test_frontend_strips_legacy_bearer_headers() -> None:
     assert "headers.delete('Authorization')" in auth_adapter
 
 
+def test_admin_database_backup_uses_cookie_session_not_query_token() -> None:
+    admin = (ROOT / "frontend" / "admin.html").read_text("utf-8")
+    assert "/api/admin/backup/database?token=" not in admin
+    assert "await response.blob()" in admin
+
+
+def test_frontend_does_not_ship_fake_bearer_session_placeholders() -> None:
+    frontend_source = "\n".join(
+        path.read_text("utf-8")
+        for path in (ROOT / "frontend").rglob("*")
+        if path.suffix in {".html", ".js"}
+    )
+    assert "central-cookie" not in frontend_source
+
+
+def test_authenticated_pages_wait_for_async_user_resolution() -> None:
+    immediate_redirect = "if (!Auth.isLoggedIn()) {\n      window.location.href = navigateUrl('/login.html');\n    }"
+    for name in ("group-chat.html", "voice-chat.html", "story-play.html"):
+        page = (ROOT / "frontend" / name).read_text("utf-8")
+        assert "Auth.loadUser().then" in page
+        assert immediate_redirect not in page
+
+
+def test_stories_loads_private_sessions_after_auth_resolves() -> None:
+    page = (ROOT / "frontend" / "stories.html").read_text("utf-8")
+    auth_callback = page.split("Auth.loadUser().then", 1)[1].split("    });", 1)[0]
+    assert "loadMySessions();" in auth_callback
+    assert "\n    loadMySessions();\n  </script>" not in page
+
+
+def test_auth_pages_do_not_render_user_before_auth_resolves() -> None:
+    for name in ("index.html", "characters.html", "group-chat.html"):
+        page = (ROOT / "frontend" / name).read_text("utf-8")
+        assert "if (user) {" not in page
+
+
 def test_default_backend_port_is_8006() -> None:
     config = (ROOT / "server" / "config.py").read_text("utf-8")
     assert '"port": 8006' in config

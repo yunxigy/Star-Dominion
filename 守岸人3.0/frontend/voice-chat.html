@@ -431,14 +431,10 @@
 
   <script src="/js/auth.js"></script>
   <script>
-    const token = 'central-cookie';
+    // Authentication is provided by auth.js via the site session cookie.
     Auth.loadUser().then((current) => {
       if (!current) window.location.href = Auth.loginUrl(window.location.pathname + window.location.search);
     });
-    if (!token) {
-      window.location.href = '/login.html';
-    }
-
     let ws = null;
     let currentSessionId = null;
     let currentCharacter = null;
@@ -452,7 +448,7 @@
     async function loadCharacters() {
       try {
         const res = await fetch('/api/characters', {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         const characters = await res.json();
         renderCharacterList(characters);
@@ -488,7 +484,6 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({ character_id: characterId })
         });
@@ -504,7 +499,7 @@
 
         // 获取角色信息
         const charRes = await fetch(`/api/characters/${characterId}`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         currentCharacter = await charRes.json();
 
@@ -526,7 +521,7 @@
       try {
         // 先获取一次性 ticket
         const ticketRes = await fetch(`/api/voice-chat/${currentSessionId}/ws-ticket`, {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         if (!ticketRes.ok) {
           alert('获取连接凭证失败，请重试');
@@ -764,7 +759,7 @@
         try {
           await fetch(`/api/voice-chat/${currentSessionId}/stop`, {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}` }
+            headers: {}
           });
         } catch (err) {
           console.error('结束会话失败:', err);
@@ -772,7 +767,7 @@
       }
 
       // 返回首页
-      window.location.href = '/';
+      window.location.href = navigateUrl('/');
     }
 
     // 更新计时器

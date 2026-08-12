@@ -30,5 +30,5 @@ sd-user-strategy-worker = "workers.user_strategy_snapshot:main"
 include = ["app*", "workers*"]
 
 [tool.pytest.ini_options]
-pythonpath = ["."]
+pythonpath = [".", "../../../"]
 testpaths = ["tests"]

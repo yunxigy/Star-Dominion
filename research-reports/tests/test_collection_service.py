@@ -39,6 +39,18 @@ class PartialCollector:
         return [_row(category, "new/python-project")]
 
 
+class MetadataCollector:
+    def __init__(self) -> None:
+        self.metadata_calls = 0
+
+    def fetch_trending(self, category: str):
+        return [_row(category, f"owner/{category}-project")]
+
+    def fetch_metadata(self, full_name: str, *, etag: str | None):
+        self.metadata_calls += 1
+        raise AssertionError(f"metadata should be disabled: {full_name}")
+
+
 def _seed(database) -> str:
     with database.sessions() as session:
         issue = WeeklyIssue(
@@ -125,5 +137,27 @@ def test_same_observation_time_is_idempotent(tmp_path: Path) -> None:
         with database.sessions() as session:
             count = session.scalar(select(func.count()).select_from(HourlyObservation))
         assert count == 1
+    finally:
+        database.dispose()
+
+
+def test_public_collection_skips_optional_metadata_without_token(tmp_path: Path) -> None:
+    database = create_database(tmp_path / "reports.db")
+    collector = MetadataCollector()
+    service = CollectionService(
+        database=database,
+        collector=collector,
+        categories=("all",),
+        metadata_enabled=False,
+    )
+    try:
+        result = service.collect_all(
+            trigger="manual",
+            requested_by=None,
+            observed_at=OBSERVED_AT,
+        )
+        assert result.categories["all"].status == "success"
+        assert result.categories["all"].metadata_delayed is False
+        assert collector.metadata_calls == 0
     finally:
         database.dispose()

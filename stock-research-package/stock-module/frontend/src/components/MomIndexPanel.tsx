@@ -89,7 +89,7 @@ export function MomIndexPanel({ snapshot, history, error, admin }: Props) {
         </div>
         {admin && (
           <div className="mom-admin-actions">
-            <button className="secondary-button" onClick={admin.onLogin}>重新登录小红书</button>
+            <button className="secondary-button" onClick={admin.onLogin}>打开小红书登录窗口</button>
             <button className="refresh-action" disabled={admin.refreshing} onClick={admin.onRefresh}>
               {admin.refreshing ? "正在刷新…" : "立即刷新宝妈指数"}
             </button>

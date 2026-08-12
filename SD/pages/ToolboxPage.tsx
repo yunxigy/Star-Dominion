@@ -7,10 +7,21 @@ import { CATEGORIES, TOOLS, getToolsByCategory } from '../tools/registry';
 import { useToolRunner } from '../components/ToolRunner';
 import { AdSlot } from '../components/AdSlot';
 import { getRecentTools, getFavoriteTools, toggleFavorite, isFavorite } from '../lib/userTools';
+import type { AssessmentGroup } from '../components/tools/test/assessment/types';
+import {
+  ASSESSMENT_GROUPS,
+  filterAssessmentTools,
+  isAssessmentGroup,
+  syncAssessmentParam,
+} from './assessmentToolbox';
+import { getAssessmentBadges } from './assessmentBadges';
+import { getToolCardActionClass, getToolCardContentClass, getToolCardLayoutClass } from './toolCardLayout';
+import { TOOLBOX_CARD_DESCRIPTION_CLASS, TOOLBOX_CARD_TITLE_CLASS } from './toolUiLayout';
 
 export const ToolboxPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [activeCategory, setActiveCategory] = useState<string | null>(null);
+  const [activeAssessmentGroup, setActiveAssessmentGroup] = useState<AssessmentGroup | null>(null);
   const [search, setSearch] = useState('');
   const [favRefresh, setFavRefresh] = useState(0);
   const { openTool } = useToolRunner();
@@ -35,13 +46,38 @@ export const ToolboxPage: React.FC = () => {
   useEffect(() => {
     const searchQuery = searchParams.get('q') || searchParams.get('search');
     const categoryQuery = searchParams.get('category');
-    if (searchQuery) {
-      setSearch(searchQuery);
-    }
-    if (categoryQuery && CATEGORIES.find(c => c.id === categoryQuery)) {
-      setActiveCategory(categoryQuery);
-    }
+    setSearch(searchQuery || '');
+    setActiveCategory(
+      categoryQuery && CATEGORIES.find(c => c.id === categoryQuery)
+        ? categoryQuery
+        : null,
+    );
+    const assessmentQuery = searchParams.get('assessment');
+    setActiveAssessmentGroup(
+      categoryQuery === 'test' && !searchQuery && isAssessmentGroup(assessmentQuery)
+        ? assessmentQuery
+        : null,
+    );
   }, [searchParams]);
+
+  const handleCategoryChange = (category: string | null) => {
+    setActiveCategory(category);
+    setActiveAssessmentGroup(null);
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      if (category) next.set('category', category);
+      else next.delete('category');
+      return syncAssessmentParam(next, category, search, null);
+    }, { replace: true });
+  };
+
+  const handleAssessmentGroupChange = (group: AssessmentGroup | null) => {
+    setActiveAssessmentGroup(group);
+    setSearchParams(
+      prev => syncAssessmentParam(prev, activeCategory, search, group),
+      { replace: true },
+    );
+  };
 
   const displayTools = useMemo(() => {
     if (search.trim()) {
@@ -53,10 +89,13 @@ export const ToolboxPage: React.FC = () => {
       );
     }
     if (activeCategory) {
-      return getToolsByCategory(activeCategory);
+      const categoryTools = getToolsByCategory(activeCategory);
+      return activeCategory === 'test'
+        ? filterAssessmentTools(categoryTools, activeAssessmentGroup)
+        : categoryTools;
     }
     return TOOLS;
-  }, [activeCategory, search]);
+  }, [activeAssessmentGroup, activeCategory, search]);
 
   const activeCatName = activeCategory
     ? CATEGORIES.find(c => c.id === activeCategory)?.name
@@ -90,9 +129,10 @@ export const ToolboxPage: React.FC = () => {
               const val = e.target.value;
               setSearch(val);
               setSearchParams(prev => {
-                if (val) prev.set('q', val);
-                else prev.delete('q');
-                return prev;
+                const next = new URLSearchParams(prev);
+                if (val) next.set('q', val);
+                else next.delete('q');
+                return syncAssessmentParam(next, activeCategory, val, activeAssessmentGroup);
               }, { replace: true });
             }}
             className="w-full pl-12 pr-4 py-4 rounded-xl text-[#2f241b] placeholder-[#8b735c] focus:outline-none text-lg"
@@ -101,7 +141,11 @@ export const ToolboxPage: React.FC = () => {
             <button
               onClick={() => {
                 setSearch('');
-                setSearchParams(prev => { prev.delete('q'); return prev; }, { replace: true });
+                setSearchParams(prev => {
+                  const next = new URLSearchParams(prev);
+                  next.delete('q');
+                  return syncAssessmentParam(next, activeCategory, '', activeAssessmentGroup);
+                }, { replace: true });
               }}
               className="absolute right-4 top-1/2 -translate-y-1/2 text-[#8b735c] hover:text-[#2f241b]"
             >
@@ -115,7 +159,7 @@ export const ToolboxPage: React.FC = () => {
           <Filter className="w-5 h-5 text-[#8b735c]" />
           <select
             value={activeCategory || ''}
-            onChange={(e) => setActiveCategory(e.target.value || null)}
+            onChange={(e) => handleCategoryChange(e.target.value || null)}
             className="px-4 py-4 bg-[#fff4e6] border border-[#d8b58e] rounded-xl text-[#2f241b] focus:outline-none focus:border-[#9a5a28] appearance-none cursor-pointer text-base shadow-sm"
           >
             <option value="">全部分类</option>
@@ -130,7 +174,7 @@ export const ToolboxPage: React.FC = () => {
       {!search.trim() && (
         <div className="flex flex-wrap gap-2">
           <button
-            onClick={() => setActiveCategory(null)}
+            onClick={() => handleCategoryChange(null)}
             className={`px-4 py-2.5 rounded-xl text-base transition-all ${
               !activeCategory
                 ? 'bg-[#7a421b] text-[#fff8ef] border border-[#7a421b]'
@@ -144,7 +188,7 @@ export const ToolboxPage: React.FC = () => {
             return (
               <button
                 key={cat.id}
-                onClick={() => setActiveCategory(cat.id)}
+                onClick={() => handleCategoryChange(cat.id)}
                 className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-base transition-all ${
                   activeCategory === cat.id
                     ? 'bg-[#7a421b] text-[#fff8ef] border border-[#7a421b]'
@@ -199,6 +243,44 @@ export const ToolboxPage: React.FC = () => {
         </div>
       )}
 
+      {/* Assessment Groups */}
+      {!search.trim() && activeCategory === 'test' && (
+        <div className="rounded-2xl border border-[#d8b58e] bg-[#fff8ef] p-3 shadow-sm">
+          <div className="flex flex-wrap items-center gap-2" aria-label="测评分组">
+            <span className="px-2 text-sm font-semibold text-[#7b624d]">按方向筛选</span>
+            <button
+              type="button"
+              onClick={() => handleAssessmentGroupChange(null)}
+              className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
+                activeAssessmentGroup === null
+                  ? 'border-[#7a421b] bg-[#7a421b] text-[#fff8ef]'
+                  : 'border-[#d8b58e] bg-white text-[#6d5a47] hover:border-[#b47a43]'
+              }`}
+            >
+              全部
+            </button>
+            {ASSESSMENT_GROUPS.map(group => (
+              <button
+                key={group.id}
+                type="button"
+                onClick={() => handleAssessmentGroupChange(group.id)}
+                className={`rounded-full border px-4 py-2 text-sm font-semibold transition-colors ${
+                  activeAssessmentGroup === group.id
+                    ? group.id === 'fun'
+                      ? 'border-orange-500 bg-orange-500 text-white'
+                      : group.id === 'personality'
+                        ? 'border-violet-600 bg-violet-600 text-white'
+                        : 'border-rose-600 bg-rose-600 text-white'
+                    : 'border-[#d8b58e] bg-white text-[#6d5a47] hover:border-[#b47a43]'
+                }`}
+              >
+                {group.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Tool Grid */}
       {displayTools.length === 0 ? (
         <div className="empty-state">
@@ -213,38 +295,65 @@ export const ToolboxPage: React.FC = () => {
           {displayTools.map((tool, index) => {
             const ToolIcon = getIcon(tool.icon);
             return (
-              <motion.button
+              <motion.div
                 key={tool.id}
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: Math.min(index * 0.02, 0.5), duration: 0.3 }}
-                onClick={() => openTool(tool.id)}
-                className="w-full text-left group tool-card-enhanced glass-card rounded-2xl p-6"
+                className={getToolCardLayoutClass(tool.category)}
               >
-                <div className="flex items-start gap-4">
-                  <div className={`tool-icon p-3 rounded-xl bg-gradient-to-br ${tool.gradient} shadow-lg shrink-0`}>
-                    <ToolIcon className="w-6 h-6 text-white" />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <div className="flex items-center gap-2">
-                      <h3 className="tool-name text-xl font-bold text-[#2f241b] group-hover:text-[#6f3714] transition-colors truncate">
-                        {tool.name}
-                      </h3>
-                      {tool.privacy === 'third-party-api' && (
-                        <span className="shrink-0 px-1.5 py-0.5 text-[10px] rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">API</span>
-                      )}
-                      {tool.privacy === 'backend-upload' && (
-                        <span className="shrink-0 px-1.5 py-0.5 text-[10px] rounded bg-red-500/20 text-red-400 border border-red-500/30">上传</span>
-                      )}
-                      {tool.status === 'beta' && (
-                        <span className="shrink-0 px-1.5 py-0.5 text-[10px] rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">Beta</span>
+                <div className={getToolCardContentClass(tool.category)}>
+                  <button
+                    type="button"
+                    onClick={() => openTool(tool.id)}
+                    className={getToolCardActionClass(tool.category)}
+                    aria-label={`打开${tool.name}`}
+                  >
+                    <div className={`tool-icon p-3 rounded-xl bg-gradient-to-br ${tool.gradient} shadow-lg shrink-0`}>
+                      <ToolIcon className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex items-center gap-2">
+                        <h3 className={`tool-name ${TOOLBOX_CARD_TITLE_CLASS} group-hover:text-[#6f3714] transition-colors`}>
+                          {tool.name}
+                        </h3>
+                        {tool.privacy === 'third-party-api' && (
+                          <span className="shrink-0 px-1.5 py-0.5 text-[10px] rounded bg-amber-500/20 text-amber-400 border border-amber-500/30">API</span>
+                        )}
+                        {tool.privacy === 'backend-upload' && (
+                          <span className="shrink-0 px-1.5 py-0.5 text-[10px] rounded bg-red-500/20 text-red-400 border border-red-500/30">上传</span>
+                        )}
+                        {tool.status === 'beta' && (
+                          <span className="shrink-0 px-1.5 py-0.5 text-[10px] rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">Beta</span>
+                        )}
+                      </div>
+                      <p className={TOOLBOX_CARD_DESCRIPTION_CLASS}>
+                        {tool.description}
+                      </p>
+                      {tool.category === 'test' && (
+                        <div className="mt-3 flex flex-wrap gap-1.5 text-[11px] font-semibold text-[#725945]">
+                          {getAssessmentBadges(tool.assessmentGroup, tool.questionCount, tool.estimatedMinutes).map((badge) => (
+                            <span key={badge.label} className={`rounded-full px-2.5 py-1 ${
+                              badge.tone === 'fun'
+                                ? 'bg-orange-100 text-orange-800'
+                                : badge.tone === 'personality'
+                                  ? 'bg-violet-100 text-violet-800'
+                                  : badge.tone === 'orientation'
+                                    ? 'bg-rose-100 text-rose-800'
+                                    : 'bg-[#f1dcc2] text-[#725945]'
+                            }`}>
+                              {badge.label}
+                            </span>
+                          ))}
+                          {tool.privacy === 'local' && (
+                            <span className="rounded-full bg-teal-100 px-2.5 py-1 text-teal-800">本地处理</span>
+                          )}
+                        </div>
                       )}
                     </div>
-                    <p className="text-base text-[#6d5a47] mt-2 line-clamp-2">
-                      {tool.description}
-                    </p>
-                  </div>
+                  </button>
                   <button
+                    type="button"
                     onClick={(e) => handleToggleFav(e, tool.id)}
                     className={`shrink-0 p-1.5 rounded-lg transition-all ${
                       isFavorite(tool.id)
@@ -252,11 +361,12 @@ export const ToolboxPage: React.FC = () => {
                         : 'text-[#9d8268] hover:text-[#8a4b1f] hover:bg-[#f1dcc2]'
                     }`}
                     title={isFavorite(tool.id) ? '取消收藏' : '收藏'}
+                    aria-label={`${isFavorite(tool.id) ? '取消收藏' : '收藏'}${tool.name}`}
                   >
                     {isFavorite(tool.id) ? '★' : '☆'}
                   </button>
                 </div>
-              </motion.button>
+              </motion.div>
             );
           })}
         </div>

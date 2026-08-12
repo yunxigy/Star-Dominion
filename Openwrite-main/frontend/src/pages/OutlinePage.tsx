@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useNovelStore } from '../store/novelStore'
 import api from '../api/client'
 
@@ -67,7 +67,7 @@ export default function OutlinePage() {
   const [editing, setEditing] = useState(false)
   const [saving, setSaving] = useState(false)
 
-  const loadOutline = () => {
+  const loadOutline = useCallback(() => {
     if (!currentNovelId) return
     setLoading(true)
     setError('')
@@ -81,11 +81,11 @@ export default function OutlinePage() {
         setError(`加载大纲失败: ${e.response?.data?.detail || e.message}`)
       })
       .finally(() => setLoading(false))
-  }
+  }, [currentNovelId])
 
   useEffect(() => {
     loadOutline()
-  }, [currentNovelId])
+  }, [loadOutline])
 
   const handleSave = async () => {
     if (!currentNovelId) return

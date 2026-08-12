@@ -110,3 +110,95 @@ class CollectionRun(Base):
     categories_json: Mapped[dict[str, object]] = mapped_column(JSON, default=dict)
     error_summary: Mapped[str | None] = mapped_column(Text, nullable=True)
     duration_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
+
+
+class AICatalogEntry(Base):
+    __tablename__ = "ai_catalog_entries"
+    __table_args__ = (
+        UniqueConstraint("issue_id", "repository_id", "category", name="uq_ai_catalog_entry"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    issue_id: Mapped[str] = mapped_column(ForeignKey("weekly_issues.id"), index=True)
+    repository_id: Mapped[str] = mapped_column(ForeignKey("repositories.id"), index=True)
+    category: Mapped[str] = mapped_column(String(48), index=True)
+    score: Mapped[int] = mapped_column(Integer, default=0)
+    reasons_json: Mapped[list[str]] = mapped_column(JSON, default=list)
+    status: Mapped[str] = mapped_column(String(32), default="active", index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+
+
+class AICatalogRun(Base):
+    __tablename__ = "ai_catalog_runs"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    trigger: Mapped[str] = mapped_column(String(32), index=True)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    status: Mapped[str] = mapped_column(String(32), default="running", index=True)
+    counts_json: Mapped[dict[str, object]] = mapped_column(JSON, default=dict)
+    error_summary: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+
+class ContentSource(Base):
+    __tablename__ = "content_sources"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    kind: Mapped[str] = mapped_column(String(32), index=True)
+    name: Mapped[str] = mapped_column(String(128), unique=True)
+    url: Mapped[str] = mapped_column(String(1024))
+    enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    last_success_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    last_error: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+
+class NewsItem(Base):
+    __tablename__ = "news_items"
+    __table_args__ = (
+        UniqueConstraint("source_id", "content_hash", name="uq_news_source_hash"),
+    )
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    source_id: Mapped[str] = mapped_column(ForeignKey("content_sources.id"), index=True)
+    canonical_url: Mapped[str] = mapped_column(String(1024), index=True)
+    title: Mapped[str] = mapped_column(Text)
+    summary: Mapped[str | None] = mapped_column(Text, nullable=True)
+    published_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), index=True)
+    fetched_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+    author_or_publisher: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    topics_json: Mapped[list[str]] = mapped_column(JSON, default=list)
+    importance_score: Mapped[int] = mapped_column(Integer, default=0)
+    content_hash: Mapped[str] = mapped_column(String(64), index=True)
+    status: Mapped[str] = mapped_column(String(32), default="candidate", index=True)
+
+
+class AIReport(Base):
+    __tablename__ = "ai_reports"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    report_date: Mapped[str] = mapped_column(String(10), unique=True, index=True)
+    window_start: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    window_end: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    status: Mapped[str] = mapped_column(String(32), default="generating", index=True)
+    model_provider: Mapped[str | None] = mapped_column(String(64), nullable=True)
+    model_name: Mapped[str | None] = mapped_column(String(128), nullable=True)
+    title: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    summary_markdown: Mapped[str | None] = mapped_column(Text, nullable=True)
+    events_json: Mapped[list[dict]] = mapped_column(JSON, default=list)
+    risks_json: Mapped[list[str]] = mapped_column(JSON, default=list)
+    source_ids_json: Mapped[list[str]] = mapped_column(JSON, default=list)
+    generated_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    error_message: Mapped[str | None] = mapped_column(Text, nullable=True)
+
+
+class AICollectionRun(Base):
+    __tablename__ = "ai_collection_runs"
+
+    id: Mapped[str] = mapped_column(String(36), primary_key=True, default=_uuid)
+    domain: Mapped[str] = mapped_column(String(32), index=True)
+    trigger: Mapped[str] = mapped_column(String(32), index=True)
+    started_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=_utcnow)
+    finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    status: Mapped[str] = mapped_column(String(32), default="running", index=True)
+    counts_json: Mapped[dict[str, object]] = mapped_column(JSON, default=dict)
+    error_summary: Mapped[str | None] = mapped_column(Text, nullable=True)

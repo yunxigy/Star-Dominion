@@ -12,13 +12,11 @@ root repository at `E:\AI\gp\.git`. Their nested Git metadata was removed on
 
 ## Runtime integration
 
-The Mom Index uses the published npm package
-`@sillyl12324/xhs-mcp@2.7.0`, sourced from
-`https://github.com/ShunL12324/xhs-mcp`. It is pinned at runtime and is not
-vendored into this repository. The upstream package declares the MIT license.
-The stock service exposes only its authentication and read-only search/detail
-tools; publishing, commenting, liking, collecting, following, and other write
-operations are rejected by the local allowlist.
+The Mom Index uses the published npm package `rednote-mcp` in Playwright stdio
+mode. It is not vendored into this repository. The stock service keeps a stable
+`xhs_*` adapter and exposes only authentication and read-only search/detail
+operations; publishing, commenting, liking, collecting, following, and other
+write operations are rejected by the local allowlist.
 
 Do not update these directories by running `git pull` inside them. Import a new
 snapshot deliberately, record its commit here, review its license and diff, and

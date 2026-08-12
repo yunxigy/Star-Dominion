@@ -434,13 +434,12 @@
 
   <script src="/js/auth.js"></script>
   <script>
-    const token = 'central-cookie';
+    // Authentication is provided by auth.js via the site session cookie.
     Auth.loadUser().then((current) => {
       if (!current || current.role !== 'admin') {
-        window.location.href = Auth.loginUrl('/admin.html');
+        window.location.href = Auth.loginUrl(navigateUrl('/admin.html'));
       }
     });
-    if (!token) window.location.href = '/login.html';
 
     let users = [];
     let characters = [];
@@ -465,7 +464,7 @@
     async function loadMonitor() {
       try {
         const res = await fetch('/api/admin/monitor', {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         monitorData = await res.json();
         renderMonitor();
@@ -546,7 +545,7 @@
     async function loadUsers() {
       try {
         const res = await fetch('/api/admin/users', {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         users = await res.json();
         renderUsers();
@@ -586,7 +585,7 @@
       try {
         await fetch(`/api/admin/users/${userId}/status`, {
           method: 'PUT',
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         await loadUsers();
       } catch (err) {
@@ -616,7 +615,6 @@
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({ new_password: newPassword })
         });
@@ -631,8 +629,8 @@
     async function loadContent() {
       try {
         const [charRes, storyRes] = await Promise.all([
-          fetch('/api/admin/characters/pending', { headers: { 'Authorization': `Bearer ${token}` } }),
-          fetch('/api/admin/stories/pending', { headers: { 'Authorization': `Bearer ${token}` } }),
+          fetch('/api/admin/characters/pending', { headers: {} }),
+          fetch('/api/admin/stories/pending', { headers: {} }),
         ]);
         characters = await charRes.json();
         stories = await storyRes.json();
@@ -675,7 +673,7 @@
       try {
         await fetch(`/api/admin/characters/${charId}/reject`, {
           method: 'PUT',
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         await loadContent();
       } catch (err) {
@@ -688,7 +686,7 @@
       try {
         await fetch(`/api/admin/stories/${storyId}/reject`, {
           method: 'PUT',
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         await loadContent();
       } catch (err) {
@@ -700,7 +698,7 @@
     async function loadConfig() {
       try {
         const res = await fetch('/api/admin/config', {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         const config = await res.json();
         document.getElementById('nsfw-toggle').checked = config.nsfw_enabled;
@@ -716,7 +714,6 @@
           method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify({ nsfw_enabled: enabled })
         });
@@ -726,14 +723,26 @@
     }
 
     // 数据备份
-    function backupDatabase() {
-      window.open('/api/admin/backup/database?token=' + token);
+    async function backupDatabase() {
+      try {
+        const response = await fetch('/api/admin/backup/database');
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'shouanren_backup.db';
+        link.click();
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        alert('导出失败');
+      }
     }
 
     async function backupCharacters() {
       try {
         const res = await fetch('/api/admin/backup/characters', {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         const data = await res.json();
         downloadJSON(data, 'characters_backup.json');
@@ -745,7 +754,7 @@
     async function backupStories() {
       try {
         const res = await fetch('/api/admin/backup/stories', {
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         const data = await res.json();
         downloadJSON(data, 'stories_backup.json');
@@ -759,7 +768,7 @@
       try {
         const res = await fetch('/api/admin/cleanup/audio-cache', {
           method: 'POST',
-          headers: { 'Authorization': `Bearer ${token}` }
+          headers: {}
         });
         const data = await res.json();
         alert(`清理完成，删除了 ${data.deleted} 个文件`);

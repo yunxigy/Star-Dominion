@@ -15,6 +15,7 @@
 | 8006 | 守岸人 | 否，仅经 `/api/`、`/wuwa/` |
 | 8007 | STM32 HTTP/WebSocket | 否，仅经 `/stm32/api/` |
 | 8008 | STM32 设备 TCP | 按设备来源设置防火墙白名单 |
+| 8010 | 文档转换中心 | 否，仅经 `/document-api/` |
 
 所有 HTTP 服务只监听 `127.0.0.1`。8008 必须监听设备可达地址，因此应在云防火墙和系统防火墙限制来源 IP。
 
@@ -35,13 +36,13 @@ python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().d
 宝妈指数需要 Node.js/npm 可供股票后端进程调用，并使用固定只读采集器：
 
 ```bash
-STOCK_XHS_MCP_COMMAND="npx -y @sillyl12324/xhs-mcp@2.7.0"
+STOCK_XHS_MCP_COMMAND="npx -y rednote-mcp@0.2.3 --stdio"
 STOCK_XHS_DATA_DIR="<SITE_ROOT>/stock-research-package/stock-module/data/xhs-mcp"
 STOCK_MOM_REFRESH_TIME="08:30"
 STOCK_TIMEZONE="Asia/Shanghai"
 ```
 
-`STOCK_XHS_DATA_DIR` 含小红书登录态，必须只允许运行用户读写，禁止放入 Nginx 静态目录或备份到公开位置。首次上线由管理员在股票页面扫码登录；之后系统每天 08:30 自动采集东方财富和小红书，管理员也可手动刷新。若部署多进程，SQLite 租约会阻止同一时刻重复采集。
+`STOCK_XHS_DATA_DIR` 含小红书登录态，必须只允许运行用户读写，禁止放入 Nginx 静态目录或备份到公开位置。首次上线由管理员在股票页面打开 Playwright 登录窗口完成登录；之后系统每天 08:30 自动采集东方财富和小红书，管理员也可手动刷新。若部署多进程，SQLite 租约会阻止同一时刻重复采集。
 
 ## 3. 安装与构建
 
@@ -76,6 +77,7 @@ npx --version
 | plagiarism | `<SITE_ROOT>/plagiarism` | `<PYTHON> main.py` |
 | ShouAnRen | `<SITE_ROOT>/守岸人3.0` | `<PYTHON> -m server.main` |
 | STM32 | `<SITE_ROOT>/4G` | `<PYTHON> 4G.py` |
+| document-converter | `<SITE_ROOT>/document-converter` | `<PYTHON> -m uvicorn document_converter.app:app --host 127.0.0.1 --port 8010` |
 
 `<PYTHON>` 必须替换为对应虚拟环境的绝对路径。不要使用开发服务器承载三个前端；将构建产物交给 Nginx。
 
@@ -109,6 +111,19 @@ cd <SITE_ROOT>/site-auth
 6. `/stm32/api/ws` 可升级 WebSocket，8008 仅允许设备白名单访问。
 7. 浏览器 Cookie 中 `sd_session` 为 HttpOnly、Secure，修改类请求携带 `X-CSRF-Token`。
 8. 股票目录能按代码、名称和拼音首字母搜索；管理员可刷新目录。
-9. 宝妈指数历史接口可读；管理员扫码登录小红书后可手动刷新，东方财富或小红书单源失败时页面明确显示部分可用。
+9. 宝妈指数历史接口可读；管理员在 Playwright 登录窗口登录小红书后可手动刷新，东方财富或小红书单源失败时页面明确显示部分可用。
 
 验收失败时先恢复上一版进程与 Nginx 配置，再恢复部署前数据库备份。线上验收全部通过后，才能更新根目录 README 的“已上线”状态。
+### 文档转换中心（8010）
+
+文档转换服务工作目录为 `<SITE_ROOT>/document-converter`，启动命令：
+
+```bash
+<PYTHON> -m pip install -r <SITE_ROOT>/document-converter/requirements.txt
+cd <SITE_ROOT>/document-converter
+<PYTHON> -m uvicorn document_converter.app:app --host 127.0.0.1 --port 8010
+```
+
+如果 `soffice` 不在系统 `PATH`，在启动前设置 `LIBREOFFICE_BIN`（或 `SOFFICE_PATH`）为可执行文件绝对路径；服务会在 `/api/v1/capabilities` 中报告最终检测结果。
+
+Nginx 将 `/document-api/` 代理到 `127.0.0.1:8010`，上传限制建议设置为 `220m`，读取超时设置为 `900s`。

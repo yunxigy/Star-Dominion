@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 
 from ..collector.github import CATEGORIES
 from ..dependencies import get_db
-from ..models import CollectionRun, HourlyObservation, RankingEntry, Repository, WeeklyIssue
+from ..models import AICatalogEntry, AIReport, CollectionRun, ContentSource, HourlyObservation, NewsItem, RankingEntry, Repository, WeeklyIssue
 from ..schemas import (
     IssuePage,
     IssueSummary,
@@ -19,6 +19,11 @@ from ..schemas import (
     RankingSummary,
     RepositoryDetail,
     ServiceStatus,
+    AICatalogResponse,
+    AICatalogRepository,
+    NewsItemPublic,
+    NewsPage,
+    BriefingPublic,
 )
 from ..services.rankings import EntryView, hourly_delta, summarize
 
@@ -231,3 +236,67 @@ def _as_utc(value: datetime) -> datetime:
     if value.tzinfo is None:
         return value.replace(tzinfo=timezone.utc)
     return value.astimezone(timezone.utc)
+
+
+@router.get("/ai/rankings", response_model=AICatalogResponse)
+def ai_rankings(category: str = Query(default="all"), db: Session = Depends(get_db)) -> AICatalogResponse:
+    issue = db.scalar(select(WeeklyIssue).order_by(WeeklyIssue.starts_at.desc()))
+    if issue is None:
+        return AICatalogResponse(category=category, items=[], updated_at=None)
+    statement = (
+        select(AICatalogEntry, Repository)
+        .join(Repository, Repository.id == AICatalogEntry.repository_id)
+        .where(AICatalogEntry.issue_id == issue.id, AICatalogEntry.status == "active")
+    )
+    if category != "all":
+        statement = statement.where(AICatalogEntry.category == category)
+    statement = statement.order_by(AICatalogEntry.score.desc(), Repository.full_name)
+    items: list[AICatalogRepository] = []
+    seen: set[str] = set()
+    for entry, repository in db.execute(statement).all():
+        if repository.full_name.lower() in seen:
+            continue
+        seen.add(repository.full_name.lower())
+        items.append(AICatalogRepository(id=repository.id, full_name=repository.full_name, html_url=repository.html_url, description=repository.description, primary_language=repository.primary_language, category=entry.category, score=entry.score, reasons=list(entry.reasons_json or []), stars_total=repository.stars_total, stars_since_weekly=0))
+    # Fallback: if no persisted entries exist, compute on-the-fly from rankings
+    if not items:
+        rows = db.execute(select(RankingEntry, Repository).join(Repository, Repository.id == RankingEntry.repository_id).where(RankingEntry.issue_id == issue.id)).all()
+        from ..services.ai_catalog import classify_repository
+        for entry, repository in rows:
+            match = classify_repository(name=repository.full_name, description=repository.description, topics=list(repository.topics_json or []))
+            if category != "all" and category not in match.categories:
+                continue
+            if match.primary_category == "other" or repository.full_name.lower() in seen:
+                continue
+            seen.add(repository.full_name.lower())
+            items.append(AICatalogRepository(id=repository.id, full_name=repository.full_name, html_url=repository.html_url, description=repository.description, primary_language=repository.primary_language, category=match.primary_category, score=match.score, reasons=list(match.reasons), stars_total=repository.stars_total, stars_since_weekly=entry.stars_since_weekly))
+    items.sort(key=lambda item: (-item.score, -item.stars_since_weekly, item.full_name))
+    return AICatalogResponse(category=category, items=items[:100], updated_at=issue.starts_at)
+
+
+@router.get("/news", response_model=NewsPage)
+def news_items(window: str = Query(default="24h"), topic: str | None = None, db: Session = Depends(get_db)) -> NewsPage:
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=24 if window == "24h" else 6)
+    statement = select(NewsItem).where(NewsItem.published_at >= cutoff).order_by(NewsItem.published_at.desc()).limit(100)
+    rows = list(db.scalars(statement))
+    if topic:
+        rows = [row for row in rows if topic.lower() in {value.lower() for value in (row.topics_json or [])}]
+    return NewsPage(items=[NewsItemPublic(id=row.id, source_id=row.source_id, canonical_url=row.canonical_url, title=row.title, summary=row.summary, published_at=row.published_at, author_or_publisher=row.author_or_publisher, topics=list(row.topics_json or []), importance_score=row.importance_score, status=row.status) for row in rows])
+
+
+@router.get("/news/social-events", response_model=NewsPage)
+def social_events(window: str = Query(default="24h"), db: Session = Depends(get_db)) -> NewsPage:
+    cutoff = datetime.now(timezone.utc) - timedelta(hours=24 if window == "24h" else 6)
+    x_source_ids = list(db.scalars(select(ContentSource.id).where(ContentSource.kind == "x_indexed")))
+    if not x_source_ids:
+        return NewsPage(items=[])
+    rows = list(db.scalars(select(NewsItem).where(NewsItem.published_at >= cutoff, NewsItem.source_id.in_(x_source_ids)).order_by(NewsItem.published_at.desc()).limit(100)))
+    return NewsPage(items=[NewsItemPublic(id=row.id, source_id=row.source_id, canonical_url=row.canonical_url, title=row.title, summary=row.summary, published_at=row.published_at, author_or_publisher=row.author_or_publisher, topics=list(row.topics_json or []), importance_score=row.importance_score, status=row.status) for row in rows])
+
+
+@router.get("/briefings/latest", response_model=BriefingPublic)
+def latest_briefing(db: Session = Depends(get_db)) -> BriefingPublic:
+    report = db.scalar(select(AIReport).order_by(AIReport.report_date.desc()))
+    if report is None:
+        raise HTTPException(status_code=404, detail="AI早报尚未生成")
+    return BriefingPublic(id=report.id, report_date=report.report_date, window_start=report.window_start, window_end=report.window_end, status=report.status, model_provider=report.model_provider, model_name=report.model_name, title=report.title, summary_markdown=report.summary_markdown, events=list(report.events_json or []), risks=list(report.risks_json or []), source_ids=list(report.source_ids_json or []), generated_at=report.generated_at, error_message=report.error_message)
