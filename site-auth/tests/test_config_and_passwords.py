@@ -53,5 +53,9 @@ def test_password_hash_uses_argon2id() -> None:
 def test_database_initializes_auth_tables(tmp_path: Path) -> None:
     database = create_database(tmp_path / "auth.db")
 
-    assert set(database.table_names()) == {User.__tablename__, Session.__tablename__}
+    assert set(database.table_names()) == {
+        User.__tablename__,
+        Session.__tablename__,
+        "schema_metadata",
+    }
     database.dispose()

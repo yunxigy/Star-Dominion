@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useFileUpload, UploadZone, Btn, formatFileSize, downloadBlob } from '../shared'
+import { decryptNcmData } from './ncm'
 
 interface NcmResult {
   name: string
@@ -40,88 +41,20 @@ export default function NcmConverter({ onClose }: { onClose: () => void }) {
   }
 
   const decryptNcm = async (file: File): Promise<NcmResult> => {
-    const buffer = await file.arrayBuffer()
-    const data = new Uint8Array(buffer)
-
-    // Verify NCM magic header
-    const magic = String.fromCharCode(data[0], data[1], data[2], data[3], data[4], data[5], data[6], data[7])
-    if (magic !== 'CTENFDAM') {
-      throw new Error('不是有效的 NCM 文件')
-    }
-
-    // Skip header (8 bytes magic + 4 bytes unknown)
-    let offset = 1024 // Standard NCM header size
-
-    // Read key length and extract encrypted key
-    const keyLen = data[offset] | (data[offset + 1] << 8) | (data[offset + 2] << 16) | (data[offset + 3] << 24)
-    offset += 4
-
-    if (keyLen <= 0 || keyLen > 1024) {
-      throw new Error('无效的 NCM 密钥长度')
-    }
-
-    // Extract and decrypt the AES key
-    const encryptedKey = new Uint8Array(keyLen)
-    for (let i = 0; i < keyLen; i++) {
-      encryptedKey[i] = data[offset + i] ^ 0x64
-    }
-    offset += keyLen
-
-    // Skip 4 bytes gap
-    offset += 4
-
-    // Read metadata length
-    const metaLen = data[offset] | (data[offset + 1] << 8) | (data[offset + 2] << 16) | (data[offset + 3] << 24)
-    offset += 4
-
-    // Extract metadata (JSON)
-    let metadata: Record<string, unknown> = {}
-    if (metaLen > 0) {
-      const metaBytes = new Uint8Array(metaLen)
-      for (let i = 0; i < metaLen; i++) {
-        metaBytes[i] = data[offset + i] ^ 0x63
-      }
-      offset += metaLen
-
-      // Skip "163 key(Don't modify):" prefix
-      const metaStr = new TextDecoder().decode(metaBytes)
-      const jsonStart = metaStr.indexOf('{')
-      if (jsonStart >= 0) {
-        try {
-          // Base64 decode the inner JSON
-          const b64 = metaStr.slice(jsonStart)
-          const decoded = atob(b64)
-          metadata = JSON.parse(decoded)
-        } catch {
-          // Metadata parsing failed, continue anyway
-        }
-      }
-    }
-
-    // Skip CRC32 gap (9 bytes)
-    offset += 9
-
-    // Build the S-box for decryption
-    const key = buildSbox(encryptedKey)
-
-    // Decrypt the audio data
-    const audioData = new Uint8Array(data.length - offset)
-    for (let i = 0; i < audioData.length; i++) {
-      const j = (i + 1) & 0xff
-      audioData[i] = data[offset + i] ^ key[key[j] + key[(key[j] + j) & 0xff] & 0xff]
-    }
-
-    // Detect format (MP3 or FLAC)
-    const format = detectFormat(audioData)
-    const ext = format === 'flac' ? 'flac' : 'mp3'
-
-    // Extract title from metadata
-    const musicInfo = metadata?.musicName as Record<string, unknown> | undefined
-    const title = (musicInfo?.name as string) || file.name.replace(/\.ncm$/i, '')
-    const artist = (musicInfo?.artist as Array<{ name: string }>)?.[0]?.name || ''
+    const decoded = await decryptNcmData(new Uint8Array(await file.arrayBuffer()))
+    const title = String(decoded.metadata.musicName || file.name.replace(/\.ncm$/i, ''))
+    const artistValue = decoded.metadata.artist
+    const artist = Array.isArray(artistValue)
+      ? String(Array.isArray(artistValue[0]) ? artistValue[0][0] : (artistValue[0] as { name?: string })?.name || '')
+      : String(artistValue || '')
     const baseName = artist ? `${artist} - ${title}` : title
 
-    const blob = new Blob([audioData], { type: format === 'flac' ? 'audio/flac' : 'audio/mpeg' })
+    const ext = decoded.format
+    const audioBuffer = decoded.audioData.buffer.slice(
+      decoded.audioData.byteOffset,
+      decoded.audioData.byteOffset + decoded.audioData.byteLength,
+    ) as ArrayBuffer
+    const blob = new Blob([audioBuffer], { type: ext === 'flac' ? 'audio/flac' : ext === 'ogg' ? 'audio/ogg' : 'audio/mpeg' })
     const url = URL.createObjectURL(blob)
 
     return {
@@ -133,44 +66,7 @@ export default function NcmConverter({ onClose }: { onClose: () => void }) {
     }
   }
 
-  const buildSbox = (key: Uint8Array): Uint8Array => {
-    // AES key derivation (NCM uses a specific key schedule)
-    const AES_KEY = new Uint8Array([
-      0x68, 0x7A, 0x48, 0x52, 0x41, 0x6D, 0x73, 0x6F,
-      0x35, 0x6B, 0x49, 0x6E, 0x62, 0x61, 0x78, 0x57,
-    ])
-
-    // Simple XOR-based key expansion (NCM simplified AES)
-    const sbox = new Uint8Array(256)
-    for (let i = 0; i < 256; i++) {
-      sbox[i] = i
-    }
-
-    let j = 0
-    for (let i = 0; i < 256; i++) {
-      j = (sbox[i] + j + AES_KEY[i % AES_KEY.length] + (key[i % key.length] || 0)) & 0xff
-      const tmp = sbox[i]
-      sbox[i] = sbox[j]
-      sbox[j] = tmp
-    }
-
-    return sbox
-  }
-
-  const detectFormat = (data: Uint8Array): string => {
-    // MP3: starts with ID3 tag or 0xFF 0xFB
-    if (data[0] === 0x49 && data[1] === 0x44 && data[2] === 0x33) return 'mp3' // ID3
-    if (data[0] === 0xFF && (data[1] & 0xE0) === 0xE0) return 'mp3' // Sync word
-    // FLAC: starts with fLaC
-    if (data[0] === 0x66 && data[1] === 0x4C && data[2] === 0x61 && data[3] === 0x43) return 'flac'
-    // OGG
-    if (data[0] === 0x4F && data[1] === 0x67 && data[2] === 0x67) return 'ogg'
-    return 'mp3' // Default
-  }
-
-  const sanitizeFilename = (name: string): string => {
-    return name.replace(/[<>:"/\\|?*\x00-\x1f]/g, '_').slice(0, 200)
-  }
+  const sanitizeFilename = (name: string): string => name.replace(/[<>:"/\\|?*\x00-\x1f]/g, '_').slice(0, 200)
 
   const handleDownload = (result: NcmResult) => {
     downloadBlob(result.blob, result.name)

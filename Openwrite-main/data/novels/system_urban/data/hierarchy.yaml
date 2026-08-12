@@ -1,0 +1,108 @@
+story_info:
+  title: 《我有一个摆烂系统》
+arcs:
+- id: arc_001
+  title: 世界观
+  sections: []
+  chapters: []
+  summary: 现代都市职场。男主陈默，普通上班族。
+- id: arc_002
+  title: 核心设定
+  sections: []
+  chapters: []
+- id: arc_003
+  title: 写作要求
+  sections:
+  - sec_001
+  - sec_002
+  - sec_003
+  - sec_004
+  chapters:
+  - ch_001
+  - ch_002
+  - ch_003
+  - ch_004
+  - ch_005
+  - ch_006
+  - ch_007
+  - ch_008
+  - ch_009
+  - ch_010
+  - ch_011
+  description: ch_001 - ch_011
+sections:
+- id: sec_001
+  title: 第一卷：摆烂崛起（第1-30章）
+  arc_id: arc_003
+  chapters:
+  - ch_001
+  - ch_002
+  - ch_003
+  - ch_004
+  - ch_005
+  - ch_006
+  - ch_007
+  - ch_008
+  - ch_009
+  - ch_010
+  - ch_011
+- id: sec_002
+  title: 第二卷：商业版图（第31-60章）
+  arc_id: arc_003
+  chapters: []
+  summary: 公司做大后拒绝资本，反而更健康。系统奖励核心技术专利，跨界布局硬件、新能源、AI芯片，每步"摆烂式"决策反踩风口。
+- id: sec_003
+  title: 第三卷：帝国崛起（第61-90章）
+  arc_id: arc_003
+  chapters: []
+  summary: 系统解锁高级功能：给别人发布任务。竞争对手效率暴跌、人才流失，陈默趁势收购，商业帝国初成。以"摆烂外交"横扫海外，跻身首富。
+- id: sec_004
+  title: 第四卷：国运之柱（第91-120章）
+  arc_id: arc_003
+  chapters: []
+  summary: 公司体量影响国运。陈默将核心芯片技术开源给国内产业链，打破国外垄断，成为推动产业升级的关键人物。系统最终奖励：一个真正自由的时代。
+chapters:
+- id: ch_001
+  title: 第一章 裁员
+  section_id: sec_001
+  summary: 陈默被裁员，绑定了摆烂系统。新手任务：拒绝签字，奖励10万。
+- id: ch_002
+  title: 第二章 第一个任务
+  section_id: sec_001
+  summary: 系统任务：明天不上班，睡到自然醒。奖励：公寓首付。
+- id: ch_003
+  title: 第三章 意外
+  section_id: sec_001
+  summary: 没去上班，公司出事。陈默反而躲过一劫。
+- id: ch_004
+  title: 第四章 对峙
+  section_id: sec_001
+  summary: 前领导打电话骂人。系统任务：挂断电话。
+- id: ch_005
+  title: 第五章 反转
+  section_id: sec_001
+  summary: 陈默用系统奖励开小公司，专门招被裁员的人。
+- id: ch_006
+  title: 第六章 招聘
+  section_id: sec_001
+  summary: 系统任务：面试时问应聘者"你最大的缺点是什么"，不要期待答案。
+- id: ch_007
+  title: 第七章 第一个员工
+  section_id: sec_001
+  summary: 招了一个被裁员的程序员，系统奖励一套服务器。
+- id: ch_008
+  title: 第八章 竞争
+  section_id: sec_001
+  summary: 前公司来找麻烦，系统任务：不要理会。
+- id: ch_009
+  title: 第九章 爆单
+  section_id: sec_001
+  summary: 客户主动找上门，系统任务：不要加班。
+- id: ch_010
+  title: 第十章 升职
+  section_id: sec_001
+  summary: 前公司倒闭，陈默收购了它的资产。
+- id: ch_011
+  title: 第十一-三十章
+  section_id: sec_001
+  summary: 公司逐渐壮大，系统任务越来越离谱。陈默成为业界传奇，但系统告诉他"真正的摆烂还没开始"。
