@@ -9,6 +9,8 @@ from sqlalchemy import create_engine, inspect
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import DeclarativeBase, Session as OrmSession, sessionmaker
 
+from .migrations import run_migrations
+
 
 class Base(DeclarativeBase):
     """Declarative base for authentication tables."""
@@ -35,6 +37,8 @@ def create_database(path: Path) -> Database:
         f"sqlite:///{resolved.as_posix()}",
         connect_args={"check_same_thread": False},
     )
+
+    run_migrations(engine)
 
     # Import registers the model metadata without creating a module-level database.
     from . import models  # noqa: F401

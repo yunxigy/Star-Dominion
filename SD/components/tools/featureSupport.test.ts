@@ -1,6 +1,4 @@
 import JSZip from 'jszip';
-import { readFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import {
@@ -90,8 +88,7 @@ paths:
   });
 
   it('uses the DOCX parser for real uploaded Office files instead of binary file.text()', async () => {
-    const source = await readFile(resolve(process.cwd(), '../ceshi/01.docx'));
-    const arrayBuffer = source.buffer.slice(source.byteOffset, source.byteOffset + source.byteLength) as ArrayBuffer;
+    const arrayBuffer = await createMinimalDocx('初代玩法设计文档');
     const text = await readSupportedDocumentText({
       name: '01.docx',
       arrayBuffer: async () => arrayBuffer,

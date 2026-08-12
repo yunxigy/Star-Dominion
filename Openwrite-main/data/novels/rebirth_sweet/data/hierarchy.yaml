@@ -1,0 +1,138 @@
+story_info:
+  title: 《醒来成了他的白月光》
+arcs:
+- id: arc_001
+  title: 世界观
+  sections: []
+  chapters: []
+  summary: 现代都市，高中校园。女主苏念28岁公司猝死，醒来回到18岁高三。
+- id: arc_002
+  title: 核心设定
+  sections: []
+  chapters: []
+- id: arc_003
+  title: 写作要求
+  sections:
+  - sec_001
+  - sec_002
+  - sec_003
+  - sec_004
+  chapters:
+  - ch_001
+  - ch_002
+  - ch_003
+  - ch_004
+  - ch_005
+  - ch_006
+  - ch_007
+  - ch_008
+  - ch_009
+  - ch_010
+  - ch_011
+  - ch_012
+  - ch_013
+  - ch_014
+  - ch_015
+  - ch_016
+  description: ch_001 - ch_016
+sections:
+- id: sec_001
+  title: 第一卷：高中篇（第1-30章）
+  arc_id: arc_003
+  chapters:
+  - ch_001
+  - ch_002
+  - ch_003
+  - ch_004
+  - ch_005
+  - ch_006
+  - ch_007
+  - ch_008
+  - ch_009
+  - ch_010
+  - ch_011
+  - ch_012
+  - ch_013
+  - ch_014
+  - ch_015
+  - ch_016
+- id: sec_002
+  title: 第二卷：创业篇（第31-60章）
+  arc_id: arc_003
+  chapters: []
+  summary: 苏念毕业后创业，利用前世对风口的了解。顾行舟进入金融行业。两人事业起步，感情升温。周宇航成为竞争对手。商场上的明争暗斗，苏念几次差点翻车，顾行舟每次都在关键时刻出手。苏念的公司逐渐做大，但也面临更大的挑战。
+- id: sec_003
+  title: 第三卷：危机篇（第61-90章）
+  arc_id: arc_003
+  chapters: []
+  summary: 公司遭遇重大危机，苏念几乎破产。顾行舟放弃自己的事业来帮她。周宇航趁机收购。苏念用最后的底牌翻盘。顾行舟住院，苏念才明白他一直在默默付出。
+- id: sec_004
+  title: 第四卷：圆满篇（第91-120章）
+  arc_id: arc_003
+  chapters: []
+  summary: 公司上市，苏念成为行业领袖。顾行舟康复。两人婚礼上，苏念说"这辈子，我终于没有错过你"。周宇航也找到自己的幸福。完结。
+chapters:
+- id: ch_001
+  title: 第一章 重生
+  section_id: sec_001
+  summary: 苏念在ICU猝死，醒来回到高三教室。旁边坐着顾行舟，上辈子从没注意过这个人。
+- id: ch_002
+  title: 第二章 校草
+  section_id: sec_001
+  summary: 周宇航递奶茶，苏念直接拒绝。顾行舟默默关注。苏念发现他卷子全是满分。
+- id: ch_003
+  title: 第三章 补课
+  section_id: sec_001
+  summary: 苏念找顾行舟补数学。图书馆里，顾行舟讲题很细但话很少。
+- id: ch_004
+  title: 第四章 暗涌
+  section_id: sec_001
+  summary: 周宇航被拒后刁难苏念。顾行舟站起来挡在前面。
+- id: ch_005
+  title: 第五章 雨天
+  section_id: sec_001
+  summary: 放学下雨，两人共撑一把伞。顾行舟耳朵红了一路。
+- id: ch_006
+  title: 第六章 月考
+  section_id: sec_001
+  summary: 苏念用前世记忆写出超纲答案，全班震惊。顾行舟看出她不对劲。
+- id: ch_007
+  title: 第七章 秘密
+  section_id: sec_001
+  summary: 顾行舟问苏念为什么突然变了。苏念编了个"做了一个很长的梦"的借口。
+- id: ch_008
+  title: 第八章 运动会
+  section_id: sec_001
+  summary: 苏念报名长跑，顾行舟在终点等她。周宇航也来凑热闹。
+- id: ch_009
+  title: 第九章 生日
+  section_id: sec_001
+  summary: 苏念生日，顾行舟送了一本手写笔记，里面是他整理的所有高考重点。
+- id: ch_010
+  title: 第十章 误会
+  section_id: sec_001
+  summary: 苏念看到顾行舟和校花说话，心里不舒服。她意识到自己上辈子的毛病又犯了。
+- id: ch_011
+  title: 第十一章 和解
+  section_id: sec_001
+  summary: 苏念主动找顾行舟道歉。顾行舟说"你不用道歉，我一直在"。
+- id: ch_012
+  title: 第十二章 家访
+  section_id: sec_001
+  summary: 班主任发现苏念成绩突飞猛进，怀疑作弊。家访后发现她家境困难，反而同情。
+- id: ch_013
+  title: 第十三章 奖学金
+  section_id: sec_001
+  summary: 苏念拿到奖学金，请顾行舟吃饭。两人第一次单独在外面相处。
+- id: ch_014
+  title: 第十四章 毕业
+  section_id: sec_001
+  summary: 高考结束，苏念考上理想大学。顾行舟也去了同一座城市。
+- id: ch_015
+  title: 第十五章 离别
+  section_id: sec_001
+  summary: 全班聚餐，苏念终于说出"谢谢顾行舟"。顾行舟红了眼眶。
+- id: ch_016
+  title: 第十六-三十章
+  section_id: sec_001
+  summary: 大学生活开始，两人在新的城市重逢。苏念用前世记忆避开各种坑，顾行舟默默守护。周宇航也考到同一所大学，三角关系展开。苏念创业初期的困难，顾行舟暗中帮助。毕业前夕，两人终于确认关系。

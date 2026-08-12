@@ -147,6 +147,7 @@ export default function Stm32Window() {
   const polylineRef = useRef<any>(null);
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const pathRef = useRef<any[]>([]);
+  const mapConfigurationReportedRef = useRef(false);
 
   const addNotification = (msg: string, type: 'success' | 'error' | 'info' | 'warning') => {
     const time = new Date().toLocaleTimeString('zh-CN', { hour12: false });
@@ -200,7 +201,10 @@ export default function Stm32Window() {
     const amapKey = import.meta.env.VITE_AMAP_KEY?.trim();
     const amapSecurityCode = import.meta.env.VITE_AMAP_SECURITY_CODE?.trim();
     if (!amapKey || !amapSecurityCode) {
-      addNotification('地图未配置，请设置 VITE_AMAP_KEY 和 VITE_AMAP_SECURITY_CODE', 'error');
+      if (!mapConfigurationReportedRef.current) {
+        mapConfigurationReportedRef.current = true;
+        addNotification('地图未配置，请设置 VITE_AMAP_KEY 和 VITE_AMAP_SECURITY_CODE', 'error');
+      }
       return;
     }
     (window as any)._AMapSecurityConfig = { securityJsCode: amapSecurityCode };
