@@ -8,7 +8,7 @@ const source = (relativePath: string) =>
 
 describe('toolbox production metadata', () => {
   it('exposes privacy and stability metadata for every tool', () => {
-    expect(TOOLS).toHaveLength(185);
+    expect(TOOLS).toHaveLength(186);
     expect(TOOLS.every((tool) => Boolean(tool.privacy))).toBe(true);
     expect(TOOLS.every((tool) => Boolean(tool.status))).toBe(true);
   });
@@ -34,5 +34,17 @@ describe('toolbox production metadata', () => {
   it('does not nest the favorite button inside the tool launch button', () => {
     const toolboxPage = source('../pages/ToolboxPage.tsx');
     expect(toolboxPage).not.toMatch(/<motion\.button[\s\S]*?<button[\s\S]*?<\/motion\.button>/);
+  });
+
+  it('registers the public video downloader with an explicit remote privacy boundary', () => {
+    const tool = TOOLS.find((item) => item.id === 'video-parser-downloader');
+    expect(tool).toMatchObject({
+      name: '视频解析下载',
+      category: 'video',
+      icon: 'Video',
+      privacy: 'third-party-api',
+      status: 'beta',
+    });
+    expect(CATEGORIES.some((category) => category.id === 'video')).toBe(true);
   });
 });

@@ -5,7 +5,7 @@ export interface ToolDef {
   name: string;
   description: string;
   icon: string;
-  category: 'pdf' | 'image' | 'converter' | 'dev' | 'calc' | 'fun' | 'image-enhance' | 'test' | 'tarot' | 'mouse' | 'document' | 'audio' | 'office' | 'academic' | 'general' | 'data';
+  category: 'pdf' | 'image' | 'converter' | 'dev' | 'calc' | 'fun' | 'image-enhance' | 'test' | 'tarot' | 'mouse' | 'document' | 'audio' | 'video' | 'office' | 'academic' | 'general' | 'data';
   color: 'red' | 'emerald' | 'violet' | 'amber' | 'cyan' | 'pink' | 'blue' | 'lime' | 'indigo';
   gradient: string;
   glow: string;
@@ -190,6 +190,9 @@ const DocumentConversionCenter = React.lazy(() => import('../components/tools/do
 const AudioConverter = React.lazy(() => import('../components/tools/audio/AudioConverter'));
 const NcmConverter = React.lazy(() => import('../components/tools/audio/NcmConverter'));
 const VoiceChanger = React.lazy(() => import('../components/tools/audio/VoiceChanger'));
+
+// ── 视频处理 ───────────────────────────────────────────────
+const VideoDownloader = React.lazy(() => import('../components/tools/video/VideoDownloader'));
 
 // ── 数据处理（新） ────────────────────────────────────────
 const ExcelCsvWorkbench = React.lazy(() => import('../components/tools/data/ExcelCsvWorkbench'));
@@ -418,6 +421,22 @@ const TOOL_DEFINITIONS: ToolDefinition[] = [
   { id: 'ncm-converter', name: 'NCM 转换器', description: '网易云音乐 NCM 解密为 MP3/FLAC', icon: 'Headphones', category: 'audio', color: 'pink', gradient: 'from-pink-600 to-rose-600', glow: 'rgba(236,72,153,0.3)', component: NcmConverter, privacy: 'local', status: 'stable', tags: ['ncm', 'wangyiyun', 'netease', 'jiami', 'jiemi', '网易云', '解密', '音乐'] },
   { id: 'voice-changer', name: '音频变声器', description: '调节音调速度实现变声效果', icon: 'Music', category: 'audio', color: 'pink', gradient: 'from-pink-600 to-rose-600', glow: 'rgba(236,72,153,0.3)', component: VoiceChanger, privacy: 'local', status: 'stable', tags: ['biansheng', 'yin调', 'sudi', '变声', '音调', '速度'] },
 
+  // ── 视频处理 ───────────────────────────────────────────
+  {
+    id: 'video-parser-downloader',
+    name: '视频解析下载',
+    description: '解析并下载抖音与B站单个公开视频，展示平台实际可用清晰度和任务进度',
+    icon: 'Video',
+    category: 'video',
+    color: 'pink',
+    gradient: 'from-orange-500 to-rose-500',
+    glow: 'rgba(244,63,94,0.3)',
+    component: VideoDownloader,
+    privacy: 'third-party-api',
+    status: 'beta',
+    tags: ['shipin', '视频', 'xiazai', '下载', 'jiexi', '解析', 'douyin', '抖音', 'bilibili', 'B站', '哔哩哔哩', '无水印'],
+  },
+
   // ── 数据处理（新） ──────────────────────────────────────
   { id: 'excel-csv-workbench', name: 'Excel/CSV 工作台', description: 'Excel/CSV 数据查看、筛选、排序、统计', icon: 'Table', category: 'data', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: ExcelCsvWorkbench, privacy: 'local', status: 'stable', tags: ['excel', 'csv', 'shuju', '数据', '表格', 'shaixuan', '筛选'] },
   { id: 'pdf-page-editor', name: 'PDF 页面编辑器', description: 'PDF 页面预览、排序、旋转、删除', icon: 'FileInput', category: 'data', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: PdfPageEditor, privacy: 'local', status: 'stable', tags: ['pdf', 'yemian', '页面', '编辑', 'paixu', '排序'] },
@@ -492,6 +511,7 @@ export const CATEGORIES = [
   { id: 'mouse', name: '鼠标测试', description: 'CPS、DPI、反应速度、抖动', icon: 'MousePointerClick', color: 'lime', gradient: 'from-lime-600 to-green-600' },
   { id: 'document', name: '文档处理', description: 'OCR、翻译、查重、语法检查', icon: 'FileEdit', color: 'indigo', gradient: 'from-indigo-600 to-blue-600' },
   { id: 'audio', name: '音频处理', description: '格式转换、NCM解密、变声', icon: 'AudioLines', color: 'pink', gradient: 'from-pink-600 to-rose-600' },
+  { id: 'video', name: '视频工具', description: '公开视频解析与临时下载', icon: 'Video', color: 'pink', gradient: 'from-orange-500 to-rose-500' },
   { id: 'data', name: '数据处理', description: 'Excel/CSV处理、文件校验、批量操作', icon: 'Table', color: 'red', gradient: 'from-red-600 to-rose-600' },
   { id: 'office', name: '办公工具', description: '发票整理、表格对比、合同审阅', icon: 'Briefcase', color: 'amber', gradient: 'from-amber-600 to-orange-600' },
   { id: 'academic', name: '学术工具', description: '论文检查、参考文献、公式编辑', icon: 'GraduationCap', color: 'violet', gradient: 'from-violet-600 to-purple-600' },
