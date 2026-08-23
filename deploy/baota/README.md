@@ -16,6 +16,7 @@
 | 8007 | STM32 HTTP/WebSocket | 否，仅经 `/stm32/api/` |
 | 8008 | STM32 设备 TCP | 按设备来源设置防火墙白名单 |
 | 8010 | 文档转换中心 | 否，仅经 `/document-api/` |
+| 8011 | 视频解析下载 | 否，仅经 `/video-api/` |
 
 所有 HTTP 服务只监听 `127.0.0.1`。8008 必须监听设备可达地址，因此应在云防火墙和系统防火墙限制来源 IP。
 
@@ -78,6 +79,7 @@ npx --version
 | ShouAnRen | `<SITE_ROOT>/守岸人3.0` | `<PYTHON> -m server.main` |
 | STM32 | `<SITE_ROOT>/4G` | `<PYTHON> 4G.py` |
 | document-converter | `<SITE_ROOT>/document-converter` | `<PYTHON> -m uvicorn document_converter.app:app --host 127.0.0.1 --port 8010` |
+| video-downloader | `<SITE_ROOT>/video-downloader` | `<PYTHON> -m uvicorn video_downloader.app:app --host 127.0.0.1 --port 8011 --workers 1` |
 
 `<PYTHON>` 必须替换为对应虚拟环境的绝对路径。不要使用开发服务器承载三个前端；将构建产物交给 Nginx。
 
@@ -112,6 +114,7 @@ cd <SITE_ROOT>/site-auth
 7. 浏览器 Cookie 中 `sd_session` 为 HttpOnly、Secure，修改类请求携带 `X-CSRF-Token`。
 8. 股票目录能按代码、名称和拼音首字母搜索；管理员可刷新目录。
 9. 宝妈指数历史接口可读；管理员在 Playwright 登录窗口登录小红书后可手动刷新，东方财富或小红书单源失败时页面明确显示部分可用。
+10. `/video-api/health` 返回能力状态；匿名解析与任务下载可用，另一匿名会话查询同一任务返回 404，过期文件返回 410，Nginx 不缓存响应且不记录该路由访问日志。
 
 验收失败时先恢复上一版进程与 Nginx 配置，再恢复部署前数据库备份。线上验收全部通过后，才能更新根目录 README 的“已上线”状态。
 ### 文档转换中心（8010）
@@ -127,3 +130,18 @@ cd <SITE_ROOT>/document-converter
 如果 `soffice` 不在系统 `PATH`，在启动前设置 `LIBREOFFICE_BIN`（或 `SOFFICE_PATH`）为可执行文件绝对路径；服务会在 `/api/v1/capabilities` 中报告最终检测结果。
 
 Nginx 将 `/document-api/` 代理到 `127.0.0.1:8010`，上传限制建议设置为 `220m`，读取超时设置为 `900s`。
+
+### 视频解析下载（8011）
+
+先确认 FFmpeg 可用，再安装固定依赖并启动单 worker 服务：
+
+```bash
+ffmpeg -version
+<PYTHON> -m pip install -e "<SITE_ROOT>/video-downloader"
+cd <SITE_ROOT>/video-downloader
+<PYTHON> -m uvicorn video_downloader.app:app --host 127.0.0.1 --port 8011 --workers 1
+```
+
+生产环境必须设置不少于 32 字符的独立 `VIDEO_SIGNING_SECRET`、`VIDEO_COOKIE_SECURE=true` 和专用绝对 `VIDEO_TEMP_DIR`。临时目录要授予服务账号读写权限且不能位于网站静态目录。可选 `VIDEO_DOUYIN_COOKIE_FILE` 只能由服务账号读取（Linux 建议 `chmod 600`），不得写入仓库、Nginx 日志或前端配置。
+
+Nginx 将 `/video-api/` 代理到 `127.0.0.1:8011`，该 location 必须关闭 access log、缓存和请求缓冲。服务仅支持无需登录的单个公开视频；不支持合集、多 P、会员、付费、私密、直播或批量下载，也不保证去除画面已有水印。更新 yt-dlp 固定版本后必须先运行离线回归测试，再使用部署者拥有或已获授权的链接执行可选 live smoke。

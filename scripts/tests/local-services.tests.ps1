@@ -19,6 +19,15 @@ Describe 'local service manifest' {
         }
     }
 
+    It 'runs the in-memory video service as one worker on 8011' {
+        $manifest = Get-LocalServiceManifest -Path (Join-Path (Join-Path $PSScriptRoot '..') 'local-services.json')
+        $video = @($manifest.services | Where-Object { $_.name -eq 'video-downloader' })
+        $video.Count | Should Be 1
+        (@($video[0].ports) -contains 8011) | Should Be $true
+        [string]$video[0].health_url | Should Be 'http://127.0.0.1:8011/health'
+        ($video[0].arguments -join ' ') | Should Match '--workers 1'
+    }
+
     It 'makes lifecycle scripts consume the manifest loader' {
         foreach ($scriptName in @('start-local.ps1', 'stop-local.ps1', 'check-local.ps1')) {
             $content = Get-Content -LiteralPath (Join-Path (Join-Path $PSScriptRoot '..') $scriptName) -Raw

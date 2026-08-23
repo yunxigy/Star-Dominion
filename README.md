@@ -16,6 +16,7 @@ Star Dominion 是一个模块化 Web 单仓库：以在线工具箱为主入口�
 | 守岸人 3.0 | AI 角色对话、互动剧情、语音、记忆和世界书 | FastAPI、原生 Web 前端 | `http://127.0.0.1:8006/` |
 | 论文查重 | TXT、DOCX、PDF 双文档相似度分析 | FastAPI、Python | 由 SD 主站调用 |
 | STM32/4G | 北斗、IMU、轨迹、告警、命令和设备 TCP 通信 | Python、WebSocket | `http://127.0.0.1:5173/stm32/` |
+| 视频解析下载 | 抖音/B站单个公开视频解析、清晰度选择和临时下载 | FastAPI、yt-dlp、FFmpeg | `http://127.0.0.1:5173/tool/video-parser-downloader` |
 
 ## 五分钟快速启动
 
@@ -44,6 +45,7 @@ python -m pip install -r .\Openwrite-main\requirements.txt
 python -m pip install -r .\plagiarism\requirements.txt
 python -m pip install -r .\4G\requirements.txt
 python -m pip install -r ".\守岸人3.0\server\requirements.txt"
+python -m pip install -e ".\video-downloader[dev]"
 
 Push-Location .\stock-research-package\stock-module\backend
 python -m pip install -e ".[dev,workers]"
@@ -82,7 +84,7 @@ Set-ExecutionPolicy -Scope Process Bypass
 
 `Set-ExecutionPolicy -Scope Process Bypass` 只影响当前 PowerShell 进程，关闭窗口后自动失效，不会更改系统级执行策略。
 
-`start-local.ps1` 默认启动 10 个后端/设备进程和 3 个前端，共监听 13 个端口（其中 STM32 同时占用 8007、8008）。只需要后端时使用：
+`start-local.ps1` 默认启动 11 个后端/设备进程和 3 个前端，共监听 15 个端口（其中 STM32 同时占用 8007、8008）。只需要后端时使用：
 
 ```powershell
 .\scripts\start-local.ps1 -WithoutFrontends
@@ -123,6 +125,7 @@ Set-ExecutionPolicy -Scope Process Bypass
 | 8007 | STM32 HTTP/WebSocket | 网页数据和设备命令 | 仅经 `/stm32/api/` |
 | 8008 | STM32 原始 TCP | 4G 设备长连接 | 只允许设备来源白名单 |
 | 8010 | 文档转换中心 | Office/PDF/Markdown/HTML/OCR 转换与批量打包 | 仅经 `/document-api/` |
+| 8011 | 视频解析下载 | 抖音/B站单个公开视频解析与临时任务下载 | 仅经 `/video-api/` |
 
 本地脚本会让 HTTP 服务监听 `127.0.0.1`。生产环境由 Nginx 提供统一 HTTPS/WSS 入口，8003 和 8004 不应配置公网反向代理。
 
@@ -214,6 +217,7 @@ flowchart TB
     SD --> Plagiarism["论文查重 :8005"]
     SD --> ShouAnRen["守岸人 :8006"]
     SD --> STM32["STM32 HTTP/WS :8007"]
+    SD --> Video["视频解析下载 :8011"]
     Device["STM32/4G 设备"] -->|"TCP :8008"| STM32
 ```
 
@@ -234,6 +238,7 @@ Star-Dominion/
 ├── 守岸人3.0/                        # AI 角色陪伴
 ├── plagiarism/                      # 论文查重
 ├── 4G/                              # STM32/4G 服务
+├── video-downloader/                # 视频解析与临时下载服务
 ├── scripts/                         # 本地启动、检查、停止脚本
 ├── deploy/                          # 当前生产部署示例
 ├── .env.local.example              # 本地环境变量模板
@@ -250,7 +255,7 @@ Star-Dominion/
 - `SITE_AUTH_INTERNAL_KEY` 用于内部会话校验，不得复用管理员密码。
 - 股票个人模型 API Key 使用 Fernet 加密保存；平台模型 Key 只存在于服务端环境变量。
 - 浏览器端 `VITE_*` 变量会进入构建产物，只能放允许公开且已绑定域名的前端配置。
-- 生产环境必须启用 HTTPS、Secure Cookie，并让 8000–8007 只监听回环地址。
+- 生产环境必须启用 HTTPS、Secure Cookie，并让除设备 TCP 端口 8008 外的 HTTP 服务只监听回环地址。
 
 提交前至少检查：
 
@@ -270,7 +275,7 @@ git diff --cached
 .\scripts\check-local.ps1
 ```
 
-该脚本检查端口 `8000`–`8010`、主要健康接口、股票目录、宝妈指数、文档转换能力和匿名权限边界；本地配置管理员凭据后，还会检查跨服务登录会话。
+该脚本检查端口 `8000`–`8011`、主要健康接口、股票目录、宝妈指数、文档转换与视频解析能力和匿名权限边界；本地配置管理员凭据后，还会检查跨服务登录会话。
 
 常用模块验证：
 
@@ -318,6 +323,7 @@ npm --prefix .\Openwrite-main\frontend run build
 - [股票研究模块](stock-research-package/stock-module/README.md)
 - [OpenWrite](Openwrite-main/README.md)
 - [守岸人 3.0](守岸人3.0/README.md)
+- [视频解析下载服务](video-downloader/README.md)
 - [宝塔上线操作手册](deploy/baota/README.md)
 
 ## 许可证与第三方项目

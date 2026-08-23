@@ -79,6 +79,15 @@ Test-Http 'research reports health' 'http://127.0.0.1:8009/health' 200 | Out-Nul
 Test-Http 'research reports current issue' 'http://127.0.0.1:8009/api/v1/issues/current' 200 | Out-Null
 Test-Http 'document converter health' 'http://127.0.0.1:8010/health' 200 | Out-Null
 Test-Http 'document converter capabilities' 'http://127.0.0.1:8010/api/v1/capabilities' 200 | Out-Null
+try {
+    $videoHealth = Invoke-RestMethod -Uri 'http://127.0.0.1:8011/health' -Method GET -TimeoutSec 5
+    $hasCapabilities = $null -ne $videoHealth.capabilities `
+        -and $null -ne $videoHealth.capabilities.PSObject.Properties['ytDlp'] `
+        -and $null -ne $videoHealth.capabilities.PSObject.Properties['ffmpeg']
+    Report 'video downloader capabilities' $hasCapabilities
+} catch {
+    Report 'video downloader capabilities' $false $_.Exception.Message
+}
 Test-Http 'research reports admin anonymous' 'http://127.0.0.1:8009/api/v1/admin/collections' 401 | Out-Null
 Test-Http 'stock private anonymous' 'http://127.0.0.1:8002/api/v1/model-profiles' 401 | Out-Null
 Test-Http 'ShouAnRen chat anonymous' 'http://127.0.0.1:8006/api/chat/characters' 401 | Out-Null
