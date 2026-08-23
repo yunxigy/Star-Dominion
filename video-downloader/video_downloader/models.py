@@ -33,3 +33,23 @@ class HealthCapabilities(ApiModel):
 class HealthResponse(ApiModel):
     status: Literal["ok", "degraded"]
     capabilities: HealthCapabilities
+
+
+class QualityOption(ApiModel):
+    id: str
+    label: str
+    height: int
+    extension: str
+    estimated_bytes: int | None
+    requires_merge: bool
+    has_audio: bool
+
+
+class VideoInfo(ApiModel):
+    platform: Literal["douyin", "bilibili"]
+    id: str
+    title: str
+    author: str | None
+    thumbnail_url: str | None
+    duration_seconds: int
+    qualities: list[QualityOption]
