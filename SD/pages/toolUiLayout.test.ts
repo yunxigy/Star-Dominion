@@ -9,6 +9,9 @@ import {
   TOOLBOX_CARD_TITLE_CLASS,
   TOOL_WINDOW_AD_CLASS,
   TOOL_WINDOW_CONTENT_CLASS,
+  getToolComponentShellClass,
+  getToolWindowContentClass,
+  usesImageWorkbench,
 } from './toolUiLayout';
 
 describe('tool page typography and width', () => {
@@ -28,5 +31,14 @@ describe('tool page typography and width', () => {
     expect(TOOL_WINDOW_CONTENT_CLASS).toContain('max-w-7xl');
     expect(TOOL_WINDOW_CONTENT_CLASS).toContain('p-8');
     expect(TOOL_WINDOW_AD_CLASS).toContain('max-w-7xl');
+  });
+
+  test('gives image categories a wider unwrapped workbench shell', () => {
+    expect(usesImageWorkbench('image')).toBe(true);
+    expect(usesImageWorkbench('image-enhance')).toBe(true);
+    expect(usesImageWorkbench('text')).toBe(false);
+    expect(getToolWindowContentClass('image')).toContain('max-w-[1500px]');
+    expect(getToolComponentShellClass('image')).not.toContain('glass-card');
+    expect(getToolComponentShellClass('text')).toContain('glass-card');
   });
 });
