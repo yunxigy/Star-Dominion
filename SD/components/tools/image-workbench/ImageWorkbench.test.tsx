@@ -125,7 +125,13 @@ describe('ImageWorkbench low-level primitives', () => {
         }}
         outputs={[
           { id: 'one', src: 'blob:one', name: '结果一.png', alt: '结果一预览' },
-          { id: 'two', src: 'blob:two', name: '结果二.png', alt: '结果二预览' },
+          {
+            id: 'two',
+            src: 'blob:two',
+            name: '结果二.png',
+            alt: '结果二预览',
+            metrics: [{ label: '清晰度', value: '清晰' }],
+          },
         ]}
         selectedOutputId="two"
         selectOutput={vi.fn()}
@@ -136,6 +142,8 @@ describe('ImageWorkbench low-level primitives', () => {
     expect(html).toContain('alt="结果二预览"');
     expect(html).toContain('aria-label="选择输出 结果一.png"');
     expect(html).toContain('aria-pressed="true"');
+    expect(html).toContain('清晰度');
+    expect(html).toContain('清晰');
 
     const emptyHtml = renderToStaticMarkup(<ImagePreviewPane />);
     expect(emptyHtml).toContain('上传图片后可在这里查看预览');

@@ -3,6 +3,7 @@ export interface ImagePreviewAsset {
   src: string;
   name: string;
   alt: string;
+  metrics?: readonly { label: string; value: string }[];
 }
 
 export interface ImagePreviewPaneProps {
@@ -65,6 +66,16 @@ export function ImagePreviewPane({
           )}
           {selectedOutput ? (
             <span className="image-workbench__preview-name">{selectedOutput.name}</span>
+          ) : null}
+          {selectedOutput?.metrics?.length ? (
+            <dl className="image-workbench__preview-metrics">
+              {selectedOutput.metrics.map((metric) => (
+                <div key={`${metric.label}-${metric.value}`}>
+                  <dt>{metric.label}</dt>
+                  <dd>{metric.value}</dd>
+                </div>
+              ))}
+            </dl>
           ) : null}
         </figure>
       </div>

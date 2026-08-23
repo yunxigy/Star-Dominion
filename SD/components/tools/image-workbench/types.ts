@@ -13,6 +13,12 @@ export interface ProcessedAsset {
   blob: Blob;
   width?: number;
   height?: number;
+  metrics?: readonly AssetMetric[];
+}
+
+export interface AssetMetric {
+  label: string;
+  value: string;
 }
 
 export interface OutputAsset extends ProcessedAsset {

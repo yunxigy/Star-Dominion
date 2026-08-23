@@ -200,6 +200,7 @@ export function BatchImageTool<P>({
     src: output.url,
     name: output.name,
     alt: `${output.name} 处理结果预览`,
+    metrics: output.metrics,
   }));
   const maxFilesReached = processor.maxFiles !== undefined
     && batch.items.length >= processor.maxFiles;

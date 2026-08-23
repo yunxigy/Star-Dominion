@@ -30,6 +30,11 @@ export interface ExifReencodeParams {
   quality: number;
 }
 
+export interface SharpnessAnalysisParams {
+  outputMime: OutputImageMime;
+  quality: number;
+}
+
 export const DEFAULT_FILTER_PARAMS: Readonly<FilterParams> = {
   brightness: 0,
   contrast: 0,
@@ -40,6 +45,11 @@ export const DEFAULT_FILTER_PARAMS: Readonly<FilterParams> = {
 };
 
 export const DEFAULT_EXIF_REENCODE_PARAMS: Readonly<ExifReencodeParams> = {
+  quality: 0.92,
+};
+
+export const DEFAULT_SHARPNESS_ANALYSIS_PARAMS: Readonly<SharpnessAnalysisParams> = {
+  outputMime: 'image/png',
   quality: 0.92,
 };
 
@@ -205,6 +215,37 @@ export function calculateSharpnessScore(
     }
   }
 
+  return count > 1 ? squaredDistance / count : 0;
+}
+
+export async function calculateSharpnessScoreCooperatively(
+  pixels: Uint8ClampedArray,
+  width: number,
+  height: number,
+  signal?: AbortSignal,
+): Promise<number> {
+  assertPixelBuffer(pixels, width, height);
+  throwIfAborted(signal);
+  if (width < 3 || height < 3) return 0;
+  let count = 0;
+  let mean = 0;
+  let squaredDistance = 0;
+
+  for (let y = 1; y < height - 1; y += 1) {
+    if (y % 32 === 1) await yieldToBrowser(signal);
+    for (let x = 1; x < width - 1; x += 1) {
+      const offset = (y * width + x) * 4;
+      const laplacian = 4 * luminanceAt(pixels, offset)
+        - luminanceAt(pixels, offset - 4)
+        - luminanceAt(pixels, offset + 4)
+        - luminanceAt(pixels, offset - width * 4)
+        - luminanceAt(pixels, offset + width * 4);
+      count += 1;
+      const delta = laplacian - mean;
+      mean += delta / count;
+      squaredDistance += delta * (laplacian - mean);
+    }
+  }
   return count > 1 ? squaredDistance / count : 0;
 }
 
@@ -425,6 +466,52 @@ export const reencodeImageWithoutExif: ImageProcessor<ExifReencodeParams>['proce
   return outputs;
 };
 
+export const analyzeImageSharpness: ImageProcessor<SharpnessAnalysisParams>['process'] = async (
+  files,
+  params,
+  context,
+) => {
+  throwIfAborted(context.signal);
+  const outputs: ProcessedAsset[] = [];
+  for (const file of files) {
+    throwIfAborted(context.signal);
+    const image = await decodeImage(file, context.signal);
+    try {
+      const { width, height } = getDecodedSize(image);
+      const canvas = createCanvas(width, height);
+      const canvasContext = getCanvasContext(canvas);
+      canvasContext.drawImage(image, 0, 0);
+      const imageData = canvasContext.getImageData(0, 0, width, height);
+      const score = await calculateSharpnessScoreCooperatively(
+        imageData.data,
+        width,
+        height,
+        context.signal,
+      );
+      const level = score < 100 ? '偏模糊' : score < 500 ? '一般' : '清晰';
+      const output = await exportCanvas(
+        canvas,
+        file.name,
+        '-sharpness-analysis',
+        params.outputMime,
+        params.quality,
+        context.signal,
+      );
+      outputs.push({
+        ...output,
+        metrics: [
+          { label: '清晰度评分', value: score.toFixed(1) },
+          { label: '参考等级', value: level },
+          { label: '图像尺寸', value: `${width} × ${height}` },
+        ],
+      });
+    } finally {
+      releaseDecodedImage(image);
+    }
+  }
+  return outputs;
+};
+
 export function createFilterProcessor(
   defaultParams: FilterParams = { ...DEFAULT_FILTER_PARAMS },
 ): ImageProcessor<FilterParams> {
@@ -444,5 +531,17 @@ export function createExifReencodeProcessor(
     mode: 'per-file',
     defaultParams: { ...defaultParams },
     process: reencodeImageWithoutExif,
+  };
+}
+
+export function createSharpnessAnalysisProcessor(
+  defaultParams: SharpnessAnalysisParams = { ...DEFAULT_SHARPNESS_ANALYSIS_PARAMS },
+): ImageProcessor<SharpnessAnalysisParams> {
+  return {
+    accept: 'image/png,image/jpeg,image/webp',
+    mode: 'per-file',
+    defaultParams: { ...defaultParams },
+    concurrency: 2,
+    process: analyzeImageSharpness,
   };
 }
