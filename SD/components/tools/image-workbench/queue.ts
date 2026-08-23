@@ -17,6 +17,7 @@ export type ImageQueueAction<P> =
   | { type: 'succeed'; id: string; outputs: OutputAsset[] }
   | { type: 'fail'; id: string; error: string }
   | { type: 'retry'; id: string }
+  | { type: 'move'; id: string; direction: 'up' | 'down' }
   | { type: 'remove'; id: string }
   | { type: 'reset' };
 
@@ -154,6 +155,14 @@ export const imageQueueReducer = <P>(
         error: null,
         stale: true,
       }));
+    case 'move': {
+      const index = state.items.findIndex((item) => item.id === action.id);
+      const target = action.direction === 'up' ? index - 1 : index + 1;
+      if (index < 0 || target < 0 || target >= state.items.length) return state;
+      const items = [...state.items];
+      [items[index], items[target]] = [items[target], items[index]];
+      return { ...state, items };
+    }
     case 'remove': {
       const removedIndex = state.items.findIndex(
         (item) => item.id === action.id,

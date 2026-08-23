@@ -13,6 +13,7 @@ export interface ImageBatchQueueProps<P> {
   select(id: string): void;
   remove(id: string): void;
   retry(id: string): void | Promise<void>;
+  move?(id: string, direction: 'up' | 'down'): void;
 }
 
 function formatBytes(bytes: number): string {
@@ -39,6 +40,7 @@ export function ImageBatchQueue<P>({
   select,
   remove,
   retry,
+  move,
 }: ImageBatchQueueProps<P>) {
   return (
     <section className="image-workbench__queue" aria-label="图片队列">
@@ -46,7 +48,7 @@ export function ImageBatchQueue<P>({
         <p className="image-workbench__queue-empty">尚未添加图片</p>
       ) : (
         <ul className="image-workbench__queue-list">
-          {items.map((item) => {
+          {items.map((item, index) => {
             const selected = item.id === selectedId;
             const bytes = item.metadata?.bytes ?? item.file.size;
             const mime = item.metadata?.mime || item.file.type;
@@ -103,6 +105,28 @@ export function ImageBatchQueue<P>({
                 ) : null}
 
                 <div className="image-workbench__queue-actions">
+                  {move ? (
+                    <>
+                      <button
+                        type="button"
+                        className="image-workbench__queue-action"
+                        aria-label={`上移 ${item.file.name}`}
+                        disabled={index === 0}
+                        onClick={() => move(item.id, 'up')}
+                      >
+                        上移
+                      </button>
+                      <button
+                        type="button"
+                        className="image-workbench__queue-action"
+                        aria-label={`下移 ${item.file.name}`}
+                        disabled={index === items.length - 1}
+                        onClick={() => move(item.id, 'down')}
+                      >
+                        下移
+                      </button>
+                    </>
+                  ) : null}
                   {item.status === 'error' ? (
                     <button
                       type="button"

@@ -1,112 +1,52 @@
-import React, { useState, useEffect } from 'react';
-import { useFileUpload, UploadZone, Btn, loadImage, loadImageFromBlob, canvasToBlob, downloadBlob, revokeUrls } from '../shared';
+import type { FC } from 'react';
+import {
+  BatchImageTool,
+  NumberControl,
+  PresetControl,
+  RangeControl,
+  SelectControl,
+} from '../image-workbench';
+import {
+  splitGridImageProcessor,
+  type SplitGridParams,
+} from './processors/conversion';
 
-type GridSize = 2 | 3 | 4;
-
-const SplitImageGrid: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles, handleFiles } = useFileUpload('image/*');
-  const [gridSize, setGridSize] = useState<GridSize>(3);
-  const [pieces, setPieces] = useState<string[]>([]);
-  const [processing, setProcessing] = useState(false);
-
-  useEffect(() => () => revokeUrls(pieces), [pieces]);
-
-  const handleSplit = async () => {
-    if (!files[0]) return;
-    setProcessing(true);
-    try {
-      const img = await loadImageFromBlob(files[0]);
-      const cellW = Math.floor(img.width / gridSize);
-      const cellH = Math.floor(img.height / gridSize);
-      const results: string[] = [];
-
-      for (let row = 0; row < gridSize; row++) {
-        for (let col = 0; col < gridSize; col++) {
-          const canvas = document.createElement('canvas');
-          canvas.width = cellW;
-          canvas.height = cellH;
-          const ctx = canvas.getContext('2d')!;
-          ctx.drawImage(img, col * cellW, row * cellH, cellW, cellH, 0, 0, cellW, cellH);
-          const blob = await canvasToBlob(canvas, 'image/png');
-          results.push(URL.createObjectURL(blob));
-        }
-      }
-
-      setPieces(results);
-    } catch (e: any) {
-      alert('切割失败: ' + e.message);
-    } finally {
-      setProcessing(false);
-    }
-  };
-
-  const handleDownloadOne = async (index: number) => {
-    if (!pieces[index]) return;
-    const blob = await fetch(pieces[index]).then(r => r.blob());
-    const row = Math.floor(index / gridSize) + 1;
-    const col = (index % gridSize) + 1;
-    downloadBlob(blob, `split_${row}_${col}.png`);
-  };
-
-  const handleDownloadAll = async () => {
-    for (let i = 0; i < pieces.length; i++) {
-      await handleDownloadOne(i);
-    }
-  };
-
-  return (
-    <div className="space-y-3">
-      <input {...inputProps} />
-      {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept="image/*" label="上传图片" sublabel="将图片切割为网格" />
-      ) : (
-        <>
-          <div className="flex items-center gap-2 text-sm text-slate-300">
-            <span className="truncate">{files[0].name}</span>
-            <button onClick={() => { clearFiles(); setPieces([]); }} className="text-red-400 hover:text-red-300 text-xs">移除</button>
-          </div>
-
-          <div>
-            <label className="text-sm text-slate-400 mb-1 block">切割方式</label>
-            <div className="grid grid-cols-3 gap-2">
-              {([2, 3, 4] as GridSize[]).map(size => (
-                <button
-                  key={size}
-                  onClick={() => setGridSize(size)}
-                  className={`px-3 py-2 text-sm rounded-lg ${gridSize === size ? 'bg-violet-600 text-white' : 'bg-slate-800 text-slate-400 hover:bg-slate-700'}`}
-                >
-                  {size}x{size}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <Btn onClick={handleSplit} disabled={processing}>{processing ? '切割中...' : '切割预览'}</Btn>
-
-          {pieces.length > 0 && (
-            <div className="space-y-3">
-              <p className="text-xs text-slate-500">共 {pieces.length} 块</p>
-              <div className="grid gap-2" style={{ gridTemplateColumns: `repeat(${gridSize}, 1fr)` }}>
-                {pieces.map((src, i) => (
-                  <div key={i} className="relative group">
-                    <img src={src} className="w-full rounded border border-slate-700" />
-                    <button
-                      onClick={() => handleDownloadOne(i)}
-                      className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center text-xs text-white transition-opacity rounded"
-                    >
-                      下载
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <Btn onClick={handleDownloadAll}>下载全部</Btn>
-            </div>
-          )}
-        </>
-      )}
-      <Btn onClick={onClose} variant="ghost">关闭</Btn>
-    </div>
-  );
-};
+const SplitImageGrid: FC<{ onClose: () => void }> = () => (
+  <BatchImageTool<SplitGridParams>
+    processor={splitGridImageProcessor}
+    parameterTitle="网格切图"
+    parameterDescription="设置独立行列数，每个网格会生成一张图片并可打包下载。"
+    maxFileSizeBytes={50 * 1024 * 1024}
+    zipFilename="split-images.zip"
+    notice={<span>边缘像素会完整保留；行列数不能超过原图像素尺寸。</span>}
+    renderControls={({ selectedParams, setSelectedParams }) => (
+      <>
+        <PresetControl
+          label="常用网格"
+          value={`${selectedParams.rows}x${selectedParams.columns}`}
+          options={[
+            { label: '2×2', value: '2x2' },
+            { label: '3×3', value: '3x3' },
+            { label: '4×4', value: '4x4' },
+          ]}
+          onChange={(value) => {
+            const [rows, columns] = value.split('x').map(Number);
+            setSelectedParams({ ...selectedParams, rows, columns });
+          }}
+        />
+        <NumberControl label="行数" value={selectedParams.rows} min={1} max={50} step={1} onChange={(rows) => setSelectedParams({ ...selectedParams, rows })} />
+        <NumberControl label="列数" value={selectedParams.columns} min={1} max={50} step={1} onChange={(columns) => setSelectedParams({ ...selectedParams, columns })} />
+        <p className="image-workbench__parameter-description">预计输出 {selectedParams.rows * selectedParams.columns} 张 / 每个输入文件</p>
+        <SelectControl
+          label="输出格式"
+          value={selectedParams.format}
+          options={[{ label: 'PNG', value: 'png' }, { label: 'JPEG', value: 'jpeg' }, { label: 'WebP', value: 'webp' }]}
+          onChange={(format) => setSelectedParams({ ...selectedParams, format })}
+        />
+        <RangeControl label="输出质量" value={Math.round(selectedParams.quality * 100)} min={10} max={100} unit="%" onChange={(quality) => setSelectedParams({ ...selectedParams, quality: quality / 100 })} />
+      </>
+    )}
+  />
+);
 
 export default SplitImageGrid;

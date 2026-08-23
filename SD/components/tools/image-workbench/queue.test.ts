@@ -259,6 +259,28 @@ describe('imageQueueReducer', () => {
     expect(state.selectedId).toBe(second.id);
   });
 
+  it('moves queue items without changing the selected item', () => {
+    const [first, second, third] = createBatchItems(
+      [makeFile('a.png'), makeFile('b.png'), makeFile('c.png')],
+      initialParams(),
+    );
+    const original = { items: [first, second, third], selectedId: second.id };
+
+    const moved = imageQueueReducer(original, {
+      type: 'move',
+      id: third.id,
+      direction: 'up',
+    });
+
+    expect(moved.items.map((item) => item.id)).toEqual([first.id, third.id, second.id]);
+    expect(moved.selectedId).toBe(second.id);
+    expect(moved.items).not.toBe(original.items);
+    expect(original.items.map((item) => item.id)).toEqual([first.id, second.id, third.id]);
+    expect(imageQueueReducer(moved, {
+      type: 'move', id: first.id, direction: 'up',
+    })).toBe(moved);
+  });
+
   it('falls back to the next item, then the previous item, then null when removing selection', () => {
     const [first, second, third] = createBatchItems(
       [makeFile('a.png'), makeFile('b.png'), makeFile('c.png')],

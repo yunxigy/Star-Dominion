@@ -27,6 +27,7 @@ export interface BatchImageToolProps<P> {
   notice?: ReactNode;
   zipFilename?: string;
   maxFileSizeBytes?: number;
+  allowReorder?: boolean;
 }
 
 function formatFileSize(bytes: number): string {
@@ -66,6 +67,7 @@ export function BatchImageTool<P>({
   notice,
   zipFilename = 'processed-images.zip',
   maxFileSizeBytes,
+  allowReorder = false,
 }: BatchImageToolProps<P>) {
   const batch = useImageBatch(processor);
   const [uploadError, setUploadError] = useState<string | null>(null);
@@ -224,6 +226,7 @@ export function BatchImageTool<P>({
           select={batch.selectItem}
           remove={removeItem}
           retry={retryItem}
+          move={allowReorder ? batch.moveItem : undefined}
         />
       )}
       controls={(

@@ -277,6 +277,7 @@ describe('useImageBatch mounted orchestration', () => {
       'applyParamsToAll',
       'isProcessing',
       'items',
+      'moveItem',
       'processAll',
       'processSelected',
       'removeItem',
@@ -651,6 +652,23 @@ describe('useImageBatch mounted orchestration', () => {
 
     expect(urls.revokeObjectURL).toHaveBeenCalledWith(oldOutputUrl);
     expect(mounted.current.allOutputs).toEqual([]);
+  });
+
+  it('reorders group inputs and revokes the output produced from the old order', async () => {
+    const urls = installImageGlobals();
+    const process = vi.fn(async () => processed('group.png'));
+    const mounted = mountBatch(makeProcessor(process, 'group'));
+    await addFiles(mounted, ['first.png', 'second.png']);
+    await act(async () => mounted.current.processAll());
+    const oldOutputUrl = mounted.current.allOutputs[0].url;
+    const secondId = mounted.current.items[1].id;
+
+    act(() => mounted.current.moveItem(secondId, 'up'));
+
+    expect(mounted.current.items.map((item) => item.file.name))
+      .toEqual(['second.png', 'first.png']);
+    expect(mounted.current.allOutputs).toEqual([]);
+    expect(urls.revokeObjectURL).toHaveBeenCalledWith(oldOutputUrl);
   });
 
   it('aborts an active group job and ignores its late result when adding files', async () => {

@@ -32,6 +32,7 @@ export interface UseImageBatchResult<P> {
   isProcessing: boolean;
   addFiles(files: readonly File[]): Promise<void>;
   removeItem(id: string): void;
+  moveItem(id: string, direction: 'up' | 'down'): void;
   selectItem(id: string): void;
   setSelectedParams(params: P): void;
   applyParamsToAll(params: P): void;
@@ -412,6 +413,28 @@ export function useImageBatch<P>(
     releaseItemOutputs,
   ]);
 
+  const moveItem = useCallback((id: string, direction: 'up' | 'down'): void => {
+    if (!mountedRef.current) return;
+    const current = stateRef.current;
+    if (!current.items.some((item) => item.id === id)) return;
+    clearPreviewTimer();
+    invalidateProcessAll();
+    if (processor.mode === 'group') {
+      abortJob('group');
+      releaseItemOutputs(current.items);
+      cancelProcessingItems(current.items);
+    }
+    dispatch({ type: 'move', id, direction });
+  }, [
+    abortJob,
+    cancelProcessingItems,
+    clearPreviewTimer,
+    dispatch,
+    invalidateProcessAll,
+    processor.mode,
+    releaseItemOutputs,
+  ]);
+
   const selectItem = useCallback((id: string): void => {
     dispatch({ type: 'select', id });
   }, [dispatch]);
@@ -610,6 +633,7 @@ export function useImageBatch<P>(
     isProcessing: state.items.some((item) => item.status === 'processing'),
     addFiles,
     removeItem,
+    moveItem,
     selectItem,
     setSelectedParams,
     applyParamsToAll,
