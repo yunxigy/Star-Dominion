@@ -1,5 +1,6 @@
 import type {
   BatchItem,
+  ImageMetadata,
   ImageQueueState,
   OutputAsset,
 } from './types';
@@ -7,14 +8,17 @@ import type {
 export type ImageQueueAction<P> =
   | { type: 'add'; items: BatchItem<P>[] }
   | { type: 'select'; id: string | null }
+  | { type: 'set-metadata'; id: string; metadata: ImageMetadata }
   | { type: 'set-item-params'; id: string; params: P }
   | { type: 'apply-params-to-all'; params: P }
+  | { type: 'clear-outputs'; id: string }
   | { type: 'start'; id: string }
   | { type: 'progress'; id: string; progress: number }
   | { type: 'succeed'; id: string; outputs: OutputAsset[] }
   | { type: 'fail'; id: string; error: string }
   | { type: 'retry'; id: string }
-  | { type: 'remove'; id: string };
+  | { type: 'remove'; id: string }
+  | { type: 'reset' };
 
 let nextBatchItemId = 0;
 
@@ -88,6 +92,11 @@ export const imageQueueReducer = <P>(
         return state;
       }
       return { ...state, selectedId: action.id };
+    case 'set-metadata':
+      return updateItem(state, action.id, (item) => ({
+        ...item,
+        metadata: action.metadata,
+      }));
     case 'set-item-params':
       return updateItem(state, action.id, (item) => ({
         ...item,
@@ -103,6 +112,11 @@ export const imageQueueReducer = <P>(
           stale: true,
         })),
       };
+    case 'clear-outputs':
+      return updateItem(state, action.id, (item) => ({
+        ...item,
+        outputs: [],
+      }));
     case 'start':
       return updateItem(state, action.id, (item) => ({
         ...item,
@@ -129,6 +143,7 @@ export const imageQueueReducer = <P>(
         ...item,
         status: 'error',
         error: action.error,
+        stale: false,
       }));
     case 'retry':
       return updateItem(state, action.id, (item) => ({
@@ -153,5 +168,7 @@ export const imageQueueReducer = <P>(
           : state.selectedId;
       return { items, selectedId };
     }
+    case 'reset':
+      return { items: [], selectedId: null };
   }
 };

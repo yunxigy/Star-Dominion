@@ -148,11 +148,11 @@ describe('imageQueueReducer', () => {
     });
   });
 
-  it('records a processing failure', () => {
+  it('records a processing failure and clears staleness', () => {
     const [item] = createBatchItems([makeFile('a.png')], initialParams());
     const state = imageQueueReducer(
       {
-        items: [{ ...item, status: 'processing', progress: 35 }],
+        items: [{ ...item, status: 'processing', progress: 35, stale: true }],
         selectedId: item.id,
       },
       { type: 'fail', id: item.id, error: '无法解码图片' },
@@ -161,7 +161,55 @@ describe('imageQueueReducer', () => {
     expect(state.items[0]).toMatchObject({
       status: 'error',
       error: '无法解码图片',
+      stale: false,
     });
+  });
+
+  it('sets metadata without replacing the queue item', () => {
+    const [item] = createBatchItems([makeFile('a.png')], initialParams());
+    const metadata = {
+      width: 640,
+      height: 480,
+      mime: 'image/png',
+      bytes: item.file.size,
+    };
+    const state = imageQueueReducer(
+      { items: [item], selectedId: item.id },
+      { type: 'set-metadata', id: item.id, metadata },
+    );
+
+    expect(state.items[0]).toEqual({ ...item, metadata });
+  });
+
+  it('clears only the targeted item outputs before reprocessing', () => {
+    const [first, second] = createBatchItems(
+      [makeFile('a.png'), makeFile('b.png')],
+      initialParams(),
+    );
+    first.outputs = [makeOutput('first-output', 'a-result.png')];
+    second.outputs = [makeOutput('second-output', 'b-result.png')];
+
+    const state = imageQueueReducer(
+      { items: [first, second], selectedId: first.id },
+      { type: 'clear-outputs', id: first.id },
+    );
+
+    expect(state.items[0].outputs).toEqual([]);
+    expect(state.items[1].outputs).toEqual(second.outputs);
+  });
+
+  it('resets the complete queue', () => {
+    const items = createBatchItems(
+      [makeFile('a.png'), makeFile('b.png')],
+      initialParams(),
+    );
+
+    const state = imageQueueReducer(
+      { items, selectedId: items[0].id },
+      { type: 'reset' },
+    );
+
+    expect(state).toEqual({ items: [], selectedId: null });
   });
 
   it('retries with the same input and params while clearing outputs and errors', () => {
