@@ -1,12 +1,15 @@
 from __future__ import annotations
 
+import threading
 from pathlib import Path
 
 import pytest
 from yt_dlp.utils import DownloadError
 
 from video_downloader.errors import ServiceError
-from video_downloader.extractor import YtDlpExtractor
+from video_downloader.extractor import DownloadCancelled, DownloadSpec, YtDlpExtractor
+from video_downloader.format_policy import FormatSelection
+from video_downloader.models import QualityOption
 from video_downloader.url_policy import ResolvedVideoUrl
 
 
@@ -185,3 +188,136 @@ def test_maps_yt_dlp_failures_to_stable_errors(settings, message, platform, code
 
     assert caught.value.code == code
     assert caught.value.http_status == status
+
+
+class RecordingHooks:
+    def __init__(self) -> None:
+        self.stages: list[str] = []
+        self.download_updates: list[tuple[int, int | None, float | None]] = []
+
+    def extracting(self) -> None:
+        self.stages.append("extracting")
+
+    def downloading(self, downloaded_bytes, total_bytes, speed_bytes_per_second) -> None:
+        self.stages.append("downloading")
+        self.download_updates.append((downloaded_bytes, total_bytes, speed_bytes_per_second))
+
+    def merging(self) -> None:
+        self.stages.append("merging")
+
+    def completed(self, output_path) -> None:
+        self.stages.append("completed")
+
+
+def download_spec(tmp_path: Path, *, requires_merge: bool = False) -> DownloadSpec:
+    quality = QualityOption(
+        id="q_12345678",
+        label="1080P" if requires_merge else "720P",
+        height=1080 if requires_merge else 720,
+        extension="mp4",
+        estimated_bytes=100,
+        requires_merge=requires_merge,
+        has_audio=True,
+    )
+    return DownloadSpec(
+        target=ResolvedVideoUrl("bilibili", "https://www.bilibili.com/video/BV1demo"),
+        video_id="BV1demo",
+        title="演示/视频",
+        selection=FormatSelection(
+            public=quality,
+            selector="v1080+a1" if requires_merge else "p720",
+            merge_extension="mp4" if requires_merge else None,
+        ),
+        directory=tmp_path,
+        cancel_event=threading.Event(),
+    )
+
+
+class FakeDownloadYdl(FakeYdl):
+    def extract_info(self, url, download):
+        assert download is True
+        for hook in self.options["progress_hooks"]:
+            hook({"status": "downloading", "downloaded_bytes": 50, "total_bytes": 100, "speed": 12.5})
+        for hook in self.options["postprocessor_hooks"]:
+            hook({"status": "started", "postprocessor": "FFmpegMerger"})
+            hook({"status": "finished", "postprocessor": "FFmpegMerger"})
+        output = Path(self.options["outtmpl"].replace("%(ext)s", "mp4"))
+        output.write_bytes(b"video")
+        return {"requested_downloads": [{"filepath": str(output)}]}
+
+
+class FailingDownloadYdl(FakeYdl):
+    def extract_info(self, url, download):
+        assert download is True
+        raise self.error
+
+
+def test_download_uses_server_selector_and_safe_output_name(settings, tmp_path: Path):
+    captured = {}
+
+    def factory(options):
+        captured.update(options)
+        return FakeDownloadYdl(options)
+
+    extractor = YtDlpExtractor(settings, ydl_factory=factory, ffmpeg_available=lambda: True)
+    spec = download_spec(tmp_path, requires_merge=True)
+    hooks = RecordingHooks()
+
+    output = extractor.download(spec, hooks)
+
+    assert captured["format"] == "v1080+a1"
+    assert captured["outtmpl"] == str(tmp_path / "media.%(ext)s")
+    assert captured["merge_output_format"] == "mp4"
+    assert output.name == "演示_视频-bilibili-BV1demo.mp4"
+    assert output.read_bytes() == b"video"
+    assert hooks.download_updates == [(50, 100, 12.5)]
+    assert "merging" in hooks.stages
+    assert hooks.stages[-1] == "completed"
+
+
+def test_download_checks_cancel_event_before_start(settings, tmp_path: Path):
+    spec = download_spec(tmp_path)
+    spec.cancel_event.set()
+    extractor = YtDlpExtractor(settings, ydl_factory=lambda options: FakeDownloadYdl(options))
+
+    with pytest.raises(DownloadCancelled):
+        extractor.download(spec, RecordingHooks())
+
+
+def test_download_progress_aborts_when_actual_bytes_exceed_limit(settings, tmp_path: Path):
+    configured = settings.model_copy(update={"max_file_bytes": 10})
+    extractor = YtDlpExtractor(configured, ydl_factory=lambda options: FakeDownloadYdl(options))
+
+    with pytest.raises(ServiceError) as caught:
+        extractor.download(download_spec(tmp_path), RecordingHooks())
+
+    assert caught.value.code == "FILE_SIZE_LIMIT"
+
+
+def test_merge_quality_requires_ffmpeg(settings, tmp_path: Path):
+    extractor = YtDlpExtractor(
+        settings,
+        ydl_factory=lambda options: FakeDownloadYdl(options),
+        ffmpeg_available=lambda: False,
+    )
+
+    with pytest.raises(ServiceError) as caught:
+        extractor.download(download_spec(tmp_path, requires_merge=True), RecordingHooks())
+
+    assert caught.value.code == "DEPENDENCY_UNAVAILABLE"
+
+
+def test_ffmpeg_download_error_maps_to_merge_failed(settings, tmp_path: Path):
+    extractor = YtDlpExtractor(
+        settings,
+        ydl_factory=lambda options: FailingDownloadYdl(
+            options,
+            error=DownloadError("Postprocessing: ffmpeg merger failed"),
+        ),
+        ffmpeg_available=lambda: True,
+    )
+
+    with pytest.raises(ServiceError) as caught:
+        extractor.download(download_spec(tmp_path, requires_merge=True), RecordingHooks())
+
+    assert caught.value.code == "MERGE_FAILED"

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import shutil
+import threading
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
@@ -8,6 +10,7 @@ from urllib.parse import urlsplit
 
 from .config import VideoSettings
 from .errors import ServiceError
+from .files import safe_download_name
 from .format_policy import FormatPolicy, FormatSelection
 from .models import VideoInfo
 from .url_policy import ResolvedVideoUrl
@@ -40,15 +43,52 @@ class ExtractedVideo:
     format_map: dict[str, FormatSelection]
 
 
+@dataclass(frozen=True)
+class DownloadSpec:
+    target: ResolvedVideoUrl
+    video_id: str
+    title: str
+    selection: FormatSelection
+    directory: Path
+    cancel_event: threading.Event
+
+
+class DownloadHooks(Protocol):
+    def extracting(self) -> None:
+        raise NotImplementedError
+
+    def downloading(
+        self,
+        downloaded_bytes: int,
+        total_bytes: int | None,
+        speed_bytes_per_second: float | None,
+    ) -> None:
+        raise NotImplementedError
+
+    def merging(self) -> None:
+        raise NotImplementedError
+
+    def completed(self, output_path: Path) -> None:
+        raise NotImplementedError
+
+
+class DownloadCancelled(Exception):
+    """Raised from yt-dlp hooks when the owning job has been cancelled."""
+
+
 class YtDlpExtractor:
     def __init__(
         self,
         settings: VideoSettings,
         ydl_factory: YdlFactory | None = None,
+        ffmpeg_available: Callable[[], bool] | None = None,
     ) -> None:
         self._settings = settings
         self._ydl_factory = ydl_factory or _default_ydl_factory
         self._format_policy = FormatPolicy(settings.max_file_bytes)
+        self._ffmpeg_available = ffmpeg_available or (
+            lambda: shutil.which(self._settings.ffmpeg_bin) is not None
+        )
 
     def extract(self, target: ResolvedVideoUrl) -> ExtractedVideo:
         options: dict[str, Any] = {
@@ -136,6 +176,141 @@ class YtDlpExtractor:
             format_map=format_map,
         )
 
+    def download(self, spec: DownloadSpec, hooks: DownloadHooks) -> Path:
+        if spec.cancel_event.is_set():
+            raise DownloadCancelled()
+        if spec.selection.public.requires_merge and not self._ffmpeg_available():
+            raise ServiceError(
+                "DEPENDENCY_UNAVAILABLE",
+                "该清晰度需要 FFmpeg 合并音视频，但服务器当前不可用。",
+                503,
+                retryable=True,
+            )
+
+        directory = spec.directory.resolve()
+        directory.mkdir(parents=True, exist_ok=True)
+
+        def progress_hook(payload: dict[str, Any]) -> None:
+            if spec.cancel_event.is_set():
+                raise DownloadCancelled()
+            if payload.get("status") != "downloading":
+                return
+            downloaded = self._non_negative_int(payload.get("downloaded_bytes"))
+            total = self._optional_positive_int(
+                payload.get("total_bytes") or payload.get("total_bytes_estimate")
+            )
+            speed = self._optional_positive_float(payload.get("speed"))
+            if downloaded > self._settings.max_file_bytes:
+                spec.cancel_event.set()
+                raise ServiceError(
+                    "FILE_SIZE_LIMIT",
+                    "视频实际下载大小超过当前服务限制。",
+                    413,
+                )
+            hooks.downloading(downloaded, total, speed)
+
+        def postprocessor_hook(payload: dict[str, Any]) -> None:
+            if spec.cancel_event.is_set():
+                raise DownloadCancelled()
+            processor = self._text(payload.get("postprocessor")).lower()
+            if payload.get("status") == "started" and "ffmpeg" in processor:
+                hooks.merging()
+
+        options: dict[str, Any] = {
+            "format": spec.selection.selector,
+            "outtmpl": str(directory / "media.%(ext)s"),
+            "noplaylist": True,
+            "quiet": True,
+            "no_warnings": True,
+            "allowed_extractors": ["Douyin", "BiliBili"],
+            "overwrites": False,
+            "continuedl": False,
+            "max_filesize": self._settings.max_file_bytes,
+            "socket_timeout": 30,
+            "retries": 1,
+            "fragment_retries": 1,
+            "progress_hooks": [progress_hook],
+            "postprocessor_hooks": [postprocessor_hook],
+        }
+        if spec.selection.merge_extension is not None:
+            options["merge_output_format"] = spec.selection.merge_extension
+        if self._settings.ffmpeg_bin != "ffmpeg":
+            options["ffmpeg_location"] = self._settings.ffmpeg_bin
+        cookie_file = self._valid_cookie_file(spec.target.platform)
+        if cookie_file is not None:
+            options["cookiefile"] = str(cookie_file)
+
+        hooks.extracting()
+        try:
+            with self._ydl_factory(options) as ydl:
+                result = ydl.extract_info(spec.target.url, download=True)
+        except (DownloadCancelled, ServiceError):
+            raise
+        except Exception as exc:
+            if self._is_yt_dlp_error(exc):
+                message = str(exc).lower()
+                if spec.selection.public.requires_merge and any(
+                    marker in message for marker in ("ffmpeg", "postprocess", "merger", "merge")
+                ):
+                    raise ServiceError(
+                        "MERGE_FAILED",
+                        "FFmpeg 合并音视频失败，请稍后重试。",
+                        500,
+                        retryable=True,
+                    ) from exc
+                raise self._map_download_error(exc, spec.target.platform) from exc
+            raise
+
+        if spec.cancel_event.is_set():
+            raise DownloadCancelled()
+        output = self._locate_output(directory, result)
+        if output.stat().st_size > self._settings.max_file_bytes:
+            raise ServiceError(
+                "FILE_SIZE_LIMIT",
+                "视频实际文件大小超过当前服务限制。",
+                413,
+            )
+        extension = output.suffix.lstrip(".") or spec.selection.public.extension
+        final_path = directory / safe_download_name(
+            spec.title,
+            spec.target.platform,
+            spec.video_id,
+            extension,
+        )
+        if output != final_path:
+            output.replace(final_path)
+        hooks.completed(final_path)
+        return final_path
+
+    @staticmethod
+    def _locate_output(directory: Path, result: object) -> Path:
+        candidates: list[Path] = []
+        if isinstance(result, dict):
+            requested = result.get("requested_downloads")
+            if isinstance(requested, list):
+                for item in requested:
+                    if isinstance(item, dict) and isinstance(item.get("filepath"), str):
+                        candidates.append(Path(item["filepath"]))
+            for key in ("filepath", "_filename"):
+                if isinstance(result.get(key), str):
+                    candidates.append(Path(result[key]))
+        candidates.extend(
+            path
+            for path in directory.iterdir()
+            if path.is_file() and not path.name.endswith((".part", ".ytdl"))
+        )
+
+        for candidate in reversed(candidates):
+            resolved = candidate.expanduser().resolve()
+            if resolved.parent == directory and resolved.is_file():
+                return resolved
+        raise ServiceError(
+            "EXTRACTOR_TEMPORARILY_UNAVAILABLE",
+            "视频下载完成但未找到安全的输出文件。",
+            502,
+            retryable=True,
+        )
+
     def _valid_cookie_file(self, platform: str) -> Path | None:
         cookie_file = self._settings.douyin_cookie_file
         if platform != "douyin" or cookie_file is None:
@@ -170,6 +345,30 @@ class YtDlpExtractor:
         if isinstance(value, (int, float)) and value > 0:
             return int(value)
         return 0
+
+    @staticmethod
+    def _non_negative_int(value: object) -> int:
+        if isinstance(value, bool):
+            return 0
+        if isinstance(value, (int, float)):
+            return max(0, int(value))
+        return 0
+
+    @staticmethod
+    def _optional_positive_int(value: object) -> int | None:
+        if isinstance(value, bool):
+            return None
+        if isinstance(value, (int, float)) and value > 0:
+            return int(value)
+        return None
+
+    @staticmethod
+    def _optional_positive_float(value: object) -> float | None:
+        if isinstance(value, bool):
+            return None
+        if isinstance(value, (int, float)) and value >= 0:
+            return float(value)
+        return None
 
     @staticmethod
     def _safe_thumbnail(value: object) -> str | None:
