@@ -7,11 +7,14 @@ import { ImageDropzone } from './ImageDropzone';
 import { ImageParameterPanel } from './ImageParameterPanel';
 import { ImagePreviewPane } from './ImagePreviewPane';
 import { ImageWorkbench } from './ImageWorkbench';
-import type { ImageProcessor, OutputAsset } from './types';
+import type { BatchItem, ImageProcessor, OutputAsset } from './types';
 import { useImageBatch } from './useImageBatch';
 
 export interface BatchImageToolControlContext<P> {
   selectedParams: P;
+  selected: BatchItem<P> | null;
+  items: readonly BatchItem<P>[];
+  isProcessing: boolean;
   setSelectedParams(params: P): void;
   applyParamsToAll(params: P): void;
 }
@@ -82,10 +85,16 @@ export function BatchImageTool<P>({
 
   const controlContext = useMemo<BatchImageToolControlContext<P>>(() => ({
     selectedParams,
+    selected: batch.selected,
+    items: batch.items,
+    isProcessing: batch.isProcessing,
     setSelectedParams: batch.setSelectedParams,
     applyParamsToAll: batch.applyParamsToAll,
   }), [
     batch.applyParamsToAll,
+    batch.isProcessing,
+    batch.items,
+    batch.selected,
     batch.setSelectedParams,
     selectedParams,
   ]);

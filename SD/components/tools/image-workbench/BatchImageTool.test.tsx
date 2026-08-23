@@ -295,7 +295,7 @@ describe('BatchImageTool', () => {
       new File(['three'], 'three.png', { type: 'image/png' }),
     ]);
 
-    expect(mounted.queue().props.items.map((item) => item.file.name))
+    expect(mounted.queue().props.items.map((item: { file: File }) => item.file.name))
       .toEqual(['one.png', 'two.png']);
     expect(JSON.stringify(mounted.renderer.toJSON())).toContain('three.png');
     expect(JSON.stringify(mounted.renderer.toJSON())).toContain('最多 2 张');

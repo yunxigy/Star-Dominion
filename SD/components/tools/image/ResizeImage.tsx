@@ -1,114 +1,103 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { useFileUpload, UploadZone, Btn, loadImage, loadImageFromBlob, canvasToBlob, downloadBlob , revokeUrls } from '../shared';
+import type { FC } from 'react';
+import {
+  BatchImageTool,
+  NumberControl,
+  PresetControl,
+  RangeControl,
+  SelectControl,
+  ToggleControl,
+} from '../image-workbench';
+import {
+  resizeImageProcessor,
+  type ResizeParams,
+} from './processors/basic';
 
-const ResizeImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles, handleFiles } = useFileUpload('image/*');
-  const [width, setWidth] = useState('');
-  const [height, setHeight] = useState('');
-  const [lockRatio, setLockRatio] = useState(true);
-  const [naturalW, setNaturalW] = useState(0);
-  const [naturalH, setNaturalH] = useState(0);
-  const [preview, setPreview] = useState('');
-  const [processing, setProcessing] = useState(false);
+const MAX_FILE_SIZE = 50 * 1024 * 1024;
 
-  const handleFileLoad = async () => {
-    if (!files[0]) return;
-    try {
-      const img = await loadImageFromBlob(files[0]);
-      setNaturalW(img.width);
-      setNaturalH(img.height);
-      setWidth(String(img.width));
-      setHeight(String(img.height));
-    } catch (e: any) {
-      alert('加载图片失败: ' + e.message);
-    }
-  };
+const ResizeImage: FC<{ onClose: () => void }> = () => (
+  <BatchImageTool<ResizeParams>
+    processor={resizeImageProcessor}
+    parameterTitle="尺寸与导出"
+    parameterDescription="先选择队列中的图片，再设置目标尺寸；保持比例可避免画面变形。"
+    maxFileSizeBytes={MAX_FILE_SIZE}
+    zipFilename="resized-images.zip"
+    notice={<span>单图参数会在约 200ms 后生成预览；多图队列需点击“处理全部”。</span>}
+    renderControls={({ selected, selectedParams, setSelectedParams }) => {
+      const sourceWidth = selected?.metadata?.width ?? 0;
+      const sourceHeight = selected?.metadata?.height ?? 0;
+      const shownWidth = selectedParams.width ?? sourceWidth;
+      const shownHeight = selectedParams.height ?? sourceHeight;
+      const updateWidth = (width: number) => {
+        const height = selectedParams.keepAspectRatio && sourceWidth > 0
+          ? Math.max(1, Math.round(width * sourceHeight / sourceWidth))
+          : selectedParams.height;
+        setSelectedParams({ ...selectedParams, width, height });
+      };
+      const updateHeight = (height: number) => {
+        const width = selectedParams.keepAspectRatio && sourceHeight > 0
+          ? Math.max(1, Math.round(height * sourceWidth / sourceHeight))
+          : selectedParams.width;
+        setSelectedParams({ ...selectedParams, width, height });
+      };
+      const applyScale = (percent: number) => {
+        if (!sourceWidth || !sourceHeight) return;
+        setSelectedParams({
+          ...selectedParams,
+          width: Math.max(1, Math.round(sourceWidth * percent / 100)),
+          height: Math.max(1, Math.round(sourceHeight * percent / 100)),
+        });
+      };
 
-  const handleWidthChange = (v: string) => {
-    setWidth(v);
-    if (lockRatio && naturalW > 0 && v) {
-      setHeight(String(Math.round(Number(v) * naturalH / naturalW)));
-    }
-  };
-
-  const handleHeightChange = (v: string) => {
-    setHeight(v);
-    if (lockRatio && naturalH > 0 && v) {
-      setWidth(String(Math.round(Number(v) * naturalW / naturalH)));
-    }
-  };
-
-  const handleResize = async () => {
-    if (!files[0] || !width || !height) return;
-    setProcessing(true);
-    try {
-      const img = await loadImageFromBlob(files[0]);
-      const canvas = document.createElement('canvas');
-      canvas.width = Number(width);
-      canvas.height = Number(height);
-      const ctx = canvas.getContext('2d')!;
-      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-      const blob = await canvasToBlob(canvas, 'image/png');
-      setPreview(URL.createObjectURL(blob));
-    } catch (e: any) {
-      alert('缩放失败: ' + e.message);
-    } finally {
-      setProcessing(false);
-    }
-  };
-
-  const handleDownload = async () => {
-    if (!files[0] || !width || !height) return;
-    const img = await loadImageFromBlob(files[0]);
-    const canvas = document.createElement('canvas');
-    canvas.width = Number(width);
-    canvas.height = Number(height);
-    const ctx = canvas.getContext('2d')!;
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-    const blob = await canvasToBlob(canvas, 'image/png');
-    const name = files[0].name.replace(/\.[^.]+$/, '') + `_${width}x${height}.png`;
-    downloadBlob(blob, name);
-  };
-
-  return (
-    <div className="space-y-3">
-      <input {...inputProps} />
-      {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept="image/*" label="上传图片" sublabel="支持 JPG/PNG/WebP" />
-      ) : (
+      return (
         <>
-          <div className="flex items-center gap-2 text-sm text-slate-300">
-            <span className="truncate">{files[0].name}</span>
-            <button onClick={() => { clearFiles(); setWidth(''); setHeight(''); setPreview(''); setNaturalW(0); setNaturalH(0); }} className="text-red-400 hover:text-red-300 text-xs">移除</button>
-          </div>
-          {naturalW > 0 && <p className="text-xs text-slate-500">原始尺寸: {naturalW} x {naturalH}</p>}
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <label className="text-sm text-slate-400 mb-1 block">宽度</label>
-              <input type="number" value={width} onChange={e => handleWidthChange(e.target.value)} placeholder="宽度" className="w-full bg-slate-800/50 border border-slate-700 rounded-lg p-2 text-sm text-slate-200 focus:outline-none focus:border-violet-500/50" />
-            </div>
-            <div>
-              <label className="text-sm text-slate-400 mb-1 block">高度</label>
-              <input type="number" value={height} onChange={e => handleHeightChange(e.target.value)} placeholder="高度" className="w-full bg-slate-800/50 border border-slate-700 rounded-lg p-2 text-sm text-slate-200 focus:outline-none focus:border-violet-500/50" />
-            </div>
-          </div>
-          <label className="flex items-center gap-2 text-sm text-slate-400 cursor-pointer">
-            <input type="checkbox" checked={lockRatio} onChange={e => setLockRatio(e.target.checked)} className="accent-violet-500" />
-            锁定宽高比例
-          </label>
-          <Btn onClick={handleResize} disabled={processing}>{processing ? '处理中...' : '缩放预览'}</Btn>
-          {preview && (
-            <div>
-              <p className="text-xs text-slate-500 mb-1">预览 ({width} x {height})</p>
-              <img src={preview} className="rounded-lg max-h-48 w-full object-contain bg-slate-800" />
-              <Btn onClick={handleDownload}>下载缩放图片</Btn>
-            </div>
-          )}
+          <PresetControl
+            label="尺寸预设"
+            value={100}
+            options={[25, 50, 75, 100].map((value) => ({
+              label: value === 100 ? '原尺寸' : `${value}%`,
+              value,
+              disabled: !selected?.metadata,
+            }))}
+            onChange={applyScale}
+          />
+          <NumberControl label="宽度" value={shownWidth} min={1} step={1} unit="px" onChange={updateWidth} />
+          <NumberControl label="高度" value={shownHeight} min={1} step={1} unit="px" onChange={updateHeight} />
+          <ToggleControl
+            label="保持比例"
+            checked={selectedParams.keepAspectRatio}
+            onChange={(keepAspectRatio) => setSelectedParams({ ...selectedParams, keepAspectRatio })}
+          />
+          <button
+            type="button"
+            className="image-workbench__button image-workbench__button--secondary"
+            disabled={!shownWidth || !shownHeight}
+            onClick={() => setSelectedParams({ ...selectedParams, width: shownHeight, height: shownWidth })}
+          >
+            互换宽高
+          </button>
+          <SelectControl
+            label="输出格式"
+            value={selectedParams.format}
+            options={[
+              { label: '保持原格式', value: 'original' },
+              { label: 'JPEG', value: 'jpeg' },
+              { label: 'PNG', value: 'png' },
+              { label: 'WebP', value: 'webp' },
+            ]}
+            onChange={(format) => setSelectedParams({ ...selectedParams, format })}
+          />
+          <RangeControl
+            label="输出质量"
+            value={Math.round(selectedParams.quality * 100)}
+            min={10}
+            max={100}
+            unit="%"
+            onChange={(quality) => setSelectedParams({ ...selectedParams, quality: quality / 100 })}
+          />
         </>
-      )}
-      <Btn onClick={onClose} variant="ghost">关闭</Btn>
-    </div>
-  );
-};
+      );
+    }}
+  />
+);
 
 export default ResizeImage;

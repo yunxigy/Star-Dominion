@@ -1,101 +1,85 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { useFileUpload, UploadZone, Btn, loadImage, loadImageFromBlob, canvasToBlob, downloadBlob , revokeUrls } from '../shared';
+import type { FC } from 'react';
+import {
+  BatchImageTool,
+  NumberControl,
+  PresetControl,
+  SelectControl,
+} from '../image-workbench';
+import {
+  cropImageProcessor,
+  type CropParams,
+} from './processors/basic';
 
-const CropImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles, handleFiles } = useFileUpload('image/*');
-  const [x, setX] = useState(0);
-  const [y, setY] = useState(0);
-  const [w, setW] = useState(0);
-  const [h, setH] = useState(0);
-  const [naturalW, setNaturalW] = useState(0);
-  const [naturalH, setNaturalH] = useState(0);
-  const [preview, setPreview] = useState('');
-  const [processing, setProcessing] = useState(false);
-  const imgRef = useRef<HTMLImageElement>(null);
+type CropRatio = 'free' | '1:1' | '4:3' | '16:9' | '3:4';
 
-  useEffect(() => {
-    if (files[0]) {
-      loadImageFromBlob(files[0]).then(img => {
-        setNaturalW(img.width);
-        setNaturalH(img.height);
-        setW(img.width);
-        setH(img.height);
-        setX(0);
-        setY(0);
-      }).catch(() => {});
-    }
-  }, [files]);
+function ratioValue(ratio: CropRatio): number | null {
+  if (ratio === 'free') return null;
+  const [width, height] = ratio.split(':').map(Number);
+  return width / height;
+}
 
-  const handleCrop = async () => {
-    if (!files[0]) return;
-    setProcessing(true);
-    try {
-      const img = await loadImageFromBlob(files[0]);
-      const canvas = document.createElement('canvas');
-      canvas.width = w;
-      canvas.height = h;
-      const ctx = canvas.getContext('2d')!;
-      ctx.drawImage(img, x, y, w, h, 0, 0, w, h);
-      const blob = await canvasToBlob(canvas, 'image/png');
-      setPreview(URL.createObjectURL(blob));
-    } catch (e: any) {
-      alert('裁剪失败: ' + e.message);
-    } finally {
-      setProcessing(false);
-    }
-  };
-
-  const handleDownload = async () => {
-    if (!files[0]) return;
-    const img = await loadImageFromBlob(files[0]);
-    const canvas = document.createElement('canvas');
-    canvas.width = w;
-    canvas.height = h;
-    const ctx = canvas.getContext('2d')!;
-    ctx.drawImage(img, x, y, w, h, 0, 0, w, h);
-    const blob = await canvasToBlob(canvas, 'image/png');
-    const name = files[0].name.replace(/\.[^.]+$/, '') + '_cropped.png';
-    downloadBlob(blob, name);
-  };
-
-  const numberInput = (label: string, value: number, set: (v: number) => void, max: number) => (
-    <div>
-      <label className="text-sm text-slate-400 mb-1 block">{label}</label>
-      <input type="number" min={0} max={max} value={value} onChange={e => set(Math.max(0, Math.min(max, Number(e.target.value))))} className="w-full bg-slate-800/50 border border-slate-700 rounded-lg p-2 text-sm text-slate-200 focus:outline-none focus:border-violet-500/50" />
-    </div>
-  );
-
-  return (
-    <div className="space-y-3">
-      <input {...inputProps} />
-      {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept="image/*" label="上传图片" sublabel="支持 JPG/PNG/WebP" />
-      ) : (
+const CropImage: FC<{ onClose: () => void }> = () => (
+  <BatchImageTool<CropParams>
+    processor={cropImageProcessor}
+    parameterTitle="裁剪区域"
+    parameterDescription="使用比例预设快速居中取景，或精确输入裁剪坐标和尺寸。"
+    maxFileSizeBytes={50 * 1024 * 1024}
+    zipFilename="cropped-images.zip"
+    notice={<span>裁剪坐标按每张图片独立保存；应用到全部前请确认图片尺寸接近。</span>}
+    renderControls={({ selected, selectedParams, setSelectedParams }) => {
+      const sourceWidth = selected?.metadata?.width ?? 0;
+      const sourceHeight = selected?.metadata?.height ?? 0;
+      const width = selectedParams.width > 0 ? selectedParams.width : sourceWidth;
+      const height = selectedParams.height > 0 ? selectedParams.height : sourceHeight;
+      const applyRatio = (ratio: CropRatio) => {
+        const targetRatio = ratioValue(ratio);
+        if (!targetRatio || !sourceWidth || !sourceHeight) return;
+        let nextWidth = sourceWidth;
+        let nextHeight = Math.round(nextWidth / targetRatio);
+        if (nextHeight > sourceHeight) {
+          nextHeight = sourceHeight;
+          nextWidth = Math.round(nextHeight * targetRatio);
+        }
+        setSelectedParams({
+          ...selectedParams,
+          x: Math.round((sourceWidth - nextWidth) / 2),
+          y: Math.round((sourceHeight - nextHeight) / 2),
+          width: nextWidth,
+          height: nextHeight,
+        });
+      };
+      return (
         <>
-          <div className="flex items-center gap-2 text-sm text-slate-300">
-            <span className="truncate">{files[0].name}</span>
-            <button onClick={() => { clearFiles(); setPreview(''); setNaturalW(0); setNaturalH(0); }} className="text-red-400 hover:text-red-300 text-xs">移除</button>
-          </div>
-          <p className="text-xs text-slate-500">图片尺寸: {naturalW} x {naturalH}</p>
-          <div className="grid grid-cols-2 gap-3">
-            {numberInput('X', x, setX, naturalW)}
-            {numberInput('Y', y, setY, naturalH)}
-            {numberInput('宽度', w, setW, naturalW)}
-            {numberInput('高度', h, setH, naturalH)}
-          </div>
-          <Btn onClick={handleCrop} disabled={processing}>{processing ? '处理中...' : '裁剪预览'}</Btn>
-          {preview && (
-            <div>
-              <p className="text-xs text-slate-500 mb-1">裁剪结果</p>
-              <img src={preview} className="rounded-lg max-h-48 w-full object-contain bg-slate-800" />
-              <Btn onClick={handleDownload}>下载裁剪图片</Btn>
-            </div>
-          )}
+          <PresetControl<CropRatio>
+            label="裁剪比例"
+            value="free"
+            options={[
+              { label: '自由', value: 'free' },
+              { label: '1:1', value: '1:1', disabled: !selected?.metadata },
+              { label: '4:3', value: '4:3', disabled: !selected?.metadata },
+              { label: '16:9', value: '16:9', disabled: !selected?.metadata },
+              { label: '3:4', value: '3:4', disabled: !selected?.metadata },
+            ]}
+            onChange={applyRatio}
+          />
+          <NumberControl label="X 坐标" value={selectedParams.x} min={0} max={Math.max(0, sourceWidth - 1)} unit="px" onChange={(x) => setSelectedParams({ ...selectedParams, x })} />
+          <NumberControl label="Y 坐标" value={selectedParams.y} min={0} max={Math.max(0, sourceHeight - 1)} unit="px" onChange={(y) => setSelectedParams({ ...selectedParams, y })} />
+          <NumberControl label="裁剪宽度" value={width} min={1} max={sourceWidth || undefined} unit="px" onChange={(nextWidth) => setSelectedParams({ ...selectedParams, width: nextWidth })} />
+          <NumberControl label="裁剪高度" value={height} min={1} max={sourceHeight || undefined} unit="px" onChange={(nextHeight) => setSelectedParams({ ...selectedParams, height: nextHeight })} />
+          <SelectControl
+            label="输出格式"
+            value={selectedParams.format}
+            options={[
+              { label: 'PNG', value: 'png' },
+              { label: 'JPEG', value: 'jpeg' },
+              { label: 'WebP', value: 'webp' },
+            ]}
+            onChange={(format) => setSelectedParams({ ...selectedParams, format })}
+          />
         </>
-      )}
-      <Btn onClick={onClose} variant="ghost">关闭</Btn>
-    </div>
-  );
-};
+      );
+    }}
+  />
+);
 
 export default CropImage;
