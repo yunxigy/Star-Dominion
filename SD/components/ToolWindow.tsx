@@ -4,7 +4,11 @@ import { X, Loader2, Shield, HelpCircle, ArrowRight, BookOpen, Lightbulb } from 
 import { getToolById, getToolsByCategory, CATEGORIES } from '../tools/registry';
 import { getIcon } from '../lib/iconMap';
 import { AdSlot } from './AdSlot';
-import { TOOL_WINDOW_AD_CLASS, TOOL_WINDOW_CONTENT_CLASS } from '../pages/toolUiLayout';
+import {
+  TOOL_WINDOW_AD_CLASS,
+  getToolComponentShellClass,
+  getToolWindowContentClass,
+} from '../pages/toolUiLayout';
 
 class ToolErrorBoundary extends Component<
   { children: ReactNode; toolName: string },
@@ -254,9 +258,9 @@ export default function ToolWindow() {
 
       {/* Content */}
       <main className="flex-1 overflow-auto">
-        <div className={TOOL_WINDOW_CONTENT_CLASS}>
+        <div className={getToolWindowContentClass(tool.category)}>
           {/* Tool Component */}
-          <div className="glass-card rounded-2xl p-6 mb-6">
+          <div className={getToolComponentShellClass(tool.category)}>
             <ToolErrorBoundary toolName={tool.name}>
               <Suspense
                 fallback={
