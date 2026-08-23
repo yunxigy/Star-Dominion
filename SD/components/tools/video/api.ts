@@ -97,32 +97,33 @@ const requireJobId = (jobId: string): string => {
   return jobId;
 };
 
-export const getHealth = (): Promise<HealthResponse> => requestJson<HealthResponse>(
+export const getHealth = (signal?: AbortSignal): Promise<HealthResponse> => requestJson<HealthResponse>(
   `${API_ROOT}/health`,
-  { method: 'GET' },
+  { method: 'GET', signal },
 );
 
-export const parseVideo = (url: string): Promise<ParseResponse> => requestJson<ParseResponse>(
+export const parseVideo = (url: string, signal?: AbortSignal): Promise<ParseResponse> => requestJson<ParseResponse>(
   `${API_BASE}/parse`,
-  jsonWrite('POST', { url }),
+  { ...jsonWrite('POST', { url }), signal },
 );
 
 export const createDownload = (
   parseToken: string,
   qualityId: string,
+  signal?: AbortSignal,
 ): Promise<CreateDownloadResponse> => requestJson<CreateDownloadResponse>(
   `${API_BASE}/downloads`,
-  jsonWrite('POST', { parseToken, qualityId }),
+  { ...jsonWrite('POST', { parseToken, qualityId }), signal },
 );
 
-export const getDownload = (jobId: string): Promise<JobStatusResponse> => requestJson<JobStatusResponse>(
+export const getDownload = (jobId: string, signal?: AbortSignal): Promise<JobStatusResponse> => requestJson<JobStatusResponse>(
   `${API_BASE}/downloads/${requireJobId(jobId)}`,
-  { method: 'GET' },
+  { method: 'GET', signal },
 );
 
-export const cancelDownload = (jobId: string): Promise<JobStatusResponse> => requestJson<JobStatusResponse>(
+export const cancelDownload = (jobId: string, signal?: AbortSignal): Promise<JobStatusResponse> => requestJson<JobStatusResponse>(
   `${API_BASE}/downloads/${requireJobId(jobId)}`,
-  { method: 'DELETE' },
+  { method: 'DELETE', signal },
 );
 
 export const downloadFileUrl = (jobId: string): string => (
