@@ -1,6 +1,8 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { OutputAsset } from './types';
 import {
+  MAX_CANVAS_EDGE,
+  assertCanvasDimensions,
   canvasToProcessedAsset,
   decodeImage,
   formatProcessingError,
@@ -201,6 +203,12 @@ describe('runWithConcurrency', () => {
 });
 
 describe('image decoding and output lifecycle', () => {
+  it('rejects invalid and unsafe canvas dimensions before allocating output', () => {
+    expect(() => assertCanvasDimensions(0, 10)).toThrow('Canvas 尺寸必须是正整数');
+    expect(() => assertCanvasDimensions(Number.NaN, 10)).toThrow('Canvas 尺寸必须是正整数');
+    expect(() => assertCanvasDimensions(MAX_CANVAS_EDGE + 1, 1)).toThrow('图片尺寸过大');
+  });
+
   it('prefers createImageBitmap when the browser supports it', async () => {
     const bitmap = { width: 640, height: 480, close: vi.fn() } as unknown as ImageBitmap;
     const createImageBitmap = vi.fn(async () => bitmap);
@@ -320,6 +328,19 @@ describe('image decoding and output lifecycle', () => {
       width: 400,
       height: 300,
     });
+  });
+
+  it('aligns the output extension with the MIME actually returned by the browser', async () => {
+    const fallbackBlob = new Blob(['fallback'], { type: 'image/png' });
+    const canvas = {
+      width: 10,
+      height: 10,
+      toBlob: (callback: BlobCallback) => callback(fallbackBlob),
+    } as unknown as HTMLCanvasElement;
+
+    await expect(
+      canvasToProcessedAsset(canvas, 'requested.webp', 'image/webp'),
+    ).resolves.toMatchObject({ name: 'requested.png', blob: fallbackBlob });
   });
 
   it('rejects when a canvas cannot produce a blob', async () => {

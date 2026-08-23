@@ -2,6 +2,9 @@ import type { ImageMetadata, OutputAsset, ProcessedAsset } from './types';
 
 type Worker<T, R> = (item: T, index: number) => Promise<R> | R;
 
+export const MAX_CANVAS_EDGE = 16_384;
+export const MAX_CANVAS_PIXELS = 67_108_864;
+
 function createAbortError(): DOMException {
   return new DOMException('操作已取消', 'AbortError');
 }
@@ -10,6 +13,26 @@ function throwIfAborted(signal?: AbortSignal): void {
   if (signal?.aborted) {
     throw createAbortError();
   }
+}
+
+export function assertCanvasDimensions(width: number, height: number): void {
+  if (!Number.isFinite(width) || !Number.isFinite(height)
+    || !Number.isInteger(width) || !Number.isInteger(height)
+    || width <= 0 || height <= 0) {
+    throw new RangeError('Canvas 尺寸必须是正整数');
+  }
+  if (width > MAX_CANVAS_EDGE || height > MAX_CANVAS_EDGE
+    || width * height > MAX_CANVAS_PIXELS) {
+    throw new RangeError(
+      `图片尺寸过大，单边不能超过 ${MAX_CANVAS_EDGE}px，且总像素不能超过 ${MAX_CANVAS_PIXELS}。`,
+    );
+  }
+}
+
+export async function yieldToBrowser(signal?: AbortSignal): Promise<void> {
+  throwIfAborted(signal);
+  await new Promise<void>((resolve) => setTimeout(resolve, 0));
+  throwIfAborted(signal);
 }
 
 function waitForWorker<R>(work: Promise<R>, signal?: AbortSignal): Promise<R> {
@@ -226,6 +249,7 @@ export function canvasToProcessedAsset(
   mime: string,
   quality?: number,
 ): Promise<ProcessedAsset> {
+  assertCanvasDimensions(canvas.width, canvas.height);
   return new Promise<ProcessedAsset>((resolve, reject) => {
     canvas.toBlob((blob) => {
       if (!blob) {
@@ -233,8 +257,19 @@ export function canvasToProcessedAsset(
         return;
       }
 
+      const extension = blob.type === 'image/jpeg'
+        ? 'jpg'
+        : blob.type === 'image/png'
+          ? 'png'
+          : blob.type === 'image/webp'
+            ? 'webp'
+            : null;
+      const alignedName = extension
+        ? `${name.replace(/\.[^.]*$/, '')}.${extension}`
+        : name;
+
       resolve({
-        name,
+        name: alignedName,
         blob,
         width: canvas.width,
         height: canvas.height,
