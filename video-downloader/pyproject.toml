@@ -1,0 +1,23 @@
+[project]
+name = "dream-chaser-video-downloader"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+  "fastapi==0.141.1",
+  "uvicorn[standard]==0.52.4",
+  "yt-dlp==2026.8.19",
+  "pydantic-settings==2.15.0",
+  "itsdangerous==2.2.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "httpx==0.28.1",
+  "pytest==9.1.1",
+  "pytest-asyncio==1.4.0",
+]
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+testpaths = ["tests"]
+markers = ["live: opt-in tests that call real public platform URLs"]
