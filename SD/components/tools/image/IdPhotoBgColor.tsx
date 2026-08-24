@@ -1,5 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import {
+  ImageDropzone,
+  ImageWorkbench,
+} from '../image-workbench';
 import { canvasToBlob, downloadBlob, loadImageFromBlob, useFileObjectUrl } from '../shared';
 import MaskEditorCanvas from './id-photo/MaskEditorCanvas';
 import { compositeRgba, estimateCornerBackground } from './id-photo/composite';
@@ -74,7 +78,6 @@ export function calculateInferenceSize(
 }
 
 const IdPhotoBgColor: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
   const resultCanvasRef = useRef<HTMLCanvasElement>(null);
   const runIdRef = useRef(0);
   const [file, setFile] = useState<File | null>(null);
@@ -224,7 +227,6 @@ const IdPhotoBgColor: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     setOverrides(new Int8Array());
     setHistory([]);
     setProcessing({ status: 'idle', message: '请选择一张正面、清晰、光线均匀的证件照。' });
-    if (inputRef.current) inputRef.current.value = '';
   };
 
   const retry = async () => {
@@ -256,187 +258,161 @@ const IdPhotoBgColor: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   };
 
   return (
-    <section className="space-y-5 text-[#2f241b]" aria-labelledby="id-photo-ai-title">
-      <header className="rounded-xl border border-[#d8b58e] bg-[#fff4e6]/80 p-4">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[#8a4b1f]">AI 人像分割</p>
-            <h2 id="id-photo-ai-title" className="mt-1 text-xl font-semibold">证件照智能换底色</h2>
-            <p className="mt-1 text-sm text-[#6d5a47]">照片仅在当前浏览器处理，不会上传到服务器。</p>
-          </div>
-          <span className="rounded-full border border-[#c8a47d] bg-white/70 px-3 py-1 text-xs text-[#6f3714]">本地处理</span>
-        </div>
-      </header>
-
-      <input
-        ref={inputRef}
-        id="id-photo-upload"
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        className="sr-only"
-        disabled={busy}
-        onChange={(event) => setFile(event.target.files?.[0] ?? null)}
-      />
-
-      {!file ? (
-        <label
-          htmlFor="id-photo-upload"
-          className="block cursor-pointer rounded-xl border-2 border-dashed border-[#c79f72] bg-[#fff4e6]/70 p-10 text-center transition hover:border-[#9a5a28] hover:bg-[#f1dcc2]/70 focus-within:ring-2 focus-within:ring-[#9a5a28]"
-          onDragOver={(event) => event.preventDefault()}
-          onDrop={(event) => {
-            event.preventDefault();
-            const droppedFile = event.dataTransfer.files[0];
-            if (droppedFile?.type.startsWith('image/')) setFile(droppedFile);
-          }}
-        >
-          <span className="block text-base font-medium text-[#5f3214]">上传证件照</span>
-          <span className="mt-1 block text-sm text-[#7a6654]">支持 JPG、PNG、WebP，可点击或拖入照片</span>
-        </label>
-      ) : (
-        <div className="flex items-center justify-between gap-3 rounded-lg border border-[#d8b58e] bg-white/60 px-3 py-2 text-sm">
-          <span className="min-w-0 truncate">{file.name}</span>
-          <button type="button" className="shrink-0 text-red-700 hover:underline" onClick={clearPhoto}>移除照片</button>
-        </div>
+    <ImageWorkbench
+      upload={(
+        <>
+          {!file ? (
+            <ImageDropzone
+              accept="image/jpeg,image/png,image/webp"
+              multiple={false}
+              onFiles={(files) => setFile(files[0] ?? null)}
+              disabled={busy}
+              title="上传证件照"
+              description="支持 JPG、PNG、WebP，可点击或拖入照片"
+            />
+          ) : (
+            <div className="image-workbench__special-file">
+              <span>{file.name}</span>
+              <button type="button" className="image-workbench__button image-workbench__button--secondary" onClick={clearPhoto}>移除照片</button>
+            </div>
+          )}
+        </>
       )}
-
-      <div
-        aria-live="polite"
-        className={`rounded-lg border px-3 py-2 text-sm ${processing.status === 'error' ? 'border-red-300 bg-red-50 text-red-800' : 'border-[#d8b58e] bg-[#fffaf4] text-[#6d5a47]'}`}
-      >
-        {busy && <span className="mr-2 inline-block h-3 w-3 animate-spin rounded-full border-2 border-[#9a5a28] border-t-transparent" aria-hidden="true" />}
-        {processing.message}
-        {processing.status === 'error' && file && (
-          <button type="button" className="ml-3 font-medium underline" onClick={() => void retry()}>重试</button>
-        )}
-      </div>
-
-      {ready && (
-        <div className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_20rem]">
-          <div className="space-y-3">
-            <div role="tablist" aria-label="照片预览" className="flex rounded-lg bg-[#ead0ad]/70 p-1">
-              {([
-                ['result', '换底结果'],
-                ['source', '原图'],
-                ['mask', '蒙版修正'],
-              ] as const).map(([id, label]) => (
-                <button
-                  key={id}
-                  type="button"
-                  role="tab"
-                  aria-selected={previewTab === id}
-                  className={`flex-1 rounded-md px-3 py-2 text-sm ${previewTab === id ? 'bg-white font-medium text-[#5f3214] shadow-sm' : 'text-[#7a6654]'}`}
-                  onClick={() => setPreviewTab(id)}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-
-            <div className="flex min-h-72 items-center justify-center overflow-hidden rounded-xl border border-[#d8b58e] bg-[linear-gradient(45deg,#eadbc8_25%,transparent_25%),linear-gradient(-45deg,#eadbc8_25%,transparent_25%),linear-gradient(45deg,transparent_75%,#eadbc8_75%),linear-gradient(-45deg,transparent_75%,#eadbc8_75%)] bg-[length:20px_20px]">
-              {previewTab === 'source' && <img src={fileUrl} alt="原始证件照" className="max-h-[32rem] max-w-full object-contain" />}
-              {previewTab === 'result' && <canvas ref={resultCanvasRef} aria-label="换底结果预览" className="max-h-[32rem] max-w-full object-contain" />}
-              {previewTab === 'mask' && (
-                <MaskEditorCanvas
-                  image={photo.canvas}
-                  alpha={editedMaskAlpha}
-                  overrides={overrides}
-                  maskWidth={snapshot.width}
-                  maskHeight={snapshot.height}
-                  brushRadius={brushRadius}
-                  mode={brushMode}
-                  showOverlay={showOverlay}
-                  onStrokeStart={() => setHistory((current) => pushMaskHistory(current, overrides, 20))}
-                  onPaint={(point) => setOverrides((current) => paintOverride(current, snapshot.width, snapshot.height, {
-                    ...point,
-                    radius: brushRadius,
-                    mode: brushMode,
-                  }))}
-                />
-              )}
-            </div>
-          </div>
-
-          <aside className="space-y-5 rounded-xl border border-[#d8b58e] bg-[#fffaf4] p-4">
-            <fieldset disabled={busy}>
-              <legend className="text-sm font-semibold">背景颜色</legend>
-              <div className="mt-2 grid grid-cols-3 gap-2">
-                {BACKGROUNDS.map((item) => (
-                  <label key={item.id} className={`cursor-pointer rounded-lg border p-2 text-center text-xs ${backgroundId === item.id ? 'border-[#7a421b] bg-[#f1dcc2]' : 'border-[#d8b58e] bg-white'}`}>
-                    <input type="radio" name="photo-background" className="sr-only" checked={backgroundId === item.id} onChange={() => setBackgroundId(item.id)} />
-                    <span className="mx-auto mb-1 block h-6 w-6 rounded-full border border-black/10" style={{ background: item.swatch }} />
-                    {item.label}
+      controls={(
+        <>
+          {!ready ? (
+            <p className="image-workbench__parameter-description">完成本地人像分割后，可在这里调整背景和蒙版。</p>
+          ) : (
+            <>
+              <fieldset className="image-workbench__control" disabled={busy}>
+                <legend className="image-workbench__control-label">背景颜色</legend>
+                <div className="image-workbench__preset-options">
+                  {BACKGROUNDS.map((item) => (
+                    <button
+                      key={item.id}
+                      type="button"
+                      className="image-workbench__preset"
+                      aria-pressed={backgroundId === item.id}
+                      onClick={() => setBackgroundId(item.id)}
+                    >
+                      <span className="image-workbench__color-swatch" style={{ background: item.swatch }} aria-hidden="true" />
+                      {item.label}
+                    </button>
+                  ))}
+                  <label className="image-workbench__preset">
+                    <input
+                      type="color"
+                      aria-label="自定义背景颜色"
+                      value={customColor}
+                      onChange={(event) => { setCustomColor(event.target.value); setBackgroundId('custom'); }}
+                    />
+                    自定义
                   </label>
-                ))}
-                <label className={`cursor-pointer rounded-lg border p-2 text-center text-xs ${backgroundId === 'custom' ? 'border-[#7a421b] bg-[#f1dcc2]' : 'border-[#d8b58e] bg-white'}`}>
-                  <input type="radio" name="photo-background" className="sr-only" checked={backgroundId === 'custom'} onChange={() => setBackgroundId('custom')} />
-                  <input
-                    type="color"
-                    aria-label="自定义背景颜色"
-                    value={customColor}
-                    className="mx-auto mb-1 block h-6 w-8 cursor-pointer border-0 bg-transparent p-0"
-                    onChange={(event) => { setCustomColor(event.target.value); setBackgroundId('custom'); }}
-                  />
-                  自定义
-                </label>
-              </div>
-            </fieldset>
-
-            <div className="space-y-4">
-              <label className="block text-sm font-medium">
-                人物判定阈值 <span className="float-right font-normal text-[#7a6654]">{threshold.toFixed(2)}</span>
-                <input type="range" min="0.2" max="0.8" step="0.01" value={threshold} onChange={(event) => setThreshold(Number(event.target.value))} className="mt-2 w-full accent-[#7a421b]" />
+                </div>
+              </fieldset>
+              <label className="image-workbench__control">
+                <span className="image-workbench__control-label">人物判定阈值 · {threshold.toFixed(2)}</span>
+                <input type="range" min="0.2" max="0.8" step="0.01" value={threshold} onChange={(event) => setThreshold(Number(event.target.value))} />
               </label>
-              <label className="block text-sm font-medium">
-                边缘柔化 <span className="float-right font-normal text-[#7a6654]">{feather}px</span>
-                <input type="range" min="0" max="12" step="1" value={feather} onChange={(event) => setFeather(Number(event.target.value))} className="mt-2 w-full accent-[#7a421b]" />
+              <label className="image-workbench__control">
+                <span className="image-workbench__control-label">边缘柔化 · {feather}px</span>
+                <input type="range" min="0" max="12" step="1" value={feather} onChange={(event) => setFeather(Number(event.target.value))} />
               </label>
-              <label className="block text-sm font-medium">
-                画笔大小 <span className="float-right font-normal text-[#7a6654]">{brushRadius}px</span>
-                <input type="range" min="1" max="32" step="1" value={brushRadius} onChange={(event) => setBrushRadius(Number(event.target.value))} className="mt-2 w-full accent-[#7a421b]" />
+              <label className="image-workbench__control">
+                <span className="image-workbench__control-label">画笔大小 · {brushRadius}px</span>
+                <input type="range" min="1" max="32" step="1" value={brushRadius} onChange={(event) => setBrushRadius(Number(event.target.value))} />
               </label>
-            </div>
-
-            <div>
-              <p className="text-sm font-semibold">手工修正</p>
-              <div className="mt-2 grid grid-cols-2 gap-2">
-                <button type="button" className={`rounded-lg border px-3 py-2 text-sm ${brushMode === 'erase' ? 'border-red-500 bg-red-50 text-red-700' : 'border-[#d8b58e]'}`} onClick={() => { setBrushMode('erase'); setPreviewTab('mask'); }}>擦除人物</button>
-                <button type="button" className={`rounded-lg border px-3 py-2 text-sm ${brushMode === 'restore' ? 'border-emerald-600 bg-emerald-50 text-emerald-700' : 'border-[#d8b58e]'}`} onClick={() => { setBrushMode('restore'); setPreviewTab('mask'); }}>恢复人物</button>
-                <button
-                  type="button"
-                  disabled={history.length === 0}
-                  className="rounded-lg border border-[#d8b58e] px-3 py-2 text-sm disabled:opacity-40"
-                  onClick={() => {
+              <fieldset className="image-workbench__control">
+                <legend className="image-workbench__control-label">手工修正</legend>
+                <div className="image-workbench__preset-options">
+                  <button type="button" className="image-workbench__preset" aria-pressed={brushMode === 'erase'} onClick={() => { setBrushMode('erase'); setPreviewTab('mask'); }}>擦除人物</button>
+                  <button type="button" className="image-workbench__preset" aria-pressed={brushMode === 'restore'} onClick={() => { setBrushMode('restore'); setPreviewTab('mask'); }}>恢复人物</button>
+                  <button type="button" className="image-workbench__preset" disabled={history.length === 0} onClick={() => {
                     const previous = undoMaskHistory(history);
                     if (!previous) return;
                     setOverrides(previous.mask);
                     setHistory(previous.history);
-                  }}
-                >撤销</button>
-                <button
-                  type="button"
-                  className="rounded-lg border border-[#d8b58e] px-3 py-2 text-sm"
-                  onClick={() => {
+                  }}>撤销</button>
+                  <button type="button" className="image-workbench__preset" onClick={() => {
                     setHistory((current) => pushMaskHistory(current, overrides, 20));
                     setOverrides(new Int8Array(overrides.length));
-                  }}
-                >重置蒙版</button>
+                  }}>重置蒙版</button>
+                </div>
+                <label className="image-workbench__control-help">
+                  <input type="checkbox" checked={showOverlay} onChange={(event) => setShowOverlay(event.target.checked)} />
+                  显示蒙版叠层
+                </label>
+              </fieldset>
+            </>
+          )}
+        </>
+      )}
+      preview={(
+        <div className="image-workbench__special-preview">
+          {ready ? (
+            <>
+              <div role="tablist" aria-label="照片预览" className="image-workbench__preset-options">
+                {([
+                  ['result', '换底结果'],
+                  ['source', '原图'],
+                  ['mask', '蒙版修正'],
+                ] as const).map(([id, label]) => (
+                  <button key={id} type="button" role="tab" aria-selected={previewTab === id} className="image-workbench__preset" onClick={() => setPreviewTab(id)}>{label}</button>
+                ))}
               </div>
-              <label className="mt-3 flex items-center gap-2 text-sm text-[#6d5a47]">
-                <input type="checkbox" checked={showOverlay} onChange={(event) => setShowOverlay(event.target.checked)} className="accent-[#7a421b]" />
-                显示蒙版叠层
-              </label>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2">
-              <button type="button" className="rounded-lg bg-[#7a421b] px-3 py-2 text-sm font-medium text-white hover:bg-[#5f3214]" onClick={() => void exportPhoto('png')}>下载 PNG</button>
-              <button type="button" className="rounded-lg bg-[#7a421b] px-3 py-2 text-sm font-medium text-white hover:bg-[#5f3214]" onClick={() => void exportPhoto('jpeg')}>下载 JPG</button>
-            </div>
-          </aside>
+              <div className="image-workbench__special-preview-stage">
+                {previewTab === 'source' && <img src={fileUrl} alt="原始证件照" />}
+                {previewTab === 'result' && <canvas ref={resultCanvasRef} aria-label="换底结果预览" />}
+                {previewTab === 'mask' && (
+                  <MaskEditorCanvas
+                    image={photo.canvas}
+                    alpha={editedMaskAlpha}
+                    overrides={overrides}
+                    maskWidth={snapshot.width}
+                    maskHeight={snapshot.height}
+                    brushRadius={brushRadius}
+                    mode={brushMode}
+                    showOverlay={showOverlay}
+                    onStrokeStart={() => setHistory((current) => pushMaskHistory(current, overrides, 20))}
+                    onPaint={(point) => setOverrides((current) => paintOverride(current, snapshot.width, snapshot.height, {
+                      ...point,
+                      radius: brushRadius,
+                      mode: brushMode,
+                    }))}
+                  />
+                )}
+              </div>
+            </>
+          ) : (
+            <p className="image-workbench__preview-empty">上传照片后将在这里显示 AI 换底结果</p>
+          )}
         </div>
       )}
-
-      <button type="button" onClick={onClose} className="rounded-lg bg-[#f1dcc2] px-4 py-2 text-sm font-medium text-[#6f3714] hover:bg-[#ead0ad]">关闭</button>
-    </section>
+      actions={(
+        <section className="image-workbench__action-bar" aria-label="证件照换底操作">
+          <div className="image-workbench__action-status" aria-live="polite">
+            {busy ? <span className="image-workbench__busy-dot" aria-hidden="true" /> : null}
+            {processing.message}
+          </div>
+          <div className="image-workbench__action-buttons">
+            <button type="button" className="image-workbench__button image-workbench__button--secondary" disabled={!file} onClick={clearPhoto}>重置</button>
+            <button type="button" className="image-workbench__button image-workbench__button--primary" disabled={!file || busy} onClick={() => void retry()}>重新分割</button>
+            <button type="button" className="image-workbench__button image-workbench__button--secondary" disabled={!ready} onClick={() => void exportPhoto('png')}>下载 PNG</button>
+            <button type="button" className="image-workbench__button image-workbench__button--secondary" disabled={!ready} onClick={() => void exportPhoto('jpeg')}>下载 JPG</button>
+            <button type="button" className="image-workbench__button image-workbench__button--secondary" onClick={onClose}>关闭</button>
+          </div>
+        </section>
+      )}
+      notice={(
+        <div className="image-workbench__special-heading">
+          <strong>AI 人像分割 · 证件照智能换底色</strong>
+          <span>照片仅在当前浏览器处理，不会上传到服务器；首次使用需加载本地模型。</span>
+          {processing.status === 'error' && file ? (
+            <button type="button" className="image-workbench__button image-workbench__button--secondary" onClick={() => void retry()}>重试</button>
+          ) : null}
+        </div>
+      )}
+    />
   );
 };
 

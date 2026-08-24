@@ -1,9 +1,36 @@
-import React, { useState } from 'react';
-import { Btn, downloadDataUrl } from '../shared';
+import { useState } from 'react';
+import type { FC } from 'react';
+import { ImageWorkbench } from '../image-workbench';
+import { dataUrlToBlob } from './processors/conversion';
+import { downloadDataUrl } from '../shared';
 
-const Base64ToImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+function normalizeDataUrl(value: string): string {
+  const trimmed = value.trim();
+  if (trimmed.startsWith('data:')) return trimmed;
+  const compact = trimmed.replace(/\s+/g, '');
+  const mime = compact.startsWith('/9j/')
+    ? 'image/jpeg'
+    : compact.startsWith('iVBOR')
+      ? 'image/png'
+      : compact.startsWith('R0lGOD')
+        ? 'image/gif'
+        : compact.startsWith('UklGR')
+          ? 'image/webp'
+          : 'image/png';
+  return `data:${mime};base64,${compact}`;
+}
+
+function extensionForMime(mime: string): string {
+  if (mime.includes('jpeg')) return 'jpg';
+  if (mime.includes('gif')) return 'gif';
+  if (mime.includes('webp')) return 'webp';
+  return 'png';
+}
+
+const Base64ToImage: FC<{ onClose: () => void }> = ({ onClose }) => {
   const [input, setInput] = useState('');
   const [preview, setPreview] = useState('');
+  const [mime, setMime] = useState('image/png');
   const [error, setError] = useState('');
 
   const handleConvert = () => {
@@ -13,69 +40,75 @@ const Base64ToImage: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       return;
     }
 
-    let dataUrl = input.trim();
-    // If it doesn't start with data:, try to add the prefix
-    if (!dataUrl.startsWith('data:')) {
-      // Try to detect image type from base64 header
-      if (dataUrl.startsWith('/9j/')) {
-        dataUrl = 'data:image/jpeg;base64,' + dataUrl;
-      } else if (dataUrl.startsWith('iVBOR')) {
-        dataUrl = 'data:image/png;base64,' + dataUrl;
-      } else if (dataUrl.startsWith('R0lGOD')) {
-        dataUrl = 'data:image/gif;base64,' + dataUrl;
-      } else if (dataUrl.startsWith('UklGR')) {
-        dataUrl = 'data:image/webp;base64,' + dataUrl;
-      } else {
-        dataUrl = 'data:image/png;base64,' + dataUrl;
-      }
-    }
-
-    // Validate by trying to load it
-    const img = new Image();
-    img.onload = () => {
-      setPreview(dataUrl);
-      setError('');
-    };
-    img.onerror = () => {
-      setError('无效的 Base64 图片数据');
+    try {
+      const dataUrl = normalizeDataUrl(input);
+      const blob = dataUrlToBlob(dataUrl);
+      if (!blob.type.startsWith('image/')) throw new Error('不是图片类型');
+      const image = new Image();
+      image.onload = () => {
+        setPreview(dataUrl);
+        setMime(blob.type);
+      };
+      image.onerror = () => {
+        setPreview('');
+        setError('无效的 Base64 图片数据');
+      };
+      image.src = dataUrl;
+    } catch {
       setPreview('');
-    };
-    img.src = dataUrl;
+      setError('无效的 Base64 图片数据');
+    }
   };
 
-  const handleDownload = () => {
-    if (!preview) return;
-    // Detect extension from mime type
-    let ext = 'png';
-    if (preview.includes('image/jpeg')) ext = 'jpg';
-    else if (preview.includes('image/gif')) ext = 'gif';
-    else if (preview.includes('image/webp')) ext = 'webp';
-    downloadDataUrl(preview, `converted.${ext}`);
+  const reset = () => {
+    setInput('');
+    setPreview('');
+    setMime('image/png');
+    setError('');
   };
 
   return (
-    <div className="space-y-3">
-      <div>
-        <label className="text-sm text-slate-400 mb-1 block">输入 Base64 字符串</label>
-        <textarea
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          placeholder="粘贴 Base64 字符串 (支持带 data: 前缀或纯 base64)"
-          rows={6}
-          className="w-full bg-slate-800/50 border border-slate-700 rounded-lg p-3 text-sm text-slate-200 font-mono resize-y focus:outline-none focus:border-violet-500/50"
-        />
-      </div>
-      <Btn onClick={handleConvert}>转换为图片</Btn>
-      {error && <p className="text-sm text-red-400">{error}</p>}
-      {preview && (
-        <div>
-          <p className="text-xs text-slate-500 mb-1">预览</p>
-          <img src={preview} className="rounded-lg max-h-48 w-full object-contain bg-slate-800" />
-          <Btn onClick={handleDownload}>下载图片</Btn>
+    <ImageWorkbench
+      upload={(
+        <div className="image-workbench__control">
+          <label className="image-workbench__control-label" htmlFor="base64-input">输入 Base64 字符串</label>
+          <textarea
+            id="base64-input"
+            value={input}
+            onChange={(event) => { setInput(event.currentTarget.value); setError(''); }}
+            placeholder="粘贴带 data: 前缀或纯 Base64 字符串"
+            rows={10}
+            spellCheck={false}
+          />
+          <p className="image-workbench__control-help">支持 JPEG、PNG、GIF、WebP；纯 Base64 会根据文件头自动识别。</p>
         </div>
       )}
-      <Btn onClick={onClose} variant="ghost">关闭</Btn>
-    </div>
+      controls={(
+        <div className="image-workbench__control">
+          <h2 className="image-workbench__parameter-title">转换说明</h2>
+          <p className="image-workbench__parameter-description">转换会先在本地校验 Data URL 和图片解码，再生成可预览的图片。</p>
+          {error ? <p className="image-workbench__action-error" role="alert">{error}</p> : null}
+          {preview ? <p className="image-workbench__parameter-description">当前格式：{mime}</p> : null}
+        </div>
+      )}
+      preview={(
+        <section className="image-workbench__special-preview" aria-label="图片预览">
+          {preview ? <img src={preview} alt="Base64 转换结果" className="image-workbench__special-preview-image" /> : <p className="image-workbench__preview-empty">转换后图片会显示在这里</p>}
+        </section>
+      )}
+      actions={(
+        <section className="image-workbench__action-bar" aria-label="Base64 转图片操作">
+          <div className="image-workbench__action-status" aria-live="polite">{preview ? '图片已生成' : '等待转换'}</div>
+          <div className="image-workbench__action-buttons">
+            <button type="button" className="image-workbench__button image-workbench__button--primary" onClick={handleConvert}>转换为图片</button>
+            <button type="button" className="image-workbench__button image-workbench__button--secondary" disabled={!preview} onClick={() => downloadDataUrl(preview, `converted.${extensionForMime(mime)}`)}>下载图片</button>
+            <button type="button" className="image-workbench__button image-workbench__button--secondary" disabled={!input && !preview} onClick={reset}>重置</button>
+            <button type="button" className="image-workbench__button image-workbench__button--secondary" onClick={onClose}>关闭</button>
+          </div>
+        </section>
+      )}
+      notice={<span>所有解析和预览都在当前浏览器内完成。</span>}
+    />
   );
 };
 

@@ -1,63 +1,69 @@
-import React, { useState, useRef } from 'react';
-import { useFileUpload, UploadZone, Btn, ResultBox, copyToClipboard } from '../shared';
+import { useEffect, useState } from 'react';
+import type { FC } from 'react';
+import {
+  BatchImageTool,
+  type OutputAsset,
+} from '../image-workbench';
+import { blobToDataUrl, imageToBase64Processor, type ImageToBase64Params } from './processors/conversion';
 
-const ImageToBase64: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles, handleFiles } = useFileUpload('image/*');
-  const [base64, setBase64] = useState('');
-  const [preview, setPreview] = useState('');
-  const [processing, setProcessing] = useState(false);
+function Base64Result({ output }: { output: OutputAsset | null }) {
+  const [dataUrl, setDataUrl] = useState('');
+  const [copyState, setCopyState] = useState<'idle' | 'copied' | 'error'>('idle');
 
-  const handleConvert = () => {
-    if (!files[0]) return;
-    setProcessing(true);
-    const reader = new FileReader();
-    reader.onload = () => {
-      const result = reader.result as string;
-      setBase64(result);
-      setPreview(result);
-      setProcessing(false);
+  useEffect(() => {
+    let active = true;
+    setDataUrl('');
+    setCopyState('idle');
+    if (output) {
+      void blobToDataUrl(output.blob).then((value) => {
+        if (active) setDataUrl(value);
+      }).catch(() => {
+        if (active) setCopyState('error');
+      });
+    }
+    return () => {
+      active = false;
     };
-    reader.onerror = () => {
-      alert('读取文件失败');
-      setProcessing(false);
-    };
-    reader.readAsDataURL(files[0]);
-  };
+  }, [output]);
 
-  const handleCopy = () => {
-    copyToClipboard(base64);
+  const copy = () => {
+    if (!dataUrl) return;
+    void navigator.clipboard.writeText(dataUrl).then(
+      () => setCopyState('copied'),
+      () => setCopyState('error'),
+    );
   };
 
   return (
-    <div className="space-y-3">
-      <input {...inputProps} />
-      {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept="image/*" label="上传图片" sublabel="支持 JPG/PNG/WebP/GIF" />
-      ) : (
+    <section className="image-workbench__base64-result" aria-label="Base64 结果">
+      <h3 className="image-workbench__control-label">Base64 字符串</h3>
+      {dataUrl ? (
         <>
-          <div className="flex items-center gap-2 text-sm text-slate-300">
-            <span className="truncate">{files[0].name}</span>
-            <button onClick={() => { clearFiles(); setBase64(''); setPreview(''); }} className="text-red-400 hover:text-red-300 text-xs">移除</button>
-          </div>
-          <Btn onClick={handleConvert} disabled={processing}>{processing ? '转换中...' : '转换为 Base64'}</Btn>
-          {preview && (
-            <div>
-              <p className="text-xs text-slate-500 mb-1">预览</p>
-              <img src={preview} className="rounded-lg max-h-48 w-full object-contain bg-slate-800" />
-            </div>
-          )}
-          {base64 && (
-            <div className="space-y-2">
-              <ResultBox label="Base64 字符串" value={base64.substring(0, 200) + (base64.length > 200 ? '...' : '')} onCopy={handleCopy} />
-              <p className="text-xs text-slate-500">长度: {base64.length} 字符</p>
-              <Btn onClick={handleCopy}>复制完整 Base64</Btn>
-            </div>
-          )}
+          <textarea readOnly value={dataUrl} rows={7} aria-label="Base64 字符串内容" />
+          <p className="image-workbench__parameter-description">长度：{dataUrl.length} 字符</p>
+          <button type="button" className="image-workbench__button image-workbench__button--secondary" onClick={copy}>
+            {copyState === 'copied' ? '已复制' : copyState === 'error' ? '复制失败，重试' : '复制完整 Base64'}
+          </button>
         </>
+      ) : (
+        <p className="image-workbench__parameter-description">处理图片后，完整字符串会显示在这里。</p>
       )}
-      <Btn onClick={onClose} variant="ghost">关闭</Btn>
-    </div>
+    </section>
   );
-};
+}
+
+const ImageToBase64: FC<{ onClose: () => void }> = () => (
+  <BatchImageTool<ImageToBase64Params>
+    processor={imageToBase64Processor}
+    parameterTitle="图片转 Base64"
+    parameterDescription="选择一张或多张图片，在浏览器本地转换为 Data URL；不会上传文件。"
+    maxFileSizeBytes={50 * 1024 * 1024}
+    zipFilename="base64-source-images.zip"
+    notice={<span>Base64 字符串可能比原文件大约三分之一，复制或嵌入代码前请注意文本长度。</span>}
+    renderControls={({ selected }) => (
+      <Base64Result output={selected?.outputs[0] ?? null} />
+    )}
+  />
+);
 
 export default ImageToBase64;

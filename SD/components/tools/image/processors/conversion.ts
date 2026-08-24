@@ -12,6 +12,8 @@ export interface FaviconParams {
   sizes: readonly number[];
 }
 
+export interface ImageToBase64Params {}
+
 export interface IdPhotoParams {
   widthMm: number;
   heightMm: number;
@@ -180,6 +182,24 @@ export const faviconImageProcessor: ImageProcessor<FaviconParams> = {
   },
 };
 
+export const imageToBase64Processor: ImageProcessor<ImageToBase64Params> = {
+  accept: 'image/png,image/jpeg,image/webp,image/gif',
+  mode: 'per-file',
+  defaultParams: {},
+  concurrency: 2,
+  async process(files, _params, context) {
+    throwIfAborted(context.signal);
+    return files.map((file) => {
+      throwIfAborted(context.signal);
+      const extension = file.type.split('/')[1] || file.name.split('.').pop() || 'bin';
+      return {
+        name: buildOutputName(file.name, '-base64', extension === 'jpeg' ? 'jpg' : extension),
+        blob: file,
+      };
+    });
+  },
+};
+
 export const idPhotoImageProcessor: ImageProcessor<IdPhotoParams> = {
   accept: 'image/png,image/jpeg,image/webp',
   mode: 'per-file',
@@ -211,12 +231,20 @@ export const idPhotoImageProcessor: ImageProcessor<IdPhotoParams> = {
           rect.dWidth,
           rect.dHeight,
         );
-        outputs.push(await canvasToProcessedAsset(
+        const output = await canvasToProcessedAsset(
           canvas,
           buildOutputName(file.name, '-id-photo', 'jpg'),
           'image/jpeg',
           Math.min(1, Math.max(0, params.quality)),
-        ));
+        );
+        outputs.push({
+          ...output,
+          metrics: [
+            { label: '打印尺寸', value: `${params.widthMm} × ${params.heightMm} mm` },
+            { label: '像素尺寸', value: `${width} × ${height} px` },
+            { label: '分辨率', value: `${params.dpi} DPI` },
+          ],
+        });
         throwIfAborted(context.signal);
       } finally {
         releaseImage(image);

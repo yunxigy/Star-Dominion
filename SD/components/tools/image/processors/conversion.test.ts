@@ -3,6 +3,7 @@ import {
   blobToDataUrl,
   dataUrlToBlob,
   faviconImageProcessor,
+  imageToBase64Processor,
   idPhotoImageProcessor,
   millimetersToPixels,
   pixelsToMillimeters,
@@ -94,6 +95,18 @@ describe('Data URL and Blob conversion', () => {
 });
 
 describe('favicon and ID photo conversion', () => {
+  it('keeps source bytes intact for local Base64 conversion', async () => {
+    const source = makeFile('photo.jpeg', 'image/jpeg');
+    const [output] = await imageToBase64Processor.process(
+      [source],
+      {},
+      { preview: false, signal: new AbortController().signal },
+    );
+
+    expect(output.name).toBe('photo-base64.jpg');
+    expect(output.blob).toBe(source);
+  });
+
   it('generates every selected favicon size as a matching PNG asset', async () => {
     const canvases = installCanvasHarness(512, 256);
 

@@ -1,133 +1,150 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { useFileUpload, UploadZone, Btn, copyToClipboard, loadImage, loadImageFromBlob } from '../shared';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import type { FC, MouseEvent } from 'react';
+import { ImageDropzone, ImageWorkbench } from '../image-workbench';
+import { copyToClipboard, loadImageFromBlob } from '../shared';
 
-// Color conversion utilities
-const rgbToHex = (r: number, g: number, b: number): string => {
-  return '#' + [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('');
-};
+interface RgbColor {
+  r: number;
+  g: number;
+  b: number;
+}
 
-const rgbToHsl = (r: number, g: number, b: number): { h: number; s: number; l: number } => {
-  r /= 255; g /= 255; b /= 255;
-  const max = Math.max(r, g, b), min = Math.min(r, g, b);
-  let h = 0, s = 0;
+function rgbToHex({ r, g, b }: RgbColor): string {
+  return `#${[r, g, b].map((value) => value.toString(16).padStart(2, '0')).join('')}`;
+}
+
+function rgbToHsl({ r, g, b }: RgbColor): { h: number; s: number; l: number } {
+  const red = r / 255;
+  const green = g / 255;
+  const blue = b / 255;
+  const max = Math.max(red, green, blue);
+  const min = Math.min(red, green, blue);
+  let h = 0;
+  let s = 0;
   const l = (max + min) / 2;
   if (max !== min) {
     const d = max - min;
     s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
     switch (max) {
-      case r: h = ((g - b) / d + (g < b ? 6 : 0)) / 6; break;
-      case g: h = ((b - r) / d + 2) / 6; break;
-      case b: h = ((r - g) / d + 4) / 6; break;
+      case red: h = ((green - blue) / d + (green < blue ? 6 : 0)) / 6; break;
+      case green: h = ((blue - red) / d + 2) / 6; break;
+      case blue: h = ((red - green) / d + 4) / 6; break;
+      default: break;
     }
   }
   return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
-};
+}
 
-const ColorPicker: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const { files, inputProps, triggerUpload, clearFiles, handleFiles } = useFileUpload('image/*');
+const ColorPicker: FC<{ onClose: () => void }> = ({ onClose }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [color, setColor] = useState<{ r: number; g: number; b: number } | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [color, setColor] = useState<RgbColor | null>(null);
   const [imgLoaded, setImgLoaded] = useState(false);
+  const [error, setError] = useState('');
 
   const loadToCanvas = useCallback(async () => {
-    if (!files[0] || !canvasRef.current) return;
+    if (!file || !canvasRef.current) return;
     try {
-      const img = await loadImageFromBlob(files[0]);
+      const image = await loadImageFromBlob(file);
       const canvas = canvasRef.current;
-      canvas.width = img.width;
-      canvas.height = img.height;
-      const ctx = canvas.getContext('2d')!;
-      ctx.drawImage(img, 0, 0);
+      canvas.width = image.width;
+      canvas.height = image.height;
+      const context = canvas.getContext('2d');
+      if (!context) throw new Error('当前浏览器不支持 Canvas 2D');
+      context.drawImage(image, 0, 0);
       setImgLoaded(true);
-    } catch (e: any) {
-      alert('加载图片失败: ' + e.message);
+      setError('');
+    } catch (loadError) {
+      setImgLoaded(false);
+      setError(`加载图片失败：${loadError instanceof Error ? loadError.message : '未知错误'}`);
     }
-  }, [files]);
+  }, [file]);
 
   useEffect(() => {
-    if (files[0]) loadToCanvas();
-  }, [files, loadToCanvas]);
+    setColor(null);
+    setImgLoaded(false);
+    if (file) void loadToCanvas();
+  }, [file, loadToCanvas]);
 
-  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  const handleCanvasClick = (event: MouseEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
+    const context = canvas?.getContext('2d');
+    if (!canvas || !context || !canvas.width || !canvas.height) return;
     const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-    const x = Math.floor((e.clientX - rect.left) * scaleX);
-    const y = Math.floor((e.clientY - rect.top) * scaleY);
-
-    const pixel = ctx.getImageData(x, y, 1, 1).data;
+    if (!rect.width || !rect.height) return;
+    const x = Math.min(canvas.width - 1, Math.max(0, Math.floor((event.clientX - rect.left) * canvas.width / rect.width)));
+    const y = Math.min(canvas.height - 1, Math.max(0, Math.floor((event.clientY - rect.top) * canvas.height / rect.height)));
+    const pixel = context.getImageData(x, y, 1, 1).data;
     setColor({ r: pixel[0], g: pixel[1], b: pixel[2] });
   };
 
-  const hex = color ? rgbToHex(color.r, color.g, color.b) : '';
-  const hsl = color ? rgbToHsl(color.r, color.g, color.b) : null;
+  const reset = () => {
+    setFile(null);
+    setColor(null);
+    setImgLoaded(false);
+    setError('');
+  };
+  const hex = color ? rgbToHex(color) : '--';
+  const hsl = color ? rgbToHsl(color) : null;
+  const rgbText = color ? `rgb(${color.r}, ${color.g}, ${color.b})` : '--';
+  const hslText = hsl ? `hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)` : '--';
 
   return (
-    <div className="space-y-3">
-      <input {...inputProps} />
-      {files.length === 0 ? (
-        <UploadZone onUpload={triggerUpload} onDropFiles={handleFiles} accept="image/*" label="上传图片" sublabel="点击图片取色" />
-      ) : (
-        <>
-          <div className="flex items-center gap-2 text-sm text-slate-300">
-            <span className="truncate">{files[0].name}</span>
-            <button onClick={() => { clearFiles(); setColor(null); setImgLoaded(false); }} className="text-red-400 hover:text-red-300 text-xs">移除</button>
+    <ImageWorkbench
+      upload={(
+        file ? (
+          <div className="image-workbench__special-file">
+            <span>{file.name}</span>
+            <button type="button" className="image-workbench__button image-workbench__button--secondary" onClick={reset}>移除</button>
           </div>
-          <div className="overflow-hidden rounded-lg border border-slate-700">
+        ) : (
+          <ImageDropzone
+            accept="image/png,image/jpeg,image/webp,image/gif"
+            multiple={false}
+            onFiles={(files) => setFile(files[0] ?? null)}
+            title="上传图片"
+            description="点击图片预览区域取色"
+          />
+        )
+      )}
+      controls={(
+        <section className="image-workbench__color-result" aria-label="颜色信息">
+          <h2 className="image-workbench__parameter-title">取色结果</h2>
+          <p className="image-workbench__parameter-description">点击图片上的任意位置取色，结果会同步显示为常用格式。</p>
+          {color ? <span className="image-workbench__color-preview" style={{ backgroundColor: hex }} aria-label={`当前颜色 ${hex}`} /> : null}
+          <dl>
+            <div><dt>HEX</dt><dd>{hex}</dd><button type="button" disabled={!color} onClick={() => copyToClipboard(hex)}>复制</button></div>
+            <div><dt>RGB</dt><dd>{rgbText}</dd><button type="button" disabled={!color} onClick={() => copyToClipboard(rgbText)}>复制</button></div>
+            <div><dt>HSL</dt><dd>{hslText}</dd><button type="button" disabled={!color} onClick={() => copyToClipboard(hslText)}>复制</button></div>
+          </dl>
+          {error ? <p className="image-workbench__action-error" role="alert">{error}</p> : null}
+        </section>
+      )}
+      preview={(
+        <section className="image-workbench__special-preview" aria-label="取色图片预览">
+          {file ? (
             <canvas
               ref={canvasRef}
               onClick={handleCanvasClick}
-              className="w-full cursor-crosshair"
-              style={{ maxHeight: 300, objectFit: 'contain' }}
+              aria-label="点击图片取色"
+              className={imgLoaded ? '' : 'image-workbench__canvas--loading'}
             />
-          </div>
-          <p className="text-xs text-slate-500">点击图片上的任意位置取色</p>
-
-          {color && (
-            <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 space-y-3">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-lg border border-slate-600" style={{ backgroundColor: `rgb(${color.r},${color.g},${color.b})` }} />
-                <div>
-                  <div className="text-sm text-slate-200 font-mono">RGB({color.r}, {color.g}, {color.b})</div>
-                  {hsl && <div className="text-xs text-slate-400 font-mono">HSL({hsl.h}, {hsl.s}%, {hsl.l}%)</div>}
-                </div>
-              </div>
-              <div className="grid grid-cols-1 gap-2">
-                <div className="flex items-center justify-between bg-slate-900/50 rounded-lg px-3 py-2">
-                  <span className="text-xs text-slate-500">HEX</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-slate-200 font-mono">{hex}</span>
-                    <button onClick={() => copyToClipboard(hex)} className="text-xs text-violet-400 hover:text-violet-300">复制</button>
-                  </div>
-                </div>
-                <div className="flex items-center justify-between bg-slate-900/50 rounded-lg px-3 py-2">
-                  <span className="text-xs text-slate-500">RGB</span>
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm text-slate-200 font-mono">{`rgb(${color.r}, ${color.g}, ${color.b})`}</span>
-                    <button onClick={() => copyToClipboard(`rgb(${color.r}, ${color.g}, ${color.b})`)} className="text-xs text-violet-400 hover:text-violet-300">复制</button>
-                  </div>
-                </div>
-                {hsl && (
-                  <div className="flex items-center justify-between bg-slate-900/50 rounded-lg px-3 py-2">
-                    <span className="text-xs text-slate-500">HSL</span>
-                    <div className="flex items-center gap-2">
-                      <span className="text-sm text-slate-200 font-mono">{`hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`}</span>
-                      <button onClick={() => copyToClipboard(`hsl(${hsl.h}, ${hsl.s}%, ${hsl.l}%)`)} className="text-xs text-violet-400 hover:text-violet-300">复制</button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
+          ) : (
+            <p className="image-workbench__preview-empty">上传图片后，点击图像任意位置取色</p>
           )}
-        </>
+        </section>
       )}
-      <Btn onClick={onClose} variant="ghost">关闭</Btn>
-    </div>
+      actions={(
+        <section className="image-workbench__action-bar" aria-label="取色操作">
+          <div className="image-workbench__action-status" aria-live="polite">{color ? `当前颜色 ${hex}` : '等待取色'}</div>
+          <div className="image-workbench__action-buttons">
+            <button type="button" className="image-workbench__button image-workbench__button--secondary" disabled={!file && !color} onClick={reset}>重置</button>
+            <button type="button" className="image-workbench__button image-workbench__button--secondary" onClick={onClose}>关闭</button>
+          </div>
+        </section>
+      )}
+      notice={<span>图片只在当前浏览器内读取，取色不会上传源文件。</span>}
+    />
   );
 };
 
