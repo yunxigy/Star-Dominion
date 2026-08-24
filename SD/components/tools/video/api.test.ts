@@ -160,4 +160,11 @@ describe('video downloader API client', () => {
       retryable: true,
     });
   });
+
+  it('preserves AbortError so component cleanup cannot overwrite fresh health state', async () => {
+    const aborted = new DOMException('cancelled', 'AbortError');
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(aborted));
+
+    await expect(getHealth(new AbortController().signal)).rejects.toBe(aborted);
+  });
 });

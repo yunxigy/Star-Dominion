@@ -57,6 +57,7 @@ async function requestJson<T>(path: string, init: RequestInit): Promise<T> {
     });
   } catch (error) {
     if (error instanceof VideoApiError) throw error;
+    if (error instanceof Error && error.name === 'AbortError') throw error;
     throw dependencyFailure();
   }
 

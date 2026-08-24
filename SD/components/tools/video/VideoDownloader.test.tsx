@@ -87,10 +87,13 @@ describe('VideoDownloader', () => {
   it('renders the approved initial hierarchy and compliance boundary', () => {
     render(<VideoDownloader onClose={() => undefined} />);
 
-    expect(screen.getByRole('heading', { name: '视频解析下载' })).toBeTruthy();
+    expect(screen.getByRole('heading', { name: '视频解析下载', level: 2 })).toBeTruthy();
     expect(screen.getByLabelText('抖音或 B 站视频链接')).toBeTruthy();
     expect(screen.getByRole('button', { name: '粘贴' })).toBeTruthy();
-    expect(screen.getByRole('button', { name: '解析视频' })).toBeTruthy();
+    const parseButton = screen.getByRole('button', { name: '解析视频' });
+    expect(parseButton).toBeTruthy();
+    expect(parseButton.className).toContain('text-[#fff8ef]');
+    expect(parseButton.className).toContain('whitespace-nowrap');
     expect(screen.getByText('无需登录')).toBeTruthy();
     expect(screen.getByText('实际清晰度')).toBeTruthy();
     expect(screen.getByText('临时处理')).toBeTruthy();

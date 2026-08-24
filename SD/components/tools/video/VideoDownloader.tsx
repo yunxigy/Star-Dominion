@@ -298,13 +298,13 @@ export default function VideoDownloader({ onClose: _onClose }: VideoDownloaderPr
     <section className="overflow-hidden rounded-[2rem] border border-[#ddc6ad] bg-[#fffaf2]/95 shadow-[0_24px_70px_rgba(113,68,35,0.12)] backdrop-blur-xl">
       <div className="px-5 py-8 sm:px-8 sm:py-10 lg:px-12 lg:py-12">
         <header className="mx-auto max-w-3xl text-center">
-          <div className="mx-auto mb-5 flex w-fit items-center gap-2 rounded-full border border-[#e6c8aa] bg-[#fff3e5] px-3 py-1.5 text-xs font-bold tracking-wide text-[#8b4b1e]">
+          <div className="mx-auto mb-5 flex w-fit items-center gap-2 whitespace-nowrap rounded-full border border-[#e6c8aa] bg-[#fff3e5] px-3 py-1.5 text-xs font-bold tracking-wide text-[#8b4b1e]">
             <ShieldCheck className="h-4 w-4" aria-hidden="true" />
             单个公开视频 · 临时处理
           </div>
-          <h1 className="text-3xl font-black tracking-tight text-[#2f241b] sm:text-4xl lg:text-5xl">
+          <h2 className="text-3xl font-black tracking-tight text-[#2f241b] sm:text-4xl lg:text-5xl">
             视频解析下载
-          </h1>
+          </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-[#6d5a47] sm:text-base">
             支持抖音和哔哩哔哩单个公开视频，识别实际可用清晰度后安全下载。
           </p>
@@ -347,7 +347,7 @@ export default function VideoDownloader({ onClose: _onClose }: VideoDownloaderPr
               <button
                 type="submit"
                 disabled={isParsing || parseUnavailable}
-                className="min-h-11 flex-1 bg-[#2f241b] px-6 py-3 text-sm font-bold text-white transition-colors hover:bg-[#5f3214] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#9a5a28]/30 disabled:cursor-not-allowed disabled:bg-[#a9998b] motion-reduce:transition-none sm:flex-none"
+                className="min-h-11 flex-1 whitespace-nowrap bg-[#2f241b] px-4 py-3 text-sm font-bold text-[#fff8ef] transition-colors hover:bg-[#5f3214] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#9a5a28]/30 disabled:cursor-not-allowed disabled:bg-[#a9998b] motion-reduce:transition-none sm:flex-none sm:px-6"
               >
                 <span className="inline-flex items-center justify-center gap-2">
                   {isParsing && <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden="true" />}
@@ -428,7 +428,7 @@ export default function VideoDownloader({ onClose: _onClose }: VideoDownloaderPr
               </div>
               <div className="p-5">
                 <div className="flex flex-wrap items-center gap-2 text-xs font-bold">
-                  <span className="rounded-full bg-[#2f241b] px-2.5 py-1 text-white">{platformName(state.video.platform)}</span>
+                  <span className="rounded-full bg-[#2f241b] px-2.5 py-1 text-[#fff8ef]">{platformName(state.video.platform)}</span>
                   <span className="inline-flex items-center gap-1 rounded-full bg-[#f3eadf] px-2.5 py-1 text-[#6d5038]">
                     <Clock3 className="h-3.5 w-3.5" aria-hidden="true" />
                     {formatDuration(state.video.durationSeconds)}
@@ -482,7 +482,7 @@ export default function VideoDownloader({ onClose: _onClose }: VideoDownloaderPr
                           <span className="mt-1 block text-xs text-[#786451]">{formatBytes(quality.estimatedBytes)}</span>
                         </span>
                         {selected && (
-                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#7a421b] text-white">
+                          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#7a421b] text-[#fff8ef]">
                             <Check className="h-3.5 w-3.5" aria-hidden="true" />
                           </span>
                         )}
@@ -520,7 +520,7 @@ export default function VideoDownloader({ onClose: _onClose }: VideoDownloaderPr
                   <a
                     download
                     href={downloadFileUrl(state.jobId)}
-                    className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-[#2f241b] px-5 py-3 text-sm font-black text-white transition hover:bg-[#5f3214] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#9a5a28]/30 motion-reduce:transition-none"
+                    className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-[#2f241b] px-5 py-3 text-sm font-black text-[#fff8ef] transition hover:bg-[#5f3214] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#9a5a28]/30 motion-reduce:transition-none"
                   >
                     <Download className="h-4 w-4" aria-hidden="true" />
                     保存视频
@@ -530,7 +530,7 @@ export default function VideoDownloader({ onClose: _onClose }: VideoDownloaderPr
                     type="button"
                     onClick={handleStartDownload}
                     disabled={!selectedQuality || isStarting || isJobActive || (selectedQuality.requiresMerge && health?.capabilities.ffmpeg === false)}
-                    className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-[#2f241b] px-5 py-3 text-sm font-black text-white transition hover:bg-[#5f3214] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#9a5a28]/30 disabled:cursor-not-allowed disabled:bg-[#a9998b] motion-reduce:transition-none"
+                    className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-[#2f241b] px-5 py-3 text-sm font-black text-[#fff8ef] transition hover:bg-[#5f3214] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#9a5a28]/30 disabled:cursor-not-allowed disabled:bg-[#a9998b] motion-reduce:transition-none"
                   >
                     {isStarting ? <Loader2 className="h-4 w-4 animate-spin motion-reduce:animate-none" aria-hidden="true" /> : <Sparkles className="h-4 w-4" aria-hidden="true" />}
                     {isStarting ? '正在创建任务' : '开始下载'}
