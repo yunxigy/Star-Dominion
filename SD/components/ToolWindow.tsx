@@ -1,8 +1,9 @@
-import React, { Suspense, Component, type ReactNode, useMemo } from 'react';
+import React, { Suspense, Component, type ReactNode, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { X, Loader2, Shield, HelpCircle, ArrowRight, BookOpen, Lightbulb } from 'lucide-react';
 import { getToolById, getToolsByCategory, CATEGORIES } from '../tools/registry';
 import { getIcon } from '../lib/iconMap';
+import { buildToolSeoDescription, buildToolSeoTitle, buildToolSeoUrl } from '../lib/toolSeo';
 import { AdSlot } from './AdSlot';
 import {
   TOOL_WINDOW_AD_CLASS,
@@ -191,6 +192,57 @@ export default function ToolWindow() {
     return CATEGORIES.find(c => c.id === tool.category);
   }, [tool]);
 
+  const seoDescription = tool
+    ? buildToolSeoDescription({ tool, categoryName: category?.name ?? tool.category })
+    : '';
+  const seoTitle = tool ? buildToolSeoTitle(tool.name) : '';
+  const seoUrl = tool ? buildToolSeoUrl(tool.id) : '';
+
+  useEffect(() => {
+    if (!tool) return undefined;
+
+    const previousTitle = document.title;
+    const headElements = {
+      description: document.head.querySelector<HTMLMetaElement>('meta[name="description"]'),
+      ogTitle: document.head.querySelector<HTMLMetaElement>('meta[property="og:title"]'),
+      ogDescription: document.head.querySelector<HTMLMetaElement>('meta[property="og:description"]'),
+      ogUrl: document.head.querySelector<HTMLMetaElement>('meta[property="og:url"]'),
+      twitterTitle: document.head.querySelector<HTMLMetaElement>('meta[name="twitter:title"]'),
+      twitterDescription: document.head.querySelector<HTMLMetaElement>('meta[name="twitter:description"]'),
+      canonical: document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]'),
+    };
+    const previousAttributes = Object.fromEntries(
+      Object.entries(headElements).map(([key, element]) => [
+        key,
+        element?.getAttribute(key === 'canonical' ? 'href' : 'content') ?? null,
+      ]),
+    ) as Record<keyof typeof headElements, string | null>;
+    const setAttribute = (key: keyof typeof headElements, value: string) => {
+      const element = headElements[key];
+      if (element) element.setAttribute(key === 'canonical' ? 'href' : 'content', value);
+    };
+
+    document.title = seoTitle;
+    setAttribute('description', seoDescription);
+    setAttribute('ogTitle', seoTitle);
+    setAttribute('ogDescription', seoDescription);
+    setAttribute('ogUrl', seoUrl);
+    setAttribute('twitterTitle', seoTitle);
+    setAttribute('twitterDescription', seoDescription);
+    setAttribute('canonical', seoUrl);
+
+    return () => {
+      document.title = previousTitle;
+      (Object.keys(headElements) as Array<keyof typeof headElements>).forEach((key) => {
+        const element = headElements[key];
+        const previousValue = previousAttributes[key];
+        if (element && previousValue !== null) {
+          element.setAttribute(key === 'canonical' ? 'href' : 'content', previousValue);
+        }
+      });
+    };
+  }, [seoDescription, seoTitle, seoUrl, tool]);
+
   // 获取使用说明
   const usage = tool ? TOOL_USAGE[tool.id] : null;
 
@@ -221,8 +273,8 @@ export default function ToolWindow() {
     '@context': 'https://schema.org',
     '@type': 'WebApplication',
     name: tool.name,
-    description: tool.description,
-    url: new URL(`/tool/${tool.id}`, window.location.origin).toString(),
+    description: seoDescription,
+    url: seoUrl,
     applicationCategory: 'UtilitiesApplication',
     operatingSystem: 'Web Browser',
     offers: { '@type': 'Offer', price: '0', priceCurrency: 'CNY' },

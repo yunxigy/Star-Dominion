@@ -1,6 +1,12 @@
 User-agent: *
 Allow: /
+
 Disallow: /api/
+Disallow: /auth-api/
+Disallow: /stock-api/
+Disallow: /reports-api/
+Disallow: /document-api/
+Disallow: /plagiarism-api/
 Disallow: /audio/
 
-Sitemap: https://tools.example.com/sitemap.xml
+Sitemap: https://zhumenggy.top/sitemap.xml
