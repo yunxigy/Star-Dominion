@@ -15,8 +15,8 @@ const newAssessmentIds = [
 ];
 
 describe('expanded assessment registry', () => {
-  it('registers 20 assessment tools and 185 tools in total', () => {
-    expect(TOOLS).toHaveLength(185);
+  it('registers 20 assessment tools and 186 tools in total', () => {
+    expect(TOOLS).toHaveLength(186);
     expect(getToolsByCategory('test')).toHaveLength(20);
   });
 
