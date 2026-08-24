@@ -178,6 +178,23 @@ def test_service_uses_cache_for_thirty_minutes_outside_trading_hours(tmp_path) -
     assert expired_source.calls == [("600519", 140)]
 
 
+def test_service_refreshes_cache_created_before_shanghai_close(tmp_path) -> None:
+    now = datetime(2026, 7, 27, 7, 30, tzinfo=UTC)  # 15:30 in Shanghai
+    repository = KlineRepository(tmp_path / "hub.db")
+    repository.save(
+        "600519",
+        make_bars(),
+        datetime(2026, 7, 27, 7, 0, tzinfo=UTC),  # 15:00 in Shanghai
+    )
+    source = FakeSource(make_bars())
+    service = KlineService(repository, source, clock=lambda: now)
+
+    result = service.get("600519", days=20)
+
+    assert result.stale is False
+    assert source.calls == [("600519", 140)]
+
+
 def test_service_returns_stale_cache_for_up_to_fourteen_days_on_source_failure(tmp_path) -> None:
     now = datetime(2026, 7, 27, 10, 0, tzinfo=UTC)
     fetched_at = now - timedelta(days=14)

@@ -63,7 +63,7 @@ export function StockQuoteSummary({ kline }: StockQuoteSummaryProps) {
       </dl>
       <div className="stock-quote-freshness">
         <span>更新于 {kline.generated_at.replace("T", " ").slice(0, 19)}</span>
-        {kline.stale ? <strong>最近缓存</strong> : <span>东方财富真实日线</span>}
+        {kline.stale ? <strong>最近缓存</strong> : <span>新浪真实日线</span>}
       </div>
     </section>
   );

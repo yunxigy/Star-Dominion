@@ -36,7 +36,7 @@ from app.integrations.catalyst_reports import CatalystMorningReportAdapter
 from app.integrations.candidate_workers import SubprocessCandidateWorker
 from app.integrations.individual_analysis import IndividualAnalysisClient
 from app.integrations.mom_sources import EastmoneyMomSource, XiaohongshuMomSource
-from app.integrations.market_data import EastmoneyKlineSource
+from app.integrations.market_data import SinaKlineSource
 from app.integrations.model_providers import ModelProviderError, OpenAICompatibleProviderClient
 from app.integrations.stock_directory_sources import AkshareStockDirectorySource
 from app.integrations.xhs_mcp import XhsMcpClient
@@ -93,7 +93,7 @@ def create_app(
     )
     klines = kline_service or KlineService(
         KlineRepository(database_path),
-        EastmoneyKlineSource(proxy=configured.market_proxy),
+        SinaKlineSource(),
         directory=directory,
     )
     leases = JobLeaseRepository(database_path)
@@ -118,12 +118,6 @@ def create_app(
         leases=leases,
     )
     xhs_logins = xhs_login_service or XhsLoginService(xhs_client)
-    job_scheduler = scheduler or build_scheduler(
-        timezone_name=configured.timezone_name,
-        mom_refresh=mom_refreshes.start,
-        directory_refresh=directory_refreshes.start,
-        mom_refresh_time=configured.mom_refresh_time,
-    )
     service = candidate_service or CandidateRefreshService(
         CandidateSnapshotRepository(database_path),
         [
@@ -140,6 +134,14 @@ def create_app(
         service,
         [SubprocessCandidateWorker(command) for command in configured.worker_commands],
         morning_report_service=morning_reports,
+    )
+    job_scheduler = scheduler or build_scheduler(
+        timezone_name=configured.timezone_name,
+        mom_refresh=mom_refreshes.start,
+        directory_refresh=directory_refreshes.start,
+        candidate_refresh=coordinator.start,
+        mom_refresh_time=configured.mom_refresh_time,
+        candidate_refresh_time=configured.candidate_refresh_time,
     )
     if model_profile_service is None:
         profile_repository = ModelProfileRepository(database_path)
@@ -265,8 +267,10 @@ def create_app(
     )
     def stock_kline(
         symbol: str,
+        response: Response,
         days: int = Query(default=60),
     ) -> StockKline:
+        response.headers["Cache-Control"] = "no-store"
         if days not in (20, 60, 120):
             raise HTTPException(
                 status_code=422,

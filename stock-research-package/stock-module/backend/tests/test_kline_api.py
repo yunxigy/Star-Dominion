@@ -64,6 +64,7 @@ async def test_kline_route_returns_normalized_daily_contract() -> None:
     assert response.json()["adjustment"] == "qfq"
     assert response.json()["days"] == 60
     assert response.json()["bars"][-1]["date"] == "2026-07-27"
+    assert response.headers["cache-control"] == "no-store"
     assert service.calls == [("600519", 60)]
 
 

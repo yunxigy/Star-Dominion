@@ -1,19 +1,20 @@
-"""Real Eastmoney daily K-line loading and normalization."""
+"""Real Sina daily K-line loading and normalization."""
 
 from collections.abc import Callable, Mapping
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
 import importlib
+import logging
 import math
+import time
 from typing import Any
-
-import httpx
+from zoneinfo import ZoneInfo
 
 from app.domain.market_data import KlineUnavailable, RawKlineBar
 
 
-EASTMONEY_KLINE_URL = "https://push2his.eastmoney.com/api/qt/stock/kline/get"
-
-FetchJson = Callable[[str, dict[str, Any]], Mapping[str, Any]]
+LOGGER = logging.getLogger(__name__)
+SHANGHAI_TZ = ZoneInfo("Asia/Shanghai")
+DEFAULT_RETRY_DELAYS = (0.0, 0.25)
 
 
 def _records(frame: Any) -> list[Mapping[str, Any]]:
@@ -44,6 +45,13 @@ def _optional_finite_number(value: Any) -> float | None:
         return None
 
 
+def _first_value(row: Mapping[str, Any], *names: str) -> Any:
+    for name in names:
+        if name in row:
+            return row[name]
+    return None
+
+
 def _normalize_rows(rows: list[Mapping[str, Any]]) -> list[RawKlineBar]:
     bars_by_date: dict[date, RawKlineBar] = {}
     for row in rows:
@@ -64,113 +72,101 @@ def _normalize_rows(rows: list[Mapping[str, Any]]) -> list[RawKlineBar]:
     return [bars_by_date[trade_date] for trade_date in sorted(bars_by_date)]
 
 
-def _normalize_akshare_frame(frame: Any) -> list[RawKlineBar]:
+def _normalize_sina_frame(frame: Any) -> list[RawKlineBar]:
     rows = [
         {
-            "date": row.get("日期"),
-            "open": row.get("开盘"),
-            "high": row.get("最高"),
-            "low": row.get("最低"),
-            "close": row.get("收盘"),
-            "volume": row.get("成交量"),
-            "change_pct": row.get("涨跌幅"),
+            "date": _first_value(row, "\u65e5\u671f", "date", "trade_date"),
+            "open": _first_value(row, "\u5f00\u76d8", "open"),
+            "high": _first_value(row, "\u6700\u9ad8", "high"),
+            "low": _first_value(row, "\u6700\u4f4e", "low"),
+            "close": _first_value(row, "\u6536\u76d8", "close"),
+            "volume": _first_value(row, "\u6210\u4ea4\u91cf", "volume"),
+            "change_pct": _first_value(
+                row,
+                "\u6da8\u8dcc\u5e45",
+                "change_pct",
+                "pct_chg",
+            ),
         }
         for row in _records(frame)
     ]
     return _normalize_rows(rows)
 
 
-def _normalize_eastmoney_payload(payload: Mapping[str, Any]) -> list[RawKlineBar]:
-    data = payload.get("data")
-    if not isinstance(data, Mapping):
-        return []
-    raw_klines = data.get("klines")
-    if not isinstance(raw_klines, list):
-        return []
-
-    rows: list[Mapping[str, Any]] = []
-    for raw in raw_klines:
-        fields = str(raw).split(",")
-        if len(fields) < 11:
-            continue
-        rows.append(
-            {
-                "date": fields[0],
-                "open": fields[1],
-                "close": fields[2],
-                "high": fields[3],
-                "low": fields[4],
-                "volume": fields[5],
-                "change_pct": fields[8],
-            }
-        )
-    return _normalize_rows(rows)
-
-
-class EastmoneyKlineSource:
-    """Load qfq daily bars through AKShare, then Eastmoney directly."""
+class SinaKlineSource:
+    """Load qfq daily bars from Sina through AKShare."""
 
     def __init__(
         self,
         akshare_module: Any | None = None,
         *,
-        proxy: str | None = None,
-        fetch_json: FetchJson | None = None,
         today: Callable[[], date] | None = None,
+        sleep: Callable[[float], None] | None = None,
+        retry_delays: tuple[float, ...] = DEFAULT_RETRY_DELAYS,
+        now: Callable[[], datetime] | None = None,
     ) -> None:
         self._akshare = akshare_module
-        self._proxy = proxy
-        self._fetch_json = fetch_json
-        self._today = today or date.today
+        self._sleep = sleep or time.sleep
+        self._retry_delays = tuple(retry_delays)
+        self._now = now or (lambda: datetime.now(UTC))
+        self._today = today or self._current_shanghai_date
 
     def _get_akshare(self) -> Any:
         if self._akshare is None:
             self._akshare = importlib.import_module("akshare")
         return self._akshare
 
-    def _request_direct(self, params: dict[str, Any]) -> Mapping[str, Any]:
-        if self._fetch_json is not None:
-            return self._fetch_json(EASTMONEY_KLINE_URL, params)
-        with httpx.Client(proxy=self._proxy, timeout=20, trust_env=False) as client:
-            response = client.get(
-                EASTMONEY_KLINE_URL,
-                params=params,
-                headers={"User-Agent": "Mozilla/5.0 Chrome/124 Safari/537.36"},
-            )
-            response.raise_for_status()
-            payload = response.json()
-        return payload if isinstance(payload, Mapping) else {}
+    def _current_shanghai_date(self) -> date:
+        current = self._now()
+        if current.tzinfo is None:
+            current = current.replace(tzinfo=UTC)
+        return current.astimezone(SHANGHAI_TZ).date()
+
+    def _load_with_retries(
+        self,
+        *,
+        symbol: str,
+        loader: Callable[[], list[RawKlineBar]],
+    ) -> list[RawKlineBar]:
+        attempts = 1 + len(self._retry_delays)
+        for attempt in range(1, attempts + 1):
+            try:
+                bars = loader()
+                if bars:
+                    return bars
+                LOGGER.warning(
+                    "kline provider returned no bars: source=sina symbol=%s attempt=%d/%d",
+                    symbol,
+                    attempt,
+                    attempts,
+                )
+            except Exception as exc:
+                LOGGER.warning(
+                    "kline provider failed: source=sina symbol=%s attempt=%d/%d error_type=%s",
+                    symbol,
+                    attempt,
+                    attempts,
+                    type(exc).__name__,
+                )
+            if attempt < attempts:
+                self._sleep(self._retry_delays[attempt - 1])
+        return []
 
     def load(self, symbol: str, minimum_bars: int) -> list[RawKlineBar]:
+        del minimum_bars
         current_date = self._today()
-        try:
-            frame = self._get_akshare().stock_zh_a_hist(
-                symbol=symbol,
-                period="daily",
+        exchange_symbol = f"{'sh' if symbol.startswith('6') else 'sz'}{symbol}"
+
+        def load_from_sina() -> list[RawKlineBar]:
+            frame = self._get_akshare().stock_zh_a_daily(
+                symbol=exchange_symbol,
                 start_date=(current_date - timedelta(days=420)).strftime("%Y%m%d"),
                 end_date=current_date.strftime("%Y%m%d"),
                 adjust="qfq",
             )
-            bars = _normalize_akshare_frame(frame)
-            if bars:
-                return bars
-        except Exception:
-            pass
+            return _normalize_sina_frame(frame)
 
-        params = {
-            "secid": f"{'1' if symbol.startswith(('600', '601', '603', '605')) else '0'}.{symbol}",
-            "klt": 101,
-            "fqt": 1,
-            "beg": 0,
-            "end": 20500101,
-            "lmt": max(160, minimum_bars),
-            "fields1": "f1,f2,f3,f4,f5,f6",
-            "fields2": "f51,f52,f53,f54,f55,f56,f57,f58,f59,f60,f61",
-        }
-        try:
-            bars = _normalize_eastmoney_payload(self._request_direct(params))
-            if bars:
-                return bars
-        except Exception:
-            pass
+        bars = self._load_with_retries(symbol=symbol, loader=load_from_sina)
+        if bars:
+            return bars
         raise KlineUnavailable("当前真实日线行情暂不可用")

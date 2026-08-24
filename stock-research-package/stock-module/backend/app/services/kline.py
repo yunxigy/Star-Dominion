@@ -91,12 +91,21 @@ class KlineService:
 
     def _is_fresh(self, cached: CachedKline, now: datetime) -> bool:
         local = now.astimezone(SHANGHAI)
+        if self._requires_post_close_refresh(cached, local):
+            return False
         in_trading_window = (
             local.weekday() < 5
             and time(9, 15) <= local.time() <= time(15, 15)
         )
         ttl = TRADING_TTL if in_trading_window else OFF_HOURS_TTL
         return self._age(cached, now) <= ttl
+
+    @staticmethod
+    def _requires_post_close_refresh(cached: CachedKline, local: datetime) -> bool:
+        if local.weekday() >= 5 or local.time() <= time(15, 15):
+            return False
+        fetched_local = cached.fetched_at.astimezone(SHANGHAI)
+        return fetched_local.date() == local.date() and fetched_local.time() <= time(15, 15)
 
     @staticmethod
     def _age(cached: CachedKline, now: datetime) -> timedelta:

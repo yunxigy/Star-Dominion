@@ -139,7 +139,7 @@ function StockResearchModalContent({
             <div className="kline-period-heading">
               <div>
                 <h3>日K线</h3>
-                <p>东方财富前复权日线 · 均线与成交量</p>
+              <p>新浪前复权日线 · 均线与成交量</p>
               </div>
               <div className="kline-period-controls" aria-label="K线时间范围">
                 {PERIODS.map((period) => (

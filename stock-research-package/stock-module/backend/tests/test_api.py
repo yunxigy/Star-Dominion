@@ -55,6 +55,15 @@ def test_settings_read_candidate_paths_from_environment(monkeypatch: pytest.Monk
     assert settings.user_strategy_snapshot_path == tmp_path / "strategy.json"
 
 
+def test_settings_read_candidate_refresh_time(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) -> None:
+    monkeypatch.setenv("STOCK_DATA_DIR", str(tmp_path / "data"))
+    monkeypatch.setenv("STOCK_CANDIDATE_REFRESH_TIME", "09:15")
+
+    settings = Settings.from_env()
+
+    assert settings.candidate_refresh_time == "09:15"
+
+
 def test_directory_searches_by_code_and_name_and_excludes_other_boards() -> None:
     directory = InMemoryStockDirectory(
         [

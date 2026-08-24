@@ -38,6 +38,7 @@ class Settings:
     )
     market_proxy: str | None = None
     mom_refresh_time: str = "08:30"
+    candidate_refresh_time: str = "09:00"
     timezone_name: str = "Asia/Shanghai"
 
     @classmethod
@@ -158,6 +159,7 @@ class Settings:
             xhs_mcp_command=tuple(shlex.split(xhs_command_text, posix=os.name != "nt")),
             market_proxy=os.environ.get("STOCK_MARKET_PROXY") or None,
             mom_refresh_time=os.environ.get("STOCK_MOM_REFRESH_TIME", "08:30"),
+            candidate_refresh_time=os.environ.get("STOCK_CANDIDATE_REFRESH_TIME", "09:00"),
             timezone_name=os.environ.get("STOCK_TIMEZONE", "Asia/Shanghai"),
         )
 

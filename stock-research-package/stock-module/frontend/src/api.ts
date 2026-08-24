@@ -133,6 +133,7 @@ export const loadStockKline = (symbol: string, days: KlineDays = 60) =>
   request<StockKline>(
     `/stock-api/api/v1/stocks/${encodeURIComponent(symbol)}/kline?days=${days}`,
     "K 线数据加载失败",
+    { cache: "no-store" },
   );
 
 export const loadCandidates = () =>

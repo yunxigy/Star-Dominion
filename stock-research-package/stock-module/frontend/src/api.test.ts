@@ -135,7 +135,7 @@ describe("morning report API contracts", () => {
 
     expect(fetch).toHaveBeenCalledWith(
       "/stock-api/api/v1/stocks/600519/kline?days=120",
-      expect.objectContaining({ credentials: "include" }),
+      expect.objectContaining({ credentials: "include", cache: "no-store" }),
     );
   });
 

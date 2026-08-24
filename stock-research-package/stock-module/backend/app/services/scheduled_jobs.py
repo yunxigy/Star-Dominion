@@ -89,7 +89,9 @@ def build_scheduler(
     timezone_name: str,
     mom_refresh: Callable[[], object],
     directory_refresh: Callable[[], object],
+    candidate_refresh: Callable[[], object] | None = None,
     mom_refresh_time: str = "08:30",
+    candidate_refresh_time: str = "09:00",
 ) -> BackgroundScheduler:
     hour_text, minute_text = mom_refresh_time.split(":", maxsplit=1)
     scheduler = BackgroundScheduler(timezone=timezone_name)
@@ -114,4 +116,16 @@ def build_scheduler(
         coalesce=True,
         max_instances=1,
     )
+    if candidate_refresh is not None:
+        candidate_hour_text, candidate_minute_text = candidate_refresh_time.split(":", maxsplit=1)
+        scheduler.add_job(
+            candidate_refresh,
+            "cron",
+            id="candidate-refresh",
+            hour=int(candidate_hour_text),
+            minute=int(candidate_minute_text),
+            replace_existing=True,
+            coalesce=True,
+            max_instances=1,
+        )
     return scheduler

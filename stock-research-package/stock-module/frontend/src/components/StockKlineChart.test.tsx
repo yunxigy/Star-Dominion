@@ -108,7 +108,7 @@ it("formats a negative percentage with one minus sign and describes fresh data c
   expect(screen.queryByText(/--0\.75%/)).not.toBeInTheDocument();
 
   rerender(<StockQuoteSummary kline={fresh} />);
-  expect(screen.getByText("东方财富真实日线")).toBeInTheDocument();
+  expect(screen.getByText("新浪真实日线")).toBeInTheDocument();
   expect(screen.queryByText(/实时/)).not.toBeInTheDocument();
 });
 
