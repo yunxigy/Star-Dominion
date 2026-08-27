@@ -28,7 +28,7 @@ export const ProjectGallery: React.FC<ProjectGalleryProps> = ({
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 2xl:grid-cols-5 max-md:flex max-md:snap-x max-md:overflow-x-auto max-md:pb-2">
         {PROJECT_LINKS.map(project => {
           const ProjectIcon = getIcon(project.icon);
-          const className = `group flex h-full flex-col rounded-2xl bg-gradient-to-br ${project.gradient} border ${project.border} p-4 transition-all hover:-translate-y-0.5 hover:shadow-md max-md:min-w-[78%] max-md:snap-start`;
+          const className = `group flex h-full flex-col rounded-2xl bg-gradient-to-br ${project.gradient} border ${project.border} p-4 transition-transform transition-shadow hover:-translate-y-0.5 hover:shadow-md max-md:min-w-[78%] max-md:snap-start`;
           const content = (
             <>
               <div className="mb-3 flex items-center justify-between gap-2">
