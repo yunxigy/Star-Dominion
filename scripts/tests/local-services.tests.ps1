@@ -32,7 +32,7 @@ Describe 'local service manifest' {
         $manifest = Get-LocalServiceManifest -Path (Join-Path (Join-Path $PSScriptRoot '..') 'local-services.json')
         $service = @($manifest.services | Where-Object { $_.name -eq 'webmaster-inspector' })
         $service.Count | Should Be 1
-        @($service[0].ports) | Should Contain 8012
+        (@($service[0].ports) -contains 8012) | Should Be $true
         [string]$service[0].working_directory | Should Be 'webmaster-inspector'
         [string]$service[0].health_url | Should Be 'http://127.0.0.1:8012/health'
         ($service[0].arguments -join ' ') | Should Match '--workers 1'
