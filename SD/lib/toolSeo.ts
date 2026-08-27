@@ -1,6 +1,5 @@
 import type { ToolDef } from '../tools/registry';
-
-export const TOOL_SITE_ORIGIN = 'https://zhumenggy.top';
+import { absoluteSiteUrl, SITE } from './siteConfig';
 
 type ToolSeoInput = {
   tool: Pick<ToolDef, 'name' | 'description'>;
@@ -14,9 +13,9 @@ export function buildToolSeoDescription({ tool, categoryName }: ToolSeoInput): s
 }
 
 export function buildToolSeoTitle(toolName: string): string {
-  return `${toolName} - 逐梦工具箱`;
+  return `${toolName} - ${SITE.name}`;
 }
 
 export function buildToolSeoUrl(toolId: string): string {
-  return `${TOOL_SITE_ORIGIN}/tool/${encodeURIComponent(toolId)}`;
+  return absoluteSiteUrl(`/tool/${encodeURIComponent(toolId)}`);
 }
