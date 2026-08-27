@@ -39,6 +39,14 @@ const PdfEncrypt = React.lazy(() => import('../components/tools/pdf/PdfEncrypt')
 const ExtractPdfImages = React.lazy(() => import('../components/tools/pdf/ExtractPdfImages'));
 const ExtractPdfText = React.lazy(() => import('../components/tools/pdf/ExtractPdfText'));
 const WordToPdf = React.lazy(() => import('../components/tools/pdf/WordToPdf'));
+const PdfPageNumbersTool = React.lazy(() => import('../components/tools/pdf/deep/PdfDeepTools').then(module => ({ default: module.PdfPageNumbersTool })));
+const PdfCropTool = React.lazy(() => import('../components/tools/pdf/deep/PdfDeepTools').then(module => ({ default: module.PdfCropTool })));
+const PdfPageSizeTool = React.lazy(() => import('../components/tools/pdf/deep/PdfDeepTools').then(module => ({ default: module.PdfPageSizeTool })));
+const PdfReorderTool = React.lazy(() => import('../components/tools/pdf/deep/PdfDeepTools').then(module => ({ default: module.PdfReorderTool })));
+const PdfLongImageTool = React.lazy(() => import('../components/tools/pdf/deep/PdfDeepTools').then(module => ({ default: module.PdfLongImageTool })));
+const PdfMetadataTool = React.lazy(() => import('../components/tools/pdf/deep/PdfDeepTools').then(module => ({ default: module.PdfMetadataTool })));
+const PdfLinkExtractorTool = React.lazy(() => import('../components/tools/pdf/deep/PdfDeepTools').then(module => ({ default: module.PdfLinkExtractorTool })));
+const PdfToWordTool = React.lazy(() => import('../components/tools/pdf/deep/PdfDeepTools').then(module => ({ default: module.PdfToWordTool })));
 
 // ── 图片工具 ─────────────────────────────────────────────
 const CompressImage = React.lazy(() => import('../components/tools/image/CompressImage'));
@@ -290,6 +298,14 @@ const TOOL_DEFINITIONS: ToolDefinition[] = [
   { id: 'extract-pdf-images', name: '提取 PDF 图片', description: '从 PDF 中提取所有图片', icon: 'Download', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: ExtractPdfImages },
   { id: 'extract-pdf-text', name: '提取 PDF 文字', description: '从 PDF 中提取纯文本内容', icon: 'FileText', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: ExtractPdfText },
   { id: 'word-to-pdf', name: 'Word 转 PDF', description: 'Word 文档转换为 PDF 格式', icon: 'FileSpreadsheet', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: WordToPdf },
+  { id: 'pdf-page-numbers', name: 'PDF 添加页码', description: '为 PDF 页面添加页码', icon: 'ListOrdered', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: PdfPageNumbersTool, privacy: 'local', status: 'stable', tags: ['pdf', '页码', 'page numbers', 'yema', '编号'] },
+  { id: 'pdf-crop-pages', name: 'PDF 页面裁剪', description: '按毫米裁剪 PDF 页面边距', icon: 'Crop', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: PdfCropTool, privacy: 'local', status: 'stable', tags: ['pdf', '裁剪', 'crop', '页面', 'caijian'] },
+  { id: 'pdf-page-size', name: 'PDF 页面尺寸', description: '统一调整 PDF 页面大小', icon: 'Maximize', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: PdfPageSizeTool, privacy: 'local', status: 'stable', tags: ['pdf', '尺寸', 'a4', 'resize', 'chicun'] },
+  { id: 'pdf-reorder-pages', name: 'PDF 页面重排', description: '按自定义顺序重新排列 PDF 页面', icon: 'ListRestart', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: PdfReorderTool, privacy: 'local', status: 'stable', tags: ['pdf', '重排', '排序', 'reorder', 'paixu'] },
+  { id: 'pdf-to-long-image', name: 'PDF 转长图', description: '把多页 PDF 拼接为 PNG 长图', icon: 'GalleryVerticalEnd', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: PdfLongImageTool, privacy: 'local', status: 'stable', tags: ['pdf', '长图', 'png', 'long image', 'changtu'] },
+  { id: 'pdf-metadata', name: 'PDF 元数据清理', description: '查看并清理 PDF 标题作者等元数据', icon: 'FileCog', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: PdfMetadataTool, privacy: 'local', status: 'stable', tags: ['pdf', '元数据', 'metadata', '隐私', 'qingli'] },
+  { id: 'pdf-link-extractor', name: 'PDF 链接提取', description: '提取 PDF 中的 HTTP(S) 链接', icon: 'Link', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: PdfLinkExtractorTool, privacy: 'local', status: 'stable', tags: ['pdf', '链接', 'link', '提取', 'tiqu'] },
+  { id: 'pdf-to-word', name: 'PDF 转 Word（图片版）', description: '服务端将 PDF 页面转为图片版 DOCX', icon: 'FileOutput', category: 'pdf', color: 'red', gradient: 'from-red-600 to-rose-600', glow: 'rgba(239,68,68,0.3)', component: PdfToWordTool, privacy: 'backend-upload', status: 'stable', tags: ['pdf', 'word', 'docx', '图片版', 'zhuanhuan'] },
 
   // 图片工具
   { id: 'compress-image', name: '图片压缩', description: '压缩图片文件大小', icon: 'Minimize2', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: CompressImage, tags: ['yasuo', 'compress', '缩小', '图片压缩'] },

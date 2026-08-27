@@ -20,6 +20,7 @@
   <url><loc>https://zhumenggy.top/category/academic</loc></url>
   <url><loc>https://zhumenggy.top/category/general</loc></url>
   <url><loc>https://zhumenggy.top/category/text</loc></url>
+  <url><loc>https://zhumenggy.top/category/webmaster</loc></url>
   <url><loc>https://zhumenggy.top/tool/merge-pdf</loc></url>
   <url><loc>https://zhumenggy.top/tool/split-pdf</loc></url>
   <url><loc>https://zhumenggy.top/tool/compress-pdf</loc></url>
@@ -32,6 +33,14 @@
   <url><loc>https://zhumenggy.top/tool/extract-pdf-images</loc></url>
   <url><loc>https://zhumenggy.top/tool/extract-pdf-text</loc></url>
   <url><loc>https://zhumenggy.top/tool/word-to-pdf</loc></url>
+  <url><loc>https://zhumenggy.top/tool/pdf-page-numbers</loc></url>
+  <url><loc>https://zhumenggy.top/tool/pdf-crop-pages</loc></url>
+  <url><loc>https://zhumenggy.top/tool/pdf-page-size</loc></url>
+  <url><loc>https://zhumenggy.top/tool/pdf-reorder-pages</loc></url>
+  <url><loc>https://zhumenggy.top/tool/pdf-to-long-image</loc></url>
+  <url><loc>https://zhumenggy.top/tool/pdf-metadata</loc></url>
+  <url><loc>https://zhumenggy.top/tool/pdf-link-extractor</loc></url>
+  <url><loc>https://zhumenggy.top/tool/pdf-to-word</loc></url>
   <url><loc>https://zhumenggy.top/tool/compress-image</loc></url>
   <url><loc>https://zhumenggy.top/tool/resize-image</loc></url>
   <url><loc>https://zhumenggy.top/tool/crop-image</loc></url>
@@ -163,6 +172,18 @@
   <url><loc>https://zhumenggy.top/tool/entity-extractor</loc></url>
   <url><loc>https://zhumenggy.top/tool/text-file-batch</loc></url>
   <url><loc>https://zhumenggy.top/tool/markup-converter</loc></url>
+  <url><loc>https://zhumenggy.top/tool/meta-tag-generator</loc></url>
+  <url><loc>https://zhumenggy.top/tool/open-graph-preview</loc></url>
+  <url><loc>https://zhumenggy.top/tool/robots-txt-generator</loc></url>
+  <url><loc>https://zhumenggy.top/tool/sitemap-generator</loc></url>
+  <url><loc>https://zhumenggy.top/tool/url-parser</loc></url>
+  <url><loc>https://zhumenggy.top/tool/utm-builder</loc></url>
+  <url><loc>https://zhumenggy.top/tool/slug-generator</loc></url>
+  <url><loc>https://zhumenggy.top/tool/user-agent-parser</loc></url>
+  <url><loc>https://zhumenggy.top/tool/ssl-checker</loc></url>
+  <url><loc>https://zhumenggy.top/tool/dns-lookup</loc></url>
+  <url><loc>https://zhumenggy.top/tool/http-status-checker</loc></url>
+  <url><loc>https://zhumenggy.top/tool/websocket-tester</loc></url>
   <url><loc>https://zhumenggy.top/tool/audio-converter</loc></url>
   <url><loc>https://zhumenggy.top/tool/ncm-converter</loc></url>
   <url><loc>https://zhumenggy.top/tool/voice-changer</loc></url>

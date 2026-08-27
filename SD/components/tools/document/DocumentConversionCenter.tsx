@@ -1,59 +1,23 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { AlertTriangle, CheckCircle2, Download, FileArchive, FileText, RefreshCw, Server, UploadCloud } from 'lucide-react';
 import { Btn, UploadZone, formatFileSize } from '../shared';
-
-type Target =
-  | 'pdf-to-word-image'
-  | 'office-to-pdf'
-  | 'pdf-table-to-xlsx'
-  | 'markdown-to-docx'
-  | 'html-to-docx'
-  | 'scan-to-docx';
-
-type Capability = Record<'libreoffice' | 'pdf' | 'pdf_tables' | 'ocr', boolean>;
-
-const TARGETS: Array<{
-  value: Target;
-  label: string;
-  detail: string;
-  accept: string;
-  capability?: keyof Capability;
-}> = [
-  { value: 'pdf-to-word-image', label: 'PDF → Word（图片版）', detail: '每页 PDF 渲染为高清图片写入 DOCX，版式稳定但文字不可编辑', accept: '.pdf', capability: 'pdf' },
-  { value: 'office-to-pdf', label: 'Word / Excel / PPT → PDF', detail: '服务器 LibreOffice 真实转换，保留 Office 页面布局', accept: '.doc,.docx,.xls,.xlsx,.ppt,.pptx,.odt,.ods,.odp', capability: 'libreoffice' },
-  { value: 'pdf-table-to-xlsx', label: 'PDF 表格 → Excel', detail: '按页面和表格写入 XLSX，可在 Excel 中继续编辑', accept: '.pdf', capability: 'pdf_tables' },
-  { value: 'markdown-to-docx', label: 'Markdown → Word', detail: '转换标题、段落、列表、引用、代码、图片和表格', accept: '.md,.markdown' },
-  { value: 'html-to-docx', label: 'HTML → Word', detail: '转换常见 HTML 结构，并过滤脚本内容', accept: '.html,.htm' },
-  { value: 'scan-to-docx', label: '图片 / 扫描件 → 可编辑 Word', detail: 'OCR 生成可编辑段落，同时保留原始页面图片', accept: '.png,.jpg,.jpeg,.tif,.tiff,.bmp,.webp,.pdf', capability: 'ocr' },
-];
-
-const API = '/document-api';
-
-function getFilename(response: Response, fallback: string): string {
-  const disposition = response.headers.get('content-disposition') || '';
-  const encoded = disposition.match(/filename\*=UTF-8''([^;]+)/i)?.[1];
-  if (encoded) return decodeURIComponent(encoded);
-  const plain = disposition.match(/filename="?([^";]+)"?/i)?.[1];
-  return plain || fallback;
-}
+import { convertDocument, DOCUMENT_CONVERSION_TARGETS, loadDocumentCapabilities, type DocumentCapability, type DocumentConversionTarget } from './documentConversionApi';
 
 const DocumentConversionCenter: React.FC<{ onClose: () => void }> = ({ onClose }) => {
-  const [target, setTarget] = useState<Target>('office-to-pdf');
+  const [target, setTarget] = useState<DocumentConversionTarget>('office-to-pdf');
   const [files, setFiles] = useState<File[]>([]);
-  const [capabilities, setCapabilities] = useState<Capability | null>(null);
+  const [capabilities, setCapabilities] = useState<DocumentCapability | null>(null);
   const [serviceOnline, setServiceOnline] = useState<boolean | null>(null);
   const [busy, setBusy] = useState(false);
   const [status, setStatus] = useState('');
   const [error, setError] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-  const selected = useMemo(() => TARGETS.find(item => item.value === target)!, [target]);
+  const selected = useMemo(() => DOCUMENT_CONVERSION_TARGETS.find(item => item.value === target)!, [target]);
 
   const loadCapabilities = useCallback(async () => {
     try {
-      const response = await fetch(`${API}/api/v1/capabilities`);
-      if (!response.ok) throw new Error('service unavailable');
-      const payload = await response.json() as { dependencies: Capability };
-      setCapabilities(payload.dependencies);
+      const payload = await loadDocumentCapabilities();
+      setCapabilities(payload);
       setServiceOnline(true);
     } catch {
       setServiceOnline(false);
@@ -77,19 +41,7 @@ const DocumentConversionCenter: React.FC<{ onClose: () => void }> = ({ onClose }
     setError('');
     setStatus(files.length > 1 ? `正在转换 ${files.length} 个文件并打包...` : '正在转换，请稍候...');
     try {
-      const form = new FormData();
-      form.append('target', target);
-      const endpoint = files.length > 1 ? `${API}/api/v1/convert/batch` : `${API}/api/v1/convert`;
-      if (files.length > 1) files.forEach(file => form.append('files', file, file.name));
-      else form.append('file', files[0], files[0].name);
-      const response = await fetch(endpoint, { method: 'POST', body: form });
-      if (!response.ok) {
-        let message = `转换失败（HTTP ${response.status}）`;
-        try { message = (await response.json() as { detail?: string }).detail || message; } catch { /* non-JSON error */ }
-        throw new Error(message);
-      }
-      const blob = await response.blob();
-      const filename = getFilename(response, files.length > 1 ? 'document-conversion-results.zip' : `${files[0].name}.converted`);
+      const { blob, filename } = await convertDocument(files, target);
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement('a');
       anchor.href = url;
@@ -120,7 +72,7 @@ const DocumentConversionCenter: React.FC<{ onClose: () => void }> = ({ onClose }
       </div>
 
       <div className="grid gap-3 md:grid-cols-2">
-        {TARGETS.map(item => (
+        {DOCUMENT_CONVERSION_TARGETS.map(item => (
           <button
             key={item.value}
             type="button"

@@ -6,11 +6,11 @@ export type CategoryContent = {
 
 export const CATEGORY_CONTENT: Record<string, CategoryContent> = {
   pdf: {
-    description: '在浏览器中完成 PDF 合并、拆分、压缩、页面调整、格式转换与内容提取。多数操作本地执行，适合办公文档、学习资料和个人文件的快速整理。',
-    features: ['页面与文件整理', '常见格式转换', '本地隐私优先'],
+    description: '在浏览器中完成 PDF 合并、拆分、压缩、页码、裁剪、页面尺寸、重排、长图、元数据与链接提取。多数操作本地执行，适合办公文档、学习资料和个人文件的快速整理。',
+    features: ['页面与文件整理', '常见格式转换', '本地隐私优先', '深度页面操作'],
     faq: [
       { question: 'PDF 文件会上传吗？', answer: '标记为本地处理的 PDF 工具不会上传文件；需要服务器转换的工具会在操作前明确提示。' },
-      { question: '处理失败怎么办？', answer: '先确认文件没有损坏或密码保护，再尝试减小文件体积并关闭占用内存较高的页面。' },
+      { question: '处理失败怎么办？', answer: '先确认文件没有损坏或密码保护，再尝试减小文件体积并关闭占用内存较高的页面。PDF 转 Word 会上传到本站服务并输出图片版 DOCX，文字不可编辑。' },
     ],
   },
   image: {

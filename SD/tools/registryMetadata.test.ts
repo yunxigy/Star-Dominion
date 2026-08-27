@@ -64,4 +64,12 @@ describe('toolbox production metadata', () => {
     expect(webmasterTools.slice(8).every((tool) => tool.privacy === 'third-party-api' && tool.status === 'beta')).toBe(true);
     expect(CATEGORIES.some((category) => category.id === 'webmaster')).toBe(true);
   });
+
+  it('registers the PDF deep-tool routes with an explicit upload boundary', () => {
+    const expected = ['pdf-page-numbers', 'pdf-crop-pages', 'pdf-page-size', 'pdf-reorder-pages', 'pdf-to-long-image', 'pdf-metadata', 'pdf-link-extractor', 'pdf-to-word'];
+    const pdfTools = TOOLS.filter((tool) => expected.includes(tool.id));
+    expect(pdfTools.map((tool) => tool.id)).toEqual(expected);
+    expect(pdfTools.slice(0, 7).every((tool) => tool.privacy === 'local' && tool.status === 'stable')).toBe(true);
+    expect(pdfTools[7]).toMatchObject({ privacy: 'backend-upload', status: 'stable' });
+  });
 });

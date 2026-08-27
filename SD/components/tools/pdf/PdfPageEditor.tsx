@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef } from 'react';
 import { Btn, ResultBox, copyToClipboard, formatFileSize } from '../shared';
 import { UploadZone } from '../shared';
 import { GripVertical, RotateCw, Trash2, Plus, FileText, Download } from 'lucide-react';
+import { reorderPdfPages } from './deep/core';
 
 interface PageInfo {
   index: number;
@@ -69,6 +70,20 @@ const PdfPageEditor: React.FC<{ onClose: () => void }> = ({ onClose }) => {
       const arrayBuffer = await file.arrayBuffer();
       const pdfLib = await import('pdf-lib');
       const srcDoc = await pdfLib.PDFDocument.load(arrayBuffer);
+      const onlyReordered = pages.length === srcDoc.getPageCount()
+        && pages.every((page) => page.index >= 0 && !page.deleted && page.rotation === 0);
+      if (onlyReordered) {
+        const reordered = await reorderPdfPages(new Uint8Array(arrayBuffer), pages.map((page) => page.index));
+        const blob = new Blob([reordered as unknown as BlobPart], { type: 'application/pdf' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'edited.pdf';
+        a.click();
+        URL.revokeObjectURL(url);
+        setResult(`编辑完成: ${pages.length} 页已导出`);
+        return;
+      }
       const newDoc = await pdfLib.PDFDocument.create();
 
       for (const page of pages) {
