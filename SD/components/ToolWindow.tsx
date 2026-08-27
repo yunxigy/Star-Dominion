@@ -1,10 +1,11 @@
 import React, { Suspense, Component, type ReactNode, useEffect, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { X, Loader2, Shield, HelpCircle, ArrowRight, BookOpen, Lightbulb } from 'lucide-react';
 import { getToolById, getToolsByCategory, CATEGORIES } from '../tools/registry';
 import { getIcon } from '../lib/iconMap';
 import { buildToolSeoDescription, buildToolSeoTitle, buildToolSeoUrl } from '../lib/toolSeo';
 import { AdSlot } from './AdSlot';
+import { ToolLink } from './ToolLink';
 import {
   TOOL_WINDOW_AD_CLASS,
   getToolComponentShellClass,
@@ -12,7 +13,7 @@ import {
 } from '../pages/toolUiLayout';
 
 class ToolErrorBoundary extends Component<
-  { children: ReactNode; toolName: string },
+  { children: ReactNode; toolName: string; onClose: () => void },
   { error: Error | null }
 > {
   state = { error: null as Error | null };
@@ -54,7 +55,7 @@ class ToolErrorBoundary extends Component<
                 {isChunkError ? '刷新页面' : '重试'}
               </button>
               <button
-                onClick={() => window.close()}
+                onClick={this.props.onClose}
                 className="px-6 py-2 bg-[#f1dcc2] text-[#6f3714] rounded-lg hover:bg-[#ead0ad] transition-colors"
               >
                 关闭窗口
@@ -175,6 +176,8 @@ const TOOL_USAGE: Record<string, { steps: string[]; tips: string[] }> = {
 
 export default function ToolWindow() {
   const { toolId } = useParams<{ toolId: string }>();
+  const navigate = useNavigate();
+  const handleClose = () => navigate('/gj');
 
   const tool = toolId ? getToolById(toolId) : null;
 
@@ -254,7 +257,7 @@ export default function ToolWindow() {
           <h2 className="text-xl font-bold text-[#2f241b] mb-2">工具未找到</h2>
           <p className="text-[#6d5a47] mb-4">ID: {toolId}</p>
           <button
-            onClick={() => window.close()}
+            onClick={handleClose}
             className="px-6 py-2 bg-[#7a421b] text-[#fff8ef] rounded-lg hover:bg-[#5f3214]"
           >
             关闭窗口
@@ -308,7 +311,7 @@ export default function ToolWindow() {
             </div>
           </div>
           <button
-            onClick={() => window.close()}
+            onClick={handleClose}
             className="p-2 rounded-lg bg-[#f1dcc2] text-[#6d5a47] hover:text-[#2f241b] hover:bg-[#ead0ad] transition-all"
             title="关闭窗口"
           >
@@ -322,7 +325,7 @@ export default function ToolWindow() {
         <div className={getToolWindowContentClass(tool.category)}>
           {/* Tool Component */}
           <div className={getToolComponentShellClass(tool.category)}>
-            <ToolErrorBoundary toolName={tool.name}>
+            <ToolErrorBoundary toolName={tool.name} onClose={handleClose}>
               <Suspense
                 fallback={
                   <div className="flex items-center justify-center h-64">
@@ -333,7 +336,7 @@ export default function ToolWindow() {
                   </div>
                 }
               >
-                <tool.component onClose={() => window.close()} />
+                <tool.component onClose={handleClose} />
               </Suspense>
             </ToolErrorBoundary>
           </div>
@@ -419,11 +422,9 @@ export default function ToolWindow() {
                 {relatedTools.map(relatedTool => {
                   const RelatedIcon = getIcon(relatedTool.icon);
                   return (
-                    <a
+                    <ToolLink
                       key={relatedTool.id}
-                      href={`/tool/${relatedTool.id}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      toolId={relatedTool.id}
                       className="flex items-center gap-3 p-3 rounded-xl bg-[#fff4e6] hover:bg-[#f1dcc2] border border-[#d8b58e] hover:border-[#b47a43] transition-all group"
                     >
                       <div className={`p-2 rounded-lg bg-gradient-to-br ${relatedTool.gradient} shadow-lg shrink-0`}>
@@ -438,7 +439,7 @@ export default function ToolWindow() {
                         </p>
                       </div>
                       <ArrowRight className="w-4 h-4 text-[#9d8268] group-hover:text-[#8a4b1f] shrink-0" />
-                    </a>
+                    </ToolLink>
                   );
                 })}
               </div>
@@ -459,9 +460,9 @@ export default function ToolWindow() {
             <Shield className="w-3 h-3" />
             <span>大部分工具本地处理 · 少数工具调用 API 或上传后端</span>
           </div>
-          <a href="/" target="_blank" rel="noopener noreferrer" className="hover:text-[#6f3714] transition-colors">
+          <Link to="/" className="hover:text-[#6f3714] transition-colors">
             逐梦工具箱
-          </a>
+          </Link>
         </div>
       </footer>
     </div>

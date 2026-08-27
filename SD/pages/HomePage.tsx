@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Search, ArrowRight, Zap, BarChart3, Shield, Calendar, Sparkles, Star, Layers3 } from 'lucide-react';
-import { useToolRunner } from '../components/ToolRunner';
 import { ProjectGallery } from '../components/ProjectGallery';
+import { ToolLink } from '../components/ToolLink';
 import { CATEGORIES, TOOLS } from '../tools/registry';
 import { getIcon } from '../lib/iconMap';
 import { AdSlot } from '../components/AdSlot';
@@ -85,7 +85,6 @@ const TypewriterText: React.FC<{ texts: string[] }> = ({ texts }) => {
 export const HomePage: React.FC = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const { openTool } = useToolRunner();
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = (e: React.FormEvent) => {
@@ -240,24 +239,29 @@ export const HomePage: React.FC = () => {
             if (!tool) return null;
             const IconComponent = getIcon(tool.icon);
             return (
-              <motion.button
+              <motion.div
                 key={tool.id}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
-                onClick={() => openTool(tool.id)}
-                className="group tool-card-enhanced p-5 rounded-2xl glass-card text-left min-h-[168px]"
+                className="min-h-[168px]"
               >
-                <div className={`tool-icon inline-flex p-3 rounded-lg bg-gradient-to-br ${tool.gradient} mb-3`}>
-                  <IconComponent className="w-6 h-6 text-white" />
-                </div>
-                <h3 className={`tool-name ${HOME_HOT_TOOL_TITLE_CLASS} truncate`}>
-                  {tool.name}
-                </h3>
-                <p className={HOME_HOT_TOOL_DESCRIPTION_CLASS}>
-                  {tool.description}
-                </p>
-              </motion.button>
+                <ToolLink
+                  toolId={tool.id}
+                  aria-label={`打开${tool.name}`}
+                  className="group block h-full tool-card-enhanced p-5 rounded-2xl glass-card text-left"
+                >
+                  <div className={`tool-icon inline-flex p-3 rounded-lg bg-gradient-to-br ${tool.gradient} mb-3`}>
+                    <IconComponent className="w-6 h-6 text-white" />
+                  </div>
+                  <h3 className={`tool-name ${HOME_HOT_TOOL_TITLE_CLASS} truncate`}>
+                    {tool.name}
+                  </h3>
+                  <p className={HOME_HOT_TOOL_DESCRIPTION_CLASS}>
+                    {tool.description}
+                  </p>
+                </ToolLink>
+              </motion.div>
             );
           })}
         </div>

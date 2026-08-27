@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Shield, Zap, Globe } from 'lucide-react';
 import { CATEGORIES, TOOLS, getToolsByCategory } from '../tools/registry';
 import { getIcon } from '../lib/iconMap';
-import { useToolRunner } from '../components/ToolRunner';
+import { ToolLink } from '../components/ToolLink';
 
 const CATEGORY_DESCRIPTIONS: Record<string, { long: string; features: string[]; faq: { q: string; a: string }[] }> = {
   pdf: {
@@ -56,7 +56,6 @@ const CATEGORY_DESCRIPTIONS: Record<string, { long: string; features: string[]; 
 
 export const CategoryPage: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
-  const { openTool } = useToolRunner();
 
   const category = useMemo(() => CATEGORIES.find(c => c.id === categoryId), [categoryId]);
   const tools = useMemo(() => categoryId ? getToolsByCategory(categoryId) : [], [categoryId]);
@@ -106,20 +105,25 @@ export const CategoryPage: React.FC = () => {
             {tools.map((tool, index) => {
               const ToolIcon = getIcon(tool.icon);
               return (
-                <motion.button key={tool.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
+                <motion.div key={tool.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: Math.min(index * 0.05, 0.5) }}
-                  onClick={() => openTool(tool.id)}
-                  className="w-full text-left group tool-card-enhanced glass-card rounded-2xl p-5">
-                  <div className="flex items-start gap-3">
-                    <div className={`tool-icon p-2.5 rounded-lg bg-gradient-to-br ${tool.gradient} shadow-lg shrink-0`}>
-                      <ToolIcon className="w-5 h-5 text-white" />
+                >
+                  <ToolLink
+                    toolId={tool.id}
+                    aria-label={`打开${tool.name}`}
+                    className="block w-full text-left group tool-card-enhanced glass-card rounded-2xl p-5"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className={`tool-icon p-2.5 rounded-lg bg-gradient-to-br ${tool.gradient} shadow-lg shrink-0`}>
+                        <ToolIcon className="w-5 h-5 text-white" />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <h3 className="text-lg font-bold text-[#2f241b] group-hover:text-[#6f3714] transition-colors truncate">{tool.name}</h3>
+                        <p className="text-base text-[#6d5a47] mt-1 line-clamp-2">{tool.description}</p>
+                      </div>
                     </div>
-                    <div className="min-w-0 flex-1">
-                      <h3 className="text-lg font-bold text-[#2f241b] group-hover:text-[#6f3714] transition-colors truncate">{tool.name}</h3>
-                      <p className="text-base text-[#6d5a47] mt-1 line-clamp-2">{tool.description}</p>
-                    </div>
-                  </div>
-                </motion.button>
+                  </ToolLink>
+                </motion.div>
               );
             })}
           </div>

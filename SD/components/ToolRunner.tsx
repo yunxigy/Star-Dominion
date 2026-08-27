@@ -1,4 +1,5 @@
 import React, { createContext, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { recordToolUse } from '../lib/userTools';
 
 interface ToolRunnerContextType {
@@ -14,13 +15,15 @@ const ToolRunnerContext = createContext<ToolRunnerContextType>({
 export const useToolRunner = () => useContext(ToolRunnerContext);
 
 export const ToolRunnerProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const navigate = useNavigate();
+
   const openTool = (id: string) => {
     recordToolUse(id);
-    window.open(`/tool/${id}`, '_blank');
+    navigate(`/tool/${encodeURIComponent(id)}`);
   };
 
   const closeTool = () => {
-    // 新标签页模式下，closeTool 由 ToolWindow 组件内部处理
+    navigate(-1);
   };
 
   return (

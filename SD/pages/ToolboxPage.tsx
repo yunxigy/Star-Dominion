@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Search, SearchX, Filter } from 'lucide-react';
 import { getIcon } from '../lib/iconMap';
 import { CATEGORIES, TOOLS, getToolsByCategory } from '../tools/registry';
-import { useToolRunner } from '../components/ToolRunner';
+import { ToolLink } from '../components/ToolLink';
 import { AdSlot } from '../components/AdSlot';
 import { getRecentTools, getFavoriteTools, toggleFavorite, isFavorite } from '../lib/userTools';
 import type { AssessmentGroup } from '../components/tools/test/assessment/types';
@@ -24,7 +24,6 @@ export const ToolboxPage: React.FC = () => {
   const [activeAssessmentGroup, setActiveAssessmentGroup] = useState<AssessmentGroup | null>(null);
   const [search, setSearch] = useState('');
   const [favRefresh, setFavRefresh] = useState(0);
-  const { openTool } = useToolRunner();
 
   const recentTools = useMemo(() => {
     const ids = getRecentTools();
@@ -212,11 +211,11 @@ export const ToolboxPage: React.FC = () => {
               if (!tool) return null;
               const ToolIcon = getIcon(tool.icon);
               return (
-                <button key={tool.id} onClick={() => openTool(tool.id)}
+                <ToolLink key={tool.id} toolId={tool.id}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#fff4e6] border border-[#d8b58e] hover:bg-[#f1dcc2] hover:border-[#b47a43] transition-all text-base">
                   <ToolIcon className="w-4 h-4 text-[#8b735c]" />
                   <span className="text-[#2f241b]">{tool.name}</span>
-                </button>
+                </ToolLink>
               );
             })}
           </div>
@@ -232,11 +231,11 @@ export const ToolboxPage: React.FC = () => {
               if (!tool) return null;
               const ToolIcon = getIcon(tool.icon);
               return (
-                <button key={tool.id} onClick={() => openTool(tool.id)}
+                <ToolLink key={tool.id} toolId={tool.id}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#f1dcc2] border border-[#d8b58e] hover:bg-[#ead0ad] transition-all text-base">
                   <ToolIcon className="w-4 h-4 text-[#9a5a28]" />
                   <span className="text-[#6f3714]">{tool.name}</span>
-                </button>
+                </ToolLink>
               );
             })}
           </div>
@@ -303,9 +302,8 @@ export const ToolboxPage: React.FC = () => {
                 className={getToolCardLayoutClass(tool.category)}
               >
                 <div className={getToolCardContentClass(tool.category)}>
-                  <button
-                    type="button"
-                    onClick={() => openTool(tool.id)}
+                  <ToolLink
+                    toolId={tool.id}
                     className={getToolCardActionClass(tool.category)}
                     aria-label={`打开${tool.name}`}
                   >
@@ -351,7 +349,7 @@ export const ToolboxPage: React.FC = () => {
                         </div>
                       )}
                     </div>
-                  </button>
+                  </ToolLink>
                   <button
                     type="button"
                     onClick={(e) => handleToggleFav(e, tool.id)}
