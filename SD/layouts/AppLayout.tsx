@@ -1,12 +1,10 @@
-import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
-import { Menu, X, Search, Wrench, Home, ArrowRight, Clock, Sparkles, ChevronUp } from 'lucide-react';
-import { CATEGORIES, TOOLS, getToolsByCategory } from '../tools/registry';
-import { getIcon } from '../lib/iconMap';
+import React, { useState, useEffect } from 'react';
+import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Menu, X, Wrench, Home, Clock, Sparkles, ChevronUp } from 'lucide-react';
+import { TOOLS } from '../tools/registry';
 import { MouseParticles } from '../components/MouseParticles';
 import { AccountMenu } from '../components/AccountMenu';
-import { PROJECT_LINKS } from '../lib/projectLinks';
-import { useAuth } from '../context/AuthContext';
+import { SidebarCatalog } from './SidebarCatalog';
 
 // 侧边栏时钟组件
 const SidebarClock: React.FC = () => {
@@ -50,27 +48,9 @@ const BackToTop: React.FC = () => {
 
 export const AppLayout: React.FC = () => {
   const location = useLocation();
-  const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
 
   const isHome = location.pathname === '/';
-
-  // Filter categories based on search
-  const filteredCategories = useMemo(() => {
-    if (!searchQuery.trim()) return CATEGORIES;
-    const q = searchQuery.toLowerCase();
-    return CATEGORIES.filter(cat =>
-      cat.name.toLowerCase().includes(q) ||
-      cat.description.toLowerCase().includes(q)
-    );
-  }, [searchQuery]);
-
-  const handleCategoryClick = (categoryId: string) => {
-    navigate(`/gj?category=${categoryId}`);
-    setSidebarOpen(false);
-  };
 
   return (
     <div className="min-h-screen mesh-bg text-[#2f241b]">
@@ -126,20 +106,6 @@ export const AppLayout: React.FC = () => {
           </Link>
         </div>
 
-        {/* Search */}
-        <div className="p-3">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8b735c]" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="搜索分类..."
-              className="w-full pl-9 pr-3 py-3 rounded-xl bg-[#fff4e6] border border-[#d8b58e] text-sm text-[#2f241b] placeholder-[#8b735c] focus:outline-none focus:border-[#9a5a28] transition-colors"
-            />
-          </div>
-        </div>
-
         {/* Home Link */}
         <div className="px-3 mb-1">
           <Link
@@ -152,82 +118,8 @@ export const AppLayout: React.FC = () => {
           </Link>
         </div>
 
-        {/* Categories */}
-        <div className="px-3 mb-2">
-          <div className="text-xs text-[#8b735c] uppercase tracking-widest px-3 py-2 font-semibold">
-            工具分类
-          </div>
-        </div>
-        <nav className="flex-1 overflow-y-auto px-3 space-y-1 scrollbar-thin">
-          {filteredCategories.map(cat => {
-            const CatIcon = getIcon(cat.icon);
-            const count = getToolsByCategory(cat.id).length;
-            const isActive = location.pathname === '/gj' && new URLSearchParams(location.search).get('category') === cat.id;
-            return (
-              <button
-                key={cat.id}
-                onClick={() => handleCategoryClick(cat.id)}
-                className={`sidebar-item w-full ${isActive ? 'active' : ''}`}
-              >
-                <div className={`p-1.5 rounded-lg bg-gradient-to-br ${cat.gradient} ${isActive ? 'shadow-md shadow-emerald-500/25' : 'opacity-80'}`}>
-                  <CatIcon className="w-4 h-4 text-white" />
-                </div>
-                <span className="flex-1 text-left font-medium">{cat.name}</span>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-[#f1dcc2] text-[#6d5a47]">
-                  {count}
-                </span>
-              </button>
-            );
-          })}
-        </nav>
-
-        {/* Project Links */}
-        <div className="px-3 mt-4 mb-2">
-          <div className="text-xs text-[#8b735c] uppercase tracking-widest px-3 py-2 font-semibold">
-            项目作品
-          </div>
-        </div>
-        <div className="px-3 space-y-1 mb-4">
-          {PROJECT_LINKS.map(project => {
-            const ProjectIcon = getIcon(project.icon);
-            const isActive = location.pathname === project.path;
-            const content = (
-              <>
-                <ProjectIcon className="w-4 h-4" />
-                <span className="flex-1 font-medium">{project.name}</span>
-                <ArrowRight className="w-3 h-3 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
-              </>
-            );
-            const className = `sidebar-item ${isActive ? 'active' : ''}`;
-            return project.external ? (
-              <a
-                key={project.path}
-                href={project.path}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(event) => {
-                  setSidebarOpen(false);
-                  if (project.requiresAuth && !authLoading && !user) {
-                    event.preventDefault();
-                    navigate(`/auth/login?next=${encodeURIComponent(project.path)}`);
-                  }
-                }}
-                className={className}
-              >
-                {content}
-              </a>
-            ) : (
-              <Link
-                key={project.path}
-                to={project.path}
-                onClick={() => setSidebarOpen(false)}
-                className={className}
-              >
-                {content}
-              </Link>
-            );
-          })}
-        </div>
+        {/* Full tool directory */}
+        <SidebarCatalog onNavigate={() => setSidebarOpen(false)} />
 
         <div className="px-3 pb-4">
           <AccountMenu />
