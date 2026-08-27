@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Search, ArrowRight, Zap, BarChart3, Shield, Calendar, Globe, Sparkles, Star, Layers3 } from 'lucide-react';
+import { Search, ArrowRight, Zap, BarChart3, Shield, Calendar, Sparkles, Star, Layers3 } from 'lucide-react';
 import { useToolRunner } from '../components/ToolRunner';
+import { ProjectGallery } from '../components/ProjectGallery';
 import { CATEGORIES, TOOLS } from '../tools/registry';
 import { getIcon } from '../lib/iconMap';
 import { AdSlot } from '../components/AdSlot';
-import { PROJECT_LINKS } from '../lib/projectLinks';
 import { useAuth } from '../context/AuthContext';
 import {
   HOME_CATEGORY_DESCRIPTION_CLASS,
@@ -171,6 +171,12 @@ export const HomePage: React.FC = () => {
               </motion.div>
             ))}
           </div>
+
+          <ProjectGallery
+            authenticated={Boolean(user)}
+            authLoading={authLoading}
+            onAuthRequired={(path) => navigate(`/auth/login?next=${encodeURIComponent(path)}`)}
+          />
         </motion.div>
 
         <motion.aside
@@ -305,57 +311,6 @@ export const HomePage: React.FC = () => {
       </section>
 
       <AdSlot name="home-banner" className="my-8" />
-
-      <section>
-        <div className="flex flex-wrap items-center gap-3 mb-5">
-          <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#9f4b5f] to-[#9a5a28] shadow-lg shadow-[#9f4b5f]/18">
-            <Globe className="w-6 h-6 text-white" />
-          </div>
-          <h2 className="text-3xl font-black text-[#2f241b]">项目作品</h2>
-          <span className="text-base text-[#6d5a47]">探索更多功能</span>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
-          {PROJECT_LINKS.map((project) => {
-            const className = `block p-7 rounded-2xl bg-gradient-to-br ${project.gradient} border ${project.border} transition-all group tool-card-enhanced h-full`;
-            const content = (
-              <>
-                <h3 className={`text-xl font-black text-[#2f241b] ${project.textColor} transition-colors mb-3`}>
-                  {project.name}
-                </h3>
-                <p className="text-base text-[#5c4937] mb-5">
-                  {project.description}
-                </p>
-                <div className={`flex items-center gap-2 text-base font-semibold ${project.arrowColor}`}>
-                  了解详情
-                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </div>
-              </>
-            );
-
-            return project.external ? (
-              <a
-                key={project.path}
-                href={project.path}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={(event) => {
-                  if (project.requiresAuth && !authLoading && !user) {
-                    event.preventDefault();
-                    navigate(`/auth/login?next=${encodeURIComponent(project.path)}`);
-                  }
-                }}
-                className={className}
-              >
-                {content}
-              </a>
-            ) : (
-              <Link key={project.path} to={project.path} className={className}>
-                {content}
-              </Link>
-            );
-          })}
-        </div>
-      </section>
 
       <AdSlot name="home-mid" className="my-8" />
     </div>
