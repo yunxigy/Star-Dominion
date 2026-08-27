@@ -1,50 +1,54 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AppLayout } from './layouts/AppLayout';
 import { ToolRunnerProvider } from './components/ToolRunner';
 import { HomePage } from './pages/HomePage';
-import { ToolboxPage } from './pages/ToolboxPage';
-import { TranslationPage } from './pages/TranslationPage';
-import { Stm32Page } from './pages/Stm32Page';
-import Stm32Window from './pages/Stm32Window';
-import { AIAgentPage } from './pages/AIAgentPage';
-import { ShouAnRenPage } from './pages/ShouAnRenPage';
-import { LoginPage } from './pages/LoginPage';
-import { CategoryPage } from './pages/CategoryPage';
-import { ReportsPage } from './pages/ReportsPage';
-import { GitHubReportsPage } from './pages/GitHubReportsPage';
-import { AIReportsPage } from './pages/AIReportsPage';
-import { NewsEventsPage } from './pages/NewsEventsPage';
-import { AIBriefingPage } from './pages/AIBriefingPage';
-import ToolWindow from './components/ToolWindow';
+
+const ToolboxPage = lazy(() => import('./pages/ToolboxPage').then(module => ({ default: module.ToolboxPage })));
+const TranslationPage = lazy(() => import('./pages/TranslationPage').then(module => ({ default: module.TranslationPage })));
+const Stm32Page = lazy(() => import('./pages/Stm32Page').then(module => ({ default: module.Stm32Page })));
+const Stm32Window = lazy(() => import('./pages/Stm32Window'));
+const AIAgentPage = lazy(() => import('./pages/AIAgentPage').then(module => ({ default: module.AIAgentPage })));
+const ShouAnRenPage = lazy(() => import('./pages/ShouAnRenPage').then(module => ({ default: module.ShouAnRenPage })));
+const LoginPage = lazy(() => import('./pages/LoginPage').then(module => ({ default: module.LoginPage })));
+const CategoryPage = lazy(() => import('./pages/CategoryPage').then(module => ({ default: module.CategoryPage })));
+const ReportsPage = lazy(() => import('./pages/ReportsPage').then(module => ({ default: module.ReportsPage })));
+const GitHubReportsPage = lazy(() => import('./pages/GitHubReportsPage').then(module => ({ default: module.GitHubReportsPage })));
+const AIReportsPage = lazy(() => import('./pages/AIReportsPage').then(module => ({ default: module.AIReportsPage })));
+const NewsEventsPage = lazy(() => import('./pages/NewsEventsPage').then(module => ({ default: module.NewsEventsPage })));
+const AIBriefingPage = lazy(() => import('./pages/AIBriefingPage').then(module => ({ default: module.AIBriefingPage })));
+const ToolWindow = lazy(() => import('./components/ToolWindow'));
 
 export default function App() {
   return (
     <BrowserRouter>
       <ToolRunnerProvider>
-        <Routes>
-          {/* 主应用布局 */}
-          <Route element={<AppLayout />}>
-            <Route index element={<HomePage />} />
-            <Route path="/gj" element={<ToolboxPage />} />
-            <Route path="/fy" element={<TranslationPage />} />
-            <Route path="/bp" element={<Stm32Page />} />
-            <Route path="/ai" element={<AIAgentPage />} />
-            <Route path="/wuwa" element={<ShouAnRenPage />} />
-            <Route path="/reports" element={<ReportsPage />} />
-            <Route path="/reports/github" element={<GitHubReportsPage />} />
-            <Route path="/reports/ai" element={<AIReportsPage />} />
-            <Route path="/reports/news" element={<NewsEventsPage />} />
-            <Route path="/reports/briefing" element={<AIBriefingPage />} />
-            <Route path="/auth/login" element={<LoginPage />} />
-          </Route>
+        <Suspense fallback={<div role="status" className="p-8 text-center text-[#6d5a47]">页面加载中…</div>}>
+          <Routes>
+            {/* 主应用布局 */}
+            <Route element={<AppLayout />}>
+              <Route index element={<HomePage />} />
+              <Route path="/gj" element={<ToolboxPage />} />
+              <Route path="/fy" element={<TranslationPage />} />
+              <Route path="/bp" element={<Stm32Page />} />
+              <Route path="/ai" element={<AIAgentPage />} />
+              <Route path="/wuwa" element={<ShouAnRenPage />} />
+              <Route path="/reports" element={<ReportsPage />} />
+              <Route path="/reports/github" element={<GitHubReportsPage />} />
+              <Route path="/reports/ai" element={<AIReportsPage />} />
+              <Route path="/reports/news" element={<NewsEventsPage />} />
+              <Route path="/reports/briefing" element={<AIBriefingPage />} />
+              <Route path="/auth/login" element={<LoginPage />} />
+            </Route>
 
-          {/* 分类专题页 */}
-          <Route path="/category/:categoryId" element={<CategoryPage />} />
+            {/* 分类专题页 */}
+            <Route path="/category/:categoryId" element={<CategoryPage />} />
 
-          {/* 工具窗口（新窗口打开） */}
-          <Route path="/tool/:toolId" element={<ToolWindow />} />
-          <Route path="/stm32/*" element={<Stm32Window />} />
-        </Routes>
+            {/* 工具页面 */}
+            <Route path="/tool/:toolId" element={<ToolWindow />} />
+            <Route path="/stm32/*" element={<Stm32Window />} />
+          </Routes>
+        </Suspense>
       </ToolRunnerProvider>
     </BrowserRouter>
   );

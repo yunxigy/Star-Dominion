@@ -122,7 +122,7 @@ export const ToolboxPage: React.FC = () => {
       <button
         type="button"
         onClick={() => handleCategoryChange(null)}
-        className={`px-4 py-2.5 rounded-xl text-base transition-all ${
+        className={`px-4 py-2.5 rounded-xl text-base transition-colors ${
           !activeCategory
             ? 'bg-[#7a421b] text-[#fff8ef] border border-[#7a421b]'
             : 'bg-[#fff4e6] text-[#6d5a47] border border-[#d8b58e] hover:bg-[#f1dcc2] hover:border-[#b47a43] hover:text-[#6f3714]'
@@ -137,7 +137,7 @@ export const ToolboxPage: React.FC = () => {
             type="button"
             key={cat.id}
             onClick={() => handleCategoryChange(cat.id)}
-            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-base transition-all ${
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-base transition-colors ${
               activeCategory === cat.id
                 ? 'bg-[#7a421b] text-[#fff8ef] border border-[#7a421b]'
                 : 'bg-[#fff4e6] text-[#6d5a47] border border-[#d8b58e] hover:bg-[#f1dcc2] hover:border-[#b47a43] hover:text-[#6f3714]'
@@ -171,8 +171,10 @@ export const ToolboxPage: React.FC = () => {
         {/* Search */}
         <div className="relative flex-1 search-bar-enhanced">
             <Search className="search-icon absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[#8b735c]" />
+          <label htmlFor="toolbox-search" className="sr-only">搜索工具</label>
           <input
-            type="text"
+            id="toolbox-search"
+            type="search"
             placeholder="搜索工具..."
             value={search}
             onChange={e => {
@@ -185,7 +187,7 @@ export const ToolboxPage: React.FC = () => {
                 return syncAssessmentParam(next, activeCategory, val, activeAssessmentGroup);
               }, { replace: true });
             }}
-            className="w-full pl-12 pr-4 py-4 rounded-xl text-[#2f241b] placeholder-[#8b735c] focus:outline-none text-lg"
+            className="w-full pl-12 pr-4 py-4 rounded-xl text-[#2f241b] placeholder-[#8b735c] text-lg"
           />
           {search && (
             <button
@@ -210,7 +212,7 @@ export const ToolboxPage: React.FC = () => {
           <select
             value={activeCategory || ''}
             onChange={(e) => handleCategoryChange(e.target.value || null)}
-            className="px-4 py-4 bg-[#fff4e6] border border-[#d8b58e] rounded-xl text-[#2f241b] focus:outline-none focus:border-[#9a5a28] appearance-none cursor-pointer text-base shadow-sm"
+            className="px-4 py-4 bg-[#fff4e6] border border-[#d8b58e] rounded-xl text-[#2f241b] focus:border-[#9a5a28] appearance-none cursor-pointer text-base shadow-sm"
           >
             <option value="">全部分类</option>
             {CATEGORIES.map(cat => (
@@ -248,7 +250,7 @@ export const ToolboxPage: React.FC = () => {
               const ToolIcon = getIcon(tool.icon);
               return (
                 <ToolLink key={tool.id} toolId={tool.id}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#fff4e6] border border-[#d8b58e] hover:bg-[#f1dcc2] hover:border-[#b47a43] transition-all text-base">
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#fff4e6] border border-[#d8b58e] hover:bg-[#f1dcc2] hover:border-[#b47a43] transition-colors text-base">
                   <ToolIcon className="w-4 h-4 text-[#8b735c]" />
                   <span className="text-[#2f241b]">{tool.name}</span>
                 </ToolLink>
@@ -268,7 +270,7 @@ export const ToolboxPage: React.FC = () => {
               const ToolIcon = getIcon(tool.icon);
               return (
                 <ToolLink key={tool.id} toolId={tool.id}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#f1dcc2] border border-[#d8b58e] hover:bg-[#ead0ad] transition-all text-base">
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[#f1dcc2] border border-[#d8b58e] hover:bg-[#ead0ad] transition-colors text-base">
                   <ToolIcon className="w-4 h-4 text-[#9a5a28]" />
                   <span className="text-[#6f3714]">{tool.name}</span>
                 </ToolLink>
@@ -421,7 +423,7 @@ export const ToolboxPage: React.FC = () => {
                   <button
                     type="button"
                     onClick={(e) => handleToggleFav(e, tool.id)}
-                    className={`shrink-0 p-1.5 rounded-lg transition-all ${
+                    className={`shrink-0 p-1.5 rounded-lg transition-colors ${
                       isFavorite(tool.id)
                         ? 'text-[#9a5a28] bg-[#f1dcc2]'
                         : 'text-[#9d8268] hover:text-[#8a4b1f] hover:bg-[#f1dcc2]'

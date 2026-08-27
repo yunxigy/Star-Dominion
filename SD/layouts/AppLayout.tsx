@@ -55,11 +55,15 @@ export const AppLayout: React.FC = () => {
   return (
     <div className="min-h-screen mesh-bg text-[#2f241b]">
       <MouseParticles />
+      <a href="#main-content" className="skip-link">跳到主要内容</a>
 
       {/* Mobile Header */}
       <div className="lg:hidden fixed top-0 left-0 right-0 z-50 glass-sidebar px-4 py-3 flex items-center justify-between">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
+          aria-label="打开工具目录"
+          aria-expanded={sidebarOpen}
+          aria-controls="tool-sidebar"
           className="p-2 rounded-lg bg-[#f1dcc2] text-[#6d5a47] hover:bg-[#ead0ad] hover:text-[#2f241b]"
         >
           {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -87,7 +91,7 @@ export const AppLayout: React.FC = () => {
         glass-sidebar flex flex-col
         transform transition-transform duration-300
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-      `}>
+      `} id="tool-sidebar">
         {/* Logo */}
         <div className="p-4 border-b border-[#dcc2a3]">
           <Link to="/" className="flex items-center gap-3 group" onClick={() => setSidebarOpen(false)}>
@@ -136,7 +140,7 @@ export const AppLayout: React.FC = () => {
       </aside>
 
       {/* Main Content */}
-      <main className="lg:ml-72 pt-16 lg:pt-0 min-h-screen flex flex-col">
+      <main id="main-content" className="lg:ml-72 pt-16 lg:pt-0 min-h-screen flex flex-col">
         <div className="flex-1 p-4 lg:p-8">
           <Outlet />
         </div>

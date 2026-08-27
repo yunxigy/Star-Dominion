@@ -134,16 +134,18 @@ export const HomePage: React.FC = () => {
           <form onSubmit={handleSearch} className="max-w-3xl mb-8">
             <div className="relative flex items-center search-bar-enhanced">
               <Search className="search-icon absolute left-4 text-[#8b735c] w-6 h-6" />
+              <label htmlFor="home-tool-search" className="sr-only">搜索工具</label>
               <input
-                type="text"
+                id="home-tool-search"
+                type="search"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="搜索你需要的工具..."
-                className="w-full pl-14 pr-28 py-5 rounded-2xl text-[#2f241b] placeholder-[#8b735c] focus:outline-none text-lg"
+                className="w-full pl-14 pr-28 py-5 rounded-2xl text-[#2f241b] placeholder-[#8b735c] text-lg"
               />
               <button
                 type="submit"
-                className="absolute right-2 px-6 py-3 bg-[#7a421b] text-[#fff8ef] rounded-xl hover:bg-[#5f3214] transition-all font-semibold shadow-sm"
+                className="absolute right-2 px-6 py-3 bg-[#7a421b] text-[#fff8ef] rounded-xl hover:bg-[#5f3214] transition-colors font-semibold shadow-sm"
               >
                 搜索
               </button>
@@ -193,7 +195,7 @@ export const HomePage: React.FC = () => {
                 <Link
                   key={category.id}
                   to={`/gj?category=${category.id}`}
-                    className="rounded-2xl border border-[#d8b58e] bg-[#fff4e6]/80 p-4 hover:border-[#b47a43] hover:bg-[#f1dcc2] transition-all group"
+                    className="rounded-2xl border border-[#d8b58e] bg-[#fff4e6]/80 p-4 hover:border-[#b47a43] hover:bg-[#f1dcc2] transition-colors group"
                 >
                   <div className={`inline-flex p-2 rounded-xl bg-gradient-to-br ${category.gradient} mb-3`}>
                     <IconComponent className="w-5 h-5 text-white" />
@@ -302,7 +304,7 @@ export const HomePage: React.FC = () => {
                         <span className="text-sm text-[#6d5a47]">{toolCount} 个工具</span>
                       </div>
                     </div>
-                    <ArrowRight className="w-5 h-5 text-[#9d8268] group-hover:text-[#8a4b1f] group-hover:translate-x-1 transition-all" />
+                    <ArrowRight className="w-5 h-5 text-[#9d8268] group-hover:text-[#8a4b1f] group-hover:translate-x-1 transition-transform" />
                   </div>
                   <p className={HOME_CATEGORY_DESCRIPTION_CLASS}>
                     {category.description}
