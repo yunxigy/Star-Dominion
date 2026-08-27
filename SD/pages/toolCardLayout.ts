@@ -1,4 +1,4 @@
-const BASE_TOOL_CARD_CLASS = 'w-full text-left group tool-card-enhanced glass-card rounded-2xl p-6';
+const BASE_TOOL_CARD_CLASS = 'content-visibility-auto w-full text-left group tool-card-enhanced glass-card rounded-2xl p-5';
 
 export function getToolCardLayoutClass(category: string): string {
   return category === 'test'

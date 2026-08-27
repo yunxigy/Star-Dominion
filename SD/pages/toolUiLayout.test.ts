@@ -16,8 +16,10 @@ import {
 
 describe('tool page typography and width', () => {
   test('uses one-step-larger typography for toolbox cards', () => {
-    expect(TOOLBOX_CARD_TITLE_CLASS).toContain('text-2xl');
-    expect(TOOLBOX_CARD_DESCRIPTION_CLASS).toContain('text-lg');
+    expect(TOOLBOX_CARD_TITLE_CLASS).toContain('text-xl');
+    expect(TOOLBOX_CARD_TITLE_CLASS).toContain('leading-snug');
+    expect(TOOLBOX_CARD_TITLE_CLASS).not.toContain('truncate');
+    expect(TOOLBOX_CARD_DESCRIPTION_CLASS).toContain('line-clamp-2');
   });
 
   test('uses one-step-larger typography for homepage tool cards', () => {

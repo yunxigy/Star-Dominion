@@ -13,6 +13,7 @@ describe('tool card layout', () => {
   test('keeps ordinary tools at their natural compact height', () => {
     const className = getToolCardLayoutClass('image');
 
+    expect(className).toContain('content-visibility-auto');
     expect(className).not.toContain('min-h-[260px]');
     expect(className).not.toContain('h-full');
   });

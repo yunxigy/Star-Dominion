@@ -17,6 +17,7 @@ import {
 import { getAssessmentBadges } from './assessmentBadges';
 import { getToolCardActionClass, getToolCardContentClass, getToolCardLayoutClass } from './toolCardLayout';
 import { TOOLBOX_CARD_DESCRIPTION_CLASS, TOOLBOX_CARD_TITLE_CLASS } from './toolUiLayout';
+import { getToolSuggestions } from './toolSuggestions';
 
 export const ToolboxPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -100,6 +101,56 @@ export const ToolboxPage: React.FC = () => {
     ? CATEGORIES.find(c => c.id === activeCategory)?.name
     : '全部工具';
 
+  const suggestions = useMemo(
+    () => getToolSuggestions(TOOLS, search.trim() || (activeCategory ? activeCatName ?? '' : ''), 6),
+    [activeCatName, activeCategory, search],
+  );
+
+  const clearFilters = () => {
+    setSearch('');
+    setActiveCategory(null);
+    setActiveAssessmentGroup(null);
+    setSearchParams(prev => {
+      const next = new URLSearchParams(prev);
+      ['q', 'search', 'category', 'assessment'].forEach(key => next.delete(key));
+      return next;
+    }, { replace: true });
+  };
+
+  const renderCategoryActions = () => (
+    <>
+      <button
+        type="button"
+        onClick={() => handleCategoryChange(null)}
+        className={`px-4 py-2.5 rounded-xl text-base transition-all ${
+          !activeCategory
+            ? 'bg-[#7a421b] text-[#fff8ef] border border-[#7a421b]'
+            : 'bg-[#fff4e6] text-[#6d5a47] border border-[#d8b58e] hover:bg-[#f1dcc2] hover:border-[#b47a43] hover:text-[#6f3714]'
+        }`}
+      >
+        全部
+      </button>
+      {CATEGORIES.map(cat => {
+        const CatIcon = getIcon(cat.icon);
+        return (
+          <button
+            type="button"
+            key={cat.id}
+            onClick={() => handleCategoryChange(cat.id)}
+            className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-base transition-all ${
+              activeCategory === cat.id
+                ? 'bg-[#7a421b] text-[#fff8ef] border border-[#7a421b]'
+                : 'bg-[#fff4e6] text-[#6d5a47] border border-[#d8b58e] hover:bg-[#f1dcc2] hover:border-[#b47a43] hover:text-[#6f3714]'
+            }`}
+          >
+            <CatIcon className="w-4 h-4" aria-hidden="true" />
+            {cat.name}
+          </button>
+        );
+      })}
+    </>
+  );
+
   return (
     <div className="space-y-7 max-w-[1500px] mx-auto">
       {/* Header */}
@@ -171,35 +222,20 @@ export const ToolboxPage: React.FC = () => {
 
       {/* Category Tags */}
       {!search.trim() && (
-        <div className="flex flex-wrap gap-2">
-          <button
-            onClick={() => handleCategoryChange(null)}
-            className={`px-4 py-2.5 rounded-xl text-base transition-all ${
-              !activeCategory
-                ? 'bg-[#7a421b] text-[#fff8ef] border border-[#7a421b]'
-                : 'bg-[#fff4e6] text-[#6d5a47] border border-[#d8b58e] hover:bg-[#f1dcc2] hover:border-[#b47a43] hover:text-[#6f3714]'
-            }`}
-          >
-            全部
-          </button>
-          {CATEGORIES.map(cat => {
-            const CatIcon = getIcon(cat.icon);
-            return (
-              <button
-                key={cat.id}
-                onClick={() => handleCategoryChange(cat.id)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-base transition-all ${
-                  activeCategory === cat.id
-                    ? 'bg-[#7a421b] text-[#fff8ef] border border-[#7a421b]'
-                    : 'bg-[#fff4e6] text-[#6d5a47] border border-[#d8b58e] hover:bg-[#f1dcc2] hover:border-[#b47a43] hover:text-[#6f3714]'
-                }`}
-              >
-                <CatIcon className="w-4 h-4" />
-                {cat.name}
-              </button>
-            );
-          })}
-        </div>
+        <>
+          <div className="hidden flex-wrap gap-2 md:flex">
+            {renderCategoryActions()}
+          </div>
+          <details className="rounded-2xl border border-[#d8b58e] bg-[#fff8ef] shadow-sm md:hidden">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3 font-semibold text-[#5c4937]">
+              <span>筛选工具</span>
+              <span className="rounded-full bg-[#f1dcc2] px-3 py-1 text-sm text-[#7a421b]">{activeCatName}</span>
+            </summary>
+            <div className="flex flex-wrap gap-2 border-t border-[#ead8c2] px-4 py-4">
+              {renderCategoryActions()}
+            </div>
+          </details>
+        </>
       )}
 
       {/* 最近使用 */}
@@ -282,12 +318,44 @@ export const ToolboxPage: React.FC = () => {
 
       {/* Tool Grid */}
       {displayTools.length === 0 ? (
-        <div className="empty-state">
+        <div className="empty-state" role="status">
           <div className="empty-icon">
-            <SearchX className="w-7 h-7 text-emerald-400/50" />
+            <SearchX className="w-7 h-7 text-[#9a5a28]/60" aria-hidden="true" />
           </div>
           <h3>没有找到匹配的工具</h3>
-          <p>尝试其他关键词或分类</p>
+          <p>{search.trim() ? `“${search.trim()}”没有匹配结果` : `“${activeCatName}”暂时没有可显示的工具`}</p>
+          <button
+            type="button"
+            onClick={clearFilters}
+            className="mt-4 rounded-xl border border-[#d8b58e] bg-[#fff4e6] px-4 py-2 text-sm font-semibold text-[#7a421b] transition hover:bg-[#f1dcc2]"
+          >
+            清除搜索和筛选
+          </button>
+          {suggestions.length > 0 && (
+            <div className="mt-6 w-full max-w-2xl">
+              <p className="mb-3 text-left text-sm font-semibold text-[#6d5a47]">你也可以试试</p>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {suggestions.map(tool => {
+                  const SuggestionIcon = getIcon(tool.icon);
+                  return (
+                    <ToolLink
+                      key={tool.id}
+                      toolId={tool.id}
+                      className="flex items-center gap-3 rounded-xl border border-[#d8b58e] bg-[#fff4e6] px-3 py-3 text-left transition hover:border-[#b47a43] hover:bg-[#f1dcc2]"
+                    >
+                      <span className={`rounded-lg bg-gradient-to-br ${tool.gradient} p-2`}>
+                        <SuggestionIcon className="h-4 w-4 text-white" aria-hidden="true" />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-sm font-semibold text-[#2f241b]">{tool.name}</span>
+                        <span className="block truncate text-xs text-[#8b735c]">{tool.description}</span>
+                      </span>
+                    </ToolLink>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -296,8 +364,8 @@ export const ToolboxPage: React.FC = () => {
             return (
               <motion.div
                 key={tool.id}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={index < 18 ? { opacity: 0, y: 12 } : false}
+                animate={index < 18 ? { opacity: 1, y: 0 } : undefined}
                 transition={{ delay: Math.min(index * 0.02, 0.5), duration: 0.3 }}
                 className={getToolCardLayoutClass(tool.category)}
               >
@@ -370,7 +438,7 @@ export const ToolboxPage: React.FC = () => {
         </div>
       )}
 
-      <AdSlot name="tools-inline" className="mt-8" />
+      {displayTools.length > 0 && <AdSlot name="tools-inline" className="mt-8" />}
     </div>
   );
 };
