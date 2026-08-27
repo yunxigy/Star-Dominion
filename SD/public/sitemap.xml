@@ -19,6 +19,7 @@
   <url><loc>https://zhumenggy.top/category/office</loc></url>
   <url><loc>https://zhumenggy.top/category/academic</loc></url>
   <url><loc>https://zhumenggy.top/category/general</loc></url>
+  <url><loc>https://zhumenggy.top/category/text</loc></url>
   <url><loc>https://zhumenggy.top/tool/merge-pdf</loc></url>
   <url><loc>https://zhumenggy.top/tool/split-pdf</loc></url>
   <url><loc>https://zhumenggy.top/tool/compress-pdf</loc></url>
@@ -34,7 +35,6 @@
   <url><loc>https://zhumenggy.top/tool/compress-image</loc></url>
   <url><loc>https://zhumenggy.top/tool/resize-image</loc></url>
   <url><loc>https://zhumenggy.top/tool/crop-image</loc></url>
-  <url><loc>https://zhumenggy.top/tool/watermark-image</loc></url>
   <url><loc>https://zhumenggy.top/tool/image-to-base64</loc></url>
   <url><loc>https://zhumenggy.top/tool/base64-to-image</loc></url>
   <url><loc>https://zhumenggy.top/tool/color-picker</loc></url>
@@ -68,7 +68,6 @@
   <url><loc>https://zhumenggy.top/tool/md5-generator</loc></url>
   <url><loc>https://zhumenggy.top/tool/sha256-generator</loc></url>
   <url><loc>https://zhumenggy.top/tool/uuid-generator</loc></url>
-  <url><loc>https://zhumenggy.top/tool/password-generator</loc></url>
   <url><loc>https://zhumenggy.top/tool/jwt-decoder</loc></url>
   <url><loc>https://zhumenggy.top/tool/color-converter</loc></url>
   <url><loc>https://zhumenggy.top/tool/qr-code-generator</loc></url>
@@ -83,7 +82,6 @@
   <url><loc>https://zhumenggy.top/tool/loan-calculator</loc></url>
   <url><loc>https://zhumenggy.top/tool/mortgage-calculator</loc></url>
   <url><loc>https://zhumenggy.top/tool/compound-interest</loc></url>
-  <url><loc>https://zhumenggy.top/tool/unit-converter</loc></url>
   <url><loc>https://zhumenggy.top/tool/length-converter</loc></url>
   <url><loc>https://zhumenggy.top/tool/weight-converter</loc></url>
   <url><loc>https://zhumenggy.top/tool/temperature-converter</loc></url>
@@ -155,8 +153,16 @@
   <url><loc>https://zhumenggy.top/tool/text-to-speech</loc></url>
   <url><loc>https://zhumenggy.top/tool/case-converter</loc></url>
   <url><loc>https://zhumenggy.top/tool/word-count</loc></url>
-  <url><loc>https://zhumenggy.top/tool/text-diff</loc></url>
   <url><loc>https://zhumenggy.top/tool/document-conversion-center</loc></url>
+  <url><loc>https://zhumenggy.top/tool/remove-blank-lines</loc></url>
+  <url><loc>https://zhumenggy.top/tool/dedupe-lines</loc></url>
+  <url><loc>https://zhumenggy.top/tool/sort-lines</loc></url>
+  <url><loc>https://zhumenggy.top/tool/batch-text-replace</loc></url>
+  <url><loc>https://zhumenggy.top/tool/line-number-tool</loc></url>
+  <url><loc>https://zhumenggy.top/tool/character-frequency</loc></url>
+  <url><loc>https://zhumenggy.top/tool/entity-extractor</loc></url>
+  <url><loc>https://zhumenggy.top/tool/text-file-batch</loc></url>
+  <url><loc>https://zhumenggy.top/tool/markup-converter</loc></url>
   <url><loc>https://zhumenggy.top/tool/audio-converter</loc></url>
   <url><loc>https://zhumenggy.top/tool/ncm-converter</loc></url>
   <url><loc>https://zhumenggy.top/tool/voice-changer</loc></url>

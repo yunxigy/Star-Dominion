@@ -47,4 +47,12 @@ describe('toolbox production metadata', () => {
     });
     expect(CATEGORIES.some((category) => category.id === 'video')).toBe(true);
   });
+
+  it('registers the local text efficiency suite with searchable intent tags', () => {
+    const expected = ['remove-blank-lines', 'dedupe-lines', 'sort-lines', 'batch-text-replace', 'line-number-tool', 'character-frequency', 'entity-extractor', 'text-file-batch', 'markup-converter'];
+    const textTools = TOOLS.filter((tool) => tool.category === 'text');
+    expect(textTools.map((tool) => tool.id)).toEqual(expected);
+    expect(textTools.every((tool) => tool.privacy === 'local' && tool.status === 'stable' && (tool.tags?.length ?? 0) >= 4)).toBe(true);
+    expect(CATEGORIES.some((category) => category.id === 'text')).toBe(true);
+  });
 });

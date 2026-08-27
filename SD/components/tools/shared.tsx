@@ -101,13 +101,15 @@ export const TextArea: React.FC<{
   rows?: number;
   className?: string;
   readOnly?: boolean;
-}> = ({ value, onChange, placeholder, rows = 6, className = '', readOnly }) => (
+  ariaLabel?: string;
+}> = ({ value, onChange, placeholder, rows = 6, className = '', readOnly, ariaLabel }) => (
   <textarea
     value={value}
     onChange={e => onChange(e.target.value)}
     placeholder={placeholder}
     rows={rows}
     readOnly={readOnly}
+    aria-label={ariaLabel}
     className={`w-full bg-[#fff4e6] border border-[#d8b58e] rounded-lg p-3 text-sm text-[#2f241b] font-mono resize-y focus:outline-none focus:border-[#9a5a28] ${className}`}
   />
 );

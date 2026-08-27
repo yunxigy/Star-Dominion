@@ -5,7 +5,7 @@ export interface ToolDef {
   name: string;
   description: string;
   icon: string;
-  category: 'pdf' | 'image' | 'converter' | 'dev' | 'calc' | 'fun' | 'image-enhance' | 'test' | 'tarot' | 'mouse' | 'document' | 'audio' | 'video' | 'office' | 'academic' | 'general' | 'data';
+  category: 'pdf' | 'image' | 'converter' | 'dev' | 'calc' | 'fun' | 'image-enhance' | 'test' | 'tarot' | 'mouse' | 'document' | 'audio' | 'video' | 'office' | 'academic' | 'general' | 'data' | 'text';
   color: 'red' | 'emerald' | 'violet' | 'amber' | 'cyan' | 'pink' | 'blue' | 'lime' | 'indigo';
   gradient: string;
   glow: string;
@@ -228,6 +228,17 @@ const EnvDiff = React.lazy(() => import('../components/tools/dev/EnvDiff'));
 const SqlWorkbench = React.lazy(() => import('../components/tools/dev/SqlWorkbench'));
 const EncodingFixer = React.lazy(() => import('../components/tools/dev/EncodingFixer'));
 
+// ── 文本效率工具 ─────────────────────────────────────────
+const RemoveBlankLinesTool = React.lazy(() => import('../components/tools/text/TextTools').then(module => ({ default: module.RemoveBlankLinesTool })));
+const DedupeLinesTool = React.lazy(() => import('../components/tools/text/TextTools').then(module => ({ default: module.DedupeLinesTool })));
+const SortLinesTool = React.lazy(() => import('../components/tools/text/TextTools').then(module => ({ default: module.SortLinesTool })));
+const BatchReplaceTool = React.lazy(() => import('../components/tools/text/TextTools').then(module => ({ default: module.BatchReplaceTool })));
+const LineNumberTool = React.lazy(() => import('../components/tools/text/TextTools').then(module => ({ default: module.LineNumberTool })));
+const CharacterFrequencyTool = React.lazy(() => import('../components/tools/text/TextTools').then(module => ({ default: module.CharacterFrequencyTool })));
+const EntityExtractorTool = React.lazy(() => import('../components/tools/text/TextTools').then(module => ({ default: module.EntityExtractorTool })));
+const TextFileBatchTool = React.lazy(() => import('../components/tools/text/TextTools').then(module => ({ default: module.TextFileBatchTool })));
+const MarkupConverterTool = React.lazy(() => import('../components/tools/text/TextTools').then(module => ({ default: module.MarkupConverterTool })));
+
 // ── 生活工具（新） ────────────────────────────────────────
 const IdPhoto = React.lazy(() => import('../components/tools/general/IdPhoto'));
 const BarcodeQr = React.lazy(() => import('../components/tools/general/BarcodeQr'));
@@ -408,6 +419,17 @@ const TOOL_DEFINITIONS: ToolDefinition[] = [
   { id: 'word-count', name: '字数统计', description: '统计文本字数、词数、行数', icon: 'FileText', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: WordCount },
   { id: 'document-conversion-center', name: '文档转换中心', description: 'PDF、Office、Markdown、HTML、OCR 真实转换与批量打包', icon: 'FileArchive', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: DocumentConversionCenter, privacy: 'backend-upload', status: 'beta', tags: ['文档', '转换', 'word', 'pdf', 'excel', 'ppt', 'ocr', '批量', 'zip'] },
 
+  // ── 文本效率工具 ──────────────────────────────────────
+  { id: 'remove-blank-lines', name: '文本去空行', description: '批量删除文本中的空白行', icon: 'Eraser', category: 'text', color: 'cyan', gradient: 'from-sky-600 to-cyan-600', glow: 'rgba(14,165,233,0.3)', component: RemoveBlankLinesTool, privacy: 'local', status: 'stable', tags: ['文本', '去空行', 'remove blank lines', 'qingli', '清理'] },
+  { id: 'dedupe-lines', name: '文本行去重', description: '去除重复行并保留首次出现顺序', icon: 'CopyCheck', category: 'text', color: 'cyan', gradient: 'from-sky-600 to-cyan-600', glow: 'rgba(14,165,233,0.3)', component: DedupeLinesTool, privacy: 'local', status: 'stable', tags: ['文本', '去重', 'dedupe', 'quchong', '清洗'] },
+  { id: 'sort-lines', name: '文本行排序', description: '按中文、字母和数字自然排序', icon: 'ArrowDownAZ', category: 'text', color: 'cyan', gradient: 'from-sky-600 to-cyan-600', glow: 'rgba(14,165,233,0.3)', component: SortLinesTool, privacy: 'local', status: 'stable', tags: ['文本', '排序', 'sort lines', 'paixu', '自然排序'] },
+  { id: 'batch-text-replace', name: '批量文本替换', description: '批量替换文本内容并支持正则', icon: 'Replace', category: 'text', color: 'cyan', gradient: 'from-sky-600 to-cyan-600', glow: 'rgba(14,165,233,0.3)', component: BatchReplaceTool, privacy: 'local', status: 'stable', tags: ['文本', '替换', 'replace', '正则', 'zhihuan'] },
+  { id: 'line-number-tool', name: '文本行号工具', description: '添加或移除文本行号前缀', icon: 'ListOrdered', category: 'text', color: 'cyan', gradient: 'from-sky-600 to-cyan-600', glow: 'rgba(14,165,233,0.3)', component: LineNumberTool, privacy: 'local', status: 'stable', tags: ['文本', '行号', 'line number', 'hanghao', '编号'] },
+  { id: 'character-frequency', name: '字符与词频统计', description: '统计字符、词数、行数和出现频率', icon: 'BarChart3', category: 'text', color: 'cyan', gradient: 'from-sky-600 to-cyan-600', glow: 'rgba(14,165,233,0.3)', component: CharacterFrequencyTool, privacy: 'local', status: 'stable', tags: ['文本', '词频', 'frequency', 'tongji', '统计'] },
+  { id: 'entity-extractor', name: '文本信息提取', description: '提取邮箱、链接和 IP 地址', icon: 'ScanSearch', category: 'text', color: 'cyan', gradient: 'from-sky-600 to-cyan-600', glow: 'rgba(14,165,233,0.3)', component: EntityExtractorTool, privacy: 'local', status: 'stable', tags: ['文本', '提取', '邮箱', 'url', 'ip', 'shiti'] },
+  { id: 'text-file-batch', name: '文本文件批处理', description: '合并文本文件或按行数切分下载', icon: 'Files', category: 'text', color: 'cyan', gradient: 'from-sky-600 to-cyan-600', glow: 'rgba(14,165,233,0.3)', component: TextFileBatchTool, privacy: 'local', status: 'stable', tags: ['文本文件', '批处理', 'merge', 'split', 'piliang', '文件'] },
+  { id: 'markup-converter', name: 'Markdown/HTML 转换', description: 'Markdown、HTML 与纯文本互转', icon: 'FileCode2', category: 'text', color: 'cyan', gradient: 'from-sky-600 to-cyan-600', glow: 'rgba(14,165,233,0.3)', component: MarkupConverterTool, privacy: 'local', status: 'stable', tags: ['markdown', 'html', '纯文本', '转换', 'zhuanhuan'] },
+
   // ── 音频处理 ───────────────────────────────────────────
   { id: 'audio-converter', name: '音频格式转换', description: 'MP3/WAV/OGG/WebM 格式互转', icon: 'AudioLines', category: 'audio', color: 'pink', gradient: 'from-pink-600 to-rose-600', glow: 'rgba(236,72,153,0.3)', component: AudioConverter, privacy: 'local', status: 'stable', tags: ['yinpin', 'mp3', 'wav', 'ogg', 'webm', 'geishi', '音频', '格式'] },
   { id: 'ncm-converter', name: 'NCM 转换器', description: '网易云音乐 NCM 解密为 MP3/FLAC', icon: 'Headphones', category: 'audio', color: 'pink', gradient: 'from-pink-600 to-rose-600', glow: 'rgba(236,72,153,0.3)', component: NcmConverter, privacy: 'local', status: 'stable', tags: ['ncm', 'wangyiyun', 'netease', 'jiami', 'jiemi', '网易云', '解密', '音乐'] },
@@ -508,6 +530,7 @@ export const CATEGORIES = [
   { id: 'office', name: '办公工具', description: '发票整理、表格对比、合同审阅', icon: 'Briefcase', color: 'amber', gradient: 'from-amber-600 to-orange-600' },
   { id: 'academic', name: '学术工具', description: '论文检查、参考文献、公式编辑', icon: 'GraduationCap', color: 'violet', gradient: 'from-violet-600 to-purple-600' },
   { id: 'general', name: '生活工具', description: '证件照、条码、压缩包、字幕', icon: 'Home', color: 'cyan', gradient: 'from-cyan-600 to-sky-600' },
+  { id: 'text', name: '文本工具', description: '文本清理、提取、替换与文件整理', icon: 'FileText', color: 'cyan', gradient: 'from-sky-600 to-cyan-600' },
 ] as const;
 
 export function getToolsByCategory(category: string): ToolDef[] {

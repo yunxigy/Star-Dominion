@@ -1,19 +1,21 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
+import { CATEGORIES, TOOLS } from './registry';
+import { absoluteSiteUrl } from '../lib/siteConfig';
 
-import { TOOLS } from './registry';
+const sitemap = readFileSync(new URL('../dist/sitemap.xml', import.meta.url), 'utf8');
 
-const sitemap = readFileSync(new URL('../public/sitemap.xml', import.meta.url), 'utf8');
+describe('generated toolbox sitemap', () => {
+  it('contains exactly the public root, directory, category, and tool routes', () => {
+    const urls = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map(match => match[1]);
+    const expected = [
+      absoluteSiteUrl('/'),
+      absoluteSiteUrl('/gj'),
+      ...CATEGORIES.map(category => absoluteSiteUrl(`/category/${category.id}`)),
+      ...TOOLS.map(tool => absoluteSiteUrl(`/tool/${tool.id}`)),
+    ];
 
-describe('toolbox sitemap', () => {
-  it('lists every registered tool exactly once with its real route ID', () => {
-    const sitemapToolIds = [...sitemap.matchAll(
-      /<loc>https:\/\/zhumenggy\.top\/tool\/([^<]+)<\/loc>/g,
-    )].map((match) => match[1]);
-    const registeredToolIds = TOOLS.map((tool) => tool.id);
-
-    expect(sitemapToolIds).toHaveLength(registeredToolIds.length);
-    expect(new Set(sitemapToolIds).size).toBe(registeredToolIds.length);
-    expect([...sitemapToolIds].sort()).toEqual([...registeredToolIds].sort());
+    expect(new Set(urls).size).toBe(urls.length);
+    expect(urls.sort()).toEqual(expected.sort());
   });
 });
