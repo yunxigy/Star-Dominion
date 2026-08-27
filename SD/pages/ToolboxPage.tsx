@@ -18,6 +18,8 @@ import { getAssessmentBadges } from './assessmentBadges';
 import { getToolCardActionClass, getToolCardContentClass, getToolCardLayoutClass } from './toolCardLayout';
 import { TOOLBOX_CARD_DESCRIPTION_CLASS, TOOLBOX_CARD_TITLE_CLASS } from './toolUiLayout';
 import { getToolSuggestions } from './toolSuggestions';
+import { PageSeo } from '../components/PageSeo';
+import { TOOLBOX_METADATA } from '../seo/pageMetadata';
 
 export const ToolboxPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -152,7 +154,9 @@ export const ToolboxPage: React.FC = () => {
   );
 
   return (
-    <div className="space-y-7 max-w-[1500px] mx-auto">
+    <>
+      <PageSeo metadata={TOOLBOX_METADATA} />
+      <div className="space-y-7 max-w-[1500px] mx-auto">
       {/* Header */}
       <div>
         <h1 className="text-4xl font-black text-[#2f241b]">
@@ -441,7 +445,8 @@ export const ToolboxPage: React.FC = () => {
       )}
 
       {displayTools.length > 0 && <AdSlot name="tools-inline" className="mt-8" />}
-    </div>
+      </div>
+    </>
   );
 };
 

@@ -1,11 +1,12 @@
-import React, { Suspense, Component, type ReactNode, useEffect, useMemo } from 'react';
+import React, { Suspense, Component, type ReactNode, useMemo } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Loader2, Shield, HelpCircle, ArrowRight, BookOpen, Lightbulb } from 'lucide-react';
 import { getToolById, getToolsByCategory, CATEGORIES } from '../tools/registry';
 import { getIcon } from '../lib/iconMap';
-import { buildToolSeoDescription, buildToolSeoTitle, buildToolSeoUrl } from '../lib/toolSeo';
 import { AdSlot } from './AdSlot';
 import { ToolLink } from './ToolLink';
+import { PageSeo } from './PageSeo';
+import { buildToolMetadata } from '../seo/pageMetadata';
 import {
   TOOL_WINDOW_AD_CLASS,
   getToolComponentShellClass,
@@ -194,57 +195,6 @@ export default function ToolWindow() {
     return CATEGORIES.find(c => c.id === tool.category);
   }, [tool]);
 
-  const seoDescription = tool
-    ? buildToolSeoDescription({ tool, categoryName: category?.name ?? tool.category })
-    : '';
-  const seoTitle = tool ? buildToolSeoTitle(tool.name) : '';
-  const seoUrl = tool ? buildToolSeoUrl(tool.id) : '';
-
-  useEffect(() => {
-    if (!tool) return undefined;
-
-    const previousTitle = document.title;
-    const headElements = {
-      description: document.head.querySelector<HTMLMetaElement>('meta[name="description"]'),
-      ogTitle: document.head.querySelector<HTMLMetaElement>('meta[property="og:title"]'),
-      ogDescription: document.head.querySelector<HTMLMetaElement>('meta[property="og:description"]'),
-      ogUrl: document.head.querySelector<HTMLMetaElement>('meta[property="og:url"]'),
-      twitterTitle: document.head.querySelector<HTMLMetaElement>('meta[name="twitter:title"]'),
-      twitterDescription: document.head.querySelector<HTMLMetaElement>('meta[name="twitter:description"]'),
-      canonical: document.head.querySelector<HTMLLinkElement>('link[rel="canonical"]'),
-    };
-    const previousAttributes = Object.fromEntries(
-      Object.entries(headElements).map(([key, element]) => [
-        key,
-        element?.getAttribute(key === 'canonical' ? 'href' : 'content') ?? null,
-      ]),
-    ) as Record<keyof typeof headElements, string | null>;
-    const setAttribute = (key: keyof typeof headElements, value: string) => {
-      const element = headElements[key];
-      if (element) element.setAttribute(key === 'canonical' ? 'href' : 'content', value);
-    };
-
-    document.title = seoTitle;
-    setAttribute('description', seoDescription);
-    setAttribute('ogTitle', seoTitle);
-    setAttribute('ogDescription', seoDescription);
-    setAttribute('ogUrl', seoUrl);
-    setAttribute('twitterTitle', seoTitle);
-    setAttribute('twitterDescription', seoDescription);
-    setAttribute('canonical', seoUrl);
-
-    return () => {
-      document.title = previousTitle;
-      (Object.keys(headElements) as Array<keyof typeof headElements>).forEach((key) => {
-        const element = headElements[key];
-        const previousValue = previousAttributes[key];
-        if (element && previousValue !== null) {
-          element.setAttribute(key === 'canonical' ? 'href' : 'content', previousValue);
-        }
-      });
-    };
-  }, [seoDescription, seoTitle, seoUrl, tool]);
-
   // 获取使用说明
   const usage = tool ? TOOL_USAGE[tool.id] : null;
 
@@ -270,28 +220,9 @@ export default function ToolWindow() {
 
   const faq = TOOL_FAQ[tool.id];
 
-  // JSON-LD 结构化数据
-  const jsonLd = {
-    '@context': 'https://schema.org',
-    '@type': 'WebApplication',
-    name: tool.name,
-    description: seoDescription,
-    url: seoUrl,
-    applicationCategory: 'UtilitiesApplication',
-    operatingSystem: 'Web Browser',
-    offers: { '@type': 'Offer', price: '0', priceCurrency: 'CNY' },
-    ...(faq && {
-      mainEntity: faq.map(f => ({
-        '@type': 'Question',
-        name: f.q,
-        acceptedAnswer: { '@type': 'Answer', text: f.a },
-      })),
-    }),
-  };
-
   return (
     <>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <PageSeo metadata={buildToolMetadata(tool)} />
       <div className="min-h-screen tool-window-bg flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-10 glass-sidebar border-b border-[#dcc2a3]">
@@ -318,7 +249,7 @@ export default function ToolWindow() {
             <Link
               to={`/category/${tool.category}`}
               aria-label={`返回${category?.name ?? '工具'}分类`}
-              className="shrink-0 rounded-lg bg-[#f1dcc2] px-3 py-2 text-sm font-semibold text-[#6d5a47] transition-all hover:bg-[#ead0ad] hover:text-[#2f241b]"
+              className="shrink-0 rounded-lg bg-[#f1dcc2] px-3 py-2 text-sm font-semibold text-[#6d5a47] transition-colors hover:bg-[#ead0ad] hover:text-[#2f241b]"
             >
               返回分类
             </Link>
@@ -431,7 +362,7 @@ export default function ToolWindow() {
                     <ToolLink
                       key={relatedTool.id}
                       toolId={relatedTool.id}
-                      className="flex items-center gap-3 p-3 rounded-xl bg-[#fff4e6] hover:bg-[#f1dcc2] border border-[#d8b58e] hover:border-[#b47a43] transition-all group"
+                      className="flex items-center gap-3 p-3 rounded-xl bg-[#fff4e6] hover:bg-[#f1dcc2] border border-[#d8b58e] hover:border-[#b47a43] transition-colors group"
                     >
                       <div className={`p-2 rounded-lg bg-gradient-to-br ${relatedTool.gradient} shadow-lg shrink-0`}>
                         <RelatedIcon className="w-4 h-4 text-white" />

@@ -6,6 +6,8 @@ import { CATEGORIES, TOOLS, getToolsByCategory } from '../tools/registry';
 import { getIcon } from '../lib/iconMap';
 import { ToolLink } from '../components/ToolLink';
 import { CATEGORY_CONTENT } from '../seo/categoryContent';
+import { PageSeo } from '../components/PageSeo';
+import { buildCategoryMetadata } from '../seo/pageMetadata';
 
 export const CategoryPage: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -28,7 +30,9 @@ export const CategoryPage: React.FC = () => {
   const CatIcon = getIcon(category.icon);
 
   return (
-    <div className="min-h-screen mesh-bg">
+    <>
+      <PageSeo metadata={buildCategoryMetadata(category)} />
+      <div className="min-h-screen mesh-bg">
       <div className="max-w-6xl mx-auto px-6 py-12">
         {/* Hero */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-12">
@@ -105,7 +109,8 @@ export const CategoryPage: React.FC = () => {
           </Link>
         </div>
       </div>
-    </div>
+      </div>
+    </>
   );
 };
 

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Search, ArrowRight, Zap, BarChart3, Shield, Calendar, Sparkles, Star, Layers3 } from 'lucide-react';
 import { ProjectGallery } from '../components/ProjectGallery';
 import { ToolLink } from '../components/ToolLink';
+import { PageSeo } from '../components/PageSeo';
 import { CATEGORIES, TOOLS } from '../tools/registry';
 import { getIcon } from '../lib/iconMap';
 import { AdSlot } from '../components/AdSlot';
@@ -14,6 +15,7 @@ import {
   HOME_HOT_TOOL_DESCRIPTION_CLASS,
   HOME_HOT_TOOL_TITLE_CLASS,
 } from './toolUiLayout';
+import { HOME_METADATA } from '../seo/pageMetadata';
 
 const HOT_TOOLS = [
   'merge-pdf', 'compress-image', 'json-format', 'bmi-calculator',
@@ -97,7 +99,9 @@ export const HomePage: React.FC = () => {
   const hotTools = HOT_TOOLS.map(id => TOOLS.find(t => t.id === id)).filter(Boolean);
 
   return (
-    <div className="space-y-10 max-w-[1500px] mx-auto">
+    <>
+      <PageSeo metadata={HOME_METADATA} />
+      <div className="space-y-10 max-w-[1500px] mx-auto">
       <section className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_420px] items-stretch">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -319,7 +323,8 @@ export const HomePage: React.FC = () => {
       <AdSlot name="home-banner" className="my-8" />
 
       <AdSlot name="home-mid" className="my-8" />
-    </div>
+      </div>
+    </>
   );
 };
 
