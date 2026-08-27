@@ -17,6 +17,7 @@
 | 8008 | STM32 设备 TCP | 按设备来源设置防火墙白名单 |
 | 8010 | 文档转换中心 | 否，仅经 `/document-api/` |
 | 8011 | 视频解析下载 | 否，仅经 `/video-api/` |
+| 8012 | 站长检测服务 | 否，仅经 `/webmaster-api/` |
 
 所有 HTTP 服务只监听 `127.0.0.1`。8008 必须监听设备可达地址，因此应在云防火墙和系统防火墙限制来源 IP。
 
@@ -80,6 +81,7 @@ npx --version
 | STM32 | `<SITE_ROOT>/4G` | `<PYTHON> 4G.py` |
 | document-converter | `<SITE_ROOT>/document-converter` | `<PYTHON> -m uvicorn document_converter.app:app --host 127.0.0.1 --port 8010` |
 | video-downloader | `<SITE_ROOT>/video-downloader` | `<PYTHON> -m uvicorn video_downloader.app:app --host 127.0.0.1 --port 8011 --workers 1` |
+| webmaster-inspector | `<SITE_ROOT>/webmaster-inspector` | `<PYTHON> -m pip install -e .` 后运行 `<PYTHON> -m uvicorn webmaster_inspector.app:app --host 127.0.0.1 --port 8012 --workers 1` |
 
 `<PYTHON>` 必须替换为对应虚拟环境的绝对路径。不要使用开发服务器承载三个前端；将构建产物交给 Nginx。
 
@@ -100,6 +102,8 @@ cd <SITE_ROOT>/site-auth
 ## 6. 合并 Nginx
 
 把 `deploy/nginx/site-modules.conf.example` 中需要的 `location` 合并到宝塔现有站点的 `server {}` 内。保留线上 `/stock/`、`/stock-api/`，然后在宝塔执行配置检查；只有 `nginx -t` 成功才能重载。
+
+站长检测服务仅允许受控的公开 HTTP(S)、DNS、TLS 与 WebSocket 检查；它拒绝内网/本机地址、用户凭据、非标准端口和自定义转发请求头。合并 `/webmaster-api/` 后先运行 `nginx -t`，不要修改现有 TLS 证书指令。
 
 ## 7. 上线验收
 

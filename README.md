@@ -17,6 +17,7 @@ Star Dominion 是一个模块化 Web 单仓库：以在线工具箱为主入口�
 | 论文查重 | TXT、DOCX、PDF 双文档相似度分析 | FastAPI、Python | 由 SD 主站调用 |
 | STM32/4G | 北斗、IMU、轨迹、告警、命令和设备 TCP 通信 | Python、WebSocket | `http://127.0.0.1:5173/stm32/` |
 | 视频解析下载 | 抖音/B站单个公开视频解析、清晰度选择和临时下载 | FastAPI、yt-dlp、FFmpeg | `http://127.0.0.1:5173/tool/video-parser-downloader` |
+| 站长工具服务 | 受控 HTTP、DNS、SSL、WebSocket 公网状态检查 | FastAPI、标准库网络栈 | 由 SD 主站调用 |
 
 ## 五分钟快速启动
 
@@ -84,7 +85,7 @@ Set-ExecutionPolicy -Scope Process Bypass
 
 `Set-ExecutionPolicy -Scope Process Bypass` 只影响当前 PowerShell 进程，关闭窗口后自动失效，不会更改系统级执行策略。
 
-`start-local.ps1` 默认启动 11 个后端/设备进程和 3 个前端，共监听 15 个端口（其中 STM32 同时占用 8007、8008）。只需要后端时使用：
+`start-local.ps1` 默认启动 12 个后端/设备进程和 3 个前端，共监听 16 个端口（其中 STM32 同时占用 8007、8008）。只需要后端时使用：
 
 ```powershell
 .\scripts\start-local.ps1 -WithoutFrontends
@@ -126,6 +127,7 @@ Set-ExecutionPolicy -Scope Process Bypass
 | 8008 | STM32 原始 TCP | 4G 设备长连接 | 只允许设备来源白名单 |
 | 8010 | 文档转换中心 | Office/PDF/Markdown/HTML/OCR 转换与批量打包 | 仅经 `/document-api/` |
 | 8011 | 视频解析下载 | 抖音/B站单个公开视频解析与临时任务下载 | 仅经 `/video-api/` |
+| 8012 | 站长检测服务 | 受控公开网站 HTTP、DNS、SSL、WebSocket 检查 | 仅经 `/webmaster-api/` |
 
 本地脚本会让 HTTP 服务监听 `127.0.0.1`。生产环境由 Nginx 提供统一 HTTPS/WSS 入口，8003 和 8004 不应配置公网反向代理。
 
@@ -218,6 +220,7 @@ flowchart TB
     SD --> ShouAnRen["守岸人 :8006"]
     SD --> STM32["STM32 HTTP/WS :8007"]
     SD --> Video["视频解析下载 :8011"]
+    SD --> Webmaster["站长检测 :8012"]
     Device["STM32/4G 设备"] -->|"TCP :8008"| STM32
 ```
 
@@ -239,6 +242,7 @@ Star-Dominion/
 ├── plagiarism/                      # 论文查重
 ├── 4G/                              # STM32/4G 服务
 ├── video-downloader/                # 视频解析与临时下载服务
+├── webmaster-inspector/             # 受控站长网络检测服务
 ├── scripts/                         # 本地启动、检查、停止脚本
 ├── deploy/                          # 当前生产部署示例
 ├── .env.local.example              # 本地环境变量模板
@@ -300,6 +304,9 @@ npm --prefix .\stock-research-package\stock-module\frontend run build
 # OpenWrite
 python -m pytest .\Openwrite-main\tests
 npm --prefix .\Openwrite-main\frontend run build
+
+# Webmaster inspector
+python -m pytest .\webmaster-inspector\tests
 ```
 
 修改端口、认证 Cookie、Nginx 路由、股票内部签名或跨模块代理后，必须重新运行完整冒烟检查。

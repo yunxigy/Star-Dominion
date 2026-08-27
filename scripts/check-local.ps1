@@ -79,6 +79,7 @@ Test-Http 'research reports health' 'http://127.0.0.1:8009/health' 200 | Out-Nul
 Test-Http 'research reports current issue' 'http://127.0.0.1:8009/api/v1/issues/current' 200 | Out-Null
 Test-Http 'document converter health' 'http://127.0.0.1:8010/health' 200 | Out-Null
 Test-Http 'document converter capabilities' 'http://127.0.0.1:8010/api/v1/capabilities' 200 | Out-Null
+Test-Http 'webmaster inspector health' 'http://127.0.0.1:8012/health' 200 | Out-Null
 try {
     $videoHealth = Invoke-RestMethod -Uri 'http://127.0.0.1:8011/health' -Method GET -TimeoutSec 5
     $hasCapabilities = $null -ne $videoHealth.capabilities `

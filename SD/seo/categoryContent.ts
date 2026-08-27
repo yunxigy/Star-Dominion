@@ -149,4 +149,12 @@ export const CATEGORY_CONTENT: Record<string, CategoryContent> = {
       { question: '可以处理多大的文本？', answer: '单个文本文件限制为 5 MiB，批量最多选择 20 个文件，以避免浏览器内存不足。' },
     ],
   },
+  webmaster: {
+    description: '提供 Meta、Open Graph、robots.txt、sitemap、URL、UTM、Slug 与 User-Agent 工具，并通过受控服务检查公开网站的 HTTP、DNS、SSL 和 WebSocket 状态。',
+    features: ['SEO 配置生成', '网址与客户端解析', '受控网络状态检查'],
+    faq: [
+      { question: '网络检查可以访问内网吗？', answer: '不可以，服务会拒绝本机、私网、保留地址和非标准端口，并在每次跳转后重新校验。' },
+      { question: '会向目标网站发送登录信息吗？', answer: '不会，检测请求不转发浏览器 Cookie、Authorization 或用户自定义请求头。' },
+    ],
+  },
 };

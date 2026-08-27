@@ -55,4 +55,13 @@ describe('toolbox production metadata', () => {
     expect(textTools.every((tool) => tool.privacy === 'local' && tool.status === 'stable' && (tool.tags?.length ?? 0) >= 4)).toBe(true);
     expect(CATEGORIES.some((category) => category.id === 'text')).toBe(true);
   });
+
+  it('registers webmaster generators and explicitly remote inspection routes', () => {
+    const expected = ['meta-tag-generator', 'open-graph-preview', 'robots-txt-generator', 'sitemap-generator', 'url-parser', 'utm-builder', 'slug-generator', 'user-agent-parser', 'ssl-checker', 'dns-lookup', 'http-status-checker', 'websocket-tester'];
+    const webmasterTools = TOOLS.filter((tool) => tool.category === 'webmaster');
+    expect(webmasterTools.map((tool) => tool.id)).toEqual(expected);
+    expect(webmasterTools.slice(0, 8).every((tool) => tool.privacy === 'local' && tool.status === 'stable')).toBe(true);
+    expect(webmasterTools.slice(8).every((tool) => tool.privacy === 'third-party-api' && tool.status === 'beta')).toBe(true);
+    expect(CATEGORIES.some((category) => category.id === 'webmaster')).toBe(true);
+  });
 });

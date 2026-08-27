@@ -5,7 +5,7 @@ export interface ToolDef {
   name: string;
   description: string;
   icon: string;
-  category: 'pdf' | 'image' | 'converter' | 'dev' | 'calc' | 'fun' | 'image-enhance' | 'test' | 'tarot' | 'mouse' | 'document' | 'audio' | 'video' | 'office' | 'academic' | 'general' | 'data' | 'text';
+  category: 'pdf' | 'image' | 'converter' | 'dev' | 'calc' | 'fun' | 'image-enhance' | 'test' | 'tarot' | 'mouse' | 'document' | 'audio' | 'video' | 'office' | 'academic' | 'general' | 'data' | 'text' | 'webmaster';
   color: 'red' | 'emerald' | 'violet' | 'amber' | 'cyan' | 'pink' | 'blue' | 'lime' | 'indigo';
   gradient: string;
   glow: string;
@@ -239,6 +239,20 @@ const EntityExtractorTool = React.lazy(() => import('../components/tools/text/Te
 const TextFileBatchTool = React.lazy(() => import('../components/tools/text/TextTools').then(module => ({ default: module.TextFileBatchTool })));
 const MarkupConverterTool = React.lazy(() => import('../components/tools/text/TextTools').then(module => ({ default: module.MarkupConverterTool })));
 
+// ── 站长与 SEO 工具 ─────────────────────────────────────
+const MetaTagTool = React.lazy(() => import('../components/tools/webmaster/WebmasterTools').then(module => ({ default: module.MetaTagTool })));
+const OpenGraphPreviewTool = React.lazy(() => import('../components/tools/webmaster/WebmasterTools').then(module => ({ default: module.OpenGraphPreviewTool })));
+const RobotsTxtTool = React.lazy(() => import('../components/tools/webmaster/WebmasterTools').then(module => ({ default: module.RobotsTxtTool })));
+const SitemapGeneratorTool = React.lazy(() => import('../components/tools/webmaster/WebmasterTools').then(module => ({ default: module.SitemapGeneratorTool })));
+const UrlParserTool = React.lazy(() => import('../components/tools/webmaster/WebmasterTools').then(module => ({ default: module.UrlParserTool })));
+const UtmBuilderTool = React.lazy(() => import('../components/tools/webmaster/WebmasterTools').then(module => ({ default: module.UtmBuilderTool })));
+const SlugGeneratorTool = React.lazy(() => import('../components/tools/webmaster/WebmasterTools').then(module => ({ default: module.SlugGeneratorTool })));
+const UserAgentParserTool = React.lazy(() => import('../components/tools/webmaster/WebmasterTools').then(module => ({ default: module.UserAgentParserTool })));
+const SslCheckerTool = React.lazy(() => import('../components/tools/webmaster/WebmasterTools').then(module => ({ default: module.SslCheckerTool })));
+const DnsLookupTool = React.lazy(() => import('../components/tools/webmaster/WebmasterTools').then(module => ({ default: module.DnsLookupTool })));
+const HttpStatusTool = React.lazy(() => import('../components/tools/webmaster/WebmasterTools').then(module => ({ default: module.HttpStatusTool })));
+const WebSocketTesterTool = React.lazy(() => import('../components/tools/webmaster/WebmasterTools').then(module => ({ default: module.WebSocketTesterTool })));
+
 // ── 生活工具（新） ────────────────────────────────────────
 const IdPhoto = React.lazy(() => import('../components/tools/general/IdPhoto'));
 const BarcodeQr = React.lazy(() => import('../components/tools/general/BarcodeQr'));
@@ -430,6 +444,20 @@ const TOOL_DEFINITIONS: ToolDefinition[] = [
   { id: 'text-file-batch', name: '文本文件批处理', description: '合并文本文件或按行数切分下载', icon: 'Files', category: 'text', color: 'cyan', gradient: 'from-sky-600 to-cyan-600', glow: 'rgba(14,165,233,0.3)', component: TextFileBatchTool, privacy: 'local', status: 'stable', tags: ['文本文件', '批处理', 'merge', 'split', 'piliang', '文件'] },
   { id: 'markup-converter', name: 'Markdown/HTML 转换', description: 'Markdown、HTML 与纯文本互转', icon: 'FileCode2', category: 'text', color: 'cyan', gradient: 'from-sky-600 to-cyan-600', glow: 'rgba(14,165,233,0.3)', component: MarkupConverterTool, privacy: 'local', status: 'stable', tags: ['markdown', 'html', '纯文本', '转换', 'zhuanhuan'] },
 
+  // ── 站长与 SEO 工具 ───────────────────────────────────
+  { id: 'meta-tag-generator', name: 'Meta 标签生成器', description: '生成标题、描述与社交分享标签', icon: 'Tags', category: 'webmaster', color: 'indigo', gradient: 'from-indigo-600 to-sky-600', glow: 'rgba(79,70,229,0.3)', component: MetaTagTool, privacy: 'local', status: 'stable', tags: ['seo', 'meta', '标签', 'yuansu', '元数据'] },
+  { id: 'open-graph-preview', name: 'Open Graph 预览', description: '预览链接在社交平台的分享卡片', icon: 'Share2', category: 'webmaster', color: 'indigo', gradient: 'from-indigo-600 to-sky-600', glow: 'rgba(79,70,229,0.3)', component: OpenGraphPreviewTool, privacy: 'local', status: 'stable', tags: ['seo', 'og', 'open graph', '分享', 'yulan'] },
+  { id: 'robots-txt-generator', name: 'robots.txt 生成器', description: '生成搜索引擎抓取规则文件', icon: 'Bot', category: 'webmaster', color: 'indigo', gradient: 'from-indigo-600 to-sky-600', glow: 'rgba(79,70,229,0.3)', component: RobotsTxtTool, privacy: 'local', status: 'stable', tags: ['seo', 'robots', '抓取', '规则', 'shengcheng'] },
+  { id: 'sitemap-generator', name: 'Sitemap 生成器', description: '生成站点地图 XML 文件', icon: 'Map', category: 'webmaster', color: 'indigo', gradient: 'from-indigo-600 to-sky-600', glow: 'rgba(79,70,229,0.3)', component: SitemapGeneratorTool, privacy: 'local', status: 'stable', tags: ['seo', 'sitemap', '站点地图', 'xml', 'shengcheng'] },
+  { id: 'url-parser', name: 'URL 解析器', description: '拆解 URL 组成与查询参数', icon: 'Link2', category: 'webmaster', color: 'indigo', gradient: 'from-indigo-600 to-sky-600', glow: 'rgba(79,70,229,0.3)', component: UrlParserTool, privacy: 'local', status: 'stable', tags: ['url', '解析', 'query', '地址', 'jiexi'] },
+  { id: 'utm-builder', name: 'UTM 链接生成器', description: '为营销链接追加 UTM 参数', icon: 'Megaphone', category: 'webmaster', color: 'indigo', gradient: 'from-indigo-600 to-sky-600', glow: 'rgba(79,70,229,0.3)', component: UtmBuilderTool, privacy: 'local', status: 'stable', tags: ['utm', '营销', '链接', '参数', 'lianjie'] },
+  { id: 'slug-generator', name: 'Slug 生成器', description: '将标题转换为 URL 友好路径', icon: 'CaseLower', category: 'webmaster', color: 'indigo', gradient: 'from-indigo-600 to-sky-600', glow: 'rgba(79,70,229,0.3)', component: SlugGeneratorTool, privacy: 'local', status: 'stable', tags: ['slug', 'url', '路径', '标题', 'biaoti'] },
+  { id: 'user-agent-parser', name: 'User-Agent 解析器', description: '识别浏览器、系统和设备类型', icon: 'MonitorSmartphone', category: 'webmaster', color: 'indigo', gradient: 'from-indigo-600 to-sky-600', glow: 'rgba(79,70,229,0.3)', component: UserAgentParserTool, privacy: 'local', status: 'stable', tags: ['user agent', 'ua', '浏览器', '设备', '解析'] },
+  { id: 'ssl-checker', name: 'SSL 证书检查', description: '检查公开域名的 TLS 证书状态', icon: 'ShieldCheck', category: 'webmaster', color: 'indigo', gradient: 'from-indigo-600 to-sky-600', glow: 'rgba(79,70,229,0.3)', component: SslCheckerTool, privacy: 'third-party-api', status: 'beta', tags: ['ssl', 'tls', '证书', '域名', 'jiancha'] },
+  { id: 'dns-lookup', name: 'DNS 查询', description: '查询公开域名的 A/AAAA 地址', icon: 'Globe2', category: 'webmaster', color: 'indigo', gradient: 'from-indigo-600 to-sky-600', glow: 'rgba(79,70,229,0.3)', component: DnsLookupTool, privacy: 'third-party-api', status: 'beta', tags: ['dns', '域名', '解析', 'a记录', '查询'] },
+  { id: 'http-status-checker', name: 'HTTP 状态检查', description: '查看响应状态、请求头和重定向链', icon: 'Activity', category: 'webmaster', color: 'indigo', gradient: 'from-indigo-600 to-sky-600', glow: 'rgba(79,70,229,0.3)', component: HttpStatusTool, privacy: 'third-party-api', status: 'beta', tags: ['http', '状态码', 'header', '重定向', 'jiancha'] },
+  { id: 'websocket-tester', name: 'WebSocket 握手测试', description: '测试公开 WebSocket 服务握手', icon: 'RadioTower', category: 'webmaster', color: 'indigo', gradient: 'from-indigo-600 to-sky-600', glow: 'rgba(79,70,229,0.3)', component: WebSocketTesterTool, privacy: 'third-party-api', status: 'beta', tags: ['websocket', 'ws', 'wss', '握手', 'ceshi'] },
+
   // ── 音频处理 ───────────────────────────────────────────
   { id: 'audio-converter', name: '音频格式转换', description: 'MP3/WAV/OGG/WebM 格式互转', icon: 'AudioLines', category: 'audio', color: 'pink', gradient: 'from-pink-600 to-rose-600', glow: 'rgba(236,72,153,0.3)', component: AudioConverter, privacy: 'local', status: 'stable', tags: ['yinpin', 'mp3', 'wav', 'ogg', 'webm', 'geishi', '音频', '格式'] },
   { id: 'ncm-converter', name: 'NCM 转换器', description: '网易云音乐 NCM 解密为 MP3/FLAC', icon: 'Headphones', category: 'audio', color: 'pink', gradient: 'from-pink-600 to-rose-600', glow: 'rgba(236,72,153,0.3)', component: NcmConverter, privacy: 'local', status: 'stable', tags: ['ncm', 'wangyiyun', 'netease', 'jiami', 'jiemi', '网易云', '解密', '音乐'] },
@@ -531,6 +559,7 @@ export const CATEGORIES = [
   { id: 'academic', name: '学术工具', description: '论文检查、参考文献、公式编辑', icon: 'GraduationCap', color: 'violet', gradient: 'from-violet-600 to-purple-600' },
   { id: 'general', name: '生活工具', description: '证件照、条码、压缩包、字幕', icon: 'Home', color: 'cyan', gradient: 'from-cyan-600 to-sky-600' },
   { id: 'text', name: '文本工具', description: '文本清理、提取、替换与文件整理', icon: 'FileText', color: 'cyan', gradient: 'from-sky-600 to-cyan-600' },
+  { id: 'webmaster', name: '站长工具', description: 'SEO 元数据、网站配置与网络状态检查', icon: 'Globe2', color: 'indigo', gradient: 'from-indigo-600 to-sky-600' },
 ] as const;
 
 export function getToolsByCategory(category: string): ToolDef[] {

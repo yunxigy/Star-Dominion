@@ -45,6 +45,12 @@ export default defineConfig({
         rewrite: (path: string) => path.replace(/^\/video-api/, ''),
         timeout: 900000,
       },
+      '/webmaster-api': {
+        target: 'http://127.0.0.1:8012',
+        changeOrigin: true,
+        rewrite: (path: string) => path.replace(/^\/webmaster-api/, ''),
+        timeout: 15000,
+      },
       '/api': {
         target: 'http://localhost:8006',
         changeOrigin: true,
