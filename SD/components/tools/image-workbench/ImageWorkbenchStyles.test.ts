@@ -76,6 +76,17 @@ describe('ImageWorkbench styles', () => {
     expect(workbenchCss).toMatch(/transition:\s*none\s*!important/);
   });
 
+  it('keeps the preview and tool footer compact on smaller screens', () => {
+    const previewRule = ruleFor('.image-workbench__preview');
+    expect(previewRule).toMatch(/min-height:\s*clamp\(\s*280px\s*,\s*42vh\s*,\s*560px\s*\)/);
+    expect(workbenchCss).toMatch(
+      /@media\s*\(max-width:\s*920px\)[\s\S]*?\.image-workbench__preview\s*\{[^}]*min-height:\s*220px/,
+    );
+    expect(workbenchCss).toMatch(
+      /@media\s*\(max-width:\s*920px\)[\s\S]*?\.tool-window-footer\s*\{[^}]*position:\s*static/,
+    );
+  });
+
   it('does not regress to the duplicated 688-line workbench stylesheet', () => {
     expect(workbenchCss.trimEnd().split(/\r?\n/).length).toBeLessThanOrEqual(600);
   });

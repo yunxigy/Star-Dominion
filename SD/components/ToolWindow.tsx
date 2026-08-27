@@ -1,6 +1,6 @@
 import React, { Suspense, Component, type ReactNode, useEffect, useMemo } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { X, Loader2, Shield, HelpCircle, ArrowRight, BookOpen, Lightbulb } from 'lucide-react';
+import { Loader2, Shield, HelpCircle, ArrowRight, BookOpen, Lightbulb } from 'lucide-react';
 import { getToolById, getToolsByCategory, CATEGORIES } from '../tools/registry';
 import { getIcon } from '../lib/iconMap';
 import { buildToolSeoDescription, buildToolSeoTitle, buildToolSeoUrl } from '../lib/toolSeo';
@@ -177,9 +177,8 @@ const TOOL_USAGE: Record<string, { steps: string[]; tips: string[] }> = {
 export default function ToolWindow() {
   const { toolId } = useParams<{ toolId: string }>();
   const navigate = useNavigate();
-  const handleClose = () => navigate('/gj');
-
   const tool = toolId ? getToolById(toolId) : null;
+  const handleClose = () => navigate(tool ? `/category/${tool.category}` : '/gj');
 
   // 获取同分类的其他工具
   const relatedTools = useMemo(() => {
@@ -296,27 +295,34 @@ export default function ToolWindow() {
       <div className="min-h-screen tool-window-bg flex flex-col">
       {/* Header */}
       <header className="sticky top-0 z-10 glass-sidebar border-b border-[#dcc2a3]">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-4">
-            <div className={`p-2.5 rounded-xl bg-gradient-to-br ${tool.gradient} shadow-lg`}>
-              <IconComponent className="w-6 h-6 text-white" />
+        <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
+          <nav aria-label="面包屑" className="mb-3 flex items-center gap-2 overflow-x-auto text-xs text-[#8b735c]">
+            <Link to="/" className="shrink-0 hover:text-[#6f3714]">首页</Link>
+            <span aria-hidden="true">/</span>
+            <Link to={`/category/${tool.category}`} className="shrink-0 hover:text-[#6f3714]">
+              {category?.name ?? '工具分类'}
+            </Link>
+            <span aria-hidden="true">/</span>
+            <span aria-current="page" className="min-w-0 truncate text-[#5c4937]">{tool.name}</span>
+          </nav>
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex min-w-0 items-center gap-4">
+              <div className={`shrink-0 rounded-xl bg-gradient-to-br ${tool.gradient} p-2.5 shadow-lg`}>
+                <IconComponent className="h-6 w-6 text-white" />
+              </div>
+              <div className="min-w-0">
+                <h1 className="truncate text-xl font-bold text-[#6f3714]">{tool.name}</h1>
+                <p className="truncate text-sm text-[#6d5a47]">{tool.description}</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-xl font-bold text-[#6f3714]">
-                {tool.name}
-              </h1>
-              <p className="text-sm text-[#6d5a47]">
-                {tool.description}
-              </p>
-            </div>
+            <Link
+              to={`/category/${tool.category}`}
+              aria-label={`返回${category?.name ?? '工具'}分类`}
+              className="shrink-0 rounded-lg bg-[#f1dcc2] px-3 py-2 text-sm font-semibold text-[#6d5a47] transition-all hover:bg-[#ead0ad] hover:text-[#2f241b]"
+            >
+              返回分类
+            </Link>
           </div>
-          <button
-            onClick={handleClose}
-            className="p-2 rounded-lg bg-[#f1dcc2] text-[#6d5a47] hover:text-[#2f241b] hover:bg-[#ead0ad] transition-all"
-            title="关闭窗口"
-          >
-            <X className="w-5 h-5" />
-          </button>
         </div>
       </header>
 
@@ -454,7 +460,7 @@ export default function ToolWindow() {
       </main>
 
       {/* Footer */}
-      <footer className="sticky bottom-0 glass-sidebar border-t border-[#dcc2a3] px-6 py-3">
+      <footer className="tool-window-footer glass-sidebar border-t border-[#dcc2a3] px-6 py-3">
         <div className="flex items-center justify-between text-xs text-[#6d5a47]">
           <div className="flex items-center gap-2">
             <Shield className="w-3 h-3" />

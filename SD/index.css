@@ -759,11 +759,12 @@ body {
 .image-workbench__preview {
   grid-area: preview;
   min-width: 0;
-  min-height: clamp(480px, 64vh, 760px);
+  min-height: clamp(280px, 42vh, 560px);
   padding: 1rem;
   background: color-mix(in srgb, var(--surface-muted) 52%, white);
 }
 
+.content-visibility-auto { content-visibility: auto; contain-intrinsic-size: 190px; }
 .image-workbench__actions {
   grid-area: actions;
   min-width: 0;
@@ -1285,9 +1286,8 @@ body {
     border-bottom: 1px solid var(--border);
   }
 
-  .image-workbench__preview {
-    min-height: 0;
-  }
+  .image-workbench__preview { min-height: 220px; }
+  .tool-window-footer { position: static; }
 
   .image-workbench__preview-comparison {
     grid-template-columns: minmax(0, 1fr);
