@@ -44,7 +44,6 @@ const WordToPdf = React.lazy(() => import('../components/tools/pdf/WordToPdf'));
 const CompressImage = React.lazy(() => import('../components/tools/image/CompressImage'));
 const ResizeImage = React.lazy(() => import('../components/tools/image/ResizeImage'));
 const CropImage = React.lazy(() => import('../components/tools/image/CropImage'));
-const WatermarkImage = React.lazy(() => import('../components/tools/image/WatermarkImage'));
 const ImageToBase64 = React.lazy(() => import('../components/tools/image/ImageToBase64'));
 const Base64ToImage = React.lazy(() => import('../components/tools/image/Base64ToImage'));
 const ColorPicker = React.lazy(() => import('../components/tools/image/ColorPicker'));
@@ -82,7 +81,6 @@ const Base64Codec = React.lazy(() => import('../components/tools/dev/Base64Codec
 const Md5Generator = React.lazy(() => import('../components/tools/dev/Md5Generator'));
 const Sha256Generator = React.lazy(() => import('../components/tools/dev/Sha256Generator'));
 const UuidGenerator = React.lazy(() => import('../components/tools/dev/UuidGenerator'));
-const PasswordGenerator = React.lazy(() => import('../components/tools/dev/PasswordGenerator'));
 const JwtDecoder = React.lazy(() => import('../components/tools/dev/JwtDecoder'));
 const ColorConverter = React.lazy(() => import('../components/tools/dev/ColorConverter'));
 const QrCodeGenerator = React.lazy(() => import('../components/tools/dev/QrCodeGenerator'));
@@ -99,7 +97,6 @@ const DiscountCalculator = React.lazy(() => import('../components/tools/calc/Dis
 const LoanCalculator = React.lazy(() => import('../components/tools/calc/LoanCalculator'));
 const MortgageCalculator = React.lazy(() => import('../components/tools/calc/MortgageCalculator'));
 const CompoundInterest = React.lazy(() => import('../components/tools/calc/CompoundInterest'));
-const UnitConverter = React.lazy(() => import('../components/tools/calc/UnitConverter'));
 const LengthConverter = React.lazy(() => import('../components/tools/calc/LengthConverter'));
 const WeightConverter = React.lazy(() => import('../components/tools/calc/WeightConverter'));
 const TemperatureConverter = React.lazy(() => import('../components/tools/calc/TemperatureConverter'));
@@ -183,7 +180,6 @@ const GrammarCheck = React.lazy(() => import('../components/tools/document/Gramm
 const TextToSpeech = React.lazy(() => import('../components/tools/document/TextToSpeech'));
 const CaseConverter = React.lazy(() => import('../components/tools/document/CaseConverter'));
 const WordCount = React.lazy(() => import('../components/tools/document/WordCount'));
-const TextDiff = React.lazy(() => import('../components/tools/document/TextDiff'));
 const DocumentConversionCenter = React.lazy(() => import('../components/tools/document/DocumentConversionCenter'));
 
 // ── 音频处理 ───────────────────────────────────────────────
@@ -274,7 +270,6 @@ const TOOL_DEFINITIONS: ToolDefinition[] = [
   { id: 'compress-image', name: '图片压缩', description: '压缩图片文件大小', icon: 'Minimize2', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: CompressImage, tags: ['yasuo', 'compress', '缩小', '图片压缩'] },
   { id: 'resize-image', name: '图片改尺寸', description: '调整图片宽高像素', icon: 'Maximize2', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: ResizeImage, tags: ['chicun', 'resize', '像素', '缩放', '放大', '缩小'] },
   { id: 'crop-image', name: '图片裁剪', description: '自由裁剪图片区域', icon: 'Crop', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: CropImage, tags: ['caijian', 'crop', '剪切', '裁切'] },
-  { id: 'watermark-image', name: '图片加水印', description: '为图片添加文字水印', icon: 'Droplets', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: WatermarkImage },
   { id: 'image-to-base64', name: '图片转 Base64', description: '图片编码为 Base64 文本', icon: 'Code', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: ImageToBase64 },
   { id: 'base64-to-image', name: 'Base64 转图片', description: 'Base64 文本解码为图片', icon: 'Image', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: Base64ToImage },
   { id: 'color-picker', name: '图片取色器', description: '从图片中提取颜色值', icon: 'Pipette', category: 'image', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: ColorPicker },
@@ -312,7 +307,6 @@ const TOOL_DEFINITIONS: ToolDefinition[] = [
   { id: 'md5-generator', name: 'MD5 生成', description: '计算文本的 MD5 哈希值', icon: 'Hash', category: 'dev', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: Md5Generator },
   { id: 'sha256-generator', name: 'SHA256 生成', description: '计算文本的 SHA256 哈希值', icon: 'Shield', category: 'dev', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: Sha256Generator },
   { id: 'uuid-generator', name: 'UUID 生成', description: '生成随机 UUID', icon: 'Fingerprint', category: 'dev', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: UuidGenerator },
-  { id: 'password-generator', name: '密码生成', description: '生成随机安全密码', icon: 'Key', category: 'dev', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: PasswordGenerator },
   { id: 'jwt-decoder', name: 'JWT 解析', description: '解析 JWT Token 内容', icon: 'Scan', category: 'dev', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: JwtDecoder },
   { id: 'color-converter', name: '颜色转换', description: 'HEX/RGB/HSL 颜色互转', icon: 'Palette', category: 'dev', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: ColorConverter },
   { id: 'qr-code-generator', name: '二维码生成', description: '文本/链接生成二维码', icon: 'QrCode', category: 'dev', color: 'amber', gradient: 'from-amber-600 to-orange-600', glow: 'rgba(245,158,11,0.3)', component: QrCodeGenerator },
@@ -329,7 +323,6 @@ const TOOL_DEFINITIONS: ToolDefinition[] = [
   { id: 'loan-calculator', name: '贷款计算', description: '等额本息/等额本金还款计算', icon: 'Landmark', category: 'calc', color: 'cyan', gradient: 'from-cyan-600 to-sky-600', glow: 'rgba(6,182,212,0.3)', component: LoanCalculator },
   { id: 'mortgage-calculator', name: '房贷计算', description: '房贷月供与利息计算', icon: 'Home', category: 'calc', color: 'cyan', gradient: 'from-cyan-600 to-sky-600', glow: 'rgba(6,182,212,0.3)', component: MortgageCalculator },
   { id: 'compound-interest', name: '复利计算', description: '复利终值与收益计算', icon: 'TrendingUp', category: 'calc', color: 'cyan', gradient: 'from-cyan-600 to-sky-600', glow: 'rgba(6,182,212,0.3)', component: CompoundInterest },
-  { id: 'unit-converter', name: '单位换算', description: '通用单位换算工具', icon: 'ArrowLeftRight', category: 'calc', color: 'cyan', gradient: 'from-cyan-600 to-sky-600', glow: 'rgba(6,182,212,0.3)', component: UnitConverter },
   { id: 'length-converter', name: '长度换算', description: '米/千米/英里/尺等换算', icon: 'Ruler', category: 'calc', color: 'cyan', gradient: 'from-cyan-600 to-sky-600', glow: 'rgba(6,182,212,0.3)', component: LengthConverter },
   { id: 'weight-converter', name: '重量换算', description: '千克/磅/盎司等换算', icon: 'Weight', category: 'calc', color: 'cyan', gradient: 'from-cyan-600 to-sky-600', glow: 'rgba(6,182,212,0.3)', component: WeightConverter },
   { id: 'temperature-converter', name: '温度换算', description: '摄氏/华氏/开尔文换算', icon: 'Thermometer', category: 'calc', color: 'cyan', gradient: 'from-cyan-600 to-sky-600', glow: 'rgba(6,182,212,0.3)', component: TemperatureConverter },
@@ -413,7 +406,6 @@ const TOOL_DEFINITIONS: ToolDefinition[] = [
   { id: 'text-to-speech', name: '文本转语音', description: '将文本转换为语音朗读', icon: 'Volume2', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: TextToSpeech },
   { id: 'case-converter', name: '大小写转换', description: '英文文本大小写批量转换', icon: 'CaseSensitive', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: CaseConverter },
   { id: 'word-count', name: '字数统计', description: '统计文本字数、词数、行数', icon: 'FileText', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: WordCount },
-  { id: 'text-diff', name: '文本对比', description: '对比两段文本的差异之处', icon: 'GitCompare', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: TextDiff },
   { id: 'document-conversion-center', name: '文档转换中心', description: 'PDF、Office、Markdown、HTML、OCR 真实转换与批量打包', icon: 'FileArchive', category: 'document', color: 'indigo', gradient: 'from-indigo-600 to-blue-600', glow: 'rgba(99,102,241,0.3)', component: DocumentConversionCenter, privacy: 'backend-upload', status: 'beta', tags: ['文档', '转换', 'word', 'pdf', 'excel', 'ppt', 'ocr', '批量', 'zip'] },
 
   // ── 音频处理 ───────────────────────────────────────────

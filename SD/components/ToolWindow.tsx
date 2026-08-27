@@ -1,5 +1,5 @@
 import React, { Suspense, Component, type ReactNode, useMemo } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import { Loader2, Shield, HelpCircle, ArrowRight, BookOpen, Lightbulb } from 'lucide-react';
 import { getToolById, getToolsByCategory, CATEGORIES } from '../tools/registry';
 import { getIcon } from '../lib/iconMap';
@@ -7,6 +7,7 @@ import { AdSlot } from './AdSlot';
 import { ToolLink } from './ToolLink';
 import { PageSeo } from './PageSeo';
 import { buildToolMetadata } from '../seo/pageMetadata';
+import { TOOL_REDIRECTS } from '../tools/redirects';
 import {
   TOOL_WINDOW_AD_CLASS,
   getToolComponentShellClass,
@@ -178,7 +179,8 @@ const TOOL_USAGE: Record<string, { steps: string[]; tips: string[] }> = {
 export default function ToolWindow() {
   const { toolId } = useParams<{ toolId: string }>();
   const navigate = useNavigate();
-  const tool = toolId ? getToolById(toolId) : null;
+  const redirectId = toolId ? TOOL_REDIRECTS[toolId] : undefined;
+  const tool = toolId ? getToolById(redirectId ?? toolId) : null;
   const handleClose = () => navigate(tool ? `/category/${tool.category}` : '/gj');
 
   // 获取同分类的其他工具
@@ -197,6 +199,10 @@ export default function ToolWindow() {
 
   // 获取使用说明
   const usage = tool ? TOOL_USAGE[tool.id] : null;
+
+  if (redirectId) {
+    return <Navigate replace to={`/tool/${encodeURIComponent(redirectId)}`} />;
+  }
 
   if (!tool) {
     return (
