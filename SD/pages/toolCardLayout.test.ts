@@ -14,7 +14,7 @@ describe('tool card layout', () => {
     const className = getToolCardLayoutClass('image');
 
     expect(className).toContain('content-visibility-auto');
-    expect(className).not.toContain('min-h-[260px]');
-    expect(className).not.toContain('h-full');
+    expect(className).toContain('min-h-[154px]');
+    expect(className).toContain('h-full');
   });
 });

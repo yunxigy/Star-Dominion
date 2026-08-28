@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AppLayout } from './layouts/AppLayout';
 import { ToolRunnerProvider } from './components/ToolRunner';
 import { HomePage } from './pages/HomePage';
+import { ScrollToTop } from './layouts/ScrollToTop';
 
 const ToolboxPage = lazy(() => import('./pages/ToolboxPage').then(module => ({ default: module.ToolboxPage })));
 const TranslationPage = lazy(() => import('./pages/TranslationPage').then(module => ({ default: module.TranslationPage })));
@@ -22,6 +23,7 @@ const ToolWindow = lazy(() => import('./components/ToolWindow'));
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <ToolRunnerProvider>
         <Suspense fallback={<div role="status" className="p-8 text-center text-[#6d5a47]">页面加载中…</div>}>
           <Routes>

@@ -8,6 +8,7 @@ import { ToolLink } from '../components/ToolLink';
 import { CATEGORY_CONTENT } from '../seo/categoryContent';
 import { PageSeo } from '../components/PageSeo';
 import { buildCategoryMetadata } from '../seo/pageMetadata';
+import { TOOL_CARD_SURFACE_CLASS } from './toolCardLayout';
 
 export const CategoryPage: React.FC = () => {
   const { categoryId } = useParams<{ categoryId: string }>();
@@ -64,11 +65,12 @@ export const CategoryPage: React.FC = () => {
               return (
                 <motion.div key={tool.id} initial={{ opacity: 0, y: 15 }} animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: Math.min(index * 0.05, 0.5) }}
+                  className="h-full"
                 >
                   <ToolLink
                     toolId={tool.id}
                     aria-label={`打开${tool.name}`}
-                    className="block w-full text-left group tool-card-enhanced glass-card rounded-2xl p-5"
+                    className={TOOL_CARD_SURFACE_CLASS}
                   >
                     <div className="flex items-start gap-3">
                       <div className={`tool-icon p-2.5 rounded-lg bg-gradient-to-br ${tool.gradient} shadow-lg shrink-0`}>
