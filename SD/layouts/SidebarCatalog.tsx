@@ -67,7 +67,7 @@ export const SidebarCatalog: React.FC<SidebarCatalogProps> = ({ onNavigate }) =>
               return (
                 <Link
                   key={category.id}
-                  to={`/category/${category.id}`}
+                  to={`/gj?category=${encodeURIComponent(category.id)}`}
                   onClick={onNavigate}
                   aria-current={isActive ? 'page' : undefined}
                   className={`sidebar-item ${isActive ? 'active' : ''}`}

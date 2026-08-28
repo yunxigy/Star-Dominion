@@ -15,7 +15,7 @@ describe('SidebarCatalog', () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByRole('link', { name: /PDF 工具/ }).getAttribute('href')).toBe('/category/pdf');
+    expect(screen.getByRole('link', { name: /PDF 工具/ }).getAttribute('href')).toBe('/gj?category=pdf');
     fireEvent.change(screen.getByRole('searchbox', { name: '搜索工具' }), { target: { value: 'JSON 格式化' } });
     expect(screen.getByRole('link', { name: /JSON 格式化/ }).getAttribute('href')).toBe('/tool/json-format');
   });
