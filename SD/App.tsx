@@ -41,13 +41,15 @@ export default function App() {
               <Route path="/reports/news" element={<NewsEventsPage />} />
               <Route path="/reports/briefing" element={<AIBriefingPage />} />
               <Route path="/auth/login" element={<LoginPage />} />
+
+              {/* 工具详情页沿用主应用壳层，保持左侧工具目录可见 */}
+              <Route path="/tool/:toolId" element={<ToolWindow />} />
             </Route>
 
             {/* 分类专题页 */}
             <Route path="/category/:categoryId" element={<CategoryPage />} />
 
-            {/* 工具页面 */}
-            <Route path="/tool/:toolId" element={<ToolWindow />} />
+            {/* 独立工作区 */}
             <Route path="/stm32/*" element={<Stm32Window />} />
           </Routes>
         </Suspense>

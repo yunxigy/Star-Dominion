@@ -231,7 +231,7 @@ export default function ToolWindow() {
       <PageSeo metadata={buildToolMetadata(tool)} />
       <div className="min-h-screen tool-window-bg flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-10 glass-sidebar border-b border-[#dcc2a3]">
+      <header className="sticky top-16 lg:top-0 z-30 glass-sidebar border-b border-[#dcc2a3]">
         <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
           <nav aria-label="面包屑" className="mb-3 flex items-center gap-2 overflow-x-auto text-xs text-[#8b735c]">
             <Link to="/" className="shrink-0 hover:text-[#6f3714]">首页</Link>
@@ -253,11 +253,11 @@ export default function ToolWindow() {
               </div>
             </div>
             <Link
-              to={`/category/${tool.category}`}
-              aria-label={`返回${category?.name ?? '工具'}分类`}
+              to="/gj"
+              aria-label="返回工具箱"
               className="shrink-0 rounded-lg bg-[#f1dcc2] px-3 py-2 text-sm font-semibold text-[#6d5a47] transition-colors hover:bg-[#ead0ad] hover:text-[#2f241b]"
             >
-              返回分类
+              返回工具箱
             </Link>
           </div>
         </div>
@@ -398,14 +398,22 @@ export default function ToolWindow() {
 
       {/* Footer */}
       <footer className="tool-window-footer glass-sidebar border-t border-[#dcc2a3] px-6 py-3">
-        <div className="flex items-center justify-between text-xs text-[#6d5a47]">
+        <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-[#6d5a47]">
           <div className="flex items-center gap-2">
             <Shield className="w-3 h-3" />
             <span>大部分工具本地处理 · 少数工具调用 API 或上传后端</span>
           </div>
-          <Link to="/" className="hover:text-[#6f3714] transition-colors">
-            逐梦工具箱
-          </Link>
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            <Link to="/" className="hover:text-[#6f3714] transition-colors">
+              逐梦工具箱
+            </Link>
+            <a
+              href="https://beian.miit.gov.cn/"
+              className="hover:text-[#6f3714] transition-colors"
+            >
+              津ICP备2025041246号-1
+            </a>
+          </div>
         </div>
       </footer>
     </div>

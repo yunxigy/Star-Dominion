@@ -51,6 +51,7 @@ export const AppLayout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const isHome = location.pathname === '/';
+  const isToolDetail = location.pathname.startsWith('/tool/');
 
   return (
     <div className="min-h-screen mesh-bg text-[#2f241b]">
@@ -145,18 +146,20 @@ export const AppLayout: React.FC = () => {
           <Outlet />
         </div>
 
-        {/* Footer */}
-        <footer className="p-4 text-center text-[#8b735c] text-sm border-t border-[#dcc2a3]">
-          <p>&copy; {new Date().getFullYear()} 逐梦工具箱 | All Rights Reserved.</p>
-          <a
-            href="https://beian.miit.gov.cn/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hover:text-[#8a4b1f] transition-colors"
-          >
-            津ICP备2025041246号-1
-          </a>
-        </footer>
+        {/* Footer (工具详情页使用自己的隐私说明页脚，避免重复) */}
+        {!isToolDetail && (
+          <footer className="p-4 text-center text-[#8b735c] text-sm border-t border-[#dcc2a3]">
+            <p>&copy; {new Date().getFullYear()} 逐梦工具箱 | All Rights Reserved.</p>
+            <a
+              href="https://beian.miit.gov.cn/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-[#8a4b1f] transition-colors"
+            >
+              津ICP备2025041246号-1
+            </a>
+          </footer>
+        )}
 
         <BackToTop />
       </main>
