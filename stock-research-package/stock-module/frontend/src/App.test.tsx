@@ -316,7 +316,7 @@ test("keeps the small-cap strategy in its own column and opens the shared detail
 
   expect(await screen.findByRole("heading", { name: "我的选股策略" })).toBeInTheDocument();
   expect(screen.getByRole("heading", { name: "小市值倍量吸筹" })).toBeInTheDocument();
-  expect(screen.getByText("首日倍量")).toBeInTheDocument();
+  expect(await screen.findByText("首日倍量")).toBeInTheDocument();
   expect(document.querySelector(".strategy-panel")?.textContent).not.toContain("小市值样本");
 
   fireEvent.click(screen.getByRole("button", { name: /查看 小市值样本 600001 详情/ }));
