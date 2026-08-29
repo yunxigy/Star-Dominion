@@ -10,6 +10,8 @@ describe('homepage spacing and copy contract', () => {
   });
 
   it('keeps the right rail in natural flow instead of distributing a forced gap', () => {
+    expect(source).toContain('className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_420px] items-start"');
+    expect(source).not.toContain('items-stretch');
     expect(source).toContain('className="glass-card rounded-[2rem] p-6 sm:p-8 flex flex-col gap-8"');
     expect(source).not.toContain('flex flex-col justify-between gap-8');
   });

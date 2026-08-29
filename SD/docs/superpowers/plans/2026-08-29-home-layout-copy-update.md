@@ -4,7 +4,7 @@
 
 **Goal:** 收紧首页右侧时钟与分类入口的垂直布局，并将首页首条广告词更新为 200+ 免费在线工具。
 
-**Architecture:** 继续使用 `HomePage` 现有的响应式两列结构和 Tailwind utility classes。右侧卡片保留 `flex-col` 与 `gap-8`，移除 `justify-between`，让内容按自然文档流排列；广告词只修改 `TypewriterText` 的首条静态文案。
+**Architecture:** 继续使用 `HomePage` 现有的响应式两列结构和 Tailwind utility classes。外层网格改为顶部对齐，右侧卡片保留 `flex-col` 与 `gap-8`，移除 `justify-between`，让卡片按自身内容高度、内容按自然文档流排列；广告词只修改 `TypewriterText` 的首条静态文案。
 
 **Tech Stack:** React 18, TypeScript, Tailwind CSS, Vitest, ESLint, Vite。
 
@@ -30,6 +30,8 @@ describe('homepage spacing and copy contract', () => {
   });
 
   it('keeps the right rail in natural flow instead of distributing a forced gap', () => {
+    expect(source).toContain('className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_420px] items-start"');
+    expect(source).not.toContain('items-stretch');
     expect(source).toContain('className="glass-card rounded-[2rem] p-6 sm:p-8 flex flex-col gap-8"');
     expect(source).not.toContain('flex flex-col justify-between gap-8');
   });
@@ -59,6 +61,10 @@ Expected: FAIL because `HomePage.tsx` still contains the `100+` copy and `justif
 ```
 
 - [ ] **Step 2: Let the right rail flow naturally**
+
+```tsx
+<section className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_420px] items-start">
+```
 
 ```tsx
 className="glass-card rounded-[2rem] p-6 sm:p-8 flex flex-col gap-8"

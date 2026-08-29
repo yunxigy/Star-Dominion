@@ -102,7 +102,7 @@ export const HomePage: React.FC = () => {
     <>
       <PageSeo metadata={HOME_METADATA} />
       <div className="space-y-10 max-w-[1500px] mx-auto">
-      <section className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_420px] items-stretch">
+      <section className="grid gap-8 xl:grid-cols-[minmax(0,1fr)_420px] items-start">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
