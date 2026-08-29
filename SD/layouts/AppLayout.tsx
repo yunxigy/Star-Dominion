@@ -4,6 +4,7 @@ import { Menu, X, Wrench, Home, Clock, Sparkles, ChevronUp } from 'lucide-react'
 import { TOOLS } from '../tools/registry';
 import { MouseParticles } from '../components/MouseParticles';
 import { AccountMenu } from '../components/AccountMenu';
+import { ThemeControl } from '../components/ThemeControl';
 import { SidebarCatalog } from './SidebarCatalog';
 
 // 侧边栏时钟组件
@@ -16,7 +17,7 @@ const SidebarClock: React.FC = () => {
   }, []);
 
   return (
-    <div className="flex items-center gap-2 text-xs text-[#8b735c]">
+    <div className="flex items-center gap-2 text-xs text-[var(--text-soft)]">
       <Clock className="w-3 h-3" />
       <span className="font-mono">
         {time.toLocaleTimeString('zh-CN', { hour12: false })}
@@ -54,7 +55,7 @@ export const AppLayout: React.FC = () => {
   const isToolDetail = location.pathname.startsWith('/tool/');
 
   return (
-    <div className="min-h-screen mesh-bg text-[#2f241b]">
+    <div className="min-h-screen mesh-bg">
       <MouseParticles />
       <a href="#main-content" className="skip-link">跳到主要内容</a>
 
@@ -65,7 +66,7 @@ export const AppLayout: React.FC = () => {
           aria-label="打开工具目录"
           aria-expanded={sidebarOpen}
           aria-controls="tool-sidebar"
-          className="p-2 rounded-lg bg-[#f1dcc2] text-[#6d5a47] hover:bg-[#ead0ad] hover:text-[#2f241b]"
+          className="p-2 rounded-lg bg-[var(--surface-hover)] text-[var(--text-muted)] hover:bg-[var(--surface-active)] hover:text-[var(--text)]"
         >
           {sidebarOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
@@ -73,8 +74,9 @@ export const AppLayout: React.FC = () => {
           <div className="p-1.5 rounded-lg bg-gradient-to-br from-[#9a5a28] to-[#5f6f42]">
             <Wrench className="w-4 h-4 text-white" />
           </div>
-          <span className="font-bold text-[#2f241b]">逐梦工具箱</span>
+          <span className="font-bold text-[var(--text)]">逐梦工具箱</span>
         </Link>
+        <ThemeControl compact />
         <SidebarClock />
       </div>
 
@@ -94,18 +96,18 @@ export const AppLayout: React.FC = () => {
         ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
       `} id="tool-sidebar">
         {/* Logo */}
-        <div className="p-4 border-b border-[#dcc2a3]">
+        <div className="p-4 border-b border-[var(--border)]">
           <Link to="/" className="flex items-center gap-3 group" onClick={() => setSidebarOpen(false)}>
             <div className="p-2.5 rounded-xl bg-gradient-to-br from-[#9a5a28] to-[#5f6f42] shadow-lg shadow-[#9a5a28]/20 group-hover:shadow-[#9a5a28]/30 transition-shadow">
               <Wrench className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-lg font-bold text-[#2f241b] group-hover:text-[#6f3714] transition-colors">
+              <h1 className="text-lg font-bold text-[var(--text)] group-hover:text-[var(--accent-strong)] transition-colors">
                 逐梦工具箱
               </h1>
               <div className="flex items-center gap-2">
-                <span className="text-sm text-[#8a4b1f]">{TOOLS.length}+ 免费工具</span>
-                <Sparkles className="w-3 h-3 text-[#9a5a28]" />
+                <span className="text-sm text-[var(--accent-strong)]">{TOOLS.length}+ 免费工具</span>
+                <Sparkles className="w-3 h-3 text-[var(--accent)]" />
               </div>
             </div>
           </Link>
@@ -129,14 +131,17 @@ export const AppLayout: React.FC = () => {
         <div className="px-3 pb-4">
           <AccountMenu />
         </div>
+        <div className="px-3 pb-4">
+          <ThemeControl />
+        </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-[#dcc2a3]">
-          <div className="flex items-center justify-between text-sm text-[#6d5a47]">
+        <div className="p-4 border-t border-[var(--border)]">
+          <div className="flex items-center justify-between text-sm text-[var(--text-muted)]">
             <span>共 {TOOLS.length} 个工具</span>
             <SidebarClock />
           </div>
-          <p className="text-xs text-[#8b735c] mt-1">本地优先 · 隐私分级</p>
+          <p className="text-xs text-[var(--text-soft)] mt-1">本地优先 · 隐私分级</p>
         </div>
       </aside>
 
@@ -148,13 +153,13 @@ export const AppLayout: React.FC = () => {
 
         {/* Footer (工具详情页使用自己的隐私说明页脚，避免重复) */}
         {!isToolDetail && (
-          <footer className="p-4 text-center text-[#8b735c] text-sm border-t border-[#dcc2a3]">
+          <footer className="p-4 text-center text-[var(--text-soft)] text-sm border-t border-[var(--border)]">
             <p>&copy; {new Date().getFullYear()} 逐梦工具箱 | All Rights Reserved.</p>
             <a
               href="https://beian.miit.gov.cn/"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-[#8a4b1f] transition-colors"
+              className="hover:text-[var(--accent-strong)] transition-colors"
             >
               津ICP备2025041246号-1
             </a>

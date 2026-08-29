@@ -2,7 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { applyThemePreference, readThemePreference } from './lib/theme';
 import './index.css';
+
+applyThemePreference(readThemePreference());
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -12,8 +16,10 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </ThemeProvider>
   </React.StrictMode>
 );
