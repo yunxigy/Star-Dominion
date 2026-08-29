@@ -85,7 +85,7 @@ class MorningReportService:
                 key=lambda item: 0 if item.source_id == "catalyst" else 1,
             )
             for source in ordered:
-                if source.source_id not in {"catalyst", "user_strategy"}:
+                if source.source_id not in {"catalyst", "user_strategy", "small_cap_absorption"}:
                     continue
                 sources.append(
                     ResearchSourceEvidence(
@@ -93,6 +93,7 @@ class MorningReportService:
                         source_name=source.source_name,
                         score=source.score,
                         reasons=source.reasons,
+                        factors=source.factors,
                     )
                 )
         source_ids = {source.source_id for source in sources}

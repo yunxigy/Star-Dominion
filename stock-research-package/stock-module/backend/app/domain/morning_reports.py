@@ -67,10 +67,11 @@ class MorningReportHistoryResponse(BaseModel):
 
 
 class ResearchSourceEvidence(BaseModel):
-    source_id: Literal["catalyst", "user_strategy"]
+    source_id: Literal["catalyst", "user_strategy", "small_cap_absorption"]
     source_name: str
     score: float | None
     reasons: list[str]
+    factors: dict[str, float | int | bool | str] = Field(default_factory=dict)
 
 
 class StockResearchContext(BaseModel):

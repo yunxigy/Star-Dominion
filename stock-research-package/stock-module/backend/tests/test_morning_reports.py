@@ -114,6 +114,36 @@ def test_research_context_keeps_sources_separate(tmp_path: Path) -> None:
     assert result.catalyst.rationale == "海外电力资本开支映射"
 
 
+def test_research_context_includes_small_cap_factors_without_changing_cross_hit(tmp_path: Path) -> None:
+    report = _report()
+    repository = MorningReportRepository(tmp_path / "hub.db")
+    repository.save(report)
+    service = MorningReportService(repository, StaticMorningSource(report))
+    candidate = CandidateStock.create(
+        symbol="000400",
+        name="许继电气",
+        source=CandidateSource(
+            source_id="small_cap_absorption",
+            source_name="小市值倍量吸筹",
+            reasons=["首日倍量"],
+            factors={
+                "trigger_date": "2026-08-27",
+                "volume_multiple": 2.4,
+                "price_range_pct": 12.0,
+                "max_drawdown_pct": 8.0,
+                "first_volume_spike": True,
+            },
+        ),
+    )
+
+    result = service.research_context("000400", CandidateCollection(items=[candidate]))
+
+    assert result.cross_hit is False
+    evidence = next(item for item in result.sources if item.source_id == "small_cap_absorption")
+    assert evidence.factors["trigger_date"] == "2026-08-27"
+    assert evidence.factors["first_volume_spike"] is True
+
+
 def test_valid_arbitrary_main_board_stock_returns_empty_context(tmp_path: Path) -> None:
     repository = MorningReportRepository(tmp_path / "hub.db")
     repository.save(_report())
