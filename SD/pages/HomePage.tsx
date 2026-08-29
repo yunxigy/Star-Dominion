@@ -128,7 +128,7 @@ export const HomePage: React.FC = () => {
 
           <p className="text-xl md:text-2xl text-[#5c4937] mb-8 min-h-10 font-semibold">
             <TypewriterText texts={[
-              '100+ 免费在线工具，助力高效工作',
+              '200+ 免费在线工具，助力高效工作',
               '本地优先，隐私分级保护',
               'PDF、图片、开发、计算一应俱全',
               '持续更新，更多功能敬请期待'
@@ -188,7 +188,7 @@ export const HomePage: React.FC = () => {
           initial={{ opacity: 0, y: 18 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.12, duration: 0.5 }}
-          className="glass-card rounded-[2rem] p-6 sm:p-8 flex flex-col justify-between gap-8"
+          className="glass-card rounded-[2rem] p-6 sm:p-8 flex flex-col gap-8"
         >
           <RealTimeClock />
           <div className="grid grid-cols-2 gap-3">
