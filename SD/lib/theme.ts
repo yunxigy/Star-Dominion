@@ -20,7 +20,9 @@ const browserStorage = (): ThemeStorage | undefined => {
 };
 
 const browserMatchMedia = (): ThemeMatchMedia | undefined => (
-  typeof window === 'undefined' ? undefined : window.matchMedia.bind(window)
+  typeof window === 'undefined' || typeof window.matchMedia !== 'function'
+    ? undefined
+    : window.matchMedia.bind(window)
 );
 
 export function readThemePreference(storage: ThemeStorage | null = browserStorage() ?? null): ThemePreference {
