@@ -3,6 +3,7 @@ from pathlib import Path
 
 import httpx
 import pytest
+from cryptography.fernet import Fernet
 
 from app.domain.candidates import CandidateSource, CandidateStock
 from app.config import Settings
@@ -129,10 +130,47 @@ async def test_new_repository_returns_no_demo_candidates(tmp_path: Path) -> None
 
 
 @pytest.mark.asyncio
+async def test_default_candidate_service_registers_small_cap_source(tmp_path: Path) -> None:
+    isolated_app = create_app(
+        settings=Settings(
+            data_dir=tmp_path / "data",
+            catalyst_report_path=tmp_path / "catalyst.json",
+            user_strategy_snapshot_path=tmp_path / "strategy.json",
+            model_master_key=Fernet.generate_key().decode("ascii"),
+        )
+    )
+
+    async with httpx.AsyncClient(
+        transport=httpx.ASGITransport(app=isolated_app),
+        base_url="http://test",
+    ) as client:
+        response = await client.get("/api/v1/candidates")
+
+    assert response.status_code == 200
+    assert {source["source_id"] for source in response.json()["sources"]} == {
+        "catalyst",
+        "user_strategy",
+        "small_cap_absorption",
+    }
+
+
+@pytest.mark.asyncio
 async def test_refresh_then_get_preserves_multiple_sources_for_same_stock(tmp_path: Path) -> None:
     catalyst = ApiFakeSource("catalyst", "九点猫研", _api_batch("catalyst", "九点猫研"))
     strategy = ApiFakeSource("user_strategy", "用户策略", _api_batch("user_strategy", "用户策略"))
-    service = CandidateRefreshService(CandidateSnapshotRepository(tmp_path / "hub.db"), [catalyst, strategy])
+    small_cap = ApiFakeSource(
+        "small_cap_absorption",
+        "小市值倍量吸筹",
+        _api_batch(
+            "small_cap_absorption",
+            "小市值倍量吸筹",
+            factors={"first_volume_spike": True},
+        ),
+    )
+    service = CandidateRefreshService(
+        CandidateSnapshotRepository(tmp_path / "hub.db"),
+        [catalyst, strategy, small_cap],
+    )
     service.refresh()
     isolated_app = create_app(candidate_service=service)
     async with httpx.AsyncClient(
@@ -146,7 +184,9 @@ async def test_refresh_then_get_preserves_multiple_sources_for_same_stock(tmp_pa
     assert {source["source_id"] for source in item["sources"]} == {
         "catalyst",
         "user_strategy",
+        "small_cap_absorption",
     }
+    assert item["sources"][2]["factors"]["first_volume_spike"] is True
     assert {source["status"] for source in response.json()["sources"]} == {"ok"}
 
 
@@ -171,7 +211,12 @@ async def test_refresh_api_returns_accepted_task_and_supports_status_lookup(tmp_
     assert missing.status_code == 404
 
 
-def _api_batch(source_id: str, source_name: str) -> CandidateBatch:
+def _api_batch(
+    source_id: str,
+    source_name: str,
+    *,
+    factors: dict[str, float | int | bool | str] | None = None,
+) -> CandidateBatch:
     generated_at = datetime(2026, 7, 21, 8, 0, tzinfo=UTC)
     item = CandidateStock.create(
         symbol="600001",
@@ -180,6 +225,7 @@ def _api_batch(source_id: str, source_name: str) -> CandidateBatch:
             source_id=source_id,
             source_name=source_name,
             reasons=["真实快照测试"],
+            factors=factors or {},
         ),
     )
     item.generated_at = generated_at

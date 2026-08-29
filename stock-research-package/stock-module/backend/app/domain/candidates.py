@@ -20,6 +20,7 @@ class CandidateSource(BaseModel):
     source_name: str
     score: float | None = None
     reasons: list[str] = Field(default_factory=list)
+    factors: dict[str, float | int | bool | str] = Field(default_factory=dict)
 
 
 class CandidateStock(BaseModel):

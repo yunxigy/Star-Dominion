@@ -1,4 +1,5 @@
 import json
+from datetime import date, timedelta
 from pathlib import Path
 
 import pytest
@@ -6,6 +7,7 @@ import pytest
 from app.integrations.candidate_sources import (
     CandidateSourceError,
     CatalystReportSource,
+    SmallCapAbsorptionSnapshotSource,
     UserStrategySnapshotSource,
 )
 
@@ -115,6 +117,65 @@ def test_catalyst_directory_uses_latest_dated_report(tmp_path: Path) -> None:
     assert [item.stock.symbol for item in batch.items] == ["600002"]
 
 
+def test_small_cap_source_reads_only_small_cap_section_and_keeps_factors(tmp_path: Path) -> None:
+    path = tmp_path / "strategy.json"
+    path.write_text(
+        json.dumps(
+            {
+                "generated_at": "2026-07-21T15:35:00+08:00",
+                "small_cap_status": "ok",
+                "small_cap_stocks": [
+                    {
+                        "symbol": "000001",
+                        "name": "小市值样本",
+                        "market_cap": 9_000_000_000,
+                        "concepts": [],
+                        "bars": _absorption_bars(),
+                    }
+                ],
+                "stocks": [
+                    {
+                        "symbol": "000001",
+                        "name": "原策略样本",
+                        "concepts": [],
+                        "bars": [_bar(10, 1.0) for _ in range(12)],
+                    }
+                ],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    batch = SmallCapAbsorptionSnapshotSource(path).load()
+
+    assert batch.source_id == "small_cap_absorption"
+    assert [item.stock.symbol for item in batch.items] == ["000001"]
+    source = batch.items[0].sources[0]
+    assert source.score is None
+    assert source.factors["first_volume_spike"] is True
+    assert source.factors["trigger_date"] == "2026-07-27"
+
+
+def test_small_cap_source_rejects_snapshot_marked_as_error(tmp_path: Path) -> None:
+    path = tmp_path / "strategy.json"
+    path.write_text(
+        json.dumps(
+            {
+                "generated_at": "2026-07-21T15:35:00+08:00",
+                "small_cap_status": "error",
+                "small_cap_error": "市值接口失败",
+                "small_cap_stocks": [],
+            },
+            ensure_ascii=False,
+        ),
+        encoding="utf-8",
+    )
+
+    with pytest.raises(CandidateSourceError, match="市值接口失败"):
+        SmallCapAbsorptionSnapshotSource(path).load()
+
+
 def _bar(close: float, pct: float) -> dict[str, float]:
     return {
         "open": close * 0.99,
@@ -124,3 +185,20 @@ def _bar(close: float, pct: float) -> dict[str, float]:
         "pct": pct,
         "volume": 100,
     }
+
+
+def _absorption_bars() -> list[dict[str, object]]:
+    bars: list[dict[str, object]] = []
+    for index in range(38):
+        bars.append(
+            {
+                "date": (date(2026, 6, 22) + timedelta(days=index)).isoformat(),
+                "open": 10,
+                "high": 10,
+                "low": 10,
+                "close": 10,
+                "pct": 0,
+                "volume": 200 if index == 35 else 100,
+            }
+        )
+    return bars

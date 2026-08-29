@@ -31,7 +31,11 @@ from app.domain.morning_reports import (
 from app.domain.market_data import KlineUnavailable, StockKline
 from app.domain.mom_index import MomIndexHistoryResponse, MomIndexSnapshot
 from app.domain.stocks import InvalidMainBoardSymbol
-from app.integrations.candidate_sources import CatalystReportSource, UserStrategySnapshotSource
+from app.integrations.candidate_sources import (
+    CatalystReportSource,
+    SmallCapAbsorptionSnapshotSource,
+    UserStrategySnapshotSource,
+)
 from app.integrations.catalyst_reports import CatalystMorningReportAdapter
 from app.integrations.candidate_workers import SubprocessCandidateWorker
 from app.integrations.individual_analysis import IndividualAnalysisClient
@@ -123,6 +127,7 @@ def create_app(
         [
             CatalystReportSource(configured.catalyst_report_path),
             UserStrategySnapshotSource(configured.user_strategy_snapshot_path),
+            SmallCapAbsorptionSnapshotSource(configured.user_strategy_snapshot_path),
         ],
     )
     morning_reports = morning_report_service or MorningReportService(

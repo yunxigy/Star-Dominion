@@ -55,6 +55,26 @@ def test_failed_source_keeps_old_snapshot_as_stale_while_other_source_updates(tm
     assert statuses["user_strategy"].status == "ok"
 
 
+def test_small_cap_source_failure_keeps_previous_batch_as_stale(tmp_path: Path) -> None:
+    small_cap = FakeSource(
+        "small_cap_absorption",
+        "小市值倍量吸筹",
+        _batch("small_cap_absorption", "小市值倍量吸筹", "000001", "小市值股"),
+    )
+    service = CandidateRefreshService(
+        CandidateSnapshotRepository(tmp_path / "hub.db"),
+        [small_cap],
+    )
+    service.refresh()
+
+    small_cap.error = "市值接口失败"
+    result = service.refresh()
+
+    assert [item.stock.symbol for item in result.items] == ["000001"]
+    assert result.sources[0].status == "stale"
+    assert result.sources[0].error == "市值接口失败"
+
+
 def test_all_failed_without_history_returns_empty_items_and_error_statuses(tmp_path: Path) -> None:
     catalyst = FakeSource("catalyst", "九点猫研")
     strategy = FakeSource("user_strategy", "用户策略")

@@ -9,7 +9,11 @@ from pydantic import BaseModel, ValidationError
 
 from app.domain.candidates import CandidateSource, CandidateStock
 from app.domain.stocks import InvalidMainBoardSymbol
-from app.domain.strategies import StockSeries, evaluate_stock_strategies
+from app.domain.strategies import (
+    StockSeries,
+    evaluate_small_cap_absorption,
+    evaluate_stock_strategies,
+)
 from app.integrations.catalyst_reports import CatalystMorningReportAdapter, CatalystReportError
 
 
@@ -110,6 +114,59 @@ class UserStrategySnapshotSource:
             items.append(item)
 
         return CandidateBatch(source_id=self.source_id, generated_at=generated_at, items=items)
+
+
+class SmallCapAbsorptionSnapshotSource:
+    source_id = "small_cap_absorption"
+    source_name = "小市值倍量吸筹"
+
+    def __init__(self, path: str | Path) -> None:
+        self._path = Path(path)
+
+    def load(self) -> CandidateBatch:
+        raw = _read_json(self._path)
+        status = raw.get("small_cap_status")
+        if status == "error":
+            raise CandidateSourceError(str(raw.get("small_cap_error") or "小市值快照刷新失败"))
+        if status not in (None, "ok"):
+            raise CandidateSourceError("小市值快照状态无效")
+        if not isinstance(raw.get("small_cap_stocks"), list):
+            raise CandidateSourceError("小市值快照结构错误：缺少 small_cap_stocks")
+        generated_at = _parse_datetime(raw.get("small_cap_generated_at") or raw.get("generated_at"))
+        items: list[CandidateStock] = []
+
+        for row in raw["small_cap_stocks"]:
+            if not isinstance(row, dict):
+                continue
+            try:
+                stock = StockSeries.model_validate(row)
+            except ValidationError as exc:
+                raise CandidateSourceError("小市值快照结构错误：股票 K 线字段无效") from exc
+            result = evaluate_small_cap_absorption(stock)
+            if not result.matched:
+                continue
+            try:
+                item = CandidateStock.create(
+                    symbol=stock.symbol,
+                    name=stock.name,
+                    source=CandidateSource(
+                        source_id=self.source_id,
+                        source_name=self.source_name,
+                        score=None,
+                        reasons=result.reasons,
+                        factors=result.factors,
+                    ),
+                )
+            except InvalidMainBoardSymbol:
+                continue
+            item.generated_at = generated_at
+            items.append(item)
+
+        return CandidateBatch(
+            source_id=self.source_id,
+            generated_at=generated_at,
+            items=sorted(items, key=lambda item: item.stock.symbol),
+        )
 
 
 def _read_json(path: Path) -> dict[str, Any]:
