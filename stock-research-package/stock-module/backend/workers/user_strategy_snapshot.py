@@ -3,14 +3,16 @@
 import argparse
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import date, datetime, timedelta
 import json
+import math
 import os
 from pathlib import Path
 from typing import Any
 from zoneinfo import ZoneInfo
 
 from app.domain.stocks import InvalidMainBoardSymbol, normalize_symbol
+from app.domain.strategies import SMALL_CAP_MARKET_CAP_LIMIT
 from workers.ths_hot_concepts import StockSeedData, collect_ths_hot_stock_pool
 
 
@@ -22,14 +24,15 @@ class StockSeed:
     symbol: str
     name: str
     concepts: list[str]
+    market_cap: float | None = None
 
 
 HistoryLoader = Callable[[str], Any]
 
 
-def normalize_history(frame: Any) -> list[dict[str, float]]:
+def normalize_history(frame: Any) -> list[dict[str, float | str]]:
     rows = frame.to_dict(orient="records")
-    output: list[dict[str, float]] = []
+    output: list[dict[str, float | str]] = []
     previous_close: float | None = None
     for row in rows:
         close = _number(row.get("收盘", row.get("close")))
@@ -39,19 +42,21 @@ def normalize_history(frame: Any) -> list[dict[str, float]]:
         volume = _number(row.get("成交量", row.get("volume")))
         if None in {open_price, high, low, close, volume}:
             continue
+        trade_date = _date_string(row.get("日期", row.get("date", row.get("trade_date"))))
         pct = _number(row.get("涨跌幅", row.get("pct")))
         if pct is None:
             pct = ((close / previous_close) - 1) * 100 if previous_close else 0.0
-        output.append(
-            {
-                "open": float(open_price),
-                "high": float(high),
-                "low": float(low),
-                "close": float(close),
-                "pct": round(float(pct), 4),
-                "volume": float(volume),
-            }
-        )
+        normalized = {
+            "open": float(open_price),
+            "high": float(high),
+            "low": float(low),
+            "close": float(close),
+            "pct": round(float(pct), 4),
+            "volume": float(volume),
+        }
+        if trade_date is not None:
+            normalized["date"] = trade_date
+        output.append(normalized)
         previous_close = close
     return output
 
@@ -62,7 +67,25 @@ def build_snapshot(
     generated_at: datetime,
     *,
     min_bars: int = 150,
+    small_cap_pool: dict[str, StockSeed] | None = None,
 ) -> dict[str, object]:
+    return {
+        "generated_at": generated_at.isoformat(),
+        "stocks": _build_snapshot_rows(stock_pool, history_loader, min_bars=min_bars),
+        "small_cap_stocks": _build_snapshot_rows(
+            small_cap_pool or {},
+            history_loader,
+            min_bars=min_bars,
+        ),
+    }
+
+
+def _build_snapshot_rows(
+    stock_pool: dict[str, StockSeed],
+    history_loader: HistoryLoader,
+    *,
+    min_bars: int,
+) -> list[dict[str, object]]:
     stocks: list[dict[str, object]] = []
     for raw_symbol, seed in stock_pool.items():
         try:
@@ -77,19 +100,21 @@ def build_snapshot(
             continue
         if len(bars) < min_bars:
             continue
-        stocks.append(
-            {
-                "symbol": symbol,
-                "name": seed.name,
-                "concepts": list(dict.fromkeys(seed.concepts)),
-                "bars": bars,
-            }
-        )
-    return {"generated_at": generated_at.isoformat(), "stocks": stocks}
+        record: dict[str, object] = {
+            "symbol": symbol,
+            "name": seed.name,
+            "concepts": list(dict.fromkeys(seed.concepts)),
+            "bars": bars,
+        }
+        if seed.market_cap is not None:
+            record["market_cap"] = seed.market_cap
+        stocks.append(record)
+    return stocks
 
 
 def write_snapshot_atomic(payload: dict[str, object], output_path: Path) -> None:
-    if not payload.get("stocks"):
+    sections = (payload.get("stocks"), payload.get("small_cap_stocks"))
+    if not any(isinstance(section, list) and section for section in sections):
         raise ValueError("拒绝用空快照覆盖最近成功结果")
     output_path.parent.mkdir(parents=True, exist_ok=True)
     temporary = output_path.with_suffix(output_path.suffix + ".tmp")
@@ -132,6 +157,42 @@ def collect_hot_stock_pool(
         top_concepts=top_concepts,
         max_stocks=max_stocks,
     )
+
+
+def collect_small_cap_stock_pool(
+    akshare: Any,
+    *,
+    market_cap_limit: float = SMALL_CAP_MARKET_CAP_LIMIT,
+) -> dict[str, StockSeed]:
+    """Collect every eligible main-board stock with a trustworthy market cap."""
+    frame = akshare.stock_zh_a_spot_em()
+    if frame is None or frame.empty:
+        raise RuntimeError("东方财富全市场行情为空，无法筛选小市值股票")
+
+    pool: dict[str, StockSeed] = {}
+    for row in frame.to_dict(orient="records"):
+        raw_symbol = str(_first_value(row, "代码", "code", "symbol") or "").strip()
+        if raw_symbol.isdigit():
+            raw_symbol = raw_symbol.zfill(6)
+        try:
+            symbol = normalize_symbol(raw_symbol)
+        except InvalidMainBoardSymbol:
+            continue
+        name = str(_first_value(row, "名称", "name") or symbol).strip()
+        if "ST" in name.upper() or "退" in name:
+            continue
+        market_cap = _number(
+            _first_value(row, "总市值", "总市值(元)", "market_cap", "total_market_cap")
+        )
+        if market_cap is None or not math.isfinite(market_cap) or market_cap >= market_cap_limit:
+            continue
+        pool[symbol] = StockSeed(
+            symbol=symbol,
+            name=name,
+            concepts=[],
+            market_cap=market_cap,
+        )
+    return pool
 
 
 def _collect_eastmoney_concept_pool(
@@ -258,6 +319,32 @@ def load_history_with_fallback(
     )
 
 
+def _first_value(row: dict[str, Any], *keys: str) -> Any:
+    for key in keys:
+        value = row.get(key)
+        if value is not None and str(value).strip() != "":
+            return value
+    return None
+
+
+def _date_string(value: Any) -> str | None:
+    if value is None:
+        return None
+    if isinstance(value, datetime):
+        return value.date().isoformat()
+    if isinstance(value, date):
+        return value.isoformat()
+    text = str(value).strip()
+    if not text:
+        return None
+    for pattern in ("%Y-%m-%d", "%Y/%m/%d", "%Y%m%d"):
+        try:
+            return datetime.strptime(text[:10] if pattern != "%Y%m%d" else text, pattern).date().isoformat()
+        except ValueError:
+            continue
+    return None
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="生成 Star Dominion 用户策略 K 线快照")
     parser.add_argument("--output", required=True, help="latest.json 输出路径")
@@ -297,9 +384,39 @@ def main(argv: list[str] | None = None) -> int:
     def load_history(symbol: str) -> Any:
         return load_history_with_fallback(ak, symbol, start_date, end_date)
 
-    payload = build_snapshot(pool, load_history, datetime.now(ZoneInfo("Asia/Shanghai")))
+    generated_at = datetime.now(ZoneInfo("Asia/Shanghai"))
+    try:
+        small_cap_pool = collect_small_cap_stock_pool(ak)
+        payload = build_snapshot(
+            pool,
+            load_history,
+            generated_at,
+            small_cap_pool=small_cap_pool,
+        )
+        payload.update(
+            {
+                "small_cap_status": "ok",
+                "small_cap_generated_at": generated_at.isoformat(),
+            }
+        )
+    except Exception as exc:
+        previous = _read_existing_snapshot(output_path)
+        payload = build_snapshot(pool, load_history, generated_at)
+        previous_small_cap = previous.get("small_cap_stocks")
+        if isinstance(previous_small_cap, list):
+            payload["small_cap_stocks"] = previous_small_cap
+        payload.update(
+            {
+                "small_cap_status": "error",
+                "small_cap_error": str(exc),
+                "small_cap_generated_at": previous.get("small_cap_generated_at"),
+            }
+        )
     write_snapshot_atomic(payload, output_path)
-    print(f"已生成用户策略快照：{output_path.resolve()}（{len(payload['stocks'])} 只股票）")
+    print(
+        f"已生成用户策略快照：{output_path.resolve()}（"
+        f"原策略 {len(payload['stocks'])} 只，小市值 {len(payload['small_cap_stocks'])} 只）"
+    )
     return 0
 
 
@@ -310,6 +427,16 @@ def _number(value: Any) -> float | None:
         return float(str(value).replace(",", "").replace("%", ""))
     except (TypeError, ValueError):
         return None
+
+
+def _read_existing_snapshot(output_path: Path) -> dict[str, Any]:
+    if not output_path.is_file():
+        return {}
+    try:
+        payload = json.loads(output_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    return payload if isinstance(payload, dict) else {}
 
 
 if __name__ == "__main__":

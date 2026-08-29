@@ -1,6 +1,8 @@
 from datetime import UTC, datetime
 import json
 from pathlib import Path
+import sys
+from types import SimpleNamespace
 
 import pandas as pd
 import pytest
@@ -11,6 +13,7 @@ from workers.user_strategy_snapshot import (
     StockSeed,
     build_snapshot,
     collect_hot_stock_pool,
+    collect_small_cap_stock_pool,
     load_history_with_fallback,
     normalize_history,
     write_snapshot_atomic,
@@ -44,8 +47,42 @@ def test_normalize_history_maps_akshare_columns_and_computes_missing_pct() -> No
 
     bars = normalize_history(frame)
 
-    assert bars[0] == {"open": 10.0, "high": 10.5, "low": 9.8, "close": 10.0, "pct": 0.0, "volume": 100.0}
+    assert bars[0] == {
+        "date": "2026-07-20",
+        "open": 10.0,
+        "high": 10.5,
+        "low": 9.8,
+        "close": 10.0,
+        "pct": 0.0,
+        "volume": 100.0,
+    }
     assert bars[1]["pct"] == 10.0
+
+
+def test_collect_small_cap_stock_pool_calls_spot_once_and_filters_board_cap_and_st() -> None:
+    class FakeAkshare:
+        def __init__(self) -> None:
+            self.spot_calls = 0
+
+        def stock_zh_a_spot_em(self) -> FakeFrame:
+            self.spot_calls += 1
+            return FakeFrame(
+                [
+                    {"代码": "000001", "名称": "平安银行", "总市值": 9_000_000_000},
+                    {"代码": "600001", "名称": "浦发银行", "总市值": 10_000_000_000},
+                    {"代码": "300001", "名称": "创业板", "总市值": 1_000_000_000},
+                    {"代码": "600002", "名称": "ST样本", "总市值": 1_000_000_000},
+                    {"代码": "600003", "名称": "缺市值", "总市值": None},
+                ]
+            )
+
+    akshare = FakeAkshare()
+
+    pool = collect_small_cap_stock_pool(akshare)
+
+    assert list(pool) == ["000001"]
+    assert pool["000001"].market_cap == 9_000_000_000
+    assert akshare.spot_calls == 1
 
 
 def test_build_snapshot_filters_non_main_board_and_st_stocks() -> None:
@@ -65,6 +102,110 @@ def test_build_snapshot_filters_non_main_board_and_st_stocks() -> None:
 
     assert [stock["symbol"] for stock in payload["stocks"]] == ["600001"]
     assert payload["stocks"][0]["concepts"] == ["机器人"]
+
+
+def test_build_snapshot_separates_original_and_small_cap_sections() -> None:
+    pool = {"000001": StockSeed(symbol="000001", name="平安银行", concepts=[])}
+    small_cap_pool = {
+        "600001": StockSeed(
+            symbol="600001",
+            name="浦发银行",
+            concepts=[],
+            market_cap=9_000_000_000,
+        )
+    }
+    frame = FakeFrame(
+        [
+            {
+                "日期": "2026-07-20",
+                "开盘": 10,
+                "最高": 10.5,
+                "最低": 9.8,
+                "收盘": 10,
+                "涨跌幅": 1,
+                "成交量": 100,
+            },
+            {
+                "日期": "2026-07-21",
+                "开盘": 10,
+                "最高": 11,
+                "最低": 9.9,
+                "收盘": 10.5,
+                "涨跌幅": 5,
+                "成交量": 200,
+            },
+        ]
+    )
+
+    payload = build_snapshot(
+        pool,
+        lambda _: frame,
+        datetime(2026, 7, 21, tzinfo=UTC),
+        min_bars=2,
+        small_cap_pool=small_cap_pool,
+    )
+
+    assert [stock["symbol"] for stock in payload["stocks"]] == ["000001"]
+    assert [stock["symbol"] for stock in payload["small_cap_stocks"]] == ["600001"]
+    assert payload["small_cap_stocks"][0]["market_cap"] == 9_000_000_000
+
+
+def test_atomic_writer_accepts_a_non_empty_small_cap_section(tmp_path: Path) -> None:
+    output = tmp_path / "latest.json"
+    payload = {
+        "generated_at": "2026-07-21T15:35:00+08:00",
+        "stocks": [],
+        "small_cap_stocks": [{"symbol": "600001"}],
+    }
+
+    write_snapshot_atomic(payload, output)
+
+    assert json.loads(output.read_text(encoding="utf-8")) == payload
+
+
+def test_main_keeps_old_small_cap_rows_when_market_cap_refresh_fails(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import workers.user_strategy_snapshot as worker
+
+    output = tmp_path / "latest.json"
+    output.write_text(
+        json.dumps(
+            {
+                "generated_at": "2026-07-20T15:35:00+08:00",
+                "stocks": [{"symbol": "600001"}],
+                "small_cap_stocks": [{"symbol": "000001", "market_cap": 1_000_000_000}],
+                "small_cap_generated_at": "2026-07-20T15:35:00+08:00",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    monkeypatch.setitem(sys.modules, "akshare", SimpleNamespace())
+    monkeypatch.setattr(worker, "collect_hot_stock_pool", lambda *_args, **_kwargs: {})
+    monkeypatch.setattr(
+        worker,
+        "collect_small_cap_stock_pool",
+        lambda *_args, **_kwargs: (_ for _ in ()).throw(ConnectionError("市值接口失败")),
+    )
+    monkeypatch.setattr(
+        worker,
+        "build_snapshot",
+        lambda *_args, **_kwargs: {
+            "generated_at": "2026-07-21T15:35:00+08:00",
+            "stocks": [{"symbol": "600002"}],
+            "small_cap_stocks": [],
+        },
+    )
+
+    assert worker.main(["--output", str(output)]) == 0
+    payload = json.loads(output.read_text(encoding="utf-8"))
+
+    assert payload["stocks"] == [{"symbol": "600002"}]
+    assert payload["small_cap_stocks"] == [{"symbol": "000001", "market_cap": 1_000_000_000}]
+    assert payload["small_cap_status"] == "error"
+    assert payload["small_cap_generated_at"] == "2026-07-20T15:35:00+08:00"
 
 
 def test_atomic_writer_does_not_replace_old_snapshot_with_empty_result(tmp_path: Path) -> None:
