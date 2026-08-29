@@ -1,6 +1,6 @@
 """Pure, explainable implementations of the user's stock-selection rules."""
 
-from datetime import UTC, datetime
+from datetime import UTC, date as date_type, datetime
 
 from pydantic import BaseModel, Field
 
@@ -14,6 +14,7 @@ class PriceBar(BaseModel):
     close: float
     pct: float
     volume: float
+    date: date_type | None = None
 
 
 class StockSeries(BaseModel):
@@ -21,6 +22,7 @@ class StockSeries(BaseModel):
     name: str
     bars: list[PriceBar]
     concepts: list[str] = Field(default_factory=list)
+    market_cap: float | None = None
 
 
 class StrategyResult(BaseModel):
@@ -40,6 +42,8 @@ _STRATEGIES = (
     ("dragon", "龙头识别"),
 )
 
+SMALL_CAP_MARKET_CAP_LIMIT = 10_000_000_000
+
 
 def evaluate_stock_strategies(stock: StockSeries) -> list[StrategyResult]:
     """Evaluate every rule and retain explanations for both matches and rejections."""
@@ -51,6 +55,89 @@ def evaluate_stock_strategies(stock: StockSeries) -> list[StrategyResult]:
         return _blocked_results("ST 股票不进入候选池")
 
     return [_evaluate_2b(stock.bars), _evaluate_ma5(stock.bars), _evaluate_dragon(stock.bars)]
+
+
+def evaluate_small_cap_absorption(stock: StockSeries) -> StrategyResult:
+    """Find the earliest recent two-times-volume day after a stable 30-day base."""
+    result = StrategyResult(
+        strategy_id="small_cap_absorption",
+        strategy_name="小市值倍量吸筹",
+        matched=False,
+        score=0,
+    )
+    try:
+        normalize_symbol(stock.symbol)
+    except InvalidMainBoardSymbol:
+        result.risk_flags.append("非 A 股主板")
+        return result
+    if "ST" in stock.name.upper() or "退" in stock.name:
+        result.risk_flags.append("ST 股票不进入候选池")
+        return result
+    if stock.market_cap is None:
+        result.risk_flags.append("缺少总市值")
+        return result
+    if stock.market_cap >= SMALL_CAP_MARKET_CAP_LIMIT:
+        result.risk_flags.append("总市值不低于 100 亿元")
+        return result
+    if len(stock.bars) < 38:
+        result.risk_flags.append("K 线少于 38 个交易日")
+        return result
+
+    for index in range(len(stock.bars) - 3, len(stock.bars)):
+        window_start = index - 30
+        baseline_start = index - 5
+        if any(bar.date is None for bar in stock.bars[window_start : index + 1]):
+            result.risk_flags.append("倍量吸筹策略缺少交易日期")
+            return result
+
+        baseline_volume = sum(bar.volume for bar in stock.bars[baseline_start:index]) / 5
+        if baseline_volume <= 0:
+            continue
+        volume_multiple = stock.bars[index].volume / baseline_volume
+        if volume_multiple < 2:
+            continue
+
+        previous_spike = False
+        for previous_index in range(window_start, index):
+            previous_baseline = sum(
+                bar.volume for bar in stock.bars[previous_index - 5 : previous_index]
+            ) / 5
+            if previous_baseline > 0 and stock.bars[previous_index].volume >= previous_baseline * 2:
+                previous_spike = True
+                break
+        if previous_spike:
+            continue
+
+        closes = [bar.close for bar in stock.bars[window_start:index]]
+        if any(close <= 0 for close in closes):
+            continue
+        minimum_close = min(closes)
+        price_range_pct = (max(closes) - minimum_close) / minimum_close * 100
+        peak = closes[0]
+        max_drawdown_pct = 0.0
+        for close in closes:
+            peak = max(peak, close)
+            max_drawdown_pct = max(max_drawdown_pct, (peak - close) / peak * 100)
+        if price_range_pct > 25 or max_drawdown_pct > 15:
+            continue
+
+        result.matched = True
+        result.reasons = [
+            "首日倍量",
+            "前 30 个交易日无其他倍量",
+            "放量前 30 日价格波动与回撤受控",
+        ]
+        result.factors = {
+            "market_cap_yuan": round(float(stock.market_cap), 2),
+            "trigger_date": stock.bars[index].date.isoformat(),
+            "volume_multiple": round(volume_multiple, 4),
+            "price_range_pct": round(price_range_pct, 4),
+            "max_drawdown_pct": round(max_drawdown_pct, 4),
+            "first_volume_spike": True,
+        }
+        return result
+
+    return result
 
 
 def _blocked_results(reason: str) -> list[StrategyResult]:

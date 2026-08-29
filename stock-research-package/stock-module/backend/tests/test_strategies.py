@@ -1,4 +1,11 @@
-from app.domain.strategies import PriceBar, StockSeries, evaluate_stock_strategies
+from datetime import date, timedelta
+
+from app.domain.strategies import (
+    PriceBar,
+    StockSeries,
+    evaluate_small_cap_absorption,
+    evaluate_stock_strategies,
+)
 
 
 def _bar(
@@ -77,3 +84,116 @@ def test_st_and_non_main_board_stocks_are_rejected_before_evaluation() -> None:
     assert all("ST 股票不进入候选池" in result.risk_flags for result in st_results)
     assert all(result.matched is False for result in other_board_results)
     assert all("非 A 股主板" in result.risk_flags for result in other_board_results)
+
+
+def test_small_cap_absorption_accepts_exact_two_times_volume_and_marks_first_day() -> None:
+    result = evaluate_small_cap_absorption(
+        _absorption_stock(volumes={-3: 200}, market_cap=9_999_999_999)
+    )
+
+    assert result.matched is True
+    assert result.reasons[0] == "首日倍量"
+    assert result.factors["volume_multiple"] == 2
+    assert result.factors["first_volume_spike"] is True
+    assert result.factors["trigger_date"] == "2026-08-27"
+
+
+def test_small_cap_absorption_rejects_cap_boundary_non_main_board_and_stocks() -> None:
+    cases = (
+        ("000001", "平安银行", 10_000_000_000),
+        ("300001", "创业板样本", 1_000_000_000),
+        ("600001", "ST样本", 1_000_000_000),
+        ("600002", "退市样本", 1_000_000_000),
+    )
+
+    for symbol, name, market_cap in cases:
+        result = evaluate_small_cap_absorption(
+            _absorption_stock(symbol=symbol, name=name, market_cap=market_cap, volumes={-3: 200})
+        )
+        assert result.matched is False
+
+
+def test_small_cap_absorption_rejects_previous_spike_zero_baseline_and_short_history() -> None:
+    previous_spike = {5: 100, 6: 100, 7: 100, 8: 100, 9: 100, 10: 200, -3: 200}
+    assert not evaluate_small_cap_absorption(
+        _absorption_stock(volumes=previous_spike)
+    ).matched
+
+    zero_baseline = {-8: 0, -7: 0, -6: 0, -5: 0, -4: 0, -3: 200, -2: 0, -1: 0}
+    assert not evaluate_small_cap_absorption(
+        _absorption_stock(volumes=zero_baseline)
+    ).matched
+
+    assert not evaluate_small_cap_absorption(
+        _absorption_stock(volumes={-3: 200}, length=37)
+    ).matched
+
+
+def test_small_cap_absorption_uses_earliest_of_three_trade_days() -> None:
+    result = evaluate_small_cap_absorption(
+        _absorption_stock(volumes={-3: 200, -2: 300, -1: 100})
+    )
+
+    assert result.matched is True
+    assert result.factors["trigger_date"] == "2026-08-27"
+
+
+def test_small_cap_absorption_rejects_price_range_and_drawdown_over_limits() -> None:
+    range_bars = _absorption_stock(volumes={-3: 200}).bars
+    range_bars[5] = range_bars[5].model_copy(update={"close": 100.0})
+    range_bars[34] = range_bars[34].model_copy(update={"close": 125.01})
+    assert not evaluate_small_cap_absorption(
+        StockSeries(symbol="600001", name="样本", market_cap=1_000_000_000, bars=range_bars)
+    ).matched
+
+    drawdown_bars = _absorption_stock(volumes={-3: 200}).bars
+    peak = 120.0
+    trough = peak * (1 - 0.1501)
+    drawdown_bars[5] = drawdown_bars[5].model_copy(update={"close": peak})
+    drawdown_bars[20] = drawdown_bars[20].model_copy(update={"close": trough})
+    assert not evaluate_small_cap_absorption(
+        StockSeries(symbol="600001", name="样本", market_cap=1_000_000_000, bars=drawdown_bars)
+    ).matched
+
+
+def test_small_cap_absorption_requires_dates_and_market_cap() -> None:
+    missing_date = _absorption_stock(volumes={-3: 200}, missing_date=True)
+    assert not evaluate_small_cap_absorption(missing_date).matched
+    assert not evaluate_small_cap_absorption(
+        _absorption_stock(volumes={-3: 200}, market_cap=None)
+    ).matched
+
+
+def _absorption_stock(
+    *,
+    symbol: str = "600001",
+    name: str = "样本股份",
+    market_cap: float | None = 1_000_000_000,
+    length: int = 38,
+    volumes: dict[int, float] | None = None,
+    missing_date: bool = False,
+) -> StockSeries:
+    volume_values = [100.0] * length
+    for index, value in (volumes or {}).items():
+        volume_values[index] = value
+    bars = [
+        _absorption_bar(
+            close=100.0,
+            volume=volume_values[index],
+            trade_date=None if missing_date else date(2026, 7, 23) + timedelta(days=index),
+        )
+        for index in range(length)
+    ]
+    return StockSeries(symbol=symbol, name=name, market_cap=market_cap, bars=bars)
+
+
+def _absorption_bar(*, close: float, volume: float, trade_date: date | None) -> PriceBar:
+    return PriceBar(
+        date=trade_date,
+        open=close,
+        high=close,
+        low=close,
+        close=close,
+        pct=0.0,
+        volume=volume,
+    )
