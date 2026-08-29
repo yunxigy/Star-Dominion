@@ -15,4 +15,10 @@ describe('homepage spacing and copy contract', () => {
     expect(source).toContain('className="glass-card rounded-[2rem] p-6 sm:p-8 flex flex-col gap-8"');
     expect(source).not.toContain('flex flex-col justify-between gap-8');
   });
+
+  it('shows the curated eight homepage categories without the calculator', () => {
+    expect(source).toContain("const HOME_QUICK_CATEGORY_IDS = ['pdf', 'image', 'image-enhance', 'converter', 'dev', 'tarot', 'audio', 'video'] as const;");
+    expect(source).toContain('{HOME_QUICK_CATEGORIES.map((category) => {');
+    expect(source).not.toContain('CATEGORIES.slice(0, 6)');
+  });
 });

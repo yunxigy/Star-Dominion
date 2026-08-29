@@ -23,6 +23,12 @@ const HOT_TOOLS = [
   'ocr-recognition', 'text-translate', 'grammar-check', 'word-count'
 ];
 
+const HOME_QUICK_CATEGORY_IDS = ['pdf', 'image', 'image-enhance', 'converter', 'dev', 'tarot', 'audio', 'video'] as const;
+const HOME_QUICK_CATEGORIES = HOME_QUICK_CATEGORY_IDS.flatMap((id) => {
+  const category = CATEGORIES.find((item) => item.id === id);
+  return category ? [category] : [];
+});
+
 const RealTimeClock: React.FC = () => {
   const [time, setTime] = useState(new Date());
 
@@ -192,7 +198,7 @@ export const HomePage: React.FC = () => {
         >
           <RealTimeClock />
           <div className="grid grid-cols-2 gap-3">
-            {CATEGORIES.slice(0, 6).map((category) => {
+            {HOME_QUICK_CATEGORIES.map((category) => {
               const IconComponent = getIcon(category.icon);
               const toolCount = TOOLS.filter(t => t.category === category.id).length;
               return (

@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 收紧首页右侧时钟与分类入口的垂直布局，并将首页首条广告词更新为 200+ 免费在线工具。
+**Goal:** 收紧首页右侧时钟与分类入口的垂直布局，将首页首条广告词更新为 200+ 免费在线工具，并将右侧快捷分类固定为用户确认的 8 个入口。
 
-**Architecture:** 继续使用 `HomePage` 现有的响应式两列结构和 Tailwind utility classes。外层网格改为顶部对齐，右侧卡片保留 `flex-col` 与 `gap-8`，移除 `justify-between`，让卡片按自身内容高度、内容按自然文档流排列；广告词只修改 `TypewriterText` 的首条静态文案。
+**Architecture:** 继续使用 `HomePage` 现有的响应式两列结构和 Tailwind utility classes。外层网格改为顶部对齐，右侧卡片保留 `flex-col` 与 `gap-8`，移除 `justify-between`，让卡片按自身内容高度、内容按自然文档流排列；广告词只修改 `TypewriterText` 的首条静态文案。右侧快捷区通过显式分类 ID 列表映射，避免依赖注册表顺序。
 
 **Tech Stack:** React 18, TypeScript, Tailwind CSS, Vitest, ESLint, Vite。
 
@@ -34,6 +34,12 @@ describe('homepage spacing and copy contract', () => {
     expect(source).not.toContain('items-stretch');
     expect(source).toContain('className="glass-card rounded-[2rem] p-6 sm:p-8 flex flex-col gap-8"');
     expect(source).not.toContain('flex flex-col justify-between gap-8');
+  });
+
+  it('shows the curated eight homepage categories without the calculator', () => {
+    expect(source).toContain("const HOME_QUICK_CATEGORY_IDS = ['pdf', 'image', 'image-enhance', 'converter', 'dev', 'tarot', 'audio', 'video'] as const;");
+    expect(source).toContain('{HOME_QUICK_CATEGORIES.map((category) => {');
+    expect(source).not.toContain('CATEGORIES.slice(0, 6)');
   });
 });
 ```
@@ -76,7 +82,34 @@ Run: `npm.cmd test -- --run pages/homePageSourceContract.test.ts`
 
 Expected: PASS with 2 tests passing.
 
-### Task 3: Verify the full frontend quality gates
+### Task 3: Curate the homepage quick categories
+
+**Files:**
+- Modify: `pages/HomePage.tsx:20-25,195`
+
+- [ ] **Step 1: Add a stable category ID list and resolve it against the registry**
+
+```tsx
+const HOME_QUICK_CATEGORY_IDS = ['pdf', 'image', 'image-enhance', 'converter', 'dev', 'tarot', 'audio', 'video'] as const;
+const HOME_QUICK_CATEGORIES = HOME_QUICK_CATEGORY_IDS.flatMap((id) => {
+  const category = CATEGORIES.find((item) => item.id === id);
+  return category ? [category] : [];
+});
+```
+
+- [ ] **Step 2: Render the curated list**
+
+```tsx
+{HOME_QUICK_CATEGORIES.map((category) => {
+```
+
+- [ ] **Step 3: Run the focused regression test**
+
+Run: `npm.cmd test -- --run pages/homePageSourceContract.test.ts`
+
+Expected: PASS with 3 tests passing.
+
+### Task 4: Verify the full frontend quality gates
 
 **Files:**
 - No additional files.
@@ -102,6 +135,6 @@ Expected: Vite completes successfully with exit code 0.
 - [ ] **Step 4: Commit the implementation**
 
 ```bash
-git add pages/HomePage.tsx pages/homePageSourceContract.test.ts
-git commit -m "fix: tighten homepage rail spacing and update tool copy"
+git add pages/HomePage.tsx pages/homePageSourceContract.test.ts docs/superpowers/specs/2026-08-29-home-layout-copy-design.md docs/superpowers/plans/2026-08-29-home-layout-copy-update.md
+git commit -m "fix: curate homepage quick categories"
 ```
