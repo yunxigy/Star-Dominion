@@ -1,4 +1,5 @@
 from datetime import date, timedelta
+import math
 
 from app.domain.strategies import (
     PriceBar,
@@ -156,11 +157,31 @@ def test_small_cap_absorption_rejects_price_range_and_drawdown_over_limits() -> 
     ).matched
 
 
+def test_small_cap_absorption_accepts_exact_stability_boundaries() -> None:
+    range_bars = _absorption_stock(volumes={-3: 200}).bars
+    range_bars[5] = range_bars[5].model_copy(update={"close": 100.0})
+    range_bars[34] = range_bars[34].model_copy(update={"close": 125.0})
+    assert evaluate_small_cap_absorption(
+        StockSeries(symbol="600001", name="样本", market_cap=1_000_000_000, bars=range_bars)
+    ).matched
+
+    drawdown_bars = _absorption_stock(volumes={-3: 200}).bars
+    for index in range(6, 35):
+        drawdown_bars[index] = drawdown_bars[index].model_copy(update={"close": 102.0})
+    drawdown_bars[5] = drawdown_bars[5].model_copy(update={"close": 120.0})
+    assert evaluate_small_cap_absorption(
+        StockSeries(symbol="600001", name="样本", market_cap=1_000_000_000, bars=drawdown_bars)
+    ).matched
+
+
 def test_small_cap_absorption_requires_dates_and_market_cap() -> None:
     missing_date = _absorption_stock(volumes={-3: 200}, missing_date=True)
     assert not evaluate_small_cap_absorption(missing_date).matched
     assert not evaluate_small_cap_absorption(
         _absorption_stock(volumes={-3: 200}, market_cap=None)
+    ).matched
+    assert not evaluate_small_cap_absorption(
+        _absorption_stock(volumes={-3: 200}, market_cap=math.nan)
     ).matched
 
 

@@ -1,6 +1,7 @@
 """Pure, explainable implementations of the user's stock-selection rules."""
 
 from datetime import UTC, date as date_type, datetime
+import math
 
 from pydantic import BaseModel, Field
 
@@ -73,7 +74,7 @@ def evaluate_small_cap_absorption(stock: StockSeries) -> StrategyResult:
     if "ST" in stock.name.upper() or "退" in stock.name:
         result.risk_flags.append("ST 股票不进入候选池")
         return result
-    if stock.market_cap is None:
+    if stock.market_cap is None or not math.isfinite(stock.market_cap):
         result.risk_flags.append("缺少总市值")
         return result
     if stock.market_cap >= SMALL_CAP_MARKET_CAP_LIMIT:
