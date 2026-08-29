@@ -118,6 +118,41 @@ const candidateCollection = {
   ],
 };
 
+const smallCapCandidate = {
+  stock: { symbol: "600001", name: "小市值样本", exchange: "SSE" },
+  sources: [
+    {
+      source_id: "small_cap_absorption",
+      source_name: "小市值倍量吸筹",
+      score: null,
+      reasons: ["首日倍量"],
+      factors: {
+        market_cap_yuan: 9_000_000_000,
+        trigger_date: "2026-08-27",
+        volume_multiple: 2.4,
+        price_range_pct: 12,
+        max_drawdown_pct: 8,
+        first_volume_spike: true,
+      },
+    },
+  ],
+  generated_at: "2026-07-22T09:01:00+08:00",
+};
+
+const smallCapCandidateCollection = {
+  items: [...candidateCollection.items, smallCapCandidate],
+  sources: [
+    ...candidateCollection.sources,
+    {
+      source_id: "small_cap_absorption",
+      source_name: "小市值倍量吸筹",
+      status: "ok" as const,
+      generated_at: "2026-07-22T09:01:00+08:00",
+      error: null,
+    },
+  ],
+};
+
 const researchContext = {
   symbol: "000400",
   name: "许继电气",
@@ -264,6 +299,46 @@ test("lists detail actions for both 九研 and personal strategy candidates", as
   expect(await screen.findByRole("button", { name: "查看 许继电气 详情" })).toBeInTheDocument();
   expect(screen.getByRole("button", { name: "查看 海康威视 详情" })).toBeInTheDocument();
   expect(screen.getAllByText("海外电力资本开支映射").length).toBeGreaterThan(0);
+});
+
+test("keeps the small-cap strategy in its own column and opens the shared detail", async () => {
+  mocks.loadCandidates.mockResolvedValueOnce(structuredClone(smallCapCandidateCollection));
+  mocks.loadStockResearchContext.mockResolvedValueOnce({
+    symbol: "600001",
+    name: "小市值样本",
+    exchange: "SSE",
+    cross_hit: false,
+    sources: smallCapCandidate.sources,
+    catalyst: null,
+  });
+
+  render(<App />);
+
+  expect(await screen.findByRole("heading", { name: "我的选股策略" })).toBeInTheDocument();
+  expect(screen.getByRole("heading", { name: "小市值倍量吸筹" })).toBeInTheDocument();
+  expect(screen.getByText("首日倍量")).toBeInTheDocument();
+  expect(document.querySelector(".strategy-panel")?.textContent).not.toContain("小市值样本");
+
+  fireEvent.click(screen.getByRole("button", { name: /查看 小市值样本 600001 详情/ }));
+
+  expect(await screen.findByRole("dialog", { name: "股票研究详情" })).toBeInTheDocument();
+  expect(mocks.loadStockResearchContext).toHaveBeenCalledWith("600001");
+});
+
+test("shows the small-cap stale state without hiding its retained candidate", async () => {
+  mocks.loadCandidates.mockResolvedValueOnce({
+    ...structuredClone(smallCapCandidateCollection),
+    sources: smallCapCandidateCollection.sources.map((source) =>
+      source.source_id === "small_cap_absorption"
+        ? { ...source, status: "stale" as const, error: "市值接口失败" }
+        : source,
+    ),
+  });
+
+  render(<App />);
+
+  expect(await screen.findByText(/沿用上一份小市值快照/)).toBeInTheDocument();
+  expect(screen.getByText("小市值样本")).toBeInTheDocument();
 });
 
 test("labels stale report without hiding its candidates", async () => {

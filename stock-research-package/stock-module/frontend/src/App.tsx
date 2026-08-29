@@ -25,6 +25,7 @@ import { MomIndexPanel } from "./components/MomIndexPanel";
 import { MorningReportPanel } from "./components/MorningReportPanel";
 import { MorningNewspaper } from "./components/MorningNewspaper";
 import { QuickStockLookup } from "./components/QuickStockLookup";
+import { SmallCapAbsorptionPanel } from "./components/SmallCapAbsorptionPanel";
 import { StrategyPanel } from "./components/StrategyPanel";
 import { StockResearchModal } from "./components/StockResearchModal";
 import { WorkspaceHeader } from "./components/WorkspaceHeader";
@@ -319,6 +320,13 @@ function StockWorkspace() {
               items={candidates.items}
               sources={candidates.sources}
               catalystSymbols={catalystSymbols}
+              refreshing={refreshing}
+              onOpenDetail={openDetail}
+              onRefresh={() => void refreshAll()}
+            />
+            <SmallCapAbsorptionPanel
+              items={candidates.items}
+              sources={candidates.sources}
               refreshing={refreshing}
               onOpenDetail={openDetail}
               onRefresh={() => void refreshAll()}
