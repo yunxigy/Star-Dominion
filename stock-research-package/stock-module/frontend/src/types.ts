@@ -3,6 +3,7 @@ export type CandidateSource = {
   source_name: string;
   score: number | null;
   reasons: string[];
+  factors?: Record<string, number | boolean | string>;
 };
 
 export type CandidateStock = {
@@ -151,10 +152,11 @@ export type MorningReportHistoryResponse = {
 };
 
 export type ResearchSourceEvidence = {
-  source_id: "catalyst" | "user_strategy";
+  source_id: "catalyst" | "user_strategy" | "small_cap_absorption";
   source_name: string;
   score: number | null;
   reasons: string[];
+  factors?: Record<string, number | boolean | string>;
 };
 
 export type StockResearchContext = {

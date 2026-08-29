@@ -28,6 +28,15 @@ export function StockEvidenceGrid({ context }: Props) {
             <b>{source.score?.toFixed(0) ?? "规则命中"}</b>
           </div>
           <ul>{source.reasons.map((reason) => <li key={reason}>{reason}</li>)}</ul>
+          {source.factors && Object.keys(source.factors).length > 0 && (
+            <dl className="evidence-factor-grid">
+              <EvidenceFactor label="总市值" value={formatMarketCap(source.factors.market_cap_yuan)} />
+              <EvidenceFactor label="触发日期" value={formatText(source.factors.trigger_date)} />
+              <EvidenceFactor label="倍量" value={formatMultiple(source.factors.volume_multiple)} />
+              <EvidenceFactor label="30日区间" value={formatPercent(source.factors.price_range_pct)} />
+              <EvidenceFactor label="最大回撤" value={formatPercent(source.factors.max_drawdown_pct)} />
+            </dl>
+          )}
         </section>
       ))}
       {catalyst && (
@@ -65,6 +74,26 @@ export function StockEvidenceGrid({ context }: Props) {
       )}
     </div>
   );
+}
+
+function EvidenceFactor({ label, value }: { label: string; value: string }) {
+  return <div><dt>{label}</dt><dd>{value}</dd></div>;
+}
+
+function formatMarketCap(value: number | boolean | string | undefined): string {
+  return typeof value === "number" ? `${(value / 100_000_000).toFixed(2)} 亿元` : "—";
+}
+
+function formatMultiple(value: number | boolean | string | undefined): string {
+  return typeof value === "number" ? `${value.toFixed(2)} 倍` : "—";
+}
+
+function formatPercent(value: number | boolean | string | undefined): string {
+  return typeof value === "number" ? `${value.toFixed(2)}%` : "—";
+}
+
+function formatText(value: number | boolean | string | undefined): string {
+  return typeof value === "string" || typeof value === "number" ? String(value) : "—";
 }
 
 function EvidenceList({
