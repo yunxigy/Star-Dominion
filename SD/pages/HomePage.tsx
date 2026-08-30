@@ -205,13 +205,13 @@ export const HomePage: React.FC = () => {
                 <Link
                   key={category.id}
                   to={`/gj?category=${category.id}`}
-                    className="rounded-2xl border border-[#d8b58e] bg-[#fff4e6]/80 p-4 hover:border-[#b47a43] hover:bg-[#f1dcc2] transition-colors group"
+                    className="home-quick-category-card rounded-2xl border border-[#d8b58e] bg-[#fff4e6]/80 p-4 hover:border-[#b47a43] hover:bg-[#f1dcc2] transition-colors group"
                 >
                   <div className={`inline-flex p-2 rounded-xl bg-gradient-to-br ${category.gradient} mb-3`}>
                     <IconComponent className="w-5 h-5 text-white" />
                   </div>
-                  <div className="text-base font-bold text-[#2f241b] group-hover:text-[#6f3714]">{category.name}</div>
-                  <div className="text-sm text-[#6d5a47] mt-1">{toolCount} 个</div>
+                  <div className="home-quick-category-card__title text-base font-bold text-[#2f241b] group-hover:text-[#6f3714]">{category.name}</div>
+                  <div className="home-quick-category-card__count text-sm text-[#6d5a47] mt-1">{toolCount} 个</div>
                 </Link>
               );
             })}

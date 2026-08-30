@@ -28,18 +28,18 @@ export const ProjectGallery: React.FC<ProjectGalleryProps> = ({
       <div className="grid grid-cols-2 gap-3 md:grid-cols-3 2xl:grid-cols-5 max-md:flex max-md:snap-x max-md:overflow-x-auto max-md:pb-2">
         {PROJECT_LINKS.map(project => {
           const ProjectIcon = getIcon(project.icon);
-          const className = `group flex h-full flex-col rounded-2xl bg-gradient-to-br ${project.gradient} border ${project.border} p-4 transition-transform transition-shadow hover:-translate-y-0.5 hover:shadow-md max-md:min-w-[78%] max-md:snap-start`;
+          const className = `project-gallery-card group flex h-full flex-col rounded-2xl bg-gradient-to-br ${project.gradient} border ${project.border} p-4 transition-transform transition-shadow hover:-translate-y-0.5 hover:shadow-md max-md:min-w-[78%] max-md:snap-start`;
           const content = (
             <>
               <div className="mb-3 flex items-center justify-between gap-2">
-                <span className="rounded-xl bg-white/65 p-2 text-[#6f3714] shadow-sm">
+                <span className="project-gallery-card__icon rounded-xl bg-white/65 p-2 text-[#6f3714] shadow-sm">
                   <ProjectIcon className="h-5 w-5" aria-hidden="true" />
                 </span>
-                <ArrowRight className="h-4 w-4 text-[#9d8268] transition-transform group-hover:translate-x-1" aria-hidden="true" />
+                <ArrowRight className="project-gallery-card__arrow h-4 w-4 text-[#9d8268] transition-transform group-hover:translate-x-1" aria-hidden="true" />
               </div>
-              <h3 className={`text-base font-black text-[#2f241b] ${project.textColor} transition-colors`}>{project.name}</h3>
-              <p className="mt-1.5 line-clamp-2 text-sm leading-5 text-[#5c4937]">{project.description}</p>
-              <span className={`mt-auto pt-3 text-xs font-bold ${project.arrowColor}`}>了解详情</span>
+              <h3 className={`project-gallery-card__title text-base font-black text-[#2f241b] ${project.textColor} transition-colors`}>{project.name}</h3>
+              <p className="project-gallery-card__description mt-1.5 line-clamp-2 text-sm leading-5 text-[#5c4937]">{project.description}</p>
+              <span className={`project-gallery-card__action mt-auto pt-3 text-xs font-bold ${project.arrowColor}`}>了解详情</span>
             </>
           );
 

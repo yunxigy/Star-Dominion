@@ -825,6 +825,67 @@
 [data-theme="dark"] [class~="border-[#c79f72]"],
 [data-theme="dark"] [class~="border-[#d8b58e]"] { border-color: var(--border) !important; }
 
+/* Homepage cards with opacity/gradient utilities need semantic dark-mode overrides. */
+[data-theme="dark"] .home-quick-category-card {
+  background-color: var(--surface-muted) !important;
+  border-color: var(--border) !important;
+}
+
+[data-theme="dark"] .home-quick-category-card:hover {
+  background-color: var(--surface-hover) !important;
+  border-color: var(--border-strong) !important;
+}
+
+[data-theme="dark"] .home-quick-category-card__title {
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .home-quick-category-card:hover .home-quick-category-card__title {
+  color: var(--accent-strong) !important;
+}
+
+[data-theme="dark"] .home-quick-category-card__count {
+  color: var(--text-muted) !important;
+}
+
+/* Project cards carry light gradient utilities in their content metadata; replace that chrome as a unit. */
+[data-theme="dark"] .project-gallery-card {
+  background-color: var(--surface-muted) !important;
+  background-image: none !important;
+  border-color: var(--border) !important;
+  color: var(--text);
+}
+
+[data-theme="dark"] .project-gallery-card:hover {
+  background-color: var(--surface-hover) !important;
+  border-color: var(--border-strong) !important;
+}
+
+[data-theme="dark"] .project-gallery-card__icon {
+  color: var(--accent-strong) !important;
+  background: color-mix(in srgb, var(--accent) 16%, var(--surface)) !important;
+}
+
+[data-theme="dark"] .project-gallery-card__arrow {
+  color: var(--text-soft) !important;
+}
+
+[data-theme="dark"] .project-gallery-card__title {
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .project-gallery-card:hover .project-gallery-card__title {
+  color: var(--accent-strong) !important;
+}
+
+[data-theme="dark"] .project-gallery-card__description {
+  color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .project-gallery-card__action {
+  color: var(--accent-strong) !important;
+}
+
 /* Existing tool pages start with a warm compatibility layer; dark mode replaces only its chrome. */
 [data-theme="dark"] .tool-window-bg [class*="bg-slate-900"],
 [data-theme="dark"] .tool-window-bg [class*="bg-slate-800"],
