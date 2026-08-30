@@ -25,6 +25,15 @@ venv/
 *.swp
 *.swo
 
+# Agent-only planning and visual QA artifacts (not runtime or deploy inputs)
+**/.agents/
+**/design-qa*.png
+**/design-qa.md
+docs/superpowers/plans/
+docs/superpowers/specs/
+SD/docs/superpowers/plans/
+SD/docs/superpowers/specs/
+
 # OS
 .DS_Store
 Thumbs.db
