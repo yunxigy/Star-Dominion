@@ -27,6 +27,12 @@ export const ThemeControl: React.FC<{ compact?: boolean }> = ({ compact = false 
     return () => document.removeEventListener('pointerdown', closeOnOutsidePointer);
   }, [open]);
 
+  useEffect(() => {
+    if (!open) return;
+    const selectedIndex = OPTIONS.findIndex((option) => option.value === preference);
+    optionRefs.current[selectedIndex < 0 ? 0 : selectedIndex]?.focus();
+  }, [open, preference]);
+
   const focusOption = (index: number) => optionRefs.current[(index + OPTIONS.length) % OPTIONS.length]?.focus();
 
   return (
@@ -50,6 +56,7 @@ export const ThemeControl: React.FC<{ compact?: boolean }> = ({ compact = false 
           ref={menuRef}
           id={menuId}
           role="menu"
+          tabIndex={-1}
           aria-label="选择主题"
           className="theme-menu"
           onKeyDown={(event) => {

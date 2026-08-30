@@ -17,7 +17,9 @@ describe('ThemeControl', () => {
     expect(trigger.getAttribute('aria-expanded')).toBe('false');
     fireEvent.click(trigger);
     expect(screen.getByRole('menu')).toBeTruthy();
-    expect(screen.getByRole('menuitemradio', { name: '跟随系统' }).getAttribute('aria-checked')).toBe('true');
+    const systemOption = screen.getByRole('menuitemradio', { name: '跟随系统' });
+    expect(systemOption.getAttribute('aria-checked')).toBe('true');
+    expect(document.activeElement).toBe(systemOption);
     expect(screen.getAllByRole('menuitemradio')).toHaveLength(3);
   });
 

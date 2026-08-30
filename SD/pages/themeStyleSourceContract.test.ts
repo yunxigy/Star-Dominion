@@ -11,6 +11,9 @@ describe('theme style contract', () => {
     expect(css).toContain('background: var(--surface-glass)');
     expect(css).toContain('background: var(--mesh-background)');
     expect(css).toContain('[data-theme="dark"] .tool-window-bg');
+    expect(css).toContain('--preview-surface: #211a15');
+    expect(css).toContain('[data-theme="dark"] .image-workbench__preview');
+    expect(css).toContain('[data-theme="dark"] .image-workbench__preview-empty');
   });
 
   it('does not leave the standalone page shell pinned to the light text color', () => {
