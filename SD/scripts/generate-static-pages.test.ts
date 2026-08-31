@@ -35,6 +35,8 @@ describe('generateStaticSite', () => {
     const toolPage = readFileSync(join(distDir, 'tool', 'merge-pdf', 'index.html'), 'utf8');
     const categoryPage = readFileSync(join(distDir, 'category', 'pdf', 'index.html'), 'utf8');
     const directoryPage = readFileSync(join(distDir, 'gj', 'index.html'), 'utf8');
+    const gamesPage = readFileSync(join(distDir, 'games', 'index.html'), 'utf8');
+    const gamePage = readFileSync(join(distDir, 'games', 'connect-four', 'index.html'), 'utf8');
     const sitemap = readFileSync(join(distDir, 'sitemap.xml'), 'utf8');
 
     expect(existsSync(join(distDir, 'tool', 'merge-pdf', 'index.html'))).toBe(true);
@@ -42,7 +44,13 @@ describe('generateStaticSite', () => {
     expect(toolPage).toContain('href="/tool/merge-pdf"');
     expect(categoryPage).toContain('https://zhumenggy.top/category/pdf');
     expect(directoryPage).toContain('href="/category/pdf"');
+    expect(gamesPage).toContain('趣味游戏');
+    expect(gamesPage).toContain('href="/games/connect-four"');
+    expect(gamePage).toContain('https://zhumenggy.top/games/connect-four');
+    expect(gamePage).toContain('href="/games/connect-four"');
     expect(sitemap).toContain('<loc>https://zhumenggy.top/tool/merge-pdf</loc>');
     expect(sitemap).toContain('<loc>https://zhumenggy.top/category/pdf</loc>');
+    expect(sitemap).toContain('<loc>https://zhumenggy.top/games</loc>');
+    expect(sitemap).toContain('<loc>https://zhumenggy.top/games/connect-four</loc>');
   });
 });

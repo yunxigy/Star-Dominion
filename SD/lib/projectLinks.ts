@@ -13,6 +13,16 @@ export interface ProjectLink {
 
 export const PROJECT_LINKS: ProjectLink[] = [
   {
+    path: '/games',
+    name: '趣味游戏',
+    description: '七款本地棋类小游戏，支持人机与双人同屏对战',
+    icon: 'Gamepad2',
+    gradient: 'from-[#dfe5cf] to-[#d7e8e2]',
+    border: 'border-[#b8cba8] hover:border-[#7f9d6c]',
+    textColor: 'group-hover:text-[#4d5b33]',
+    arrowColor: 'text-[#5f6f42]',
+  },
+  {
     path: '/fy',
     name: '智创翻译',
     description: '基于 PaddleOCR 与百度翻译 API 的屏幕实时翻译工具',

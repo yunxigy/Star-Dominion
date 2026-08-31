@@ -7,7 +7,8 @@ import { ImageWorkbench } from './ImageWorkbench';
 const stylesheet = readFileSync(new URL('../../../index.css', import.meta.url), 'utf8');
 const marker = '/* ===== Image workbench ===== */';
 const markerIndex = stylesheet.indexOf(marker);
-const workbenchCss = stylesheet.slice(markerIndex);
+const nextSectionIndex = stylesheet.indexOf('/* ===== 本地趣味游戏 ===== */', markerIndex + marker.length);
+const workbenchCss = stylesheet.slice(markerIndex, nextSectionIndex >= 0 ? nextSectionIndex : undefined);
 
 const html = renderToStaticMarkup(createElement(ImageWorkbench, {
   upload: createElement('span', null, 'upload'),

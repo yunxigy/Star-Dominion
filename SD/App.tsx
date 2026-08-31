@@ -19,6 +19,8 @@ const AIReportsPage = lazy(() => import('./pages/AIReportsPage').then(module => 
 const NewsEventsPage = lazy(() => import('./pages/NewsEventsPage').then(module => ({ default: module.NewsEventsPage })));
 const AIBriefingPage = lazy(() => import('./pages/AIBriefingPage').then(module => ({ default: module.AIBriefingPage })));
 const ToolWindow = lazy(() => import('./components/ToolWindow'));
+const GamesPage = lazy(() => import('./pages/GamesPage').then(module => ({ default: module.GamesPage })));
+const GamePage = lazy(() => import('./pages/GamePage').then(module => ({ default: module.GamePage })));
 
 export default function App() {
   return (
@@ -41,6 +43,8 @@ export default function App() {
               <Route path="/reports/news" element={<NewsEventsPage />} />
               <Route path="/reports/briefing" element={<AIBriefingPage />} />
               <Route path="/auth/login" element={<LoginPage />} />
+              <Route path="/games" element={<GamesPage />} />
+              <Route path="/games/:gameId" element={<GamePage />} />
 
               {/* 工具详情页沿用主应用壳层，保持左侧工具目录可见 */}
               <Route path="/tool/:toolId" element={<ToolWindow />} />

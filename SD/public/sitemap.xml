@@ -2,6 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>https://zhumenggy.top/</loc></url>
   <url><loc>https://zhumenggy.top/gj</loc></url>
+  <url><loc>https://zhumenggy.top/games</loc></url>
   <url><loc>https://zhumenggy.top/category/pdf</loc></url>
   <url><loc>https://zhumenggy.top/category/image</loc></url>
   <url><loc>https://zhumenggy.top/category/image-enhance</loc></url>
@@ -103,6 +104,7 @@
   <url><loc>https://zhumenggy.top/tool/random-nickname</loc></url>
   <url><loc>https://zhumenggy.top/tool/what-to-eat</loc></url>
   <url><loc>https://zhumenggy.top/tool/random-picker</loc></url>
+  <url><loc>https://zhumenggy.top/tool/dice-tool</loc></url>
   <url><loc>https://zhumenggy.top/tool/image-sharpness</loc></url>
   <url><loc>https://zhumenggy.top/tool/image-brightness</loc></url>
   <url><loc>https://zhumenggy.top/tool/image-sharpen</loc></url>
@@ -232,4 +234,11 @@
   <url><loc>https://zhumenggy.top/tool/text-diff-advanced</loc></url>
   <url><loc>https://zhumenggy.top/tool/markdown-editor</loc></url>
   <url><loc>https://zhumenggy.top/tool/vcard-qr</loc></url>
+  <url><loc>https://zhumenggy.top/games/tic-tac-toe</loc></url>
+  <url><loc>https://zhumenggy.top/games/connect-four</loc></url>
+  <url><loc>https://zhumenggy.top/games/gomoku</loc></url>
+  <url><loc>https://zhumenggy.top/games/othello</loc></url>
+  <url><loc>https://zhumenggy.top/games/chess</loc></url>
+  <url><loc>https://zhumenggy.top/games/xiangqi</loc></url>
+  <url><loc>https://zhumenggy.top/games/checkers</loc></url>
 </urlset>

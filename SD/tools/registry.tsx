@@ -119,6 +119,7 @@ const RandomPassword = React.lazy(() => import('../components/tools/fun/RandomPa
 const RandomNickname = React.lazy(() => import('../components/tools/fun/RandomNickname'));
 const WhatToEat = React.lazy(() => import('../components/tools/fun/WhatToEat'));
 const RandomPicker = React.lazy(() => import('../components/tools/fun/RandomPicker'));
+const DiceTool = React.lazy(() => import('../components/tools/fun/DiceTool'));
 
 // ── 图片增强 ───────────────────────────────────────────────
 const ImageSharpness = React.lazy(() => import('../components/tools/image-enhance/ImageSharpness'));
@@ -378,6 +379,7 @@ const TOOL_DEFINITIONS: ToolDefinition[] = [
   { id: 'random-nickname', name: '随机昵称生成', description: '生成有趣随机昵称', icon: 'Smile', category: 'fun', color: 'pink', gradient: 'from-pink-600 to-rose-600', glow: 'rgba(236,72,153,0.3)', component: RandomNickname },
   { id: 'what-to-eat', name: '今天吃什么', description: '随机推荐今天吃什么', icon: 'UtensilsCrossed', category: 'fun', color: 'pink', gradient: 'from-pink-600 to-rose-600', glow: 'rgba(236,72,153,0.3)', component: WhatToEat },
   { id: 'random-picker', name: '随机选择器', description: '从选项中随机选择一个', icon: 'Shuffle', category: 'fun', color: 'pink', gradient: 'from-pink-600 to-rose-600', glow: 'rgba(236,72,153,0.3)', component: RandomPicker },
+  { id: 'dice-tool', name: '幸运骰子', description: '多种面数与颗数的本地随机骰子', icon: 'Dices', category: 'fun', color: 'pink', gradient: 'from-pink-600 to-rose-600', glow: 'rgba(236,72,153,0.3)', component: DiceTool, privacy: 'local', status: 'stable', tags: ['touzi', '骰子', 'suiji', '随机', 'jueding', '决定'] },
 
   // 图片增强
   { id: 'image-sharpness', name: '图片清晰度增强', description: '提升图片清晰度和细节', icon: 'Sparkles', category: 'image-enhance', color: 'emerald', gradient: 'from-emerald-600 to-teal-600', glow: 'rgba(16,185,129,0.3)', component: ImageSharpness },

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation } from 'react-router-dom';
-import { Menu, X, Wrench, Home, Clock, Sparkles, ChevronUp } from 'lucide-react';
+import { Menu, X, Wrench, Home, Clock, Sparkles, ChevronUp, Gamepad2 } from 'lucide-react';
 import { TOOLS } from '../tools/registry';
+import { GAME_CATALOG } from '../games/catalog';
 import { MouseParticles } from '../components/MouseParticles';
 import { AccountMenu } from '../components/AccountMenu';
 import { ThemeControl } from '../components/ThemeControl';
@@ -53,6 +54,7 @@ export const AppLayout: React.FC = () => {
 
   const isHome = location.pathname === '/';
   const isToolDetail = location.pathname.startsWith('/tool/');
+  const isGames = location.pathname.startsWith('/games');
 
   return (
     <div className="min-h-screen mesh-bg">
@@ -127,6 +129,21 @@ export const AppLayout: React.FC = () => {
 
         {/* Full tool directory */}
         <SidebarCatalog onNavigate={() => setSidebarOpen(false)} />
+
+        <div className="px-3 pb-2">
+          <Link
+            to="/games"
+            onClick={() => setSidebarOpen(false)}
+            aria-current={isGames ? 'page' : undefined}
+            className={`sidebar-item ${isGames ? 'active' : ''}`}
+          >
+            <span className="rounded-lg bg-gradient-to-br from-emerald-600 to-teal-600 p-1.5">
+              <Gamepad2 className="h-4 w-4 text-white" aria-hidden="true" />
+            </span>
+            <span className="min-w-0 flex-1 font-medium">趣味游戏</span>
+            <span className="rounded-full bg-[#f1dcc2] px-2 py-0.5 text-xs text-[#6d5a47]">{GAME_CATALOG.length}</span>
+          </Link>
+        </div>
 
         <div className="px-3 pb-4">
           <AccountMenu />
