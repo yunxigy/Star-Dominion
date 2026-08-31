@@ -1,0 +1,747 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DeepResearch Console</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #f6f7f9;
+      --panel: #ffffff;
+      --panel-soft: #eef3f8;
+      --ink: #17202a;
+      --muted: #637083;
+      --line: #d9e0e8;
+      --blue: #2268a8;
+      --green: #1d7a57;
+      --amber: #98620d;
+      --red: #b13a3a;
+      --shadow: 0 14px 40px rgba(22, 34, 51, 0.10);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--bg);
+      color: var(--ink);
+    }
+
+    .shell {
+      display: grid;
+      grid-template-columns: minmax(300px, 420px) minmax(0, 1fr);
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      border-right: 1px solid var(--line);
+      background: var(--panel);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.2;
+      letter-spacing: 0;
+    }
+
+    .status-pill {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 5px 10px;
+      font-size: 12px;
+      color: var(--muted);
+      white-space: nowrap;
+      background: var(--panel-soft);
+    }
+
+    label {
+      display: block;
+      margin: 0 0 7px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    textarea, input, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      font: inherit;
+      padding: 11px 12px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 170px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    textarea:focus, input:focus, select:focus {
+      border-color: #7aa7ce;
+      box-shadow: 0 0 0 3px rgba(34, 104, 168, 0.14);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      border: 1px solid var(--line);
+      background: var(--panel);
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 10px 13px;
+      font: inherit;
+      cursor: pointer;
+    }
+
+    button.primary {
+      background: var(--blue);
+      border-color: var(--blue);
+      color: #fff;
+      flex: 1;
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
+    .meta {
+      display: grid;
+      gap: 7px;
+      border-top: 1px solid var(--line);
+      padding-top: 16px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .meta code {
+      color: var(--ink);
+      word-break: break-all;
+    }
+
+    main {
+      min-width: 0;
+      padding: 22px;
+      display: grid;
+      grid-template-rows: auto auto minmax(0, 1fr);
+      gap: 14px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .topbar h2 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(96px, 1fr));
+      gap: 10px;
+    }
+
+    .metric {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 11px 12px;
+      box-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
+    }
+
+    .metric span {
+      display: block;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .metric strong {
+      font-size: 20px;
+      letter-spacing: 0;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+      gap: 14px;
+      min-height: 0;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .panel-header {
+      padding: 14px 16px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .panel-header h3 {
+      margin: 0;
+      font-size: 15px;
+      letter-spacing: 0;
+    }
+
+    .lane-filter {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+    }
+
+    .lane-filter button {
+      padding: 6px 9px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .lane-filter button.active {
+      border-color: var(--blue);
+      color: var(--blue);
+      background: #eef6fc;
+    }
+
+    .timeline {
+      padding: 10px 12px 18px;
+      overflow: auto;
+      display: grid;
+      gap: 9px;
+    }
+
+    .event {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 11px 12px;
+      background: #fff;
+      display: grid;
+      gap: 7px;
+    }
+
+    .event[data-severity="success"] { border-left: 4px solid var(--green); }
+    .event[data-severity="warning"] { border-left: 4px solid var(--amber); }
+    .event[data-severity="error"] { border-left: 4px solid var(--red); }
+    .event[data-severity="info"] { border-left: 4px solid var(--blue); }
+
+    .event-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .event-title {
+      font-size: 14px;
+      font-weight: 650;
+      line-height: 1.35;
+    }
+
+    .event-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .tag {
+      border-radius: 999px;
+      background: var(--panel-soft);
+      border: 1px solid var(--line);
+      padding: 2px 7px;
+      white-space: nowrap;
+    }
+
+    .summary {
+      font-size: 13px;
+      line-height: 1.55;
+      color: #344150;
+      white-space: pre-wrap;
+    }
+
+    details {
+      border-top: 1px dashed var(--line);
+      padding-top: 7px;
+    }
+
+    summary {
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    pre {
+      margin: 8px 0 0;
+      max-height: 280px;
+      overflow: auto;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 12px;
+      line-height: 1.5;
+      background: #f4f6f8;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+    }
+
+    .agent-list {
+      padding: 10px;
+      overflow: auto;
+      display: grid;
+      gap: 9px;
+    }
+
+    .agent {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px;
+      background: #fff;
+      display: grid;
+      gap: 7px;
+    }
+
+    .agent strong {
+      font-size: 13px;
+    }
+
+    .agent small {
+      color: var(--muted);
+      word-break: break-word;
+    }
+
+    .agent-bar {
+      height: 6px;
+      border-radius: 999px;
+      background: var(--panel-soft);
+      overflow: hidden;
+    }
+
+    .agent-bar span {
+      display: block;
+      height: 100%;
+      width: 0;
+      background: var(--blue);
+      transition: width 200ms ease;
+    }
+
+    .empty {
+      padding: 24px;
+      color: var(--muted);
+      line-height: 1.55;
+      font-size: 14px;
+    }
+
+    @media (max-width: 980px) {
+      .shell, .workspace {
+        grid-template-columns: 1fr;
+      }
+
+      .sidebar {
+        border-right: 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .metrics {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <h1>DeepResearch Console</h1>
+        <span id="status" class="status-pill">idle</span>
+      </div>
+
+      <form id="researchForm">
+        <label for="prompt">研究任务</label>
+        <textarea id="prompt" required>帮我做一份研究马克思主义在中国的发展路线的研究</textarea>
+
+        <div class="grid-2" style="margin-top: 12px;">
+          <div>
+            <label for="language">语言</label>
+            <select id="language">
+              <option value="zh-CN">zh-CN</option>
+              <option value="en">en</option>
+            </select>
+          </div>
+          <div>
+            <label for="trace">流式模式</label>
+            <select id="trace">
+              <option value="full">full</option>
+              <option value="steps">steps</option>
+              <option value="transcript">transcript</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="grid-2" style="margin-top: 12px;">
+          <div>
+            <label for="cycles">最大轮次</label>
+            <input id="cycles" type="number" min="1" max="80" value="30" />
+          </div>
+          <div>
+            <label for="reportCalls">写作调用</label>
+            <input id="reportCalls" type="number" min="1" max="300" value="96" />
+          </div>
+        </div>
+
+        <div class="actions" style="margin-top: 16px;">
+          <button id="startBtn" class="primary" type="submit">Start</button>
+          <button id="cancelBtn" type="button" disabled>Cancel</button>
+        </div>
+      </form>
+
+      <div class="meta">
+        <div>Run ID: <code id="runId">-</code></div>
+        <div>Episode: <code id="episodeId">-</code></div>
+        <div>Report: <code id="reportPath">-</code></div>
+      </div>
+    </aside>
+
+    <main>
+      <div class="topbar">
+        <h2>Agent activity</h2>
+        <button id="replayBtn" type="button" disabled>Replay</button>
+      </div>
+
+      <section class="metrics" aria-label="run metrics">
+        <div class="metric"><span>Events</span><strong id="metricEvents">0</strong></div>
+        <div class="metric"><span>Agents</span><strong id="metricAgents">0</strong></div>
+        <div class="metric"><span>Tools</span><strong id="metricTools">0</strong></div>
+        <div class="metric"><span>Evidence</span><strong id="metricEvidence">0</strong></div>
+        <div class="metric"><span>Issues</span><strong id="metricIssues">0</strong></div>
+      </section>
+
+      <section class="workspace">
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Timeline</h3>
+            <div class="lane-filter" id="laneFilter"></div>
+          </div>
+          <div id="timeline" class="timeline">
+            <div class="empty">运行开始后，这里会按主 agent、子 agent、工具、写作和发布门控显示每一步。</div>
+          </div>
+        </div>
+
+        <div class="panel">
+          <div class="panel-header">
+            <h3>Agents</h3>
+            <span class="status-pill" id="agentHint">0 active</span>
+          </div>
+          <div id="agents" class="agent-list">
+            <div class="empty">子 agent 出现后会在这里按任务聚合。</div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const form = document.getElementById("researchForm");
+    const startBtn = document.getElementById("startBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+    const replayBtn = document.getElementById("replayBtn");
+    const timeline = document.getElementById("timeline");
+    const agentsEl = document.getElementById("agents");
+    const laneFilter = document.getElementById("laneFilter");
+    const statusEl = document.getElementById("status");
+    const state = {
+      runId: "",
+      events: [],
+      frames: [],
+      agents: new Map(),
+      lane: "all",
+      counts: { tools: 0, evidence: 0, issues: 0 },
+      aborting: false,
+    };
+    const lanes = ["all", "main", "subagent", "tool", "writer", "gate", "artifact"];
+
+    laneFilter.innerHTML = lanes.map((lane) => `<button type="button" data-lane="${lane}" class="${lane === "all" ? "active" : ""}">${lane}</button>`).join("");
+    laneFilter.addEventListener("click", (event) => {
+      const button = event.target.closest("button[data-lane]");
+      if (!button) return;
+      state.lane = button.dataset.lane;
+      laneFilter.querySelectorAll("button").forEach((item) => item.classList.toggle("active", item === button));
+      render();
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      resetRun();
+      setStatus("running");
+      startBtn.disabled = true;
+      cancelBtn.disabled = false;
+
+      const body = {
+        prompt: document.getElementById("prompt").value,
+        language: document.getElementById("language").value,
+        maxCycles: Number(document.getElementById("cycles").value),
+        reportMaxCalls: Number(document.getElementById("reportCalls").value),
+        traceLevel: "full",
+        streamMode: document.getElementById("trace").value,
+        streamMaxChars: 80000,
+      };
+
+      try {
+        const response = await fetch("/research", {
+          method: "POST",
+          headers: { "content-type": "application/json", "accept": "text/event-stream" },
+          body: JSON.stringify(body),
+        });
+        if (!response.ok || !response.body) throw new Error(await response.text());
+        await readSse(response.body);
+      } catch (err) {
+        if (!state.aborting) pushSystemError(err);
+      } finally {
+        startBtn.disabled = false;
+        cancelBtn.disabled = true;
+        replayBtn.disabled = !state.runId;
+        if (statusEl.textContent === "running") setStatus("finished");
+      }
+    });
+
+    cancelBtn.addEventListener("click", async () => {
+      if (!state.runId) return;
+      state.aborting = true;
+      await fetch(`/research/${encodeURIComponent(state.runId)}/cancel`, { method: "POST" }).catch(() => {});
+      setStatus("cancelled");
+      cancelBtn.disabled = true;
+    });
+
+    replayBtn.addEventListener("click", async () => {
+      if (!state.runId) return;
+      const response = await fetch(`/research/${encodeURIComponent(state.runId)}/events`);
+      const replay = await response.json();
+      state.frames = replay.frames || [];
+      state.events = state.frames.map((frame) => frame.event).filter(Boolean);
+      rebuildAgents();
+      render();
+    });
+
+    async function readSse(stream) {
+      const reader = stream.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const chunks = buffer.split("\n\n");
+        buffer = chunks.pop() || "";
+        for (const chunk of chunks) handleSseChunk(chunk);
+      }
+      if (buffer.trim()) handleSseChunk(buffer);
+    }
+
+    function handleSseChunk(chunk) {
+      const lines = chunk.split(/\r?\n/);
+      const event = lines.find((line) => line.startsWith("event:"))?.slice(6).trim() || "message";
+      const data = lines.filter((line) => line.startsWith("data:")).map((line) => line.slice(5).trimStart()).join("\n");
+      if (!data) return;
+      const payload = JSON.parse(data);
+      if (event === "run") {
+        state.runId = payload.runId;
+        document.getElementById("runId").textContent = state.runId || "-";
+        return;
+      }
+      if (event === "frame") {
+        addFrame(payload.frame);
+        return;
+      }
+      if (event === "result") {
+        const result = payload.result || {};
+        setStatus(result.status || "finished");
+        document.getElementById("episodeId").textContent = result.episodeId || "-";
+        document.getElementById("reportPath").textContent = result.reportArtifactPath || "-";
+        return;
+      }
+      if (event === "error") pushSystemError(payload.error || payload);
+    }
+
+    function addFrame(frame) {
+      state.frames.push(frame);
+      if (frame.event) state.events.push(frame.event);
+      const visual = frame.visual;
+      if (visual) {
+        const lane = visual.ui?.lane || "main";
+        if (visual.kind === "tool_started" || visual.kind === "tool_finished") state.counts.tools += 1;
+        if (visual.kind === "evidence_saved") state.counts.evidence += 1;
+        if (visual.ui?.severity === "warning" || visual.ui?.severity === "error") state.counts.issues += 1;
+        const actor = visual.actor || {};
+        const key = actor.agentRunId || actor.taskId || actor.title || lane;
+        const current = state.agents.get(key) || { title: actor.title || key, lane, taskId: actor.taskId, reportNodeId: actor.reportNodeId, count: 0, last: "" };
+        current.count += 1;
+        current.last = visual.ui?.summary || visual.ui?.title || frame.line;
+        current.lane = lane;
+        state.agents.set(key, current);
+      }
+      render();
+    }
+
+    function rebuildAgents() {
+      state.agents.clear();
+      state.counts = { tools: 0, evidence: 0, issues: 0 };
+      const frames = [...state.frames];
+      state.frames = [];
+      frames.forEach(addFrame);
+    }
+
+    function render() {
+      renderMetrics();
+      renderTimeline();
+      renderAgents();
+    }
+
+    function renderMetrics() {
+      document.getElementById("metricEvents").textContent = String(state.frames.length);
+      document.getElementById("metricAgents").textContent = String(state.agents.size);
+      document.getElementById("metricTools").textContent = String(state.counts.tools);
+      document.getElementById("metricEvidence").textContent = String(state.counts.evidence);
+      document.getElementById("metricIssues").textContent = String(state.counts.issues);
+    }
+
+    function renderTimeline() {
+      const frames = state.frames.filter((frame) => {
+        if (state.lane === "all") return true;
+        return (frame.visual?.ui?.lane || frame.phase || "main") === state.lane;
+      }).slice(-400);
+      if (frames.length === 0) {
+        timeline.innerHTML = `<div class="empty">没有匹配当前筛选的事件。</div>`;
+        return;
+      }
+      timeline.innerHTML = frames.map(renderFrame).join("");
+      timeline.scrollTop = timeline.scrollHeight;
+    }
+
+    function renderFrame(frame) {
+      const visual = frame.visual || {};
+      const ui = visual.ui || {};
+      const actor = visual.actor || {};
+      const severity = ui.severity || "info";
+      const title = escapeHtml(ui.title || frame.line || "event");
+      const summary = escapeHtml(ui.summary || frame.line || "");
+      const lane = escapeHtml(ui.lane || frame.phase || "main");
+      const role = escapeHtml(actor.role || frame.kind || "event");
+      const task = actor.taskId ? `<span class="tag">${escapeHtml(actor.taskId)}</span>` : "";
+      const node = actor.reportNodeId ? `<span class="tag">${escapeHtml(actor.reportNodeId)}</span>` : "";
+      const messages = Array.isArray(frame.messages) && frame.messages.length
+        ? frame.messages.map((msg) => `${msg.role}: ${msg.content}`).join("\n\n")
+        : JSON.stringify(frame.event?.payload || visual.payload || {}, null, 2);
+      return `<article class="event" data-severity="${severity}">
+        <div class="event-head">
+          <div class="event-title">${title}</div>
+          <span class="tag">${lane}</span>
+        </div>
+        <div class="event-meta"><span class="tag">${role}</span>${task}${node}</div>
+        ${summary ? `<div class="summary">${summary}</div>` : ""}
+        <details ${ui.initiallyCollapsed === false ? "open" : ""}>
+          <summary>details</summary>
+          <pre>${escapeHtml(messages)}</pre>
+        </details>
+      </article>`;
+    }
+
+    function renderAgents() {
+      const agents = Array.from(state.agents.values()).sort((a, b) => b.count - a.count);
+      document.getElementById("agentHint").textContent = `${agents.length} tracked`;
+      if (agents.length === 0) {
+        agentsEl.innerHTML = `<div class="empty">暂无 agent。</div>`;
+        return;
+      }
+      const max = Math.max(...agents.map((agent) => agent.count), 1);
+      agentsEl.innerHTML = agents.map((agent) => {
+        const width = Math.max(8, Math.round(agent.count / max * 100));
+        return `<section class="agent">
+          <strong>${escapeHtml(agent.title)}</strong>
+          <div class="event-meta"><span class="tag">${escapeHtml(agent.lane)}</span>${agent.taskId ? `<span class="tag">${escapeHtml(agent.taskId)}</span>` : ""}</div>
+          <div class="agent-bar"><span style="width:${width}%"></span></div>
+          <small>${escapeHtml(agent.last || "")}</small>
+        </section>`;
+      }).join("");
+    }
+
+    function resetRun() {
+      state.runId = "";
+      state.events = [];
+      state.frames = [];
+      state.agents.clear();
+      state.counts = { tools: 0, evidence: 0, issues: 0 };
+      state.aborting = false;
+      document.getElementById("runId").textContent = "-";
+      document.getElementById("episodeId").textContent = "-";
+      document.getElementById("reportPath").textContent = "-";
+      render();
+    }
+
+    function pushSystemError(err) {
+      setStatus("error");
+      addFrame({
+        kind: "debug",
+        line: String(err?.message || err),
+        visual: {
+          ui: { lane: "gate", severity: "error", title: "Client error", summary: String(err?.message || err) },
+          actor: { title: "Browser", role: "system" },
+          kind: "error",
+        },
+      });
+    }
+
+    function setStatus(status) {
+      statusEl.textContent = status;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+      }[char]));
+    }
+  </script>
+</body>
+</html>

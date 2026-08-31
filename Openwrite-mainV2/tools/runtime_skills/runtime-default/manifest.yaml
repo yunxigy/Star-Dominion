@@ -1,0 +1,12 @@
+schema_version: 1
+id: runtime-default
+version: 1.0.0
+name: OpenWrite 默认运行约束
+description: 为现有 Agent 提供有界的运行时方法说明。
+agents: [dante, goethe, writer, reviewer, cli, studio]
+allow_tools: ["*"]
+output_contract: text
+budget:
+  max_instruction_chars: 6000
+  max_reference_chars: 0
+  max_tool_calls: 20

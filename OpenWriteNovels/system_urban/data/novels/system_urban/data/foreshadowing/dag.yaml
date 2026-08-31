@@ -1,0 +1,117 @@
+nodes:
+  f_agreement_clause:
+    id: f_agreement_clause
+    content: 星辰科技裁员协议中的模糊责任与免责条款，促使陈默重视书面边界
+    weight: 9
+    layer: 主线
+    status: 待收
+    created_at: ch_001
+    target_chapter: ch_014
+    tags:
+      - 星辰科技
+      - 合同
+  f_old_tool:
+    id: f_old_tool
+    content: 陈默五年项目中被搁置的流程工具想法，后来成为摆烂协作的早期原型
+    weight: 8
+    layer: 主线
+    status: 埋伏
+    created_at: ch_006
+    target_chapter: ch_021
+    tags:
+      - 产品
+      - 过去
+  f_luye_idea:
+    id: f_luye_idea
+    content: 陆野被前公司否掉的产品构想，必须从夸夸其谈变成可验收原型
+    weight: 9
+    layer: 主线
+    status: 埋伏
+    created_at: ch_023
+    target_chapter: ch_046
+    tags:
+      - 陆野
+      - 点子王
+  f_write_office:
+    id: f_write_office
+    content: 写字楼奖励附带的设备与供应商名单，成为摆烂科技进入产业链的入口
+    weight: 7
+    layer: 支线
+    status: 埋伏
+    created_at: ch_018
+    target_chapter: ch_074
+    tags:
+      - 场地
+      - 供应链
+  f_rotation:
+    id: f_rotation
+    content: 第19章建立的轮值和补休制度，后续要在工业现场、断供危机和最终交付中接受验证
+    weight: 8
+    layer: 主线
+    status: 埋伏
+    created_at: ch_019
+    target_chapter: ch_119
+    tags:
+      - 制度
+      - 应急
+  f_chens_control:
+    id: f_chens_control
+    content: 陈默习惯亲自收拾残局，表面上反对加班，实际上可能把压力转移给核心员工
+    weight: 9
+    layer: 主线
+    status: 埋伏
+    created_at: ch_022
+    target_chapter: ch_117
+    tags:
+      - 陈默
+      - 授权
+  f_supply_chain:
+    id: f_supply_chain
+    content: 国内设备与器件供应商之间缺少统一接口和稳定订单，后期会成为技术突破的现实瓶颈
+    weight: 8
+    layer: 主线
+    status: 埋伏
+    created_at: ch_074
+    target_chapter: ch_106
+    tags:
+      - 国产替代
+      - 产业链
+  f_system_purpose:
+    id: f_system_purpose
+    content: 系统真正考察的不是宿主能否躺赢，而是组织能否在没有个人监工时持续高效
+    weight: 10
+    layer: 主线
+    status: 埋伏
+    created_at: ch_001
+    target_chapter: ch_120
+    tags:
+      - 系统
+      - 终局
+status:
+  f_agreement_clause: 待收
+  f_old_tool: 埋伏
+  f_luye_idea: 埋伏
+  f_write_office: 埋伏
+  f_rotation: 埋伏
+  f_chens_control: 埋伏
+  f_supply_chain: 埋伏
+  f_system_purpose: 埋伏
+edges:
+  - from: f_agreement_clause
+    to: f_old_tool
+    type: 强化
+  - from: f_old_tool
+    to: f_luye_idea
+    type: 依赖
+  - from: f_write_office
+    to: f_supply_chain
+    type: 依赖
+  - from: f_rotation
+    to: f_system_purpose
+    type: 强化
+  - from: f_chens_control
+    to: f_system_purpose
+    type: 依赖
+  - from: f_supply_chain
+    to: f_system_purpose
+    type: 强化

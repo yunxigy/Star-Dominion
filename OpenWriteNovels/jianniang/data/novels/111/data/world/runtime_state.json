@@ -1,0 +1,275 @@
+{
+  "schema_version": 1,
+  "revision": 2,
+  "novel_id": "111",
+  "source_chapter": "ch_002",
+  "updated_at": "2026-08-24",
+  "legacy_documents": {
+    "current_state": "ch_002",
+    "ledger": "ch_002",
+    "relationships": "ch_002"
+  },
+  "current_state_notes": [
+    {
+      "id": "state_ch_002_01",
+      "text": "灵汐与拉菲在第9527号新人试炼区荒芜戈壁度过第一天。",
+      "source_chapter": "ch_002",
+      "status": "active"
+    },
+    {
+      "id": "state_ch_002_02",
+      "text": "领地拥有领主木屋、建造台、一级木质栅栏和深水之井。",
+      "source_chapter": "ch_002",
+      "status": "active"
+    },
+    {
+      "id": "state_ch_002_03",
+      "text": "新手保护罩在正文中明确持续七天。",
+      "source_chapter": "ch_002",
+      "status": "active"
+    }
+  ],
+  "ledger_notes": [
+    {
+      "id": "ledger_ch_002_01",
+      "text": "初始物资600、心智魔方1、快速建造工具1、石油0。",
+      "source_chapter": "ch_002",
+      "status": "active"
+    },
+    {
+      "id": "ledger_ch_002_02",
+      "text": "已获得基础材料若干和魔核5。",
+      "source_chapter": "ch_002",
+      "status": "active"
+    },
+    {
+      "id": "ledger_ch_002_03",
+      "text": "拉菲油料枯竭，属性下降50%，主炮与护盾不可用。",
+      "source_chapter": "ch_002",
+      "status": "active"
+    }
+  ],
+  "relationship_notes": [
+    {
+      "id": "relationship_ch_002_01",
+      "text": "灵汐与拉菲的指挥官/舰娘关系刚刚建立。",
+      "source_chapter": "ch_002",
+      "status": "active"
+    },
+    {
+      "id": "relationship_ch_002_02",
+      "text": "叶冰瑶、林北、老李在现实侧提供情感和物资支持。",
+      "source_chapter": "ch_002",
+      "status": "active"
+    }
+  ],
+  "characters": {
+    "灵汐": {
+      "name": "灵汐",
+      "state": "第一天结束，已建立初始领地",
+      "location": "第9527号新人试炼区·荒芜戈壁",
+      "knowledge": ["碧蓝舰枢", "心智感应", "魔方感应", "拉菲需要燃油和水"],
+      "source_chapter": "ch_002"
+    },
+    "拉菲": {
+      "name": "拉菲",
+      "state": "SR，Lv.3，油料枯竭",
+      "location": "灵汐初始领地",
+      "knowledge": ["称灵汐为指挥官", "无油时无法正常开主炮"],
+      "source_chapter": "ch_002"
+    },
+    "叶冰瑶": {
+      "name": "叶冰瑶",
+      "state": "现实侧朋友，A级自然亲和与A级精灵之心",
+      "location": "魔都二中及其试炼路径，未确认",
+      "knowledge": ["知道灵汐觉醒了碧蓝舰枢"],
+      "source_chapter": "ch_001"
+    },
+    "林北": {
+      "name": "林北",
+      "state": "现实侧朋友，A级炎魔召唤，赠送一次性防御护盾",
+      "location": "魔都二中及其试炼路径，未确认",
+      "knowledge": ["知道灵汐觉醒了碧蓝舰枢"],
+      "source_chapter": "ch_001"
+    },
+    "老李": {
+      "name": "老李",
+      "state": "现实侧班主任，赠送绿色稀有深水之井图纸",
+      "location": "魔都二中",
+      "knowledge": ["知道灵汐将进入新人试炼", "不知道她的具体出生地"],
+      "source_chapter": "ch_001"
+    }
+  },
+  "resources": {
+    "物资": {
+      "name": "物资",
+      "owner": "灵汐",
+      "status": "初始资源，已用于建造和召唤，余量未完整确认",
+      "quantity": 600,
+      "source_chapter": "ch_002"
+    },
+    "石油": {
+      "name": "石油/灵能燃油",
+      "owner": "灵汐领地",
+      "status": "油料枯竭，当前为零",
+      "quantity": 0,
+      "source_chapter": "ch_002"
+    },
+    "心智魔方": {
+      "name": "心智魔方",
+      "owner": "灵汐",
+      "status": "初始召唤已消耗，后续余量未确认",
+      "quantity": 1,
+      "source_chapter": "ch_002"
+    },
+    "快速建造工具": {
+      "name": "快速建造工具",
+      "owner": "灵汐",
+      "status": "初始召唤已使用，后续余量未确认",
+      "quantity": 1,
+      "source_chapter": "ch_002"
+    },
+    "魔核": {
+      "name": "魔核",
+      "owner": "灵汐领地",
+      "status": "第一天战利品",
+      "quantity": 5,
+      "source_chapter": "ch_002"
+    },
+    "水源": {
+      "name": "地下水源",
+      "owner": "灵汐领地",
+      "status": "深水之井已建成，储存和保护方式待建立",
+      "quantity": null,
+      "source_chapter": "ch_002"
+    },
+    "基础材料": {
+      "name": "木材与石材",
+      "owner": "灵汐领地",
+      "status": "已采集并用于初始建筑，余量未确认",
+      "quantity": null,
+      "source_chapter": "ch_002"
+    }
+  },
+  "relationships": {
+    "lingxi_laffey": {
+      "source": "灵汐",
+      "target": "拉菲",
+      "status": "指挥官与第一位舰娘，信任形成中",
+      "tension": "燃油和资源不足",
+      "source_chapter": "ch_002"
+    },
+    "lingxi_ye_bingyao": {
+      "source": "灵汐",
+      "target": "叶冰瑶",
+      "status": "从小一起长大的朋友",
+      "tension": "试炼后能否相遇未确认",
+      "source_chapter": "ch_001"
+    },
+    "lingxi_lin_bei": {
+      "source": "灵汐",
+      "target": "林北",
+      "status": "发小与互相较劲的朋友",
+      "tension": "双方都不愿直接承认担心",
+      "source_chapter": "ch_001"
+    },
+    "lingxi_li": {
+      "source": "灵汐",
+      "target": "老李",
+      "status": "学生与班主任，获得深水井图纸",
+      "tension": "现实侧无法继续直接保护",
+      "source_chapter": "ch_001"
+    }
+  },
+  "open_threads": {
+    "oil_source": {
+      "title": "燃油来源",
+      "status": "open",
+      "detail": "拉菲需要石油/灵能燃油才能恢复完整舰装能力。",
+      "source_chapter": "ch_002"
+    },
+    "protection_boundary": {
+      "title": "保护罩边界",
+      "status": "open",
+      "detail": "七天保护罩之外的戈壁危险尚未验证。",
+      "source_chapter": "ch_002"
+    },
+    "black_cube": {
+      "title": "黑色方块",
+      "status": "open",
+      "detail": "与父母、舰娘心智和观察者的关系未揭示。",
+      "source_chapter": "ch_001"
+    },
+    "external_contact": {
+      "title": "外部接触",
+      "status": "open",
+      "detail": "尚未决定是否回应陌生领主或前人信息。",
+      "source_chapter": "ch_002"
+    }
+  },
+  "foreshadowing_refs": {
+    "f_cube_origin": {
+      "title": "黑色方块在觉醒日苏醒",
+      "status": "planted",
+      "reference": "黑色方块与觉醒台共鸣并融入灵汐的能力体系。",
+      "source_chapter": "ch_001"
+    },
+    "f_parent_accident": {
+      "title": "父母意外",
+      "status": "planted",
+      "reference": "父母十年前意外双亡，黑色方块是唯一遗物。",
+      "source_chapter": "ch_001"
+    },
+    "f_laffey_mind": {
+      "title": "舰娘心智",
+      "status": "planted",
+      "reference": "拉菲以独立声音回应灵汐，并表现出困倦、依赖和战斗意志。",
+      "source_chapter": "ch_002"
+    },
+    "f_oil_source": {
+      "title": "燃油来源",
+      "status": "planted",
+      "reference": "拉菲油料枯竭，石油成为下一阶段的明确资源缺口。",
+      "source_chapter": "ch_002"
+    },
+    "f_concept_sea": {
+      "title": "概念之海",
+      "status": "planted",
+      "reference": "设定规划中用于解决舰娘上岸问题，尚未在正文出现。",
+      "source_chapter": "ch_001"
+    },
+    "f_observer_game": {
+      "title": "观察者兵棋",
+      "status": "planted",
+      "reference": "设定规划中把万族争霸指向高维文明的游戏。",
+      "source_chapter": "ch_001"
+    }
+  },
+  "timeline": [
+    {
+      "id": "event_ch_001_01",
+      "chapter_id": "ch_001",
+      "event": "灵汐觉醒稀有S级天赋碧蓝舰枢",
+      "story_time": "蓝星纪元37年六月，觉醒日"
+    },
+    {
+      "id": "event_ch_001_02",
+      "chapter_id": "ch_001",
+      "event": "灵汐在老李、叶冰瑶和林北的支持下准备进入新人试炼",
+      "story_time": "觉醒日当晚"
+    },
+    {
+      "id": "event_ch_002_01",
+      "chapter_id": "ch_002",
+      "event": "灵汐抵达第9527号新人试炼区荒芜戈壁并激活领主核心",
+      "story_time": "新人领主历第一天08:05"
+    },
+    {
+      "id": "event_ch_002_02",
+      "chapter_id": "ch_002",
+      "event": "灵汐建成深水之井，结束第一天并获得水源",
+      "story_time": "新人领主历第一天结束"
+    }
+  ],
+  "proposed_entities": {}
+}

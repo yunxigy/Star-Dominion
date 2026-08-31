@@ -1,0 +1,14 @@
+schema_version: 1
+id: truth-validation
+version: 1.0.0
+name: 真源校验
+description: 将正文变化与结构化真源的校验纳入运行记录。
+agents: [dante, goethe, writer, reviewer]
+tasks: [write, review, planning, chapter.write, chapter.review]
+allow_tools: ["*"]
+output_contract: validation_report
+requires: [runtime-default]
+budget:
+  max_instruction_chars: 4000
+  max_reference_chars: 0
+  max_tool_calls: 12

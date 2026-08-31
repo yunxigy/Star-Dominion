@@ -1,0 +1,13 @@
+id: 拉菲
+name: 拉菲
+tier: 核心伙伴
+age: null
+occupation: ''
+identity: ''
+brief: 灵汐召唤的第一位 SR 舰娘。慵懒、软糯、依赖感强，称灵汐为指挥官；没有油料时不能正常展开主炮，却能把舰装当作沉重的物理武器。
+background: ''
+personality: []
+relationships:
+- target: 灵汐
+  kind: 指挥官
+  note: 召唤关系刚刚建立

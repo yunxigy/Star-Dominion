@@ -1,0 +1,31 @@
+{
+  "name": "deepresearch-framework",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "pnpm@9.0.0",
+  "scripts": {
+    "build": "pnpm -r run build",
+    "test": "pnpm build && pnpm -r run test",
+    "lint": "eslint . --max-warnings=0",
+    "typecheck": "pnpm build && pnpm -r run typecheck",
+    "package:check": "node scripts/check-package-readiness.mjs",
+    "package:pack": "pnpm build && pnpm package:check && node scripts/pack-packages.mjs",
+    "package:smoke": "node scripts/smoke-installed-package.mjs",
+    "package:verify": "pnpm package:pack && pnpm package:smoke",
+    "research": "tsx packages/orchestrator/src/cli.ts",
+    "quality:regression": "tsx packages/benchmark-adapters/src/cli/quality-regression.ts",
+    "live:stress": "tsx packages/orchestrator/src/live-research-stress.ts",
+    "bench:drb2": "pnpm build && tsx packages/benchmark-adapters/src/cli/deepresearch-bench-ii.ts",
+    "server": "tsx examples/backend-sse-server.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.31.0",
+    "@types/node": "^20.12.0",
+    "eslint": "^9.31.0",
+    "globals": "^16.3.0",
+    "tsx": "^4.23.1",
+    "typescript": "^5.4.0",
+    "typescript-eslint": "^8.38.0",
+    "vitest": "^1.6.0"
+  }
+}

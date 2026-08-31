@@ -1,0 +1,70 @@
+novel_id: '111'
+chapter_id: ch_001
+current_stage: review
+draft_path: ''
+polished_path: ''
+review_passed: false
+review_errors: &id001
+- 发现禁用表达：嘴角微微上扬
+- 禁止句式：'不是...而是...'
+- 禁止句式：破折号'——'
+- 禁止句式：省略号
+- 审稿模型输出无效：审稿模型返回的 JSON 无法解析
+review_warnings: &id002
+- 正文约5826个中文字符，目标为3000，偏差超过30%
+- 发现禁用表达：下意识地
+- 高疲劳词 '瞬间' 出现 5 次（建议 ≤1次/章）
+- 转折词密度 0.83次/千字（阈值 0.33）
+- 段落 1 过长（7234字，建议 <300字）
+user_approved: null
+stages:
+- name: context_assembly
+  status: pending
+  started_at: ''
+  completed_at: ''
+  message: ''
+  data: {}
+- name: writing
+  status: pending
+  started_at: ''
+  completed_at: ''
+  message: ''
+  data: {}
+- name: review
+  status: failed
+  started_at: '2026-08-26T22:50:39.562007'
+  completed_at: '2026-08-26T22:50:43.307676'
+  message: 'LLM API 错误
+
+
+    原始错误: litellm.RateLimitError: RateLimitError: OpenAIException - Rate limit exceeded.
+    Please try again later.'
+  data:
+    passed: false
+    errors: *id001
+    warnings: *id002
+- name: user_confirm
+  status: pending
+  started_at: ''
+  completed_at: ''
+  message: ''
+  data: {}
+- name: styling
+  status: pending
+  started_at: ''
+  completed_at: ''
+  message: ''
+  data: {}
+- name: compression
+  status: pending
+  started_at: ''
+  completed_at: ''
+  message: ''
+  data: {}
+created_at: '2026-08-24T23:47:29.336355'
+updated_at: '2026-08-26T22:50:43.307676'
+error: 'review: LLM API 错误
+
+
+  原始错误: litellm.RateLimitError: RateLimitError: OpenAIException - Rate limit exceeded.
+  Please try again later.'

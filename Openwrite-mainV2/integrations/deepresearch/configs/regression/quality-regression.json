@@ -1,0 +1,468 @@
+{
+  "version": 1,
+  "generatedAt": "2026-07-14T00:00:00.000Z",
+  "cases": [
+    {
+      "id": "healthy_authoritative_grounded",
+      "description": "A covered must requirement with independent, authoritative, fetched evidence and local citations remains clean.",
+      "requirements": [
+        {
+          "requirementId": "RQ_CORE",
+          "description": "Evaluate the core claim.",
+          "kind": "question",
+          "priority": "must",
+          "evidenceRequired": true,
+          "evidenceNeeds": ["Independent authoritative evidence"],
+          "successCriteria": ["The report evaluates the claim"]
+        }
+      ],
+      "leaf": { "status": "supported", "requirementIds": ["RQ_CORE"] },
+      "sources": [
+        { "id": "K_OFFICIAL", "url": "https://agency.gov.example/data", "sourceTier": "official", "qualityScore": 0.9, "fetched": true, "publishedAt": "2026-06-01" },
+        { "id": "K_PRIMARY", "url": "https://research.example/study", "sourceTier": "primary", "qualityScore": 0.85, "fetched": true, "publishedAt": "2026-05-15" }
+      ],
+      "links": [
+        { "id": "E_1", "sourceId": "K_OFFICIAL", "relation": "supports" },
+        { "id": "E_2", "sourceId": "K_PRIMARY", "relation": "qualifies" }
+      ],
+      "report": {
+        "markdown": "# Finding\n\nThe measured rate reached 25% in 2026 [C1]. Independent research qualifies the estimate [C2].",
+        "citationMap": { "C1": "K_OFFICIAL", "C2": "K_PRIMARY" }
+      },
+      "expect": {
+        "minScore": 100,
+        "activeErrorCount": 0,
+        "forbiddenIssueCodes": ["unmapped_research_requirement", "ungrounded_research_requirement", "uncited_quantitative_claim"],
+        "requirementStatuses": { "RQ_CORE": "covered" },
+        "minCitationCoverage": 1,
+        "maxUncitedQuantitativeClaims": 0
+      }
+    },
+    {
+      "id": "unmapped_must_requirement",
+      "description": "A must requirement that no active leaf owns remains a blocking regression.",
+      "requirements": [
+        {
+          "requirementId": "RQ_MISSING",
+          "description": "Answer the required question.",
+          "kind": "question",
+          "priority": "must",
+          "evidenceRequired": true,
+          "evidenceNeeds": ["Direct evidence"],
+          "successCriteria": ["The question is answered"]
+        }
+      ],
+      "leaf": { "status": "supported", "requirementIds": [] },
+      "sources": [],
+      "links": [],
+      "expect": {
+        "maxScore": 5,
+        "requiredIssueCodes": ["unmapped_research_requirement"],
+        "requirementStatuses": { "RQ_MISSING": "unmapped" }
+      }
+    },
+    {
+      "id": "stale_current_requirement",
+      "description": "High-quality but old sources cannot satisfy a current requirement with a 30-day window.",
+      "requirements": [
+        {
+          "requirementId": "RQ_CURRENT",
+          "description": "Describe the current policy.",
+          "kind": "question",
+          "priority": "must",
+          "evidenceRequired": true,
+          "evidenceNeeds": ["Current official policy"],
+          "successCriteria": ["Policy is current"],
+          "temporalScope": { "mode": "current", "maxAgeDays": 30 }
+        }
+      ],
+      "leaf": { "status": "supported", "requirementIds": ["RQ_CURRENT"] },
+      "sources": [
+        { "id": "K_OLD_OFFICIAL", "url": "https://agency.gov.example/old", "sourceTier": "official", "qualityScore": 0.9, "fetched": true, "publishedAt": "2024-01-01" },
+        { "id": "K_OLD_PRIMARY", "url": "https://archive.example/study", "sourceTier": "primary", "qualityScore": 0.85, "fetched": true, "publishedAt": "2024-02-01" }
+      ],
+      "links": [
+        { "id": "E_OLD_1", "sourceId": "K_OLD_OFFICIAL", "relation": "supports" },
+        { "id": "E_OLD_2", "sourceId": "K_OLD_PRIMARY", "relation": "qualifies" }
+      ],
+      "expect": {
+        "requiredIssueCodes": ["stale_research_requirement"],
+        "requirementStatuses": { "RQ_CURRENT": "stale" }
+      }
+    },
+    {
+      "id": "mixed_conflict_status_mismatch",
+      "description": "Mixed support and contradiction must not remain marked simply supported.",
+      "leaf": { "status": "supported", "requirementIds": [] },
+      "sources": [
+        { "id": "K_SUPPORT", "url": "https://agency.gov.example/support", "sourceTier": "official", "qualityScore": 0.9, "fetched": true },
+        { "id": "K_OPPOSE", "url": "https://independent.example/oppose", "sourceTier": "primary", "qualityScore": 0.85, "fetched": true }
+      ],
+      "links": [
+        { "id": "E_SUPPORT", "sourceId": "K_SUPPORT", "relation": "supports" },
+        { "id": "E_OPPOSE", "sourceId": "K_OPPOSE", "relation": "contradicts" }
+      ],
+      "expect": {
+        "requiredIssueCodes": ["evidence_status_inconsistent"]
+      }
+    },
+    {
+      "id": "uncited_quantitative_claim",
+      "description": "A numeric/date claim without a local citation remains a strict publication error.",
+      "policy": { "mode": "strict" },
+      "leaf": { "status": "supported", "requirementIds": [] },
+      "sources": [
+        { "id": "K_CITE_1", "url": "https://agency.gov.example/data", "sourceTier": "official", "qualityScore": 0.9, "fetched": true },
+        { "id": "K_CITE_2", "url": "https://research.example/data", "sourceTier": "primary", "qualityScore": 0.85, "fetched": true }
+      ],
+      "links": [
+        { "id": "E_CITE_1", "sourceId": "K_CITE_1", "relation": "supports" },
+        { "id": "E_CITE_2", "sourceId": "K_CITE_2", "relation": "qualifies" }
+      ],
+      "report": {
+        "markdown": "# Finding\n\nThe measured rate increased by 25% in 2025.",
+        "citationMap": { "C1": "K_CITE_1", "C2": "K_CITE_2" }
+      },
+      "expect": {
+        "requiredIssueCodes": ["low_report_citation_coverage", "uncited_quantitative_claim"],
+        "maxUncitedQuantitativeClaims": 1
+      }
+    },
+    {
+      "id": "scoped_issue_waiver",
+      "description": "An approved source-authority issue moves to waivedIssues without hiding unrelated defects.",
+      "leaf": { "status": "partially_supported", "requirementIds": [] },
+      "sources": [
+        { "id": "K_SECONDARY", "url": "https://news.example/story", "sourceTier": "secondary", "qualityScore": 0.75, "fetched": true }
+      ],
+      "links": [
+        { "id": "E_SECONDARY", "sourceId": "K_SECONDARY", "relation": "supports" }
+      ],
+      "waivers": [
+        {
+          "waiverId": "W_AUTHORITY",
+          "questionId": "quality_authority",
+          "issueCode": "missing_authoritative_source",
+          "action": "accept_risk",
+          "rationale": "Approved for this bounded report.",
+          "reportNodeId": "R_leaf",
+          "requirementIds": [],
+          "decidedAt": "2026-07-14T00:00:00.000Z"
+        }
+      ],
+      "expect": {
+        "requiredWaivedIssueCodes": ["missing_authoritative_source"],
+        "forbiddenIssueCodes": ["missing_authoritative_source"],
+        "requiredIssueCodes": ["insufficient_source_depth", "insufficient_source_independence"]
+      }
+    },
+    {
+      "id": "research_window_not_value_matrix",
+      "description": "A dated literature corpus and narrative geographic overview do not become endpoint or entity value cells.",
+      "requirements": [
+        {
+          "requirementId": "RQ_REVIEW_WINDOW",
+          "description": "Summarize empirical K-12 tutoring-system research published from 2009-2024, including its geographic distribution and author backgrounds.",
+          "kind": "deliverable",
+          "priority": "must",
+          "evidenceRequired": true,
+          "evidenceNeeds": ["Empirical studies published from 2009-2024"],
+          "successCriteria": ["Explain that research is concentrated in the United States and Asia."],
+          "temporalScope": { "mode": "range", "start": "2009-01-01", "end": "2024-12-31" },
+          "geographicScope": ["United States", "Asia"]
+        }
+      ],
+      "leaf": { "status": "supported", "requirementIds": ["RQ_REVIEW_WINDOW"] },
+      "sources": [
+        { "id": "K_REVIEW_1", "url": "https://education.example/review", "sourceTier": "primary", "qualityScore": 0.9, "fetched": true },
+        { "id": "K_REVIEW_2", "url": "https://institute.example/overview", "sourceTier": "official", "qualityScore": 0.85, "fetched": true }
+      ],
+      "links": [
+        { "id": "E_REVIEW_1", "sourceId": "K_REVIEW_1", "relation": "supports" },
+        { "id": "E_REVIEW_2", "sourceId": "K_REVIEW_2", "relation": "qualifies" }
+      ],
+      "expect": {
+        "minScore": 100,
+        "activeErrorCount": 0,
+        "forbiddenIssueCodes": ["incomplete_temporal_coverage", "incomplete_entity_coverage"],
+        "requirementStatuses": { "RQ_REVIEW_WINDOW": "covered" }
+      }
+    },
+    {
+      "id": "categorical_entity_field_matrix",
+      "description": "A populated categorical comparison table reports only the unavailable entity-field cell.",
+      "requirements": [
+        {
+          "requirementId": "RQ_FRAMEWORK_MATRIX",
+          "description": "Compare Node.js and React.js across Release Year, Key Area, and XSS support.",
+          "kind": "deliverable",
+          "priority": "must",
+          "evidenceRequired": true,
+          "evidenceNeeds": ["Official framework documentation"],
+          "successCriteria": ["Every framework row includes every requested field."],
+          "entityScope": ["Node.js", "React.js"],
+          "metricScope": ["Release Year", "Key Area", "XSS"]
+        }
+      ],
+      "leaf": { "status": "supported", "requirementIds": ["RQ_FRAMEWORK_MATRIX"] },
+      "sources": [
+        { "id": "K_FRAMEWORK_DOCS", "url": "https://docs.example/frameworks", "sourceTier": "official", "qualityScore": 0.9, "fetched": true }
+      ],
+      "links": [
+        {
+          "id": "E_FRAMEWORK_TABLE",
+          "sourceId": "K_FRAMEWORK_DOCS",
+          "relation": "supports",
+          "claimText": "| Framework | Release Year | Key Area | XSS |\n|---|---:|---|---|\n| Node.js | 2009 | Runtime Environment | Add. library |\n| React.js | 2013 | GUI | unavailable |"
+        }
+      ],
+      "expect": {
+        "requiredIssueCodes": ["incomplete_entity_coverage"],
+        "requirementStatuses": { "RQ_FRAMEWORK_MATRIX": "incomplete" }
+      }
+    },
+    {
+      "id": "source_publication_cutoff",
+      "description": "A later retrospective paper cannot satisfy a hard source-publication cutoff even when it discusses earlier work.",
+      "requirements": [
+        {
+          "requirementId": "RQ_PUBLICATION_CUTOFF",
+          "description": "Survey academic perspectives published no later than the stated historical cutoff.",
+          "kind": "constraint",
+          "priority": "must",
+          "evidenceRequired": true,
+          "evidenceNeeds": ["Dated eligible academic sources"],
+          "successCriteria": ["Every direct source was published inside the allowed window."],
+          "temporalScope": { "mode": "as_of", "basis": "source_publication", "asOf": "2018-12-31" }
+        }
+      ],
+      "leaf": { "status": "supported", "requirementIds": ["RQ_PUBLICATION_CUTOFF"] },
+      "sources": [
+        { "id": "K_ELIGIBLE_PAPER", "url": "https://journal.example/paper-2017", "sourceTier": "primary", "qualityScore": 0.9, "fetched": true, "publishedAt": "2017-06-01" },
+        { "id": "K_LATE_REVIEW", "url": "https://institute.example/review-2021", "sourceTier": "official", "qualityScore": 0.85, "fetched": true, "publishedAt": "2021-03-15" }
+      ],
+      "links": [
+        { "id": "E_ELIGIBLE_PAPER", "sourceId": "K_ELIGIBLE_PAPER", "relation": "supports" },
+        { "id": "E_LATE_REVIEW", "sourceId": "K_LATE_REVIEW", "relation": "supports" }
+      ],
+      "expect": {
+        "requiredIssueCodes": ["out_of_scope_source_publication"],
+        "requirementStatuses": { "RQ_PUBLICATION_CUTOFF": "stale" }
+      }
+    },
+    {
+      "id": "named_temporal_source_exception",
+      "description": "A user-required named report may cross an otherwise strict cutoff without admitting unnamed later sources.",
+      "requirements": [
+        {
+          "requirementId": "RQ_NAMED_EXCEPTION",
+          "description": "Compare bounded regional evidence with one explicitly required later report.",
+          "kind": "comparison",
+          "priority": "must",
+          "evidenceRequired": true,
+          "evidenceNeeds": ["Dated regional evidence and the exact required report"],
+          "successCriteria": ["Only the named report is exempt from the cutoff."],
+          "temporalScope": {
+            "mode": "as_of",
+            "basis": "covered_period",
+            "asOf": "2022-12-31",
+            "exemptSources": ["K_REQUIRED_2023_REPORT"]
+          }
+        }
+      ],
+      "leaf": { "status": "supported", "requirementIds": ["RQ_NAMED_EXCEPTION"] },
+      "sources": [
+        { "id": "K_BASE_2022", "url": "https://regional.example/evidence-2022", "sourceTier": "primary", "qualityScore": 0.9, "fetched": true, "publishedAt": "2022-06-01" },
+        { "id": "K_REQUIRED_2023_REPORT", "url": "https://global.example/required-report-2023", "sourceTier": "official", "qualityScore": 0.9, "fetched": true, "publishedAt": "2023-05-01" }
+      ],
+      "links": [
+        { "id": "E_BASE_2022", "sourceId": "K_BASE_2022", "relation": "supports" },
+        { "id": "E_REQUIRED_2023_REPORT", "sourceId": "K_REQUIRED_2023_REPORT", "relation": "supports" }
+      ],
+      "expect": {
+        "minScore": 100,
+        "activeErrorCount": 0,
+        "forbiddenIssueCodes": ["stale_research_requirement", "unknown_source_freshness"],
+        "requirementStatuses": { "RQ_NAMED_EXCEPTION": "covered" }
+      }
+    },
+    {
+      "id": "exclusive_month_availability_cutoff",
+      "description": "A March 1 source cannot pass a technology-availability boundary stated as before March 2025.",
+      "requirements": [
+        {
+          "requirementId": "RQ_MONTH_CUTOFF",
+          "description": "Limit the report to technologies publicly available before March 2025.",
+          "kind": "constraint",
+          "priority": "must",
+          "evidenceRequired": true,
+          "evidenceNeeds": ["Dated public technology evidence"],
+          "successCriteria": ["Every ordinary technology was public by 2025-02-28."],
+          "temporalScope": { "mode": "as_of", "basis": "covered_period", "asOf": "2025-02-28" }
+        }
+      ],
+      "leaf": { "status": "supported", "requirementIds": ["RQ_MONTH_CUTOFF"] },
+      "sources": [
+        { "id": "K_FEBRUARY_TECH", "url": "https://primary.example/technology-february", "sourceTier": "primary", "qualityScore": 0.9, "fetched": true, "publishedAt": "2025-02-28" },
+        { "id": "K_MARCH_TECH", "url": "https://authority.example/technology-march", "sourceTier": "official", "qualityScore": 0.9, "fetched": true, "publishedAt": "2025-03-01" }
+      ],
+      "links": [
+        { "id": "E_FEBRUARY_TECH", "sourceId": "K_FEBRUARY_TECH", "relation": "supports" },
+        { "id": "E_MARCH_TECH", "sourceId": "K_MARCH_TECH", "relation": "supports" }
+      ],
+      "expect": {
+        "requiredIssueCodes": ["stale_research_requirement"],
+        "requirementStatuses": { "RQ_MONTH_CUTOFF": "stale" }
+      }
+    },
+    {
+      "id": "open_taxonomy_group_coverage",
+      "description": "Top-level discovery groups are audited as evidenced categories rather than mistaken for final entity-field rows.",
+      "requirements": [
+        {
+          "requirementId": "RQ_OPEN_TAXONOMY",
+          "description": "Create a comprehensive categorized comparison table by discovering concrete members in every requested group.",
+          "kind": "deliverable",
+          "priority": "must",
+          "evidenceRequired": true,
+          "evidenceNeeds": ["Authoritative inventories and member-level specifications"],
+          "successCriteria": ["Every group contributes multiple concrete complete member rows."],
+          "entityScope": ["Category Alpha", "Category Beta", "Category Gamma"],
+          "entityScopeRole": "groups",
+          "metricScope": ["Member Name", "Use", "Relative Measure"]
+        }
+      ],
+      "leaf": { "status": "supported", "requirementIds": ["RQ_OPEN_TAXONOMY"] },
+      "sources": [
+        { "id": "K_TAXONOMY_ALPHA", "url": "https://authority.example/taxonomy-alpha", "sourceTier": "official", "qualityScore": 0.9, "fetched": true },
+        { "id": "K_TAXONOMY_BETA", "url": "https://primary.example/taxonomy-beta", "sourceTier": "primary", "qualityScore": 0.88, "fetched": true },
+        { "id": "K_TAXONOMY_GAMMA", "url": "https://institute.example/taxonomy-gamma", "sourceTier": "secondary", "qualityScore": 0.82, "fetched": true }
+      ],
+      "links": [
+        { "id": "E_TAXONOMY_ALPHA", "sourceId": "K_TAXONOMY_ALPHA", "relation": "supports", "claimText": "Category Alpha contains multiple verified named members with complete use and relative-measure fields." },
+        { "id": "E_TAXONOMY_BETA", "sourceId": "K_TAXONOMY_BETA", "relation": "supports", "claimText": "Category Beta contains multiple verified named members with complete use and relative-measure fields." },
+        { "id": "E_TAXONOMY_GAMMA", "sourceId": "K_TAXONOMY_GAMMA", "relation": "supports", "claimText": "Category Gamma contains multiple verified named members with complete use and relative-measure fields." }
+      ],
+      "expect": {
+        "minScore": 100,
+        "activeErrorCount": 0,
+        "forbiddenIssueCodes": ["incomplete_entity_coverage"],
+        "requirementStatuses": { "RQ_OPEN_TAXONOMY": "covered" }
+      }
+    },
+    {
+      "id": "named_narrative_example_coverage",
+      "description": "A must requirement remains incomplete when one explicitly requested narrative example lacks cited substantive analysis.",
+      "requirements": [
+        {
+          "requirementId": "RQ_NARRATIVE_EXAMPLES",
+          "description": "Analyze the three named rescue narratives.",
+          "kind": "question",
+          "priority": "must",
+          "evidenceRequired": true,
+          "evidenceNeeds": [
+            "Primary texts and scholarship for every named narrative"
+          ],
+          "successCriteria": [
+            "Every named example receives distinct cited analysis."
+          ],
+          "exampleScope": [
+            "Moses",
+            "Mephibosheth",
+            "Joash"
+          ]
+        }
+      ],
+      "leaf": {
+        "status": "supported",
+        "requirementIds": [
+          "RQ_NARRATIVE_EXAMPLES"
+        ]
+      },
+      "sources": [
+        {
+          "id": "K_NARRATIVE_PRIMARY",
+          "url": "https://primary.example/narratives",
+          "sourceTier": "primary",
+          "qualityScore": 0.9,
+          "fetched": true
+        },
+        {
+          "id": "K_NARRATIVE_SCHOLARSHIP",
+          "url": "https://scholarship.example/narratives",
+          "sourceTier": "official",
+          "qualityScore": 0.85,
+          "fetched": true
+        }
+      ],
+      "links": [
+        {
+          "id": "E_NARRATIVE_PRIMARY",
+          "sourceId": "K_NARRATIVE_PRIMARY",
+          "relation": "supports",
+          "claimText": "Moses was preserved through coordinated caregiving, while Joash was hidden with his nurse so the royal line survived."
+        },
+        {
+          "id": "E_NARRATIVE_SCHOLARSHIP",
+          "sourceId": "K_NARRATIVE_SCHOLARSHIP",
+          "relation": "qualifies",
+          "claimText": "The cited scholarship explains how rescue narratives contribute to the broader theological argument."
+        }
+      ],
+      "expect": {
+        "requiredIssueCodes": [
+          "incomplete_example_coverage"
+        ],
+        "requirementStatuses": {
+          "RQ_NARRATIVE_EXAMPLES": "incomplete"
+        }
+      }
+    },
+    {
+      "id": "budget_artifact_thresholds",
+      "description": "Budget totals and adaptive-stop state remain enforceable regression dimensions.",
+      "leaf": { "status": "supported", "requirementIds": [] },
+      "sources": [
+        { "id": "K_BUDGET_1", "url": "https://agency.gov.example/a", "sourceTier": "official", "qualityScore": 0.9, "fetched": true },
+        { "id": "K_BUDGET_2", "url": "https://research.example/b", "sourceTier": "primary", "qualityScore": 0.85, "fetched": true }
+      ],
+      "links": [
+        { "id": "E_BUDGET_1", "sourceId": "K_BUDGET_1", "relation": "supports" },
+        { "id": "E_BUDGET_2", "sourceId": "K_BUDGET_2", "relation": "qualifies" }
+      ],
+      "budgetAudit": {
+        "version": 1,
+        "generatedAt": "2026-07-14T00:00:00.000Z",
+        "limits": {},
+        "usage": [],
+        "totals": {
+          "requests": 80,
+          "succeededRequests": 79,
+          "failedRequests": 1,
+          "promptTokens": 70000,
+          "completionTokens": 20000,
+          "totalTokens": 90000,
+          "estimatedCostUsd": 1.75
+        },
+        "breaches": [],
+        "cycleGains": [],
+        "adaptiveStop": {
+          "stopped": true,
+          "reason": "Quality satisfied after a measured plateau.",
+          "cycle": 4,
+          "cancelledTaskIds": ["T_exploratory"]
+        }
+      },
+      "expect": {
+        "activeErrorCount": 0,
+        "budget": {
+          "maxRequests": 100,
+          "maxTotalTokens": 100000,
+          "maxEstimatedCostUsd": 2,
+          "maxBreaches": 0,
+          "adaptiveStopApplied": true
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,200 @@
+task_id: tsk_20260826033842_f59bd4c6c5
+novel_id: '111'
+type: chapter_review
+status: completed
+phase: complete
+chapter_id: ch_001
+input_summary: 审稿 · ch_001
+input:
+  path: data/manuscript/arc_001/ch_001.md
+result:
+  ok: true
+  chapter_id: ch_001
+  passed: false
+  score: 0
+  issues: 10
+  summary: 发现问题：严重问题 5 个，警告 5 项（得分：0）
+  issue_details:
+  - severity: medium
+    category: 目标字数偏差
+    description: 正文约5826个中文字符，目标为3000，偏差超过30%
+    suggestion: 删减重复动作与支线，或补足关键场景，使篇幅回到目标区间
+    dimension: '7'
+    evidence:
+      quote: ''
+      context_before: ''
+      context_after: ''
+    id: issue_469594f17b00
+    legacy_severity: warning
+    summary: 正文约5826个中文字符，目标为3000，偏差超过30%
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: false
+  - severity: blocker
+    category: 表情描写
+    description: 发现禁用表达：嘴角微微上扬
+    suggestion: 建议替换为：笑了 / 咧嘴一笑 / 嘴角勾起
+    dimension: 表情描写
+    evidence:
+      quote: ''
+      context_before: ''
+      context_after: ''
+    id: issue_b952a781972e
+    legacy_severity: critical
+    summary: 发现禁用表达：嘴角微微上扬
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: false
+  - severity: medium
+    category: 过度修饰
+    description: 发现禁用表达：下意识地
+    suggestion: 建议替换为： / 习惯性地
+    dimension: 过度修饰
+    evidence:
+      quote: ''
+      context_before: ''
+      context_after: ''
+    id: issue_73bb5a8d99e0
+    legacy_severity: warning
+    summary: 发现禁用表达：下意识地
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: false
+  - severity: blocker
+    category: 后置验证
+    description: 禁止句式：'不是...而是...'
+    suggestion: 修订候选正文后重新审查
+    dimension: 后置验证
+    evidence:
+      quote: 出现 2 次
+      context_before: ''
+      context_after: ''
+    id: issue_84a97d8b523d
+    legacy_severity: critical
+    summary: 禁止句式：'不是...而是...'
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: blocker
+    category: 后置验证
+    description: 禁止句式：破折号'——'
+    suggestion: 修订候选正文后重新审查
+    dimension: 后置验证
+    evidence:
+      quote: 出现 11 次
+      context_before: ''
+      context_after: ''
+    id: issue_9dbd177d5dc6
+    legacy_severity: critical
+    summary: 禁止句式：破折号'——'
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: blocker
+    category: 后置验证
+    description: 禁止句式：省略号
+    suggestion: 修订候选正文后重新审查
+    dimension: 后置验证
+    evidence:
+      quote: 出现 1 次
+      context_before: ''
+      context_after: ''
+    id: issue_0fcd5a6f328f
+    legacy_severity: critical
+    summary: 禁止句式：省略号
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: medium
+    category: 后置验证
+    description: 高疲劳词 '瞬间' 出现 5 次（建议 ≤1次/章）
+    suggestion: 修订候选正文后重新审查
+    dimension: 后置验证
+    evidence:
+      quote: ''
+      context_before: ''
+      context_after: ''
+    id: issue_3dbe67453b84
+    legacy_severity: warning
+    summary: 高疲劳词 '瞬间' 出现 5 次（建议 ≤1次/章）
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: false
+  - severity: medium
+    category: 后置验证
+    description: 转折词密度 0.83次/千字（阈值 0.33）
+    suggestion: 修订候选正文后重新审查
+    dimension: 后置验证
+    evidence:
+      quote: ''
+      context_before: ''
+      context_after: ''
+    id: issue_7d9d4bc66649
+    legacy_severity: warning
+    summary: 转折词密度 0.83次/千字（阈值 0.33）
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: false
+  - severity: medium
+    category: 后置验证
+    description: 段落 1 过长（7234字，建议 <300字）
+    suggestion: 修订候选正文后重新审查
+    dimension: 后置验证
+    evidence:
+      quote: ''
+      context_before: ''
+      context_after: ''
+    id: issue_c38c2ce95975
+    legacy_severity: warning
+    summary: 段落 1 过长（7234字，建议 <300字）
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: false
+  - severity: blocker
+    category: 审稿结构化输出
+    description: 审稿模型输出无效：审稿模型返回的 JSON 无法解析
+    suggestion: 保留候选稿不提交，修复模型输出格式后重新审查
+    dimension: 审稿结构化输出
+    evidence:
+      quote: reviewer JSON
+      context_before: ''
+      context_after: ''
+    id: issue_df2dff432481
+    legacy_severity: critical
+    summary: 审稿模型输出无效：审稿模型返回的 JSON 无法解析
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  run_id: ''
+  run_id_v2: ''
+  effective_target_words: 3000
+  token_usage:
+    prompt_tokens: 138290
+    completion_tokens: 52703
+    total_tokens: 190993
+    audit_calls: 26
+    compressed_calls: 19
+    original_estimated_tokens: 496086
+    final_estimated_tokens: 451767
+  strict: false
+  dimensions: null
+error: null
+retryable: true
+retry_of: ''
+attempt: 1
+cancel_requested: false
+created_at: '2026-08-26T03:38:42.372613+00:00'
+started_at: '2026-08-26T03:38:42.457201+00:00'
+completed_at: '2026-08-26T04:45:23.085269+00:00'
+updated_at: '2026-08-26T04:45:23.085269+00:00'
+last_event_id: evt_baf093ed20264113a8cf0590d938c45a

@@ -1,0 +1,36 @@
+{
+  "name": "@deepresearch/testing",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@deepresearch/contracts": "workspace:*",
+    "@deepresearch/intent-analyzer": "workspace:*",
+    "@deepresearch/task-ledger": "workspace:*",
+    "@deepresearch/knowledge-graph": "workspace:*",
+    "@deepresearch/memory-graph": "workspace:*",
+    "@deepresearch/report-evaluator": "workspace:*"
+  },
+  "devDependencies": {
+    "vitest": "^1.6.1"
+  },
+  "files": [
+    "dist",
+    "!dist/tests",
+    "!dist/__tests__",
+    "!dist/**/__tests__"
+  ]
+}

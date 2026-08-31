@@ -1,0 +1,713 @@
+{
+  "ok": true,
+  "chapter_id": "ch_001",
+  "passed": false,
+  "score": 0,
+  "issues": 10,
+  "summary": "发现问题：严重问题 5 个，警告 5 项（得分：0）",
+  "issue_details": [
+    {
+      "severity": "medium",
+      "category": "目标字数偏差",
+      "description": "正文约5826个中文字符，目标为3000，偏差超过30%",
+      "suggestion": "删减重复动作与支线，或补足关键场景，使篇幅回到目标区间",
+      "dimension": "7",
+      "evidence": {
+        "quote": "",
+        "context_before": "",
+        "context_after": ""
+      },
+      "id": "issue_469594f17b00",
+      "legacy_severity": "warning",
+      "summary": "正文约5826个中文字符，目标为3000，偏差超过30%",
+      "anchor": {
+        "start_hint": null,
+        "end_hint": null
+      },
+      "auto_fixable": false
+    },
+    {
+      "severity": "blocker",
+      "category": "表情描写",
+      "description": "发现禁用表达：嘴角微微上扬",
+      "suggestion": "建议替换为：笑了 / 咧嘴一笑 / 嘴角勾起",
+      "dimension": "表情描写",
+      "evidence": {
+        "quote": "",
+        "context_before": "",
+        "context_after": ""
+      },
+      "id": "issue_b952a781972e",
+      "legacy_severity": "critical",
+      "summary": "发现禁用表达：嘴角微微上扬",
+      "anchor": {
+        "start_hint": null,
+        "end_hint": null
+      },
+      "auto_fixable": false
+    },
+    {
+      "severity": "medium",
+      "category": "过度修饰",
+      "description": "发现禁用表达：下意识地",
+      "suggestion": "建议替换为： / 习惯性地",
+      "dimension": "过度修饰",
+      "evidence": {
+        "quote": "",
+        "context_before": "",
+        "context_after": ""
+      },
+      "id": "issue_73bb5a8d99e0",
+      "legacy_severity": "warning",
+      "summary": "发现禁用表达：下意识地",
+      "anchor": {
+        "start_hint": null,
+        "end_hint": null
+      },
+      "auto_fixable": false
+    },
+    {
+      "severity": "blocker",
+      "category": "后置验证",
+      "description": "禁止句式：'不是...而是...'",
+      "suggestion": "修订候选正文后重新审查",
+      "dimension": "后置验证",
+      "evidence": {
+        "quote": "出现 2 次",
+        "context_before": "",
+        "context_after": ""
+      },
+      "id": "issue_84a97d8b523d",
+      "legacy_severity": "critical",
+      "summary": "禁止句式：'不是...而是...'",
+      "anchor": {
+        "start_hint": null,
+        "end_hint": null
+      },
+      "auto_fixable": true
+    },
+    {
+      "severity": "blocker",
+      "category": "后置验证",
+      "description": "禁止句式：破折号'——'",
+      "suggestion": "修订候选正文后重新审查",
+      "dimension": "后置验证",
+      "evidence": {
+        "quote": "出现 11 次",
+        "context_before": "",
+        "context_after": ""
+      },
+      "id": "issue_9dbd177d5dc6",
+      "legacy_severity": "critical",
+      "summary": "禁止句式：破折号'——'",
+      "anchor": {
+        "start_hint": null,
+        "end_hint": null
+      },
+      "auto_fixable": true
+    },
+    {
+      "severity": "blocker",
+      "category": "后置验证",
+      "description": "禁止句式：省略号",
+      "suggestion": "修订候选正文后重新审查",
+      "dimension": "后置验证",
+      "evidence": {
+        "quote": "出现 1 次",
+        "context_before": "",
+        "context_after": ""
+      },
+      "id": "issue_0fcd5a6f328f",
+      "legacy_severity": "critical",
+      "summary": "禁止句式：省略号",
+      "anchor": {
+        "start_hint": null,
+        "end_hint": null
+      },
+      "auto_fixable": true
+    },
+    {
+      "severity": "medium",
+      "category": "后置验证",
+      "description": "高疲劳词 '瞬间' 出现 5 次（建议 ≤1次/章）",
+      "suggestion": "修订候选正文后重新审查",
+      "dimension": "后置验证",
+      "evidence": {
+        "quote": "",
+        "context_before": "",
+        "context_after": ""
+      },
+      "id": "issue_3dbe67453b84",
+      "legacy_severity": "warning",
+      "summary": "高疲劳词 '瞬间' 出现 5 次（建议 ≤1次/章）",
+      "anchor": {
+        "start_hint": null,
+        "end_hint": null
+      },
+      "auto_fixable": false
+    },
+    {
+      "severity": "medium",
+      "category": "后置验证",
+      "description": "转折词密度 0.83次/千字（阈值 0.33）",
+      "suggestion": "修订候选正文后重新审查",
+      "dimension": "后置验证",
+      "evidence": {
+        "quote": "",
+        "context_before": "",
+        "context_after": ""
+      },
+      "id": "issue_7d9d4bc66649",
+      "legacy_severity": "warning",
+      "summary": "转折词密度 0.83次/千字（阈值 0.33）",
+      "anchor": {
+        "start_hint": null,
+        "end_hint": null
+      },
+      "auto_fixable": false
+    },
+    {
+      "severity": "medium",
+      "category": "后置验证",
+      "description": "段落 1 过长（7234字，建议 <300字）",
+      "suggestion": "修订候选正文后重新审查",
+      "dimension": "后置验证",
+      "evidence": {
+        "quote": "",
+        "context_before": "",
+        "context_after": ""
+      },
+      "id": "issue_c38c2ce95975",
+      "legacy_severity": "warning",
+      "summary": "段落 1 过长（7234字，建议 <300字）",
+      "anchor": {
+        "start_hint": null,
+        "end_hint": null
+      },
+      "auto_fixable": false
+    },
+    {
+      "severity": "blocker",
+      "category": "审稿结构化输出",
+      "description": "审稿模型输出无效：审稿模型返回的 JSON 无法解析",
+      "suggestion": "保留候选稿不提交，修复模型输出格式后重新审查",
+      "dimension": "审稿结构化输出",
+      "evidence": {
+        "quote": "reviewer JSON",
+        "context_before": "",
+        "context_after": ""
+      },
+      "id": "issue_df2dff432481",
+      "legacy_severity": "critical",
+      "summary": "审稿模型输出无效：审稿模型返回的 JSON 无法解析",
+      "anchor": {
+        "start_hint": null,
+        "end_hint": null
+      },
+      "auto_fixable": true
+    }
+  ],
+  "run_id": "",
+  "run_id_v2": "",
+  "effective_target_words": 3000,
+  "token_usage": {
+    "prompt_tokens": 138290,
+    "completion_tokens": 52703,
+    "total_tokens": 190993,
+    "audit_calls": 26,
+    "compressed_calls": 19,
+    "original_estimated_tokens": 496086,
+    "final_estimated_tokens": 451767
+  },
+  "strict": false,
+  "dimensions": null,
+  "issue_delta": {
+    "resolved": [
+      {
+        "severity": "medium",
+        "category": "时间线检查",
+        "description": "开头倒计时16小时与觉醒时间矛盾：午后教室，倒计时16小时，但随后直接前往觉醒中心并完成觉醒，未经过16小时。",
+        "suggestion": "调整倒计时数字或明确觉醒在第二天，使时间线自洽。",
+        "dimension": "2",
+        "evidence": {
+          "quote": "【距离“领主觉醒”仪式，倒计时：16小时】……午后的空气……下课铃响后前往觉醒广场并觉醒。",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_9ec5ad54fe6e",
+        "legacy_severity": "medium",
+        "summary": "开头倒计时16小时与觉醒时间矛盾：午后教室，倒计时16小时，但随后直接前往觉醒中心并完成觉醒，未经过16小时。",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": true
+      },
+      {
+        "severity": "medium",
+        "category": "设定冲突",
+        "description": "魔方感应被用于感知他人情绪，与设定‘感知周边心智魔方位置’不符。",
+        "suggestion": "改为灵汐的直觉或观察，或扩展魔方感应能力并提前说明。",
+        "dimension": "3",
+        "evidence": {
+          "quote": "在她的“魔方感应”中，林北周身散发着的并不是恶意的黑气，而是一团焦躁的、暖烘烘的橙色光晕。",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_26dacf342086",
+        "legacy_severity": "medium",
+        "summary": "魔方感应被用于感知他人情绪，与设定‘感知周边心智魔方位置’不符。",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": true
+      },
+      {
+        "severity": "medium",
+        "category": "数值检查",
+        "description": "林北赠送的是‘通用材料补给*200’，后文却称‘紫色燃油卡’，前后不一致。",
+        "suggestion": "统一为同一种道具，或明确补给卡包含燃油。",
+        "dimension": "5",
+        "evidence": {
+          "quote": "似乎感应到了那张紫色燃油卡的气息……‘拉菲……想喝。’",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_4f6643dfa1dc",
+        "legacy_severity": "medium",
+        "summary": "林北赠送的是‘通用材料补给*200’，后文却称‘紫色燃油卡’，前后不一致。",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": true
+      },
+      {
+        "severity": "medium",
+        "category": "利益链断裂",
+        "description": "林北赠送的是“通用材料补给*200”，但后文拉菲感应到“紫色燃油卡”，资源类型前后矛盾，导致利益链断裂。",
+        "suggestion": "将后文改为“通用材料卡”或明确该材料卡包含燃油，保持资源类型一致。",
+        "dimension": "11",
+        "evidence": {
+          "quote": "“似乎感应到了那张紫色燃油卡的气息”与“【道具卡：通用材料补给*200】”矛盾。",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_25a91cf3594b",
+        "legacy_severity": "medium",
+        "summary": "林北赠送的是“通用材料补给*200”，但后文拉菲感应到“紫色燃油卡”，资源类型前后矛盾，导致利益链断裂。",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": true
+      },
+      {
+        "severity": "low",
+        "category": "年代考据",
+        "description": "“蓝星纪元37年”与“万族争霸·第二十个年头”的换算关系未明确，若万族争霸始于蓝星纪元17年，则第20年应为36年。",
+        "suggestion": "补充万族争霸起始年份，或调整年份使时间线自洽。",
+        "dimension": "12",
+        "evidence": {
+          "quote": "“【蓝星纪元37年，六月】 【万族争霸·第二十个年头】”",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_e111efca2e31",
+        "legacy_severity": "low",
+        "summary": "“蓝星纪元37年”与“万族争霸·第二十个年头”的换算关系未明确，若万族争霸始于蓝星纪元17年，则第20年应为36年。",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": true
+      },
+      {
+        "severity": "medium",
+        "category": "爽点虚化",
+        "description": "觉醒S级的爽点被外界反应快速冲淡，从“S级”到“惋惜”的转变过快，觉醒本身的冲击力未充分释放。",
+        "suggestion": "在觉醒后增加灵汐感受天赋力量的描写，让读者先体验S级的强大，再引入外界质疑。",
+        "dimension": "15",
+        "evidence": {
+          "quote": "“S级！！！”人群瞬间炸锅了……从云端跌落凡尘，不过短短几行字的距离。",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_6035ba221395",
+        "legacy_severity": "medium",
+        "summary": "觉醒S级的爽点被外界反应快速冲淡，从“S级”到“惋惜”的转变过快，觉醒本身的冲击力未充分释放。",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": true
+      },
+      {
+        "severity": "medium",
+        "category": "爽点虚化",
+        "description": "灵汐的自信宣言（“真理只在射程之内”“口径震撼”）缺乏实际能力展示，宣言显得空洞，爽点被虚化。",
+        "suggestion": "在觉醒场景中至少展示一次天赋的初步效果（如召唤出拉菲的舰装虚影），让宣言有实际支撑。",
+        "dimension": "15",
+        "evidence": {
+          "quote": "“真理，往往只在射程之内。”——宣言但没有展示。",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_522c5a55fc7b",
+        "legacy_severity": "medium",
+        "summary": "灵汐的自信宣言（“真理只在射程之内”“口径震撼”）缺乏实际能力展示，宣言显得空洞，爽点被虚化。",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": true
+      },
+      {
+        "severity": "blocker",
+        "category": "知识库污染",
+        "description": "林北赠送的是‘通用材料补给*200’，当晚拉菲却感应到‘紫色燃油卡’的气息，前后设定矛盾。",
+        "suggestion": "统一卡片名称，将‘紫色燃油卡’改为‘通用材料补给卡’，或让林北实际赠送燃油卡。",
+        "dimension": "18",
+        "evidence": {
+          "quote": "当晚：似乎感应到了那张紫色燃油卡的气息；前文：道具卡：通用材料补给*200",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_513f1c96a59c",
+        "legacy_severity": "blocker",
+        "summary": "林北赠送的是‘通用材料补给*200’，当晚拉菲却感应到‘紫色燃油卡’的气息，前后设定矛盾。",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": true
+      },
+      {
+        "severity": "medium",
+        "category": "套话密度",
+        "description": "多处使用常见网文套话，如‘人群瞬间炸锅了’‘从云端跌落凡尘’‘眉头皱得能夹死苍蝇’等，削弱语言新鲜感。",
+        "suggestion": "替换为更具体、有画面感的描写，减少陈词滥调。",
+        "dimension": "21",
+        "evidence": {
+          "quote": "人群瞬间炸锅了；从云端跌落凡尘；眉头皱得能夹死苍蝇",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_6dfc7765a7d9",
+        "legacy_severity": "medium",
+        "summary": "多处使用常见网文套话，如‘人群瞬间炸锅了’‘从云端跌落凡尘’‘眉头皱得能夹死苍蝇’等，削弱语言新鲜感。",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": true
+      },
+      {
+        "severity": "medium",
+        "category": "公式化转折",
+        "description": "觉醒异变采用‘轰！异变突生’和‘死寂三秒’的常见套路，转折方式公式化。",
+        "suggestion": "用更独特的细节或人物反应呈现异变，避免直接套用‘轰’和‘死寂’。",
+        "dimension": "22",
+        "evidence": {
+          "quote": "轰！异变突生；死寂。足足三秒钟的死寂。",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_47fcc2111d6d",
+        "legacy_severity": "medium",
+        "summary": "觉醒异变采用‘轰！异变突生’和‘死寂三秒’的常见套路，转折方式公式化。",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": true
+      },
+      {
+        "severity": "medium",
+        "category": "节奏单调",
+        "description": "觉醒广场部分连续两轮“震惊—议论”结构重复：S级公布后人群炸锅，舰船公布后又一轮议论，且议论段密集，节奏单一。",
+        "suggestion": "将第二轮议论差异化处理，加入具体人物动作或场景细节，或用灵汐的内心观察打断纯议论，避免重复结构。",
+        "dimension": "26",
+        "evidence": {
+          "quote": "“S级！！！”人群瞬间炸锅……“舰……舰船？”死寂。",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_ed3ceb9ad663",
+        "legacy_severity": "medium",
+        "summary": "觉醒广场部分连续两轮“震惊—议论”结构重复：S级公布后人群炸锅，舰船公布后又一轮议论，且议论段密集，节奏单一。",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": true
+      },
+      {
+        "severity": "low",
+        "category": "弧线平坦",
+        "description": "灵汐在“被误解”后的情绪转折主要依赖外部支持（林北、叶冰瑶、老李），主角内在情绪波动不足，弧线在主角视角上偏平。",
+        "suggestion": "在朋友支持前增加一段灵汐的内心独白或细微动作，展现她面对质疑时的真实情绪波动，再过渡到重新确定。",
+        "dimension": "25",
+        "evidence": {
+          "quote": "灵汐礼貌地向几位负责人点了点头：“谢谢老师，我会证明的。”",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_6975e0cbeba5",
+        "legacy_severity": "low",
+        "summary": "灵汐在“被误解”后的情绪转折主要依赖外部支持（林北、叶冰瑶、老李），主角内在情绪波动不足，弧线在主角视角上偏平。",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": true
+      },
+      {
+        "severity": "medium",
+        "category": "读者期待管理",
+        "description": "灵汐多次宣言炮火威力，但当前石油为0，主炮不可用，可能让读者期待过早的火力展示，与慢积累承诺冲突。",
+        "suggestion": "弱化宣言，或补充当前限制，例如强调拉菲需要燃油才能开炮，避免读者期待第二章就出现火力碾压。",
+        "dimension": "32",
+        "evidence": {
+          "quote": "“明天，我们会给林北那个自大的家伙，还有这个世界……一点小小的，口径震撼。”",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_57ac11c80ebc",
+        "legacy_severity": "medium",
+        "summary": "灵汐多次宣言炮火威力，但当前石油为0，主炮不可用，可能让读者期待过早的火力展示，与慢积累承诺冲突。",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": true
+      },
+      {
+        "severity": "medium",
+        "category": "读者期待管理",
+        "description": "灵汐内心“船只能在水里游？那是你们凡人的常识”暗示已有解决之道，但概念之海是后期能力，可能削弱“舰船无法上岸”的真实困难。",
+        "suggestion": "改为她只是相信天赋但具体方法未知，或强调当前仍需解决水、油问题，避免读者认为困难已被解决。",
+        "dimension": "32",
+        "evidence": {
+          "quote": "“船只能在水里游？那是你们凡人的常识。”",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_582e10741dce",
+        "legacy_severity": "medium",
+        "summary": "灵汐内心“船只能在水里游？那是你们凡人的常识”暗示已有解决之道，但概念之海是后期能力，可能削弱“舰船无法上岸”的真实困难。",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": true
+      }
+    ],
+    "remaining": [],
+    "new": [
+      {
+        "severity": "medium",
+        "category": "目标字数偏差",
+        "description": "正文约5826个中文字符，目标为3000，偏差超过30%",
+        "suggestion": "删减重复动作与支线，或补足关键场景，使篇幅回到目标区间",
+        "dimension": "7",
+        "evidence": {
+          "quote": "",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_469594f17b00",
+        "legacy_severity": "warning",
+        "summary": "正文约5826个中文字符，目标为3000，偏差超过30%",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": false
+      },
+      {
+        "severity": "blocker",
+        "category": "表情描写",
+        "description": "发现禁用表达：嘴角微微上扬",
+        "suggestion": "建议替换为：笑了 / 咧嘴一笑 / 嘴角勾起",
+        "dimension": "表情描写",
+        "evidence": {
+          "quote": "",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_b952a781972e",
+        "legacy_severity": "critical",
+        "summary": "发现禁用表达：嘴角微微上扬",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": false
+      },
+      {
+        "severity": "medium",
+        "category": "过度修饰",
+        "description": "发现禁用表达：下意识地",
+        "suggestion": "建议替换为： / 习惯性地",
+        "dimension": "过度修饰",
+        "evidence": {
+          "quote": "",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_73bb5a8d99e0",
+        "legacy_severity": "warning",
+        "summary": "发现禁用表达：下意识地",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": false
+      },
+      {
+        "severity": "blocker",
+        "category": "后置验证",
+        "description": "禁止句式：'不是...而是...'",
+        "suggestion": "修订候选正文后重新审查",
+        "dimension": "后置验证",
+        "evidence": {
+          "quote": "出现 2 次",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_84a97d8b523d",
+        "legacy_severity": "critical",
+        "summary": "禁止句式：'不是...而是...'",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": true
+      },
+      {
+        "severity": "blocker",
+        "category": "后置验证",
+        "description": "禁止句式：破折号'——'",
+        "suggestion": "修订候选正文后重新审查",
+        "dimension": "后置验证",
+        "evidence": {
+          "quote": "出现 11 次",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_9dbd177d5dc6",
+        "legacy_severity": "critical",
+        "summary": "禁止句式：破折号'——'",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": true
+      },
+      {
+        "severity": "blocker",
+        "category": "后置验证",
+        "description": "禁止句式：省略号",
+        "suggestion": "修订候选正文后重新审查",
+        "dimension": "后置验证",
+        "evidence": {
+          "quote": "出现 1 次",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_0fcd5a6f328f",
+        "legacy_severity": "critical",
+        "summary": "禁止句式：省略号",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": true
+      },
+      {
+        "severity": "medium",
+        "category": "后置验证",
+        "description": "高疲劳词 '瞬间' 出现 5 次（建议 ≤1次/章）",
+        "suggestion": "修订候选正文后重新审查",
+        "dimension": "后置验证",
+        "evidence": {
+          "quote": "",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_3dbe67453b84",
+        "legacy_severity": "warning",
+        "summary": "高疲劳词 '瞬间' 出现 5 次（建议 ≤1次/章）",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": false
+      },
+      {
+        "severity": "medium",
+        "category": "后置验证",
+        "description": "转折词密度 0.83次/千字（阈值 0.33）",
+        "suggestion": "修订候选正文后重新审查",
+        "dimension": "后置验证",
+        "evidence": {
+          "quote": "",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_7d9d4bc66649",
+        "legacy_severity": "warning",
+        "summary": "转折词密度 0.83次/千字（阈值 0.33）",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": false
+      },
+      {
+        "severity": "medium",
+        "category": "后置验证",
+        "description": "段落 1 过长（7234字，建议 <300字）",
+        "suggestion": "修订候选正文后重新审查",
+        "dimension": "后置验证",
+        "evidence": {
+          "quote": "",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_c38c2ce95975",
+        "legacy_severity": "warning",
+        "summary": "段落 1 过长（7234字，建议 <300字）",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": false
+      },
+      {
+        "severity": "blocker",
+        "category": "审稿结构化输出",
+        "description": "审稿模型输出无效：审稿模型返回的 JSON 无法解析",
+        "suggestion": "保留候选稿不提交，修复模型输出格式后重新审查",
+        "dimension": "审稿结构化输出",
+        "evidence": {
+          "quote": "reviewer JSON",
+          "context_before": "",
+          "context_after": ""
+        },
+        "id": "issue_df2dff432481",
+        "legacy_severity": "critical",
+        "summary": "审稿模型输出无效：审稿模型返回的 JSON 无法解析",
+        "anchor": {
+          "start_hint": null,
+          "end_hint": null
+        },
+        "auto_fixable": true
+      }
+    ]
+  },
+  "source_revision": "sha256:eb8940880a3206559d0b7854f7d3844a6d240c88c0ffab8385819a0fad6d28bf",
+  "reviewed_at": "2026-08-26T04:45:23.077293+00:00"
+}

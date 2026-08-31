@@ -1,0 +1,520 @@
+task_id: tsk_20260826134440_1838a565c9
+novel_id: '111'
+type: chapter_review
+status: completed
+phase: complete
+chapter_id: ''
+input_summary: 审稿
+input:
+  path: '[object PointerEvent]'
+result:
+  ok: true
+  chapter_id: ch_002
+  passed: false
+  score: 0
+  issues: 30
+  summary: 发现问题：严重问题 4 个，警告 19 项（得分：0）
+  issue_details:
+  - severity: blocker
+    category: 后置验证
+    description: 禁止句式：破折号'——'
+    suggestion: 修订候选正文后重新审查
+    dimension: 后置验证
+    evidence:
+      quote: 出现 8 次
+      context_before: ''
+      context_after: ''
+    id: issue_627acb0e7a9b
+    legacy_severity: critical
+    summary: 禁止句式：破折号'——'
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: medium
+    category: 后置验证
+    description: 高疲劳词 '瞬间' 出现 4 次（建议 ≤1次/章）
+    suggestion: 修订候选正文后重新审查
+    dimension: 后置验证
+    evidence:
+      quote: ''
+      context_before: ''
+      context_after: ''
+    id: issue_09411c0ca359
+    legacy_severity: warning
+    summary: 高疲劳词 '瞬间' 出现 4 次（建议 ≤1次/章）
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: false
+  - severity: medium
+    category: 后置验证
+    description: 转折词密度 1.16次/千字（阈值 0.33）
+    suggestion: 修订候选正文后重新审查
+    dimension: 后置验证
+    evidence:
+      quote: ''
+      context_before: ''
+      context_after: ''
+    id: issue_a8ea7a806b71
+    legacy_severity: warning
+    summary: 转折词密度 1.16次/千字（阈值 0.33）
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: false
+  - severity: medium
+    category: 后置验证
+    description: 段落 1 过长（3447字，建议 <300字）
+    suggestion: 修订候选正文后重新审查
+    dimension: 后置验证
+    evidence:
+      quote: ''
+      context_before: ''
+      context_after: ''
+    id: issue_b66686a314fc
+    legacy_severity: warning
+    summary: 段落 1 过长（3447字，建议 <300字）
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: false
+  - severity: blocker
+    category: 数值检查
+    description: 资源账本矛盾：木材50、石材50已全部消耗于建造台，但随后深水之井又需石料x50、木材x20并宣称'材料齐了'，来源无交代。
+    suggestion: 调整采集总量（如木材70、石材100），或修改水井需求并在正文中补充二次采集过程。
+    dimension: '5'
+    evidence:
+      quote: 【消耗：木材x50，石材x50】……【需求：石料x50，木材x20】'材料齐了'
+      context_before: ''
+      context_after: ''
+    id: issue_14343f3f546e
+    legacy_severity: critical
+    summary: 资源账本矛盾：木材50、石材50已全部消耗于建造台，但随后深水之井又需石料x50、木材x20并宣称'材料齐了'，来源无交代。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: medium
+    category: 设定冲突
+    description: 第一章明确灵汐选择了一级木质栅栏图纸，且世界状态记录领地含栅栏，但本章正文全程未提及建造栅栏。
+    suggestion: 在本章补入使用栅栏图纸的情节，或在后续章节明确说明未建原因。
+    dimension: '3'
+    evidence:
+      quote: 第一章：'伸手拿向了【一级木质栅栏】'；本章无对应内容
+      context_before: ''
+      context_after: ''
+    id: issue_cae57c47003a
+    legacy_severity: warning
+    summary: 第一章明确灵汐选择了一级木质栅栏图纸，且世界状态记录领地含栅栏，但本章正文全程未提及建造栅栏。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: medium
+    category: 时间线检查
+    description: 时间标注混乱：08:05落地，采集半小时约08:40，建造台加召唤约09:10，却直接跳到【12:00】称'接下来的两个小时'，中间约两小时去向不明。
+    suggestion: 将战斗段标注改为【09:00-11:00】等连续时段，或补充中间的时间过渡。
+    dimension: '2'
+    evidence:
+      quote: 【新人领主历第一天 08:05】……【12:00】'接下来的两个小时'
+      context_before: ''
+      context_after: ''
+    id: issue_2e00fe7970f0
+    legacy_severity: warning
+    summary: 时间标注混乱：08:05落地，采集半小时约08:40，建造台加召唤约09:10，却直接跳到【12:00】称'接下来的两个小时'，中间约两小时去向不明。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: medium
+    category: OOC检查
+    description: 灵汐内心独白'装逼就让你飞起来''人形自走打桩机'等网络梗式吐槽与其清冷沉稳、先判断后回应的性格不符。
+    suggestion: 改为冷静的战术评估口吻，如惊讶于舰装物理形态的重量优势并思考其代价。
+    dimension: '1'
+    evidence:
+      quote: '''这就叫……装逼就让你飞起来？''''这分明是人形自走打桩机！'''
+      context_before: ''
+      context_after: ''
+    id: issue_e5545447d84d
+    legacy_severity: warning
+    summary: 灵汐内心独白'装逼就让你飞起来''人形自走打桩机'等网络梗式吐槽与其清冷沉稳、先判断后回应的性格不符。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: medium
+    category: 文风检查
+    description: 存在明显的编辑残留与格式错误：'当务之急，是先把拉菲召唤出来'连续出现两次且引号错乱，'卷起袖子'重复描写，多处残留**加粗标记。
+    suggestion: 删除重复句与**符号，统一系统面板格式，清理残句。
+    dimension: '8'
+    evidence:
+      quote: '''当务之急，是先把拉菲召唤出来。''出现两次；''**【木材x50】和【石材x50】**'''
+      context_before: ''
+      context_after: ''
+    id: issue_dcc13c874016
+    legacy_severity: warning
+    summary: 存在明显的编辑残留与格式错误：'当务之急，是先把拉菲召唤出来'连续出现两次且引号错乱，'卷起袖子'重复描写，多处残留**加粗标记。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: low
+    category: 节奏检查
+    description: 结尾'我们的领主之路，才刚刚开始'属于泛化宣言式收尾，违反风格约束中避免宣言结尾的要求，且未留下具体资源线索。
+    suggestion: 改为指向石油缺口或保护罩外敌情的具体悬念，如让灵汐盘点剩余物资时发现燃油问题。
+    dimension: '7'
+    evidence:
+      quote: '''我们的领主之路，才刚刚开始。'''
+      context_before: ''
+      context_after: ''
+    id: issue_a02f7977681d
+    legacy_severity: info
+    summary: 结尾'我们的领主之路，才刚刚开始'属于泛化宣言式收尾，违反风格约束中避免宣言结尾的要求，且未留下具体资源线索。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: blocker
+    category: 利益链断裂
+    description: 资源账断裂：木材50、石材50已全部消耗于建造台，随后深水之井需要石料x50、木材x20，正文未补充采集却直接宣称'材料齐了'并建成水井。
+    suggestion: 在召唤拉菲前后补一段继续采集的情节，或修改水井需求为剩余可覆盖的数量，保证账目闭合。
+    dimension: '11'
+    evidence:
+      quote: 【消耗：木材x50，石材x50】……【需求：石料x50，木材x20】'材料齐了。'
+      context_before: ''
+      context_after: ''
+    id: issue_5e5e01cf23de
+    legacy_severity: critical
+    summary: 资源账断裂：木材50、石材50已全部消耗于建造台，随后深水之井需要石料x50、木材x20，正文未补充采集却直接宣称'材料齐了'并建成水井。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: medium
+    category: 词汇疲劳
+    description: '''当务之急，是先把拉菲召唤出来''连续重复两次，''卷起袖子''''叹了口气''也各出现两次以上，疑似修改残留。'
+    suggestion: 删除重复段落，合并两次取斧头的动作描写为一处。
+    dimension: '10'
+    evidence:
+      quote: 先点开建造台看看……当务之急，是先把拉菲召唤出来 / 当务之急，是先把拉菲召唤出来。
+      context_before: ''
+      context_after: ''
+    id: issue_21cd4fd446f8
+    legacy_severity: warning
+    summary: '''当务之急，是先把拉菲召唤出来''连续重复两次，''卷起袖子''''叹了口气''也各出现两次以上，疑似修改残留。'
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: medium
+    category: 年代考据
+    description: 章节标题'82年的拉菲'使用现实红酒品牌梗，与蓝星纪元37年的架空世界观不符；正文中该梗也未落地。
+    suggestion: 改为架空世界的等价说法，或在正文加入对应解释性桥段使标题成立。
+    dimension: '12'
+    evidence:
+      quote: 第二章：82年的拉菲与第一滴血
+      context_before: ''
+      context_after: ''
+    id: issue_7898cb43848f
+    legacy_severity: warning
+    summary: 章节标题'82年的拉菲'使用现实红酒品牌梗，与蓝星纪元37年的架空世界观不符；正文中该梗也未落地。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: medium
+    category: 爽点虚化
+    description: 拉菲油料枯竭全属性下降50%，却能单手抡动数吨舰装连杀两小时无伤无耗，代价仅体现为'出汗想泡澡'，削弱了燃油设定的分量。
+    suggestion: 增加体力条/状态面板变化或明确休息时长成本，让近战模式的消耗可见。
+    dimension: '15'
+    evidence:
+      quote: 拉菲单手拎着比她人还大的炮管……化身拆迁办拉主任
+      context_before: ''
+      context_after: ''
+    id: issue_b754cd6b9a25
+    legacy_severity: warning
+    summary: 拉菲油料枯竭全属性下降50%，却能单手抡动数吨舰装连杀两小时无伤无耗，代价仅体现为'出汗想泡澡'，削弱了燃油设定的分量。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: low
+    category: 利益链断裂
+    description: 击杀一只赤尾岩蝎获得经验+10即从Lv.1升至Lv.2，此后无战斗播报却在日结算时已是Lv.3，升级路径缺一环。
+    suggestion: 在两小时清剿段补一条升级系统提示，保持数值链完整。
+    dimension: '11'
+    evidence:
+      quote: 【拉菲升级：Lv.1 -> Lv.2】……【拉菲等级：Lv.3】
+      context_before: ''
+      context_after: ''
+    id: issue_729bfc35c0b7
+    legacy_severity: info
+    summary: 击杀一只赤尾岩蝎获得经验+10即从Lv.1升至Lv.2，此后无战斗播报却在日结算时已是Lv.3，升级路径缺一环。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: low
+    category: 台词失真
+    description: '''装逼就让你飞起来''''人形自走打桩机''''拆迁办拉主任''等密集网络流行语与全书冷静克制的工业质感文风不统一。'
+    suggestion: 保留一处吐槽即可，其余替换为贴合灵汐观察型性格的表达。
+    dimension: '16'
+    evidence:
+      quote: 这分明是人形自走打桩机！
+      context_before: ''
+      context_after: ''
+    id: issue_6b8d01858c90
+    legacy_severity: info
+    summary: '''装逼就让你飞起来''''人形自走打桩机''''拆迁办拉主任''等密集网络流行语与全书冷静克制的工业质感文风不统一。'
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: medium
+    category: 流水账
+    description: 中段采集与建造过程按时间顺序平铺直叙，缺乏判断与波折，读感像任务日志。
+    suggestion: 在采集和建造中插入风险判断或小意外，压缩重复性劳作描写。
+    dimension: '17'
+    evidence:
+      quote: 【半小时后】……【12:00】两段以时间戳推进的连续劳作记录
+      context_before: ''
+      context_after: ''
+    id: issue_635e4b89cd7f
+    legacy_severity: warning
+    summary: 中段采集与建造过程按时间顺序平铺直叙，缺乏判断与波折，读感像任务日志。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: medium
+    category: 知识库污染
+    description: 正文残留Markdown加粗符号，且出现'装逼就让你飞起来''人形自走打桩机'等网络梗语，破坏工业质感文风。
+    suggestion: 删除**符号，替换网络流行语为符合灵汐冷静视角的表达。
+    dimension: '18'
+    evidence:
+      quote: '**【木材x50】**；''这就叫……装逼就让你飞起来？'''
+      context_before: ''
+      context_after: ''
+    id: issue_89e934e93d70
+    legacy_severity: warning
+    summary: 正文残留Markdown加粗符号，且出现'装逼就让你飞起来''人形自走打桩机'等网络梗语，破坏工业质感文风。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: medium
+    category: 视角一致性
+    description: 存在明显文本重复粘贴痕迹：'当务之急是先把拉菲召唤出来'连续出现两次，取斧头、卷袖子动作也重复叙述。
+    suggestion: 删除重复段落，保留一次完整的行动描写。
+    dimension: '19'
+    evidence:
+      quote: '''先点开建造台看看需要什么吧，当务之急是把拉菲召唤出来''后紧接重复句'
+      context_before: ''
+      context_after: ''
+    id: issue_ea22c162fcd1
+    legacy_severity: warning
+    summary: 存在明显文本重复粘贴痕迹：'当务之急是先把拉菲召唤出来'连续出现两次，取斧头、卷袖子动作也重复叙述。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: medium
+    category: 套话密度
+    description: '''接下来就是见证奇迹的时刻了''''我们的领主之路才刚刚开始''均为高频网文套话，且结尾宣言违反创作罗盘约束。'
+    suggestion: 删除套话，改为具体资源缺口或石油线索收尾。
+    dimension: '21'
+    evidence:
+      quote: '''接下来……就是见证奇迹的时刻了。''；''我们的领主之路，才刚刚开始。'''
+      context_before: ''
+      context_after: ''
+    id: issue_22dee80a361a
+    legacy_severity: warning
+    summary: '''接下来就是见证奇迹的时刻了''''我们的领主之路才刚刚开始''均为高频网文套话，且结尾宣言违反创作罗盘约束。'
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: low
+    category: 公式化转折
+    description: 拉菲登场采用'金光炸裂+樱花瓣+香气'的标准抽卡演出，随后立即接战斗立威，转折路径较为公式化。
+    suggestion: 可让召唤结果带一点意外或代价细节，弱化模板感。
+    dimension: '22'
+    evidence:
+      quote: '''金色的光芒炸裂，无数粉色的樱花瓣……凭空飘落'''
+      context_before: ''
+      context_after: ''
+    id: issue_c416bc612b38
+    legacy_severity: info
+    summary: 拉菲登场采用'金光炸裂+樱花瓣+香气'的标准抽卡演出，随后立即接战斗立威，转折路径较为公式化。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: low
+    category: 列表式结构
+    description: 系统面板密集堆叠（资源清单、进度、单位面板、结算），部分面板信息可用叙述承载。
+    suggestion: 合并或精简面板，仅保留必要字段，符合罗盘'系统播报不当情节'要求。
+    dimension: '23'
+    evidence:
+      quote: 开篇连续四条系统提示加资源列表
+      context_before: ''
+      context_after: ''
+    id: issue_24bc824d7733
+    legacy_severity: info
+    summary: 系统面板密集堆叠（资源清单、进度、单位面板、结算），部分面板信息可用叙述承载。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: medium
+    category: 正传事件冲突
+    description: 第一章明确灵汐选择了【一级木质栅栏】图纸，当前世界状态也记录领地拥有栅栏，但本章全程未提及或建造栅栏，领地防御描述缺失。
+    suggestion: 在采集或建井段落补入使用栅栏图纸建成一级木质栅栏的情节，或在结算中说明。
+    dimension: '28'
+    evidence:
+      quote: 第一章：'伸手拿向了【一级木质栅栏】'；本章结算仅列'水井x1'
+      context_before: ''
+      context_after: ''
+    id: issue_774d49e6442a
+    legacy_severity: warning
+    summary: 第一章明确灵汐选择了【一级木质栅栏】图纸，当前世界状态也记录领地拥有栅栏，但本章全程未提及或建造栅栏，领地防御描述缺失。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: medium
+    category: 节奏单调
+    description: 存在成段文字重复：'当务之急是先把拉菲召唤出来''卷起袖子'等句子各出现两次，'稿子/镐子'用字混乱，明显是修改残留未清理。
+    suggestion: 删除重复段落，统一工具名称为'铁镐'，并清理加粗标记残留。
+    dimension: '26'
+    evidence:
+      quote: '''当务之急，是先把拉菲召唤出来。''紧邻重复出现两次'
+      context_before: ''
+      context_after: ''
+    id: issue_b27c86e5a4af
+    legacy_severity: warning
+    summary: 存在成段文字重复：'当务之急是先把拉菲召唤出来''卷起袖子'等句子各出现两次，'稿子/镐子'用字混乱，明显是修改残留未清理。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: medium
+    category: 节奏单调
+    description: 战斗段以'砸扁/砸碎/拆掉'清单式播报推进，缺乏判断与代价，拉菲连续两小时高强度作战后仅表现为想泡澡，体力消耗代价过轻。
+    suggestion: 压缩清怪蒙太奇，加入灵汐的战术观察和拉菲体力透支的具体表现。
+    dimension: '26'
+    evidence:
+      quote: '''【沙暴响尾蛇（Lv.1）】——砸扁。【硬皮蜥蜴（Lv.2）】——砸碎。'''
+      context_before: ''
+      context_after: ''
+    id: issue_77b51f4f679d
+    legacy_severity: warning
+    summary: 战斗段以'砸扁/砸碎/拆掉'清单式播报推进，缺乏判断与代价，拉菲连续两小时高强度作战后仅表现为想泡澡，体力消耗代价过轻。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: medium
+    category: 读者期待管理
+    description: 章末以'我们的领主之路，才刚刚开始'的泛化宣言收尾，违反创作罗盘'不用泛化的旅程宣言结尾'的约束，悬念落点空泛。
+    suggestion: 改为具体的资源缺口或异常线索收尾，如石油来源线索或保护罩外的异动。
+    dimension: '32'
+    evidence:
+      quote: '''我们的领主之路，才刚刚开始。'''
+      context_before: ''
+      context_after: ''
+    id: issue_ec87c1805b22
+    legacy_severity: warning
+    summary: 章末以'我们的领主之路，才刚刚开始'的泛化宣言收尾，违反创作罗盘'不用泛化的旅程宣言结尾'的约束，悬念落点空泛。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: low
+    category: 世界规则跨书一致性
+    description: 拉菲油料枯竭全属性下降50%，却能单手抡动数吨炮管一击秒杀同级怪物，力量表现与减益设定的比例关系未交代。
+    suggestion: 补一句说明驱逐舰舰装自重对低级魔物的碾压逻辑，或让挥砸有迟滞感。
+    dimension: '30'
+    evidence:
+      quote: '''单手拎着比她人还大的炮管，就像拎着一根棒球棍'''
+      context_before: ''
+      context_after: ''
+    id: issue_e0a1b6ead01e
+    legacy_severity: info
+    summary: 拉菲油料枯竭全属性下降50%，却能单手抡动数吨炮管一击秒杀同级怪物，力量表现与减益设定的比例关系未交代。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: blocker
+    category: 大纲偏离检测
+    description: 深水之井需要石料x50、木材x20，但正文明确石材50/50已全部消耗于建造台，此后无任何补充采集，灵汐却直接宣称'材料齐了'并建成水井，资源连续性断裂。
+    suggestion: 在召唤拉菲前增加一段补采石材与木材的情节，或在建造台消耗时保留部分余量，使水井材料有据可查。
+    dimension: '33'
+    evidence:
+      quote: 【消耗：木材x50，石材x50】……【建筑图纸：深水之井】【需求：石料x50，木材x20】'材料齐了。'
+      context_before: ''
+      context_after: ''
+    id: issue_9cef62d7745d
+    legacy_severity: critical
+    summary: 深水之井需要石料x50、木材x20，但正文明确石材50/50已全部消耗于建造台，此后无任何补充采集，灵汐却直接宣称'材料齐了'并建成水井，资源连续性断裂。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: medium
+    category: 世界规则遵守
+    description: 第一章末灵汐选择了【一级木质栅栏】图纸，当前世界状态也记载领地拥有栅栏，但本章正文从未建造栅栏，且未交代该图纸去向。
+    suggestion: 在第一天内补充使用栅栏图纸建立防御的情节，或删除相关设定记载以保持一致。
+    dimension: '35'
+    evidence:
+      quote: 第一章：'伸手拿向了【一级木质栅栏】'；本章全文无栅栏建造描写
+      context_before: ''
+      context_after: ''
+    id: issue_8d72a3396d1e
+    legacy_severity: warning
+    summary: 第一章末灵汐选择了【一级木质栅栏】图纸，当前世界状态也记载领地拥有栅栏，但本章正文从未建造栅栏，且未交代该图纸去向。
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  - severity: low
+    category: 角色还原度
+    description: '''当务之急，是先把拉菲召唤出来''一句重复出现两次，''卷起袖子''亦重复，属于排版残留，削弱文本质感。'
+    suggestion: 删除重复句，保留一处即可。
+    dimension: '34'
+    evidence:
+      quote: '''当务之急，是先把拉菲召唤出来。''出现两遍'
+      context_before: ''
+      context_after: ''
+    id: issue_a1b5869c3695
+    legacy_severity: info
+    summary: '''当务之急，是先把拉菲召唤出来''一句重复出现两次，''卷起袖子''亦重复，属于排版残留，削弱文本质感。'
+    anchor:
+      start_hint: null
+      end_hint: null
+    auto_fixable: true
+  run_id: ''
+  run_id_v2: ''
+  effective_target_words: 3000
+  token_usage:
+    prompt_tokens: 61339
+    completion_tokens: 5193
+    total_tokens: 66532
+    audit_calls: 5
+    compressed_calls: 0
+    original_estimated_tokens: 105765
+    final_estimated_tokens: 105765
+  strict: false
+  dimensions: null
+error: null
+retryable: true
+retry_of: ''
+attempt: 1
+cancel_requested: false
+created_at: '2026-08-26T13:44:40.623268+00:00'
+started_at: '2026-08-26T13:44:40.743615+00:00'
+completed_at: '2026-08-26T13:48:34.854979+00:00'
+updated_at: '2026-08-26T13:48:34.854979+00:00'
+last_event_id: evt_c5eb64f71cd84cefa4ca8b3ccd208535

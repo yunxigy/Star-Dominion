@@ -1,0 +1,4 @@
+interface:
+  display_name: "Oh Story 短篇写作"
+  short_description: "用于短篇网文情绪设计、场景推进、反转安排和成稿精修的方法"
+  default_prompt: "使用 $oh-story-short-write 构思或精修当前短篇故事。"

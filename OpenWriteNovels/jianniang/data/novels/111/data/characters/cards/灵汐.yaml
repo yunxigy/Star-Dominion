@@ -1,0 +1,22 @@
+id: 灵汐
+name: 灵汐
+tier: 主角
+age: null
+occupation: ''
+identity: ''
+brief: 十八岁，魔都二中学生、孤儿，以父母留下的黑色方块觉醒稀有 S 级天赋碧蓝舰枢。清冷沉稳，擅长观察和判断，但当前缺乏领主世界的实战经验。
+background: ''
+personality: []
+relationships:
+- target: 拉菲
+  kind: 舰娘伙伴
+  note: 第一位召唤的舰娘，共同建立领地
+- target: 叶冰瑶
+  kind: 朋友
+  note: 从小一起长大，现实侧互相支持
+- target: 林北
+  kind: 发小
+  note: 嘴硬的朋友，赠送一次性防御护盾
+- target: 老李
+  kind: 老师
+  note: 赠送深水之井图纸

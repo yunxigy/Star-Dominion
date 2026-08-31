@@ -1,0 +1,4 @@
+interface:
+  display_name: "Oh Story 短篇拆解"
+  short_description: "用于从场景链、情绪、反转和结算证据化拆解短篇小说的方法"
+  default_prompt: "使用 $oh-story-short-analyze 对用户提供的短篇作品做证据化拆解。"

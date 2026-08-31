@@ -1,0 +1,89 @@
+# 伏笔DAG
+nodes:
+  f_cube_origin:
+    id: f_cube_origin
+    content: 父母留下的黑色方块在觉醒日苏醒并与觉醒台共鸣
+    weight: 10
+    layer: 主线
+    status: 埋伏
+    created_at: ch_001
+    target_chapter: ch_090
+    tags: [黑色方块, 父母, 观察者]
+  f_parent_accident:
+    id: f_parent_accident
+    content: 灵汐父母十年前的意外可能与心智魔方或观察者有关
+    weight: 9
+    layer: 主线
+    status: 埋伏
+    created_at: ch_001
+    target_chapter: ch_075
+    tags: [父母, 意外]
+  f_laffey_mind:
+    id: f_laffey_mind
+    content: 拉菲拥有独立心智、情绪和对指挥官的依赖，不只是被调用的单位
+    weight: 8
+    layer: 主线
+    status: 埋伏
+    created_at: ch_001
+    target_chapter: ch_085
+    tags: [拉菲, 舰娘, 心智]
+  f_oil_source:
+    id: f_oil_source
+    content: 灵汐必须找到石油/灵能燃油，才能把舰娘的战斗循环从近战低耗模式推进到完整舰装
+    weight: 8
+    layer: 第一卷
+    status: 待收
+    created_at: ch_002
+    target_chapter: ch_011
+    tags: [燃油, 资源, 基建]
+  f_concept_sea:
+    id: f_concept_sea
+    content: 碧蓝舰枢在达到等级 40/镇级门槛后以概念之海解决舰娘上岸问题
+    weight: 9
+    layer: 主线
+    status: 埋伏
+    created_at: ch_001
+    target_chapter: ch_045
+    tags: [概念之海, 领地等级]
+  f_observer_game:
+    id: f_observer_game
+    content: 万族争霸可能是观察者操控的高维兵棋，心智魔方是异常变量
+    weight: 10
+    layer: 主线
+    status: 埋伏
+    created_at: ch_001
+    target_chapter: ch_090
+    tags: [观察者, 高维, 兵棋]
+  f_territory_transfer:
+    id: f_territory_transfer
+    content: 满四年或达到王城级后，领地可能转移到现实蓝星
+    weight: 9
+    layer: 终局
+    status: 规划
+    created_at: ch_001
+    target_chapter: ch_095
+    tags: [王城级, 蓝星, 国门]
+edges:
+  - from: f_cube_origin
+    to: f_parent_accident
+    type: 指向
+  - from: f_cube_origin
+    to: f_laffey_mind
+    type: 强化
+  - from: f_oil_source
+    to: f_concept_sea
+    type: 依赖
+  - from: f_concept_sea
+    to: f_territory_transfer
+    type: 铺垫
+  - from: f_observer_game
+    to: f_cube_origin
+    type: 解释
+status:
+  f_cube_origin: 埋伏
+  f_parent_accident: 埋伏
+  f_laffey_mind: 埋伏
+  f_oil_source: 待收
+  f_concept_sea: 埋伏
+  f_observer_game: 埋伏
+  f_territory_transfer: 规划

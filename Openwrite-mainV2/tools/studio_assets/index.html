@@ -1,0 +1,1685 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light dark">
+  <title>OpenWrite Studio</title>
+  <link rel="stylesheet" href="/vendor/vditor/dist/index.css">
+  <link rel="stylesheet" href="/styles.css?v=review-progress-4">
+</head>
+<body>
+  <svg class="icon-sprite" aria-hidden="true">
+    <symbol id="icon-menu" viewBox="0 0 24 24"><path d="M4 12h16M4 6h16M4 18h16"/></symbol>
+    <symbol id="icon-home" viewBox="0 0 24 24"><path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10M9 20v-6h6v6"/></symbol>
+    <symbol id="icon-outline" viewBox="0 0 24 24"><path d="M3 6h18M3 12h12M3 18h18"/><path d="m17 10 2 2-2 2"/></symbol>
+    <symbol id="icon-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/><path d="M14 2v6h6M8 13h8M8 17h6"/></symbol>
+    <symbol id="icon-review" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></symbol>
+    <symbol id="icon-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/></symbol>
+    <symbol id="icon-users" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></symbol>
+    <symbol id="icon-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 0 20M12 2a15.3 15.3 0 0 0 0 20"/></symbol>
+    <symbol id="icon-boxes" viewBox="0 0 24 24"><path d="m12 2 4 2.3v4.6L12 11 8 8.9V4.3ZM5 13l4 2.3v4.6L5 22l-4-2.1v-4.6ZM19 13l4 2.3v4.6L19 22l-4-2.1v-4.6Z"/></symbol>
+    <symbol id="icon-network" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="16" y="16" width="6" height="6" rx="1"/><path d="M5 16v-2a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v2M12 8v4"/></symbol>
+    <symbol id="icon-sparkles" viewBox="0 0 24 24"><path d="m12 3-1.2 3.3L7.5 7.5l3.3 1.2L12 12l1.2-3.3 3.3-1.2-3.3-1.2ZM5 14l-.8 2.2L2 17l2.2.8L5 20l.8-2.2L8 17l-2.2-.8ZM18 13l-1.2 3.3-3.3 1.2 3.3 1.2L18 22l1.2-3.3 3.3-1.2-3.3-1.2Z"/></symbol>
+    <symbol id="icon-pen" viewBox="0 0 24 24"><path d="M12 19h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="icon-chevron-right" viewBox="0 0 24 24"><path d="m9 18 6-6-6-6"/></symbol>
+    <symbol id="icon-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></symbol>
+    <symbol id="icon-focus" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3M16 3h3a2 2 0 0 1 2 2v3M8 21H5a2 2 0 0 1-2-2v-3M16 21h3a2 2 0 0 0 2-2v-3"/></symbol>
+    <symbol id="icon-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+    <symbol id="icon-assistant" viewBox="0 0 24 24"><path d="M12 3v3M5.6 5.6l2.1 2.1M3 12h3M18 12h3M16.3 7.7l2.1-2.1"/><path d="M8 13a4 4 0 1 1 8 0c0 1.8-1 2.8-2 3.8-.7.7-1 1.3-1 2.2h-2c0-.9-.3-1.5-1-2.2-1-1-2-2-2-3.8Z"/><path d="M10 22h4"/></symbol>
+    <symbol id="icon-tools" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5-5L7.5 3.5 10 6 7 9 4.5 6.5l-2.2 2.2a4 4 0 0 0 5 5l9.4 9.4a2.1 2.1 0 0 0 3-3Z"/></symbol>
+    <symbol id="icon-tasks" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+    <symbol id="icon-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3A1.7 1.7 0 0 0 10 3V2.8h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"/></symbol>
+    <symbol id="icon-refresh" viewBox="0 0 24 24"><path d="M20 11a8.1 8.1 0 0 0-15.5-2M4 4v5h5M4 13a8.1 8.1 0 0 0 15.5 2M20 20v-5h-5"/></symbol>
+    <symbol id="icon-pause" viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></symbol>
+    <symbol id="icon-play" viewBox="0 0 24 24"><path d="m6 3 14 9-14 9Z"/></symbol>
+  </svg>
+  <a class="skip-link" href="#workspace-main">跳到正文</a>
+  <div id="app" class="app" aria-busy="true">
+    <header class="topbar">
+      <div class="brand-lockup">
+        <img src="/brand/logo.svg" alt="OpenWrite" class="brand-logo">
+        <span class="brand-divider" aria-hidden="true"></span>
+        <div class="book-identity">
+          <strong id="book-title">载入中</strong>
+          <span id="book-location">OpenWrite Studio</span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button id="mobile-nav-toggle" class="icon-button mobile-only" type="button" aria-expanded="false" aria-controls="studio-sidebar" aria-label="打开导航"><svg><use href="#icon-menu"/></svg></button>
+        <span id="save-state" class="save-state" aria-live="polite">已保存</span>
+        <button id="inspector-toggle" class="quiet-button mobile-only" type="button" aria-expanded="false" aria-label="打开创作助手"><svg class="mobile-compact-icon" aria-hidden="true"><use href="#icon-assistant"/></svg><span class="mobile-compact-label">助手</span></button>
+        <button id="project-settings-open" class="quiet-button" type="button" aria-haspopup="dialog" aria-label="打开作品设置"><svg class="mobile-compact-icon" aria-hidden="true"><use href="#icon-settings"/></svg><span class="mobile-compact-label">作品</span></button>
+        <button id="writing-targets-open" class="quiet-button writing-targets-button" type="button" aria-haspopup="dialog" aria-label="打开字数规划" title="字数规划"><svg class="mobile-compact-icon" aria-hidden="true"><use href="#icon-outline"/></svg><span class="mobile-compact-label">字数规划</span></button>
+        <button id="task-center-open" class="task-center-button" type="button" aria-haspopup="dialog" aria-label="任务中心">
+          <span aria-hidden="true">↻</span><span id="task-active-count">0</span>
+        </button>
+        <button id="model-settings-open" class="model-settings-button" type="button" aria-haspopup="dialog">
+          <span id="model-connection-dot" class="connection-dot" aria-hidden="true"></span>
+          <span>模型设置</span>
+          <small id="model-topbar-name">未配置</small>
+        </button>
+        <button id="theme-toggle" class="icon-button" type="button" aria-label="切换明暗主题" title="切换明暗主题">◐</button>
+        <button id="write-open" class="primary-button" type="button">写下一章</button>
+      </div>
+    </header>
+
+    <div class="workspace-shell">
+      <aside id="studio-sidebar" class="sidebar" aria-label="作品导航">
+        <nav class="view-nav" aria-label="工作区">
+          <div class="nav-group nav-primary"><span class="nav-group-label">创作</span>
+            <button class="nav-item active" type="button" data-view="dashboard"><svg><use href="#icon-home"/></svg><span>总览</span></button>
+            <button class="nav-item" type="button" data-view="outline"><svg><use href="#icon-outline"/></svg><span>大纲</span></button>
+            <button class="nav-item" type="button" data-view="chapters"><svg><use href="#icon-file"/></svg><span>正文</span></button>
+            <button class="nav-item" type="button" data-view="review"><svg><use href="#icon-review"/></svg><span>审稿</span></button>
+            <button class="nav-item" type="button" data-view="core" data-nav-section="library"><svg><use href="#icon-book"/></svg><span>资料库</span></button>
+            <button class="nav-item" type="button" data-view="agents" data-nav-section="agents"><svg><use href="#icon-sparkles"/></svg><span>AI 协作</span></button>
+          </div>
+          <details class="nav-tools">
+            <summary><svg><use href="#icon-tools"/></svg><span>工具与设置</span></summary>
+            <div class="nav-group nav-tool-items">
+              <button class="nav-item" type="button" data-view="continuity"><svg><use href="#icon-network"/></svg><span>连续性</span></button>
+              <button class="nav-item" type="button" data-view="research"><svg><use href="#icon-search"/></svg><span>深度研究</span></button>
+              <button class="nav-item" type="button" data-view="search"><svg><use href="#icon-search"/></svg><span>项目搜索</span></button>
+              <button class="nav-item" type="button" data-view="transfer"><svg><use href="#icon-file"/></svg><span>项目迁移</span></button>
+              <button class="nav-item" type="button" data-view="deconstruct"><svg><use href="#icon-book"/></svg><span>参考库</span></button>
+              <button class="nav-item" type="button" data-view="skills"><svg><use href="#icon-sparkles"/></svg><span>Skills</span></button>
+              <button class="nav-item" type="button" data-view="tools"><svg><use href="#icon-tools"/></svg><span>高级工具</span></button>
+              <button class="nav-item" type="button" data-nav-command="tasks"><svg><use href="#icon-tasks"/></svg><span>任务中心</span></button>
+              <button class="nav-item" type="button" data-nav-command="settings"><svg><use href="#icon-settings"/></svg><span>模型与设置</span></button>
+            </div>
+          </details>
+        </nav>
+        <div class="sidebar-divider"></div>
+        <div class="document-heading">
+          <span id="document-group-title">最近章节</span>
+          <span id="document-count">0</span>
+        </div>
+        <div id="library-browser-tools" class="library-browser-tools" hidden>
+          <input id="library-filter" type="search" autocomplete="off" placeholder="筛选当前资料" aria-label="筛选当前资料">
+          <select id="library-category-filter" aria-label="资料子分类">
+            <option value="all">全部子分类</option>
+          </select>
+        </div>
+        <div id="document-list" class="document-list" role="list"></div>
+      </aside>
+      <button id="mobile-nav-backdrop" class="mobile-nav-backdrop" type="button" aria-label="关闭导航" hidden></button>
+      <button id="inspector-backdrop" class="inspector-backdrop" type="button" aria-label="关闭助手背景层" hidden></button>
+
+      <main id="workspace-main" class="main-panel" tabindex="-1">
+        <section id="bootstrap-error" class="system-notice error" role="alert" aria-labelledby="bootstrap-error-title" hidden>
+          <div class="system-notice-copy">
+            <strong id="bootstrap-error-title">作品载入失败</strong>
+            <p id="bootstrap-error-detail"></p>
+            <code id="bootstrap-error-request" hidden></code>
+          </div>
+          <div class="system-notice-actions">
+            <button id="bootstrap-retry" class="quiet-button" type="button"><svg aria-hidden="true"><use href="#icon-refresh"/></svg><span>重试</span></button>
+            <button id="bootstrap-open-project" class="quiet-button" type="button">打开其他作品</button>
+          </div>
+        </section>
+        <section id="editor-fallback-notice" class="system-notice warning" role="status" hidden>
+          <div class="system-notice-copy">
+            <strong>富文本编辑器资源未载入</strong>
+            <p>Studio 已切换到基础文本编辑模式，作品读取、切换和保存仍可使用。请重新安装完整发布包后刷新页面。</p>
+          </div>
+        </section>
+        <section id="dashboard-view" class="dashboard-view" aria-labelledby="dashboard-title">
+          <div class="section-title-row">
+            <div>
+              <p class="eyebrow">WORKSPACE</p>
+              <h1 id="dashboard-title">小说总览</h1>
+            </div>
+            <div class="dashboard-title-actions">
+              <button id="onboarding-open" class="quiet-button" type="button">继续引导</button>
+              <button id="model-state" class="status-pill" type="button" title="打开模型设置">模型设置 · 未配置</button>
+            </div>
+          </div>
+
+          <div class="metric-grid" aria-label="写作统计">
+            <article class="metric"><span>正文</span><strong id="metric-words">0</strong><small>字</small></article>
+            <article class="metric"><span>章节</span><strong id="metric-chapters">0</strong><small>章</small></article>
+            <article class="metric"><span>人物</span><strong id="metric-characters">0</strong><small>人</small></article>
+            <article class="metric"><span>待处理伏笔</span><strong id="metric-hooks">0</strong><small>条</small></article>
+          </div>
+
+          <section class="progress-band" aria-labelledby="progress-title">
+            <div class="progress-copy">
+              <div>
+                <p class="eyebrow">MANUSCRIPT</p>
+                <h2 id="progress-title">全书进度</h2>
+              </div>
+              <strong id="progress-percent">0%</strong>
+            </div>
+            <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+              <span id="progress-fill"></span>
+            </div>
+            <div class="progress-meta">
+              <span id="progress-current">0 字</span>
+              <span id="progress-target">目标未设置</span>
+            </div>
+          </section>
+
+          <div class="dashboard-columns">
+            <section class="dashboard-section" aria-labelledby="readiness-title">
+              <div class="subsection-heading">
+                <h2 id="readiness-title">创作资产</h2>
+                <span id="readiness-score">0 / 6</span>
+              </div>
+              <div id="readiness-list" class="readiness-list"></div>
+            </section>
+            <section class="dashboard-section" aria-labelledby="recent-title">
+              <div class="subsection-heading">
+                <h2 id="recent-title">最近章节</h2>
+                <button class="text-button" type="button" data-switch-view="chapters">查看全部</button>
+              </div>
+              <div id="recent-chapters" class="recent-chapters"></div>
+            </section>
+          </div>
+
+          <section class="next-action-band" aria-labelledby="next-action-title">
+            <div>
+              <p class="eyebrow">NEXT</p>
+              <h2 id="next-action-title">下一步</h2>
+            </div>
+            <div id="next-actions" class="next-actions"></div>
+          </section>
+        </section>
+
+        <section id="review-workspace-view" class="workspace-view review-workspace-view" hidden aria-labelledby="review-workspace-title">
+          <div class="section-title-row workspace-view-header">
+            <div>
+              <p class="eyebrow">REVISION WORKSPACE</p>
+              <h1 id="review-workspace-title">审稿工作区</h1>
+              <p class="section-description">按优先级处理章节问题，定位原文，并从可修订问题生成提案。</p>
+            </div>
+            <button id="review-current-chapter" class="primary-button" type="button">审查当前章节</button>
+          </div>
+          <div class="review-summary-band" aria-live="polite">
+            <div><span>已审章节</span><strong id="review-workspace-count">0</strong></div>
+            <div><span>阻断问题</span><strong id="review-blocker-count">0</strong></div>
+            <div><span>待处理</span><strong id="review-open-count">0</strong></div>
+          </div>
+          <section id="review-task-progress" class="review-task-progress" hidden aria-live="polite" aria-label="审稿进度">
+            <div class="review-task-progress-header">
+              <strong id="review-task-progress-title">章节审稿进度</strong>
+              <span id="review-task-progress-phase">排队中</span>
+            </div>
+            <div id="review-task-progress-track" class="review-task-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="排队中，0%">
+              <span id="review-task-progress-fill"></span>
+            </div>
+            <div class="review-task-progress-meta">
+              <span id="review-task-progress-note">审稿任务已加入队列</span>
+              <span id="review-task-progress-percent">0%</span>
+            </div>
+          </section>
+          <div class="review-workspace-layout">
+            <aside class="review-chapter-list-panel" aria-label="审稿章节">
+              <div class="subsection-heading"><h2>章节</h2><span id="review-chapter-count">0</span></div>
+              <div id="review-chapter-list" class="review-chapter-list" role="listbox"></div>
+            </aside>
+            <section class="review-issue-workspace" aria-labelledby="review-issue-title">
+              <div class="review-filter-bar">
+                <h2 id="review-issue-title">问题清单</h2>
+                <select id="review-severity-filter" aria-label="按严重度筛选">
+                  <option value="all">全部严重度</option><option value="blocker">Blocker</option><option value="high">High</option><option value="medium">Medium</option><option value="low">Low</option>
+                </select>
+                <select id="review-dimension-filter" aria-label="按维度筛选"><option value="all">全部维度</option></select>
+                <label class="inline-check"><input id="review-fixable-filter" type="checkbox"> 仅可生成修订</label>
+              </div>
+              <p id="review-workspace-status" class="form-status" role="status">选择一章查看审稿问题</p>
+              <div id="review-workspace-issues" class="review-workspace-issues"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="research-view" class="workspace-view research-view" hidden aria-labelledby="research-title">
+          <div class="section-title-row workspace-view-header">
+            <div>
+              <p class="eyebrow">DEEP RESEARCH</p>
+              <h1 id="research-title">深度研究</h1>
+              <p class="section-description">调用内置 DeepResearch 进行检索、证据校验和报告整理，结果归档到当前作品资料区。</p>
+            </div>
+            <div class="research-header-actions">
+              <button id="research-settings-open" class="quiet-button" type="button">API 设置</button>
+              <button id="research-refresh" class="icon-button" type="button" aria-label="刷新状态" title="刷新状态"><svg><use href="#icon-refresh"/></svg></button>
+            </div>
+          </div>
+          <div id="research-runtime-status" class="research-runtime-status" role="status">正在检查运行环境…</div>
+          <div class="research-layout">
+            <section class="tool-card research-form-card">
+              <div class="subsection-heading"><h2>发起研究</h2><span>后台任务</span></div>
+              <form id="research-form" class="compact-form">
+                <label for="research-prompt">研究问题</label>
+                <textarea id="research-prompt" rows="8" maxlength="20000" required placeholder="例如：比较三种叙事视角在悬疑长篇中的优势，并给出适合本作品的选择建议"></textarea>
+                <div class="form-grid two">
+                  <label>模型档案<input id="research-llm" type="text" value="读取深度研究任务路由" readonly></label>
+                  <label>搜索<select id="research-search"><option value="bocha">博查</option><option value="bing">Bing</option><option value="jina">Jina</option><option value="none">不联网</option></select></label>
+                </div>
+                <p id="research-api-state" class="form-status" role="status"></p>
+                <div class="form-grid two">
+                  <label>证据策略<select id="research-quality"><option value="balanced">平衡</option><option value="strict">严格</option><option value="advisory">建议</option></select></label>
+                  <label>研究轮次<input id="research-cycles" type="number" min="1" max="8" value="2"></label>
+                </div>
+                <button id="research-submit" class="primary-button" type="submit">开始研究</button>
+                <p id="research-form-status" class="form-status" role="status"></p>
+              </form>
+            </section>
+            <section class="tool-card research-reports-card">
+              <div class="subsection-heading"><h2>已归档报告</h2><span id="research-report-count">0</span></div>
+              <div id="research-report-list" class="research-report-list"></div>
+            </section>
+          </div>
+          <article id="research-report-panel" class="research-report-panel" hidden>
+            <div class="subsection-heading"><h2 id="research-report-title">研究报告</h2><span id="research-report-meta"></span></div>
+            <pre id="research-report-content" class="research-report-content"></pre>
+          </article>
+        </section>
+
+        <section id="editor-view" class="editor-view" hidden aria-labelledby="editor-title">
+          <div class="editor-toolbar">
+            <div class="editor-title-block">
+              <p id="editor-path" class="editor-path"></p>
+              <input id="editor-title" class="editor-title" aria-label="文档标题" readonly>
+            </div>
+            <div id="document-editor-actions" class="editor-actions">
+              <span id="editor-word-count">0 字</span>
+              <span id="editor-target-count" hidden>目标 0</span>
+              <button id="outline-tree-back" class="quiet-button" type="button" hidden>返回大纲树</button>
+              <button id="reload-document" class="quiet-button" type="button">重新载入</button>
+              <button id="review-document" class="quiet-button" type="button" hidden>审稿</button>
+              <button id="revision-selection" class="quiet-button" type="button" hidden disabled>修订选区</button>
+              <button id="revision-full-chapter" class="quiet-button" type="button" hidden disabled>整章修订</button>
+              <button id="revision-history" class="icon-button" type="button" hidden aria-label="修订记录" title="修订记录">≋</button>
+              <button id="delete-chapter" class="quiet-button danger-mini-button" type="button" hidden>删除正文</button>
+              <button id="save-document" class="primary-button" type="button" disabled>保存</button>
+            </div>
+          </div>
+          <div id="library-navigation" class="library-navigation" hidden>
+            <div id="library-tabs" class="library-tabs" role="tablist" aria-label="资料库分类">
+              <button type="button" role="tab" data-library-view="core" data-view="core">作品核心</button>
+              <button type="button" role="tab" data-library-view="characters" data-view="characters">角色</button>
+              <button type="button" role="tab" data-library-view="settings" data-view="settings">设定</button>
+            </div>
+            <div class="library-actions">
+              <select id="library-create-kind" aria-label="新建资料类型">
+                <option value="character">角色</option>
+                <option value="world">设定</option>
+                <option value="progression">成长体系</option>
+              </select>
+              <button id="asset-package-import-open" class="quiet-button" type="button">导入</button>
+              <button id="asset-package-export" class="quiet-button" type="button" disabled>导出当前</button>
+              <button id="asset-create" class="primary-button" type="button">新建</button>
+            </div>
+          </div>
+          <div id="editor-commandbar" class="editor-commandbar" aria-label="编辑器工具">
+            <div class="editor-progress" aria-live="polite">
+              <span id="editor-autosave-state">即时渲染 · 自动保存已开启</span>
+              <span id="editor-chapter-progress" hidden></span>
+            </div>
+            <div class="editor-tool-actions">
+              <button id="editor-find-toggle" class="icon-text-button" type="button"><svg><use href="#icon-search"/></svg><span>查找</span></button>
+              <button id="editor-reading-toggle" class="icon-text-button" type="button" aria-pressed="false"><svg><use href="#icon-eye"/></svg><span>阅读宽度</span></button>
+              <button id="editor-focus-toggle" class="icon-text-button" type="button" aria-pressed="false"><svg><use href="#icon-focus"/></svg><span>专注</span></button>
+              <button id="editor-assistant-toggle" class="icon-text-button" type="button"><svg><use href="#icon-assistant"/></svg><span>Dante 助手</span></button>
+            </div>
+          </div>
+          <form id="editor-find-panel" class="editor-find-panel" hidden>
+            <label>查找<input id="editor-find-query" type="search" autocomplete="off"></label>
+            <label>替换<input id="editor-replace-value" autocomplete="off"></label>
+            <span id="editor-find-status" role="status">输入文字开始查找</span>
+            <button id="editor-find-next" class="quiet-button" type="button">下一个</button>
+            <button id="editor-replace-one" class="quiet-button" type="button">替换</button>
+            <button id="editor-replace-all" class="quiet-button" type="button">全部替换</button>
+            <button id="editor-find-close" class="icon-button" type="button" aria-label="关闭查找">×</button>
+          </form>
+          <div id="asset-editor-pane" class="asset-editor-pane" hidden>
+            <div id="asset-empty" class="asset-empty-state" hidden></div>
+            <form id="asset-form" class="asset-form" hidden>
+              <div class="asset-editor-heading">
+                <div>
+                  <span id="asset-editor-kind" class="asset-kind-label">角色</span>
+                  <h2 id="asset-editor-title">资料字段</h2>
+                  <code id="asset-editor-path"></code>
+                </div>
+              </div>
+              <div class="asset-editor-modes" role="tablist" aria-label="资料编辑方式">
+                <button class="asset-mode-tab active" type="button" role="tab" aria-selected="true" aria-controls="asset-structured-fields" data-asset-mode="structured">资料字段</button>
+                <button class="asset-mode-tab" type="button" role="tab" aria-selected="false" aria-controls="asset-raw-field" data-asset-mode="raw">Markdown 原文</button>
+              </div>
+              <div id="asset-structured-fields" class="asset-fields" role="tabpanel"></div>
+              <label id="asset-raw-field" class="asset-raw-field" role="tabpanel" hidden for="asset-raw-text">
+                <span class="asset-raw-heading">
+                  <strong>源文件</strong>
+                  <code id="asset-raw-format">TOML + Markdown</code>
+                </span>
+                <textarea id="asset-raw-text" rows="24" spellcheck="false"></textarea>
+              </label>
+              <div class="asset-form-actions">
+                <p id="asset-form-status" class="form-status" role="status"></p>
+                <button id="asset-save" class="primary-button" type="submit">保存资料</button>
+              </div>
+            </form>
+          </div>
+          <div id="document-editor-pane" class="editor-canvas">
+            <div id="document-editor" class="document-editor" aria-label="Markdown 文档正文"></div>
+          </div>
+        </section>
+
+        <section id="outline-view" class="outline-view" hidden aria-labelledby="outline-title">
+          <div class="outline-header">
+            <div class="outline-title-block">
+              <div class="outline-title-row">
+                <svg aria-hidden="true"><use href="#icon-outline"/></svg>
+                <h1 id="outline-title">大纲</h1>
+                <code>src/outline.md</code>
+              </div>
+              <div id="outline-stats" class="outline-stats" aria-live="polite"></div>
+            </div>
+            <div class="outline-header-actions">
+              <button id="outline-add-volume" class="quiet-button" type="button"><span aria-hidden="true">＋</span>新增卷</button>
+              <button id="outline-source" class="quiet-button" type="button"><svg aria-hidden="true"><use href="#icon-file"/></svg>编辑原文</button>
+              <button id="outline-refresh" class="icon-button" type="button" aria-label="刷新大纲" title="刷新大纲"><span aria-hidden="true">↻</span></button>
+              <button id="outline-smart-create" class="primary-button" type="button">写推荐章节</button>
+            </div>
+          </div>
+          <div class="outline-mobile-switch segmented" role="tablist" aria-label="大纲工作区">
+            <button class="segment active" type="button" role="tab" aria-selected="true" data-outline-pane="tree">结构</button>
+            <button class="segment" type="button" role="tab" aria-selected="false" data-outline-pane="detail">节点</button>
+          </div>
+          <div class="outline-workspace" data-mobile-pane="tree">
+            <nav class="outline-tree-panel" aria-label="大纲层级">
+              <div class="outline-panel-heading">
+                <div><strong>结构</strong><span id="outline-tree-count">0</span></div>
+                <div class="outline-panel-actions">
+                  <button id="outline-expand-all" class="icon-button" type="button" aria-label="展开全部节点" title="展开全部"><svg aria-hidden="true"><use href="#icon-chevron-right"/></svg></button>
+                  <button id="outline-collapse-all" class="icon-button" type="button" aria-label="收起全部节点" title="收起全部"><svg aria-hidden="true"><use href="#icon-chevron-right"/></svg></button>
+                </div>
+              </div>
+              <div class="outline-tree-tools">
+                <label class="outline-search-field">
+                  <svg aria-hidden="true"><use href="#icon-search"/></svg>
+                  <input id="outline-search" type="search" autocomplete="off" placeholder="搜索节点" aria-label="搜索大纲节点">
+                </label>
+                <div class="outline-status-filter segmented" role="group" aria-label="章节状态">
+                  <button class="segment active" type="button" aria-pressed="true" data-outline-status="all">全部</button>
+                  <button class="segment" type="button" aria-pressed="false" data-outline-status="planned">待写</button>
+                  <button class="segment" type="button" aria-pressed="false" data-outline-status="drafted">已写</button>
+                </div>
+              </div>
+              <p id="outline-filter-status" class="outline-filter-status" role="status"></p>
+              <ul id="outline-tree" class="outline-tree" role="tree"></ul>
+            </nav>
+            <article id="outline-detail" class="outline-detail" aria-labelledby="outline-detail-title">
+              <header class="outline-detail-header">
+                <nav id="outline-breadcrumb" class="outline-breadcrumb" aria-label="当前大纲路径">选择一个节点</nav>
+                <div class="outline-detail-title-row">
+                  <h2 id="outline-detail-title">选择一个节点</h2>
+                  <div class="outline-detail-utility">
+                    <button id="outline-node-rename" class="icon-button" type="button" aria-label="重命名节点" title="重命名" disabled><svg aria-hidden="true"><use href="#icon-pen"/></svg></button>
+                    <button id="outline-node-delete" class="danger-button" type="button" disabled>删除</button>
+                  </div>
+                </div>
+                <div id="outline-node-meta" class="outline-node-meta"></div>
+                <div class="outline-detail-command-row">
+                  <div class="outline-edit-actions" aria-label="编辑所选大纲节点">
+                    <button id="outline-node-add-child" class="quiet-button" type="button" disabled>新增下级</button>
+                    <button id="outline-node-add-after" class="quiet-button" type="button" disabled>新增同级</button>
+                  </div>
+                  <div class="outline-detail-actions">
+                    <button id="outline-node-source" class="quiet-button" type="button" disabled><svg aria-hidden="true"><use href="#icon-file"/></svg>原文定位</button>
+                    <button id="outline-node-create" class="primary-button" type="button" disabled>用此章创建正文</button>
+                  </div>
+                </div>
+              </header>
+              <div id="outline-node-summary" class="outline-node-summary"></div>
+            </article>
+          </div>
+        </section>
+
+        <section id="search-view" class="workspace-view" hidden aria-labelledby="search-title">
+          <div class="section-title-row workspace-view-header">
+            <div>
+              <p class="eyebrow">FIND &amp; CONTEXT</p>
+              <h1 id="search-title">项目搜索</h1>
+              <p class="section-description">搜索作品核心、角色、设定、连续性、正文与参考资料；结果保留资料分类、文件和行号。</p>
+            </div>
+          </div>
+          <form id="search-form" class="search-form">
+            <input id="search-query" type="search" maxlength="200" required placeholder="输入角色、伏笔、地点或原文片段">
+            <select id="search-scope" aria-label="搜索范围">
+              <option value="all">全部资产</option>
+              <option value="outline">大纲</option>
+              <option value="core">作品核心</option>
+              <option value="characters">角色</option>
+              <option value="settings">设定</option>
+              <option value="continuity">连续性</option>
+              <option value="chapters">正文</option>
+              <option value="sources">参考资料</option>
+            </select>
+            <button class="primary-button" type="submit">搜索</button>
+          </form>
+          <p id="search-status" class="form-status" role="status">输入关键词开始搜索</p>
+          <div id="search-results" class="search-results"></div>
+        </section>
+
+        <section id="agents-view" class="workspace-view" hidden aria-labelledby="agents-title">
+          <div class="section-title-row workspace-view-header">
+            <div>
+              <p class="eyebrow">LONG SESSION</p>
+              <h1 id="agents-title">AI 协作</h1>
+              <p class="section-description">Goethe 整理可写资产，Dante 持续推进正文。对话与工作记忆会写入项目，下次打开仍可继续。</p>
+            </div>
+            <div class="segmented" role="group" aria-label="选择协作 Agent">
+              <button class="segment active" type="button" data-agent="goethe">Goethe · 规划</button>
+              <button class="segment" type="button" data-agent="dante">Dante · 正文</button>
+            </div>
+          </div>
+          <div class="agent-console">
+            <aside class="agent-sessions-panel" aria-label="Agent 会话">
+              <div class="agent-sessions-header">
+                <strong>会话</strong>
+                <div class="agent-session-actions">
+                  <button id="agent-session-new" class="icon-button" type="button" aria-label="新建会话" title="新建会话">＋</button>
+                  <button id="agent-session-delete" class="quiet-button danger-mini-button" type="button" disabled>清空</button>
+                </div>
+              </div>
+              <div id="agent-session-list" class="agent-session-list" role="listbox" aria-label="选择历史会话"></div>
+            </aside>
+            <div class="agent-chat-panel">
+              <div class="agent-session-bar">
+                <div>
+                  <strong id="agent-history-title">Goethe 历史对话</strong>
+                  <span id="agent-history-status" role="status">正在恢复…</span>
+                </div>
+                <button id="agent-history-refresh" class="quiet-button" type="button">刷新历史</button>
+              </div>
+              <details class="agent-tools-panel">
+                <summary id="agent-tools-summary">Goethe Tools · 载入中</summary>
+                <p class="agent-tools-note">此处直接读取 Agent 当前注册表；Direct 为只读或细粒度工具，Action 为高层工作流。</p>
+                <div id="agent-tools-list" class="agent-tools-list"></div>
+              </details>
+              <div id="chat-log" class="chat-log" aria-live="polite">
+                <article class="chat-message assistant"><strong>OpenWrite</strong><p>选择 Agent 后直接描述目标。规划阶段先找 Goethe，已有可写大纲时切换到 Dante。</p></article>
+              </div>
+              <template id="agent-activity-template">
+                <article class="agent-activity" aria-live="polite">
+                  <details class="agent-activity-disclosure" open>
+                    <summary class="agent-activity-head">
+                      <span class="agent-activity-pulse" aria-hidden="true"></span>
+                      <span class="agent-activity-summary-copy">
+                        <strong class="agent-activity-title">Agent 正在工作</strong>
+                        <span class="agent-activity-meta"><span class="agent-activity-count">正在连接</span><span aria-hidden="true">·</span><time class="agent-activity-elapsed">00:00</time></span>
+                      </span>
+                      <svg class="agent-activity-chevron" aria-hidden="true"><use href="#icon-chevron-right"/></svg>
+                    </summary>
+                    <div class="agent-activity-body">
+                      <p class="agent-activity-note"></p>
+                      <ol class="agent-activity-events"></ol>
+                    </div>
+                  </details>
+                </article>
+              </template>
+              <form id="chat-form" class="chat-composer">
+                <label for="chat-input">本轮目标</label>
+                <textarea id="chat-input" rows="4" maxlength="12000" placeholder="例如：检查现有资产，帮我把第一篇推进到可写状态。" required></textarea>
+                <div class="composer-actions">
+                  <span id="chat-status" role="status"></span>
+                  <button id="chat-submit" class="primary-button" type="submit">发送给 Goethe</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </section>
+
+        <section id="continuity-view" class="workspace-view" hidden aria-labelledby="continuity-title">
+          <div class="section-title-row workspace-view-header">
+            <div>
+              <p class="eyebrow">CONTINUITY</p>
+              <h1 id="continuity-title">连续性控制台</h1>
+              <p class="section-description">查看真相文件、伏笔与章节 workflow。这里展示运行态，不替代 `src/` 中的人工确认真源。</p>
+            </div>
+            <button id="continuity-refresh" class="icon-button" type="button" aria-label="刷新连续性" title="刷新连续性"><svg><use href="#icon-refresh"/></svg></button>
+          </div>
+          <section class="tool-card relationship-card" aria-labelledby="relationship-title">
+            <div class="relationship-heading">
+              <div>
+                <p class="eyebrow">RELATION MAP</p>
+                <h2 id="relationship-title">关系拓扑</h2>
+                <p id="relationship-summary" class="relationship-summary" aria-live="polite">正在读取实体关系…</p>
+                <p class="relationship-format-help"><code>//**A~&gt;B:具体关系**</code> 注册有向关系；<code>//**人物[维度]：旧状态 -&gt; 新状态**</code> 记录状态变化。同章以正文事实为准。</p>
+              </div>
+              <div class="relationship-controls" aria-label="关系图控制">
+                <label class="relationship-control relationship-search-control" for="relationship-search">
+                  <span>搜索</span>
+                  <input id="relationship-search" type="search" placeholder="节点、摘要或关系" autocomplete="off" spellcheck="false">
+                </label>
+                <label class="relationship-control" for="relationship-filter">
+                  <span>类型</span>
+                  <select id="relationship-filter">
+                    <option value="all">全部节点</option>
+                    <option value="character">人物</option>
+                    <option value="faction">势力</option>
+                    <option value="place">地点</option>
+                    <option value="concept">概念</option>
+                    <option value="unknown">其他 / 未归档</option>
+                  </select>
+                </label>
+                <label class="relationship-control" for="relationship-origin">
+                  <span>关系</span>
+                  <select id="relationship-origin">
+                    <option value="all">全部关系</option>
+                    <option value="canonical">资料字段</option>
+                    <option value="annotation">内联注册</option>
+                  </select>
+                </label>
+                <div class="relationship-control-actions" aria-label="布局控制">
+                  <button id="relationship-fit" class="icon-button relationship-icon-button" type="button" aria-label="适合视图" title="适合视图"><svg><use href="#icon-focus"/></svg></button>
+                  <button id="relationship-layout" class="icon-button relationship-icon-button" type="button" aria-label="暂停布局" title="暂停布局" aria-pressed="false"><svg><use href="#icon-pause"/></svg></button>
+                  <button id="relationship-reset" class="icon-button relationship-icon-button" type="button" aria-label="重置布局" title="重置布局"><svg><use href="#icon-refresh"/></svg></button>
+                </div>
+              </div>
+            </div>
+            <p id="relationship-search-status" class="relationship-search-status" role="status" aria-live="polite"></p>
+            <div class="relationship-legend" aria-label="节点图例">
+              <span data-kind="character">人物 · 圆形</span>
+              <span data-kind="faction">势力 · 方形</span>
+              <span data-kind="place">地点 · 菱形</span>
+              <span data-kind="concept">概念 · 六边形</span>
+              <span data-kind="unknown">其他 · 虚线圆</span>
+              <span class="relationship-origin-key canonical">资料字段 · 实线</span>
+              <span class="relationship-origin-key annotation">内联注册 · 点线</span>
+            </div>
+            <div class="relationship-workspace">
+              <div id="relationship-stage" class="relationship-stage">
+                <svg id="relationship-graph" viewBox="0 0 960 560" role="group" aria-label="可拖拽的实体关系拓扑图。滚轮缩放，拖动空白区域平移。">
+                  <defs>
+                    <marker id="relationship-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z"></path></marker>
+                  </defs>
+                  <g id="relationship-viewport">
+                    <g id="relationship-edges"></g>
+                    <g id="relationship-nodes"></g>
+                  </g>
+                </svg>
+                <p id="relationship-empty" class="relationship-empty" hidden>暂无实体节点。</p>
+              </div>
+              <aside class="relationship-inspector" aria-labelledby="relationship-detail-title">
+                <h3 id="relationship-detail-title">节点详情</h3>
+                <div id="relationship-detail" class="relationship-detail">选择图中节点或下方列表查看相邻关系。</div>
+                <div class="relationship-list-heading">
+                  <h3>可访问节点列表</h3>
+                  <span id="relationship-visible-count">0</span>
+                </div>
+                <div id="relationship-node-list" class="relationship-node-list" role="list"></div>
+              </aside>
+            </div>
+          </section>
+          <div class="truth-grid">
+            <article class="tool-card"><h2>当前状态</h2><pre id="truth-current">载入中…</pre></article>
+            <article class="tool-card"><h2>资源账本</h2><pre id="truth-ledger">载入中…</pre></article>
+            <article class="tool-card"><h2>人物关系</h2><pre id="truth-relationships">载入中…</pre></article>
+          </div>
+          <div class="continuity-grid">
+            <section class="tool-card">
+              <div class="subsection-heading"><h2>待处理伏笔</h2><span id="foreshadow-count">0</span></div>
+              <div id="foreshadow-list" class="operation-list"></div>
+              <form id="foreshadow-form" class="compact-form">
+                <label for="foreshadow-id">新增伏笔 ID</label>
+                <input id="foreshadow-id" required placeholder="hook_clock_001">
+                <label for="foreshadow-content">内容</label>
+                <textarea id="foreshadow-content" rows="3" required></textarea>
+                <div class="form-grid two">
+                  <label>权重<input id="foreshadow-weight" type="number" min="1" max="10" value="5"></label>
+                  <label>目标章节<input id="foreshadow-target" placeholder="ch_010"></label>
+                </div>
+                <button class="primary-button" type="submit">加入伏笔</button>
+              </form>
+            </section>
+            <section class="tool-card">
+              <div class="subsection-heading"><h2>活动 Workflow</h2><span id="workflow-count">0</span></div>
+              <div id="workflow-list" class="operation-list"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="transfer-view" class="workspace-view" hidden aria-labelledby="transfer-title">
+          <div class="section-title-row workspace-view-header">
+            <div>
+              <p class="eyebrow">PROJECT PORTABILITY</p>
+              <h1 id="transfer-title">项目迁移</h1>
+            </div>
+            <div class="transfer-metrics" aria-label="当前正文概况">
+              <span><strong id="transfer-chapter-count">0</strong> 章</span>
+              <span><strong id="transfer-writing-units">0</strong> 字</span>
+            </div>
+          </div>
+          <div class="transfer-layout">
+            <section class="transfer-panel" aria-labelledby="import-title">
+              <div class="workspace-panel-heading">
+                <div><p class="eyebrow">IMPORT</p><h2 id="import-title">导入正文</h2></div>
+                <span class="format-badge">TXT / MD</span>
+              </div>
+              <form id="import-form" class="compact-form transfer-form">
+                <label for="import-file">正文文件</label>
+                <input id="import-file" type="file" accept=".txt,.md,.markdown" required>
+                <div class="form-grid two">
+                  <label>目标篇<input id="import-arc" value="arc_001" pattern="arc_[0-9]+"></label>
+                  <label>起始章节<input id="import-start" type="number" min="1" placeholder="自动追加"></label>
+                </div>
+                <label class="check-row"><input id="import-force" type="checkbox">覆盖冲突章节</label>
+                <div class="row-actions transfer-actions">
+                  <button id="import-preview-button" class="quiet-button" type="button">解析预览</button>
+                  <button id="import-submit" class="primary-button" type="submit" disabled>确认导入</button>
+                </div>
+              </form>
+              <p id="import-status" class="form-status" role="status"></p>
+              <div id="import-preview" class="import-preview" aria-live="polite">
+                <p class="empty-state">选择正文文件后解析章节。</p>
+              </div>
+            </section>
+
+            <section class="transfer-panel" aria-labelledby="export-title">
+              <div class="workspace-panel-heading">
+                <div><p class="eyebrow">EXPORT</p><h2 id="export-title">导出整书</h2></div>
+                <span id="export-readiness" class="status-badge">等待正文</span>
+              </div>
+              <div class="export-book-summary">
+                <strong id="export-book-title">当前作品</strong>
+                <span id="export-book-range">0 章 · 0 字</span>
+              </div>
+              <fieldset id="export-format-options" class="export-format-options">
+                <legend>文件格式</legend>
+                <label class="export-format active">
+                  <input type="radio" name="export-format" value="md" checked>
+                  <strong>Markdown</strong><span>保留标题层级</span><small>.md</small>
+                </label>
+                <label class="export-format">
+                  <input type="radio" name="export-format" value="txt">
+                  <strong>纯文本</strong><span>适合通用阅读</span><small>.txt</small>
+                </label>
+                <label class="export-format">
+                  <input type="radio" name="export-format" value="epub">
+                  <strong>EPUB</strong><span>电子书阅读器</span><small>.epub</small>
+                </label>
+              </fieldset>
+              <a id="export-download" class="primary-button export-download-button" href="/api/export?format=md" download>下载 Markdown</a>
+              <p id="export-status" class="form-status" role="status"></p>
+            </section>
+          </div>
+        </section>
+
+        <section id="deconstruct-view" class="workspace-view" hidden aria-labelledby="deconstruct-title">
+          <div class="section-title-row workspace-view-header">
+            <div>
+              <p class="eyebrow">REFERENCE LIBRARY</p>
+              <h1 id="deconstruct-title">参考库</h1>
+            </div>
+            <div class="deconstruct-stats" aria-label="拆书来源状态">
+              <span><strong id="reference-count">0</strong> 部作品</span>
+              <span><strong id="reference-complete-count">0</strong> 已拆解</span>
+            </div>
+          </div>
+          <div class="deconstruct-layout">
+            <section class="deconstruct-intake" aria-labelledby="reference-intake-title">
+              <div class="workspace-panel-heading">
+                <div><p class="eyebrow">IMPORT REFERENCE</p><h2 id="reference-intake-title">导入参考作品</h2></div>
+              </div>
+              <form id="reference-form" class="compact-form source-form">
+                <div class="form-grid two">
+                  <label>作品标题<input id="reference-title" required placeholder="参考作品标题"></label>
+                  <label>导入意图<select id="reference-intent"><option value="reference">参考与拆解</option><option value="continuation">自己的旧稿续写</option><option value="canon">同人 Canon</option><option value="migration">反向重建项目</option></select></label>
+                </div>
+                <div class="form-grid two">
+                  <label>参考 ID<input id="reference-id" required placeholder="reference_01"></label>
+                  <label>分析重点<select id="reference-focus"><option value="all">全面拆解</option><option value="narrative">结构、线索、摘要与风格</option><option value="setting">人物、设定、关系与时间线</option></select></label>
+                </div>
+                <label for="reference-file">原文文件</label>
+                <input id="reference-file" type="file" accept=".txt,.md,.markdown">
+                <label for="reference-content">文本内容</label>
+                <textarea id="reference-content" rows="6" placeholder="也可直接粘贴文本"></textarea>
+                <details class="reference-analysis-options">
+                  <summary>分析配置</summary>
+                  <label>单块输入预算<input id="reference-input-budget" type="number" min="256" max="100000" step="1" value="12000" inputmode="numeric"></label>
+                </details>
+                <button id="reference-prepare" class="primary-button" type="submit">解析卷章结构</button>
+              </form>
+              <p id="reference-status" class="form-status" role="status"></p>
+              <section id="reference-structure" class="reference-structure" hidden aria-labelledby="reference-structure-title">
+                <div class="workspace-panel-heading">
+                  <div><p class="eyebrow">STRUCTURE CHECK</p><h3 id="reference-structure-title">确认原文覆盖</h3></div>
+                  <span id="reference-structure-count" class="status-badge">0 个单元</span>
+                </div>
+                <div id="reference-structure-list" class="reference-structure-list"></div>
+                <div class="row-actions">
+                  <button id="reference-structure-cancel" class="quiet-button" type="button">返回修改</button>
+                  <button id="reference-structure-confirm" class="primary-button" type="button">确认并开始拆解</button>
+                </div>
+              </section>
+            </section>
+
+            <section class="deconstruct-library" aria-labelledby="reference-library-title">
+              <div class="workspace-panel-heading">
+                <div><p class="eyebrow">PRIVATE LIBRARY</p><h2 id="reference-library-title">本机参考作品</h2></div>
+                <button id="reference-synthesize" class="quiet-button" type="button" disabled>对照所选</button>
+              </div>
+              <div id="reference-list" class="source-list"></div>
+            </section>
+          </div>
+          <section class="deconstruct-report" aria-labelledby="reference-report-title">
+            <div class="workspace-panel-heading">
+              <div><p class="eyebrow">REVIEW &amp; ADOPT</p><h2 id="reference-report-title">证据与采纳</h2></div>
+              <div class="source-analysis-toolbar">
+                <button id="reference-send-goethe" class="quiet-button" type="button" disabled>交给 Goethe 审议</button>
+                <button id="reference-adoption-preview" class="quiet-button" type="button" disabled>预览采纳</button>
+                <button id="reference-adoption-apply" class="primary-button" type="button" disabled>确认采纳</button>
+              </div>
+            </div>
+            <div id="reference-report-actions" class="row-actions source-report-actions"></div>
+            <div id="reference-report" class="source-report-view"><p class="empty-state">从参考库打开证据报告，或选择多部作品生成对照画像。</p></div>
+          </section>
+          <section class="reference-style-surface" aria-labelledby="reference-style-title">
+            <div class="workspace-panel-heading">
+              <div><p class="eyebrow">PROJECT STYLE</p><h2 id="reference-style-title">当前风格配方</h2></div>
+              <span id="reference-style-status" class="status-badge">尚未配置</span>
+            </div>
+            <div id="reference-style-recipe" class="reference-style-recipe"><p class="empty-state">确认采纳后，Writer 使用的风格说明和 Reviewer 使用的指纹目标会显示在这里。</p></div>
+          </section>
+        </section>
+
+        <section id="skills-view" class="workspace-view" hidden aria-labelledby="skills-title">
+          <div class="section-title-row workspace-view-header">
+            <div>
+              <p class="eyebrow">RUNTIME POLICY</p>
+              <h1 id="skills-title">Skills</h1>
+            </div>
+            <div class="skill-stats" aria-label="Skill 状态">
+              <span><strong id="skill-available-count">0</strong> 可用</span>
+              <span><strong id="skill-active-count">0</strong> 本次启用</span>
+              <span><strong id="skill-diagnostic-count">0</strong> 诊断</span>
+            </div>
+          </div>
+          <div class="skills-layout">
+            <section class="skill-catalog" aria-labelledby="skill-catalog-title">
+              <div class="workspace-panel-heading">
+                <div><p class="eyebrow">CATALOG</p><h2 id="skill-catalog-title">已发现 Skills</h2></div>
+              </div>
+              <div id="runtime-skill-list" class="runtime-skill-list"></div>
+            </section>
+            <section class="skill-simulator" aria-labelledby="skill-simulator-title">
+              <div class="workspace-panel-heading">
+                <div><p class="eyebrow">RESOLUTION</p><h2 id="skill-simulator-title">运行模拟</h2></div>
+              </div>
+              <div class="form-grid two">
+                <label>Agent<select id="runtime-skill-agent"><option value="studio">Studio</option><option value="dante">Dante</option><option value="goethe">Goethe</option><option value="writer">Writer</option><option value="reviewer">Reviewer</option></select></label>
+                <label>任务<select id="runtime-skill-task"><option value="">通用任务</option><option value="chapter.write">章节写作</option><option value="chapter.review">章节审稿</option><option value="planning">故事规划</option><option value="review">审查</option></select></label>
+              </div>
+              <div class="row-actions">
+                <button id="runtime-skill-resolve" class="primary-button" type="button">解析本次运行</button>
+                <button id="runtime-skill-diagnose" class="quiet-button" type="button">运行诊断</button>
+              </div>
+              <p id="runtime-skill-status" class="form-status" role="status"></p>
+              <div id="runtime-skill-report" class="runtime-skill-report"><p class="empty-state">选择 Agent 与任务查看实际运行边界。</p></div>
+            </section>
+          </div>
+          <section class="runtime-rules-panel" aria-labelledby="runtime-rules-title">
+            <div class="workspace-panel-heading">
+              <div><p class="eyebrow">PROJECT RULES</p><h2 id="runtime-rules-title">项目规则</h2></div>
+              <div class="row-actions">
+                <button id="runtime-rules-preview" class="quiet-button" type="button">生成规则差异</button>
+                <button id="runtime-rules-apply" class="primary-button" type="button" disabled>确认应用</button>
+              </div>
+            </div>
+            <pre id="runtime-rules-diff" class="context-preview">尚未生成规则差异</pre>
+          </section>
+        </section>
+
+        <section id="tools-view" class="workspace-view" hidden aria-labelledby="tools-title">
+          <div class="section-title-row workspace-view-header tools-view-header">
+            <div>
+              <p class="eyebrow">OPERATIONS</p>
+              <h1 id="tools-title">高级工具</h1>
+              <p class="workspace-view-summary">集中处理项目维护、上下文核对和规划干预。每项工具都会标明读写影响。</p>
+            </div>
+          </div>
+          <div class="tool-grid">
+            <section class="tool-card tool-card-compact" aria-labelledby="tool-sync-title">
+              <div class="tool-card-header">
+                <div class="tool-card-heading">
+                  <span class="tool-card-icon" aria-hidden="true"><svg><use href="#icon-refresh"/></svg></span>
+                  <div>
+                    <p class="tool-card-kicker">项目维护 · 会写入同步结果</p>
+                    <h2 id="tool-sync-title">项目检查与同步</h2>
+                    <p class="tool-card-summary">核对项目状态，把源资料更新到运行数据。</p>
+                  </div>
+                </div>
+                <button class="tool-help-button" type="button" data-tool-help aria-expanded="false" aria-controls="tool-sync-help" aria-label="说明：项目检查与同步" title="查看工具说明"><span aria-hidden="true">!</span></button>
+              </div>
+              <div id="tool-sync-help" class="tool-help-panel" hidden>
+                <strong>什么时候使用</strong>
+                <p>直接修改过 src 中的大纲或人物资料后，用它检查差异并同步到 data。</p>
+                <p class="tool-help-note"><span>影响</span>执行同步会更新项目运行数据，请先确认诊断结果。</p>
+              </div>
+              <div class="tool-card-body">
+                <div id="diagnostic-list" class="operation-list"></div>
+                <button id="sync-project" class="primary-button" type="button">同步 src → data</button>
+                <p id="sync-status" class="form-status" role="status"></p>
+              </div>
+            </section>
+            <section class="tool-card tool-card-compact" aria-labelledby="tool-context-title">
+              <div class="tool-card-header">
+                <div class="tool-card-heading">
+                  <span class="tool-card-icon" aria-hidden="true"><svg><use href="#icon-eye"/></svg></span>
+                  <div>
+                    <p class="tool-card-kicker">上下文核对 · 只读</p>
+                    <h2 id="tool-context-title">检查章节上下文</h2>
+                    <p class="tool-card-summary">查看某章实际会交给模型的 canonical packet。</p>
+                  </div>
+                </div>
+                <button class="tool-help-button" type="button" data-tool-help aria-expanded="false" aria-controls="tool-context-help" aria-label="说明：检查章节上下文" title="查看工具说明"><span aria-hidden="true">!</span></button>
+              </div>
+              <div id="tool-context-help" class="tool-help-panel" hidden>
+                <strong>什么时候使用</strong>
+                <p>写作前核对模型能看到的大纲、人物、设定和近期正文，排查上下文缺失。</p>
+                <p class="tool-help-note"><span>输入</span>使用 next 检查下一章，或填写 ch_001 这类章节 ID。</p>
+              </div>
+              <div class="tool-card-body">
+                <form id="context-form" class="compact-form">
+                  <label for="context-chapter">章节 ID</label>
+                  <input id="context-chapter" value="next" placeholder="next 或 ch_001">
+                  <button class="quiet-button" type="submit">组装 canonical packet</button>
+                </form>
+                <p id="context-meta" class="form-status"></p>
+                <pre id="context-preview" class="context-preview">尚未组装</pre>
+              </div>
+            </section>
+            <section class="tool-card tool-card-compact" aria-labelledby="tool-asset-title">
+              <div class="tool-card-header">
+                <div class="tool-card-heading">
+                  <span class="tool-card-icon" aria-hidden="true"><svg><use href="#icon-file"/></svg></span>
+                  <div>
+                    <p class="tool-card-kicker">资料创建 · 会新建文件</p>
+                    <h2 id="tool-asset-title">新建小说资产</h2>
+                    <p class="tool-card-summary">快速建立人物档案或世界设定并进入编辑。</p>
+                  </div>
+                </div>
+                <button class="tool-help-button" type="button" data-tool-help aria-expanded="false" aria-controls="tool-asset-help" aria-label="说明：新建小说资产" title="查看工具说明"><span aria-hidden="true">!</span></button>
+              </div>
+              <div id="tool-asset-help" class="tool-help-panel" hidden>
+                <strong>什么时候使用</strong>
+                <p>故事里出现需要长期维护的新人物或设定时，先创建结构化资料再补充细节。</p>
+                <p class="tool-help-note"><span>影响</span>提交后会在当前项目中新建资产并立即打开。</p>
+              </div>
+              <div class="tool-card-body">
+                <form id="create-document-form" class="compact-form">
+                  <label for="create-kind">文档类型</label>
+                  <select id="create-kind"><option value="character">人物档案</option><option value="world">世界设定</option></select>
+                  <label for="create-name">名称</label>
+                  <input id="create-name" maxlength="80" required>
+                  <label for="create-description">一句话说明</label>
+                  <textarea id="create-description" rows="3"></textarea>
+                  <button class="primary-button" type="submit">创建并打开</button>
+                </form>
+                <p id="create-status" class="form-status" role="status"></p>
+              </div>
+            </section>
+            <section class="tool-card tool-card-wide" aria-labelledby="tool-run-title">
+              <div class="tool-card-header">
+                <div class="tool-card-heading">
+                  <span class="tool-card-icon" aria-hidden="true"><svg><use href="#icon-tasks"/></svg></span>
+                  <div>
+                    <p class="tool-card-kicker">流程控制 · 会写入干预记录</p>
+                    <h2 id="tool-run-title">章节运行与干预</h2>
+                    <p class="tool-card-summary">查看写作流水线，在事实核对后记录并推进方向调整。</p>
+                  </div>
+                </div>
+                <div class="tool-card-header-actions">
+                  <span class="tool-card-metric"><span>运行</span><strong id="chapter-run-count">0</strong></span>
+                  <button class="tool-help-button" type="button" data-tool-help aria-expanded="false" aria-controls="tool-run-help" aria-label="说明：章节运行与干预" title="查看工具说明"><span aria-hidden="true">!</span></button>
+                </div>
+              </div>
+              <div id="tool-run-help" class="tool-help-panel" hidden>
+                <strong>什么时候使用</strong>
+                <p>章节写作或审稿后，先查看八阶段运行状态；需要改变方向时再登记干预并逐步确认。</p>
+                <p class="tool-help-note"><span>注意</span>“推进干预”会改变干预状态，应用前应核对作用域、风险和提案。</p>
+              </div>
+              <div class="tool-card-body tool-workflow">
+                <section class="tool-workflow-section" aria-labelledby="tool-run-step-1">
+                  <div class="tool-workflow-heading"><span>1</span><strong id="tool-run-step-1">查看最近运行</strong></div>
+                  <div class="form-grid two">
+                    <label>最近运行<select id="chapter-run-select"><option value="">暂无运行</option></select></label>
+                    <label>风险<select id="chapter-run-risk"><option value="low">低</option><option value="medium" selected>中</option><option value="high">高</option><option value="blocker">阻塞</option></select></label>
+                  </div>
+                  <pre id="chapter-run-report" class="context-preview">写作或审稿后可在这里查看八阶段状态</pre>
+                </section>
+                <section class="tool-workflow-section" aria-labelledby="tool-run-step-2">
+                  <div class="tool-workflow-heading"><span>2</span><strong id="tool-run-step-2">记录方向调整</strong></div>
+                  <form id="chapter-intervention-form" class="compact-form">
+                    <div class="form-grid two">
+                      <label>作用域<select id="chapter-intervention-scope"><option value="chapter">当前章</option><option value="arc">当前弧</option><option value="project">全书</option><option value="asset">资产</option></select></label>
+                      <label class="check-row"><input id="chapter-intervention-rewrite" type="checkbox">需要重写</label>
+                    </div>
+                    <label>方向调整<textarea id="chapter-intervention-request" rows="3" maxlength="10000" required></textarea></label>
+                    <button class="quiet-button" type="submit">记录干预</button>
+                  </form>
+                </section>
+                <section class="tool-workflow-section" aria-labelledby="tool-run-step-3">
+                  <div class="tool-workflow-heading"><span>3</span><strong id="tool-run-step-3">核对提案并推进</strong></div>
+                  <div class="form-grid two">
+                    <label>待处理干预<select id="chapter-intervention-select"><option value="">暂无干预</option></select></label>
+                    <label>下一状态<select id="chapter-intervention-state"><option value="facts_read">已读取事实</option><option value="classified">已分类影响</option><option value="proposed">已生成提案</option><option value="awaiting_confirmation">等待确认</option><option value="confirmed">确认提案</option><option value="applied">确认应用</option><option value="rejected">拒绝</option></select></label>
+                  </div>
+                  <label>提案或影响说明<textarea id="chapter-intervention-proposal" rows="3"></textarea></label>
+                  <div class="row-actions">
+                    <button id="chapter-intervention-advance" class="primary-button" type="button">推进干预</button>
+                    <button id="chapter-run-refresh" class="quiet-button" type="button">刷新运行</button>
+                  </div>
+                </section>
+                <p id="chapter-run-status" class="form-status" role="status"></p>
+              </div>
+            </section>
+            <section class="tool-card tool-card-wide" aria-labelledby="tool-plan-title">
+              <div class="tool-card-header">
+                <div class="tool-card-heading">
+                  <span class="tool-card-icon" aria-hidden="true"><svg><use href="#icon-outline"/></svg></span>
+                  <div>
+                    <p class="tool-card-kicker">规划辅助 · 候选不直接改大纲</p>
+                    <h2 id="tool-plan-title">滚动规划</h2>
+                    <p class="tool-card-summary">根据近期章节生成规划候选，再交给 Goethe 形成待确认草案。</p>
+                  </div>
+                </div>
+                <div class="tool-card-header-actions">
+                  <span class="tool-card-metric"><span>候选</span><strong id="rolling-plan-count">0</strong></span>
+                  <button class="tool-help-button" type="button" data-tool-help aria-expanded="false" aria-controls="tool-plan-help" aria-label="说明：滚动规划" title="查看工具说明"><span aria-hidden="true">!</span></button>
+                </div>
+              </div>
+              <div id="tool-plan-help" class="tool-help-panel" hidden>
+                <strong>什么时候使用</strong>
+                <p>正文推进后需要重新评估接下来几章时，先生成候选，再选择是否交给 Goethe 细化。</p>
+                <p class="tool-help-note"><span>安全边界</span>生成候选不会修改 canonical 大纲，后续仍需明确确认。</p>
+              </div>
+              <div class="tool-card-body">
+                <div class="form-grid two">
+                  <label>规划候选<select id="rolling-plan-select"><option value="">暂无候选</option></select></label>
+                  <label>近期窗口<input id="rolling-plan-window" type="number" min="1" max="20" value="5"></label>
+                </div>
+                <pre id="rolling-plan-report" class="context-preview">生成候选后可交给 Goethe 形成待确认大纲草案</pre>
+                <div class="row-actions">
+                  <button id="rolling-plan-create" class="quiet-button" type="button">生成候选</button>
+                  <button id="rolling-plan-goethe" class="primary-button" type="button" disabled>交给 Goethe</button>
+                </div>
+                <p id="rolling-plan-status" class="form-status" role="status"></p>
+              </div>
+            </section>
+            <section class="tool-card tool-card-wide narrative-forecast-tool" aria-labelledby="narrative-forecast-title">
+              <div class="tool-card-header">
+                <div class="tool-card-heading">
+                  <span class="tool-card-icon" aria-hidden="true"><svg><use href="#icon-sparkles"/></svg></span>
+                  <div>
+                    <p class="tool-card-kicker">Goethe 推演 · 候选不直接改大纲</p>
+                    <h2 id="narrative-forecast-title">剧情多线推演</h2>
+                    <p class="tool-card-summary">围绕一个分歧点比较多条剧情路径，选择后再进入规划。</p>
+                  </div>
+                </div>
+                <div class="tool-card-header-actions">
+                  <span class="tool-card-metric"><span>推演</span><strong id="narrative-forecast-count">0</strong></span>
+                  <button class="tool-help-button" type="button" data-tool-help aria-expanded="false" aria-controls="tool-forecast-help" aria-label="说明：剧情多线推演" title="查看工具说明"><span aria-hidden="true">!</span></button>
+                </div>
+              </div>
+              <div id="tool-forecast-help" class="tool-help-panel" hidden>
+                <strong>什么时候使用</strong>
+                <p>面对关键选择且难以判断长期影响时，用 2–5 个分支比较节奏、角色弧和设定代价。</p>
+                <p class="tool-help-note"><span>安全边界</span>选中分支只记录规划偏好，不会直接改写 canonical 大纲或正文。</p>
+              </div>
+              <div class="tool-card-body">
+                <div class="narrative-forecast-controls">
+                  <label class="narrative-forecast-divergence" for="narrative-forecast-divergence">分歧点<textarea id="narrative-forecast-divergence" rows="3" maxlength="4000" placeholder="例如：主角接受合作，还是公开拒绝并独自调查？"></textarea></label>
+                  <div class="narrative-forecast-settings">
+                    <label for="narrative-forecast-anchor">大纲锚点<select id="narrative-forecast-anchor" required><option value="">请先选择章节</option></select></label>
+                    <div class="form-grid two narrative-forecast-options">
+                      <label for="narrative-forecast-branch-count">分支数<input id="narrative-forecast-branch-count" type="number" min="2" max="5" step="1" value="3"></label>
+                      <label for="narrative-forecast-horizon">推演跨度<input id="narrative-forecast-horizon" type="number" min="1" max="10" step="1" value="5"></label>
+                    </div>
+                  </div>
+                </div>
+                <div class="row-actions narrative-forecast-actions">
+                  <button id="narrative-forecast-create" class="primary-button" type="button">交给 Goethe 推演</button>
+                  <button id="narrative-forecast-refresh" class="quiet-button" type="button"><svg aria-hidden="true"><use href="#icon-refresh"/></svg><span>刷新结果</span></button>
+                </div>
+                <p id="narrative-forecast-status" class="form-status" role="status" aria-live="polite"></p>
+                <div class="narrative-forecast-history">
+                  <label for="narrative-forecast-select">历史推演</label>
+                  <select id="narrative-forecast-select"><option value="">暂无推演</option></select>
+                </div>
+                <div id="narrative-forecast-result" class="narrative-forecast-result" hidden>
+                  <div class="narrative-forecast-summary">
+                    <div>
+                      <span id="narrative-forecast-state" class="status-badge">候选</span>
+                      <strong id="narrative-forecast-question"></strong>
+                    </div>
+                    <span id="narrative-forecast-meta"></span>
+                  </div>
+                  <div id="narrative-forecast-comparison" class="narrative-forecast-comparison"></div>
+                  <div id="narrative-forecast-tabs" class="segmented narrative-forecast-tabs" role="tablist" aria-label="推演分支"></div>
+                  <section id="narrative-forecast-detail" class="narrative-forecast-detail" aria-live="polite"></section>
+                  <div class="row-actions narrative-forecast-selection-actions">
+                    <button id="narrative-forecast-select-branch" class="primary-button" type="button" disabled>选为规划分支</button>
+                    <button id="narrative-forecast-continue" class="quiet-button" type="button" disabled>交给 Goethe 继续规划</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </section>
+      </main>
+
+      <aside id="inspector" class="inspector" aria-label="创作助手">
+        <div class="inspector-header">
+          <div>
+            <p class="eyebrow">WORKSPACE ASSISTANT</p>
+            <h2 id="inspector-title">创作助手</h2>
+          </div>
+          <div class="inspector-actions">
+            <button id="inspector-collapse" class="icon-button desktop-only" type="button" aria-label="折叠创作助手" title="折叠创作助手">›</button>
+            <button id="inspector-close" class="icon-button mobile-only" type="button" aria-label="关闭创作助手">×</button>
+          </div>
+        </div>
+        <div class="segmented inspector-tabs" role="tablist" aria-label="正文上下文">
+          <button class="segment active" type="button" role="tab" aria-selected="true" data-inspector-tab="assistant">助手</button>
+          <button class="segment" type="button" role="tab" aria-selected="false" data-inspector-tab="compass">罗盘</button>
+          <button class="segment" type="button" role="tab" aria-selected="false" data-inspector-tab="context">上下文</button>
+          <button class="segment" type="button" role="tab" aria-selected="false" data-inspector-tab="review">审稿</button>
+          <button class="segment" type="button" role="tab" aria-selected="false" data-inspector-tab="revisions">修订</button>
+        </div>
+        <div class="inspector-pane" data-inspector-pane="assistant">
+          <div class="assistant-quick-actions" aria-label="Dante 快捷操作">
+            <button type="button" data-assistant-prompt="分析当前选区的叙事作用、节奏和潜在问题，先给建议，不直接修改。">分析选区</button>
+            <button type="button" data-assistant-prompt="根据当前章节和创作罗盘，给出下一段的三个可选推进方向。">续写建议</button>
+            <button type="button" data-assistant-prompt="检查当前章节的节奏、信息密度和段落张力，列出最值得优先处理的问题。">节奏检查</button>
+          </div>
+          <div id="inspector-assistant-log" class="inspector-assistant-log" aria-live="polite">
+            <article><strong>Dante</strong><p>打开正文后可以直接提问；选中文字时会把选区作为本轮重点。</p></article>
+          </div>
+          <form id="inspector-assistant-form" class="inspector-assistant-form">
+            <label for="inspector-assistant-input">向 Dante 提问</label>
+            <textarea id="inspector-assistant-input" rows="5" maxlength="12000" placeholder="例如：这段对话是否暴露信息太快？"></textarea>
+            <p id="inspector-assistant-status" class="form-status" role="status"></p>
+            <button id="inspector-assistant-submit" class="primary-button full-button" type="submit">发送</button>
+          </form>
+        </div>
+        <div class="inspector-pane" data-inspector-pane="compass" hidden>
+        <form id="focus-form" class="focus-form">
+          <label for="focus-goal">当前阶段目标</label>
+          <textarea id="focus-goal" rows="4" required></textarea>
+          <label for="focus-keep">必须保留</label>
+          <textarea id="focus-keep" rows="4"></textarea>
+          <label for="focus-avoid">必须避免</label>
+          <textarea id="focus-avoid" rows="4"></textarea>
+          <label for="focus-notes">写作备注</label>
+          <textarea id="focus-notes" rows="3"></textarea>
+          <button class="primary-button full-button" type="submit">更新罗盘</button>
+        </form>
+        <div class="inspector-divider"></div>
+        <dl class="project-facts">
+          <div><dt>当前篇</dt><dd id="fact-arc">-</dd></div>
+          <div><dt>下一章</dt><dd id="fact-chapter">-</dd></div>
+          <div><dt>阶段</dt><dd id="fact-stage">-</dd></div>
+          <div><dt>设定文档</dt><dd id="fact-world">0</dd></div>
+          <div><dt>模型 Tokens</dt><dd id="fact-tokens">0</dd></div>
+          <div><dt>审稿均分</dt><dd id="fact-review-score">-</dd></div>
+        </dl>
+        </div>
+        <div class="inspector-pane" data-inspector-pane="context" hidden>
+          <div class="inspector-context-summary">
+            <span>当前文档</span><strong id="inspector-document-title">尚未选择</strong>
+            <span>任务模型</span><strong id="inspector-model-route">未配置</strong>
+            <span>本章字数</span><strong id="inspector-document-units">0</strong>
+          </div>
+          <button id="inspector-context-open" class="quiet-button full-button" type="button">打开上下文检查</button>
+        </div>
+        <div class="inspector-pane" data-inspector-pane="review" hidden>
+          <p id="inspector-review-summary" class="form-status">当前章节尚无审稿结果</p>
+          <div id="inspector-review-issues" class="inspector-review-issues"></div>
+          <button class="quiet-button full-button" type="button" data-switch-view="review">打开审稿工作区</button>
+        </div>
+        <div class="inspector-pane" data-inspector-pane="revisions" hidden>
+          <p class="form-status">修订提案始终先预览差异，再确认应用。</p>
+          <button id="inspector-revision-history" class="quiet-button full-button" type="button">查看当前章节提案</button>
+        </div>
+      </aside>
+      <button id="inspector-restore" class="inspector-restore" type="button" aria-label="展开创作助手" title="展开创作助手" hidden>‹</button>
+    </div>
+  </div>
+
+  <dialog id="asset-package-dialog" class="write-dialog asset-package-dialog">
+    <div class="asset-package-content">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">OPENWRITE ASSET PACKAGE</p>
+          <h2>导入资产包</h2>
+        </div>
+        <button id="asset-package-close" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <div id="asset-package-picker">
+        <label for="asset-package-file">资产包文件</label>
+        <input id="asset-package-file" type="file" accept=".zip,.owasset.zip,application/zip">
+        <p class="dialog-note">预览只写入运行态暂存区，不会修改正典资产。</p>
+        <div class="dialog-actions">
+          <button id="asset-package-cancel" class="quiet-button" type="button">取消</button>
+          <button id="asset-package-preview" class="primary-button" type="button">校验并预览</button>
+        </div>
+      </div>
+      <div id="asset-package-preview-panel" hidden>
+        <div class="asset-package-summary">
+          <strong id="asset-package-counts">0 个资产</strong>
+          <span id="asset-package-source"></span>
+        </div>
+        <div id="asset-package-assets" class="asset-package-assets"></div>
+        <label id="asset-package-missing-row" class="check-row" hidden>
+          <input id="asset-package-allow-missing" type="checkbox">
+          仍然导入，接受缺失依赖：<span id="asset-package-missing"></span>
+        </label>
+        <div class="dialog-actions">
+          <button id="asset-package-back" class="quiet-button" type="button">重新选择</button>
+          <button id="asset-package-apply" class="primary-button" type="button">确认导入</button>
+        </div>
+      </div>
+      <p id="asset-package-status" class="write-progress" role="status" aria-live="polite"></p>
+    </div>
+  </dialog>
+
+  <dialog id="outline-edit-dialog" class="write-dialog">
+    <form id="outline-edit-form" method="dialog">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">INCREMENTAL OUTLINE EDIT</p>
+          <h2 id="outline-edit-title">编辑大纲节点</h2>
+        </div>
+        <button id="outline-edit-close" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <p id="outline-edit-context" class="dialog-note"></p>
+      <div id="outline-edit-impact" class="outline-edit-impact" hidden></div>
+      <input id="outline-edit-operation" type="hidden">
+      <input id="outline-edit-node-id" type="hidden">
+      <input id="outline-edit-kind" type="hidden">
+      <div id="outline-edit-title-field" class="outline-edit-title-field">
+        <label for="outline-edit-name">标题</label>
+        <input id="outline-edit-name" maxlength="160" autocomplete="off" required>
+        <p id="outline-edit-help" class="dialog-note"></p>
+      </div>
+      <div class="dialog-actions">
+        <button id="outline-edit-cancel" class="quiet-button" type="button">取消</button>
+        <button id="outline-edit-submit" class="primary-button" type="submit">保存修改</button>
+      </div>
+      <p id="outline-edit-progress" class="write-progress" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <dialog id="write-dialog" class="write-dialog">
+    <form id="write-form" method="dialog">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">DANTE PIPELINE</p>
+          <h2>写下一章</h2>
+        </div>
+        <button id="write-close" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <div id="write-outline-context" class="write-outline-context">
+        <span id="write-chapter-id" class="chapter-id">等待大纲建议</span>
+        <strong id="write-chapter-title">尚未选择章纲</strong>
+        <span id="write-breadcrumb"></span>
+      </div>
+      <input id="write-outline-revision" type="hidden">
+      <label for="write-guidance">本章要求</label>
+      <textarea id="write-guidance" rows="6"></textarea>
+      <label for="write-words">目标字数</label>
+      <input id="write-words" type="number" min="200" max="12000" step="100" value="3000" inputmode="numeric">
+      <div class="dialog-actions">
+        <button id="write-cancel" class="quiet-button" type="button">取消</button>
+        <button id="write-submit" class="primary-button" type="submit">开始写作</button>
+      </div>
+      <p id="write-progress" class="write-progress" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <dialog id="chapter-delete-dialog" class="write-dialog chapter-delete-dialog">
+    <form id="chapter-delete-form" method="dialog">
+      <div class="dialog-header">
+        <div><p class="eyebrow">MANUAL DELETE</p><h2>删除正文</h2></div>
+        <button id="chapter-delete-close" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <p id="chapter-delete-context" class="dialog-note"></p>
+      <p class="dialog-note">只删除正文及该章的记忆、审稿、修订和批注数据；大纲、角色与世界设定保持不变。删除前会自动保留一个正文版本。</p>
+      <label>输入章节 ID 确认<input id="chapter-delete-confirm" autocomplete="off" spellcheck="false" required></label>
+      <p id="chapter-delete-status" class="dialog-note" role="status"></p>
+      <div class="dialog-actions">
+        <button id="chapter-delete-cancel" class="quiet-button" type="button">取消</button>
+        <button id="chapter-delete-submit" class="danger-button" type="submit" disabled>确认删除</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="research-settings-dialog" class="write-dialog setup-dialog research-settings-dialog">
+    <form id="research-settings-form">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">DEEP RESEARCH API</p>
+          <h2>深度研究 API 设置</h2>
+        </div>
+        <button id="research-settings-close" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <p class="dialog-note">模型凭据和搜索 Key 只保存在本机 OpenWrite 配置目录，不写入作品、任务记录或浏览器存储。</p>
+      <div class="research-model-setting">
+        <div>
+          <small>研究模型路由</small>
+          <strong id="research-settings-model">尚未配置</strong>
+        </div>
+        <button id="research-model-route-open" class="quiet-button" type="button">选择模型档案</button>
+      </div>
+      <div class="model-form-grid research-settings-fields">
+        <div class="model-field full-span"><label for="research-settings-search">搜索提供方</label><select id="research-settings-search"><option value="bocha">博查</option><option value="bing">Bing（无需 Key）</option><option value="jina">Jina</option><option value="none">不联网</option></select></div>
+        <div id="research-search-key-field" class="model-field full-span"><label for="research-search-api-key">搜索 API Key</label><div class="secret-input-row"><input id="research-search-api-key" type="password" autocomplete="new-password" placeholder="留空则沿用已保存的 Key" spellcheck="false"><button id="research-search-key-toggle" class="quiet-button" type="button" aria-pressed="false">显示</button></div><small id="research-search-key-state" class="field-help">尚未保存 Key</small><label class="model-remember-key"><input id="research-search-remember-key" type="checkbox" checked> 重启后自动恢复 API Key</label></div>
+      </div>
+      <div class="dialog-actions">
+        <button id="research-search-key-clear" class="danger-button" type="button">清除 Key</button>
+        <span class="action-spacer"></span>
+        <button id="research-settings-cancel" class="quiet-button" type="button">取消</button>
+        <button id="research-settings-save" class="primary-button" type="submit">保存设置</button>
+      </div>
+      <p id="research-settings-status" class="write-progress" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <dialog id="model-dialog" class="write-dialog model-dialog">
+    <form id="model-form">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">MODEL ROUTING</p>
+          <h2>模型设置</h2>
+        </div>
+        <button id="model-close" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="model-active-card" aria-live="polite">
+        <span id="model-dialog-status-dot" class="connection-dot" aria-hidden="true"></span>
+        <div>
+          <small>当前任务路由</small>
+          <strong id="model-dialog-current">尚未配置模型</strong>
+        </div>
+      </div>
+      <p class="dialog-note model-security-note">
+        档案和凭据保存在本机 OpenWrite 配置目录，不写入作品、Git 或浏览器存储。已保存的 API Key 只显示是否存在。
+      </p>
+      <div class="segmented model-tabs" role="tablist" aria-label="模型设置分类">
+        <button class="segment active" type="button" role="tab" aria-selected="true" data-model-tab="profiles">档案</button>
+        <button class="segment" type="button" role="tab" aria-selected="false" data-model-tab="routes">任务路由</button>
+      </div>
+      <section id="model-profiles-pane" class="model-tab-pane">
+        <div class="model-profile-layout">
+          <aside class="model-profile-browser" aria-label="模型档案">
+            <button id="model-profile-new" class="quiet-button full-button" type="button">新建档案</button>
+            <div id="model-profile-list" class="model-profile-list" role="listbox"></div>
+          </aside>
+          <div class="model-profile-editor">
+            <div class="model-form-grid">
+              <div class="model-field"><label for="model-profile-id">档案 ID</label><input id="model-profile-id" required maxlength="48" pattern="[A-Za-z0-9][A-Za-z0-9_\-]{0,47}" placeholder="prose"></div>
+              <div class="model-field"><label for="model-profile-label">显示名称</label><input id="model-profile-label" required maxlength="80" placeholder="正文模型"></div>
+              <div class="model-field full-span"><label for="model-preset">快速预设</label><select id="model-preset">
+                <option value="openai">OpenAI 格式接口</option>
+                <option value="anthropic">Anthropic 格式接口</option>
+                <option value="custom">自定义接口</option>
+              </select><small id="model-preset-help" class="field-help"></small></div>
+              <div class="model-field full-span"><label for="model-base-url">Base URL</label><input id="model-base-url" type="url" required placeholder="https://api.deepseek.com" spellcheck="false"></div>
+              <div class="model-field full-span"><label for="model-name">模型名称</label><input id="model-name" required placeholder="deepseek-v4-pro" spellcheck="false"></div>
+              <div class="model-field full-span"><label for="model-api-key">API Key</label><div class="secret-input-row"><input id="model-api-key" type="password" autocomplete="new-password" placeholder="留空则沿用此档案已保存的 Key" spellcheck="false"><button id="model-key-toggle" class="quiet-button" type="button" aria-pressed="false">显示</button></div><small id="model-key-state" class="field-help">此档案尚未保存 Key</small><label class="model-remember-key"><input id="model-remember-key" type="checkbox" checked> 重启后自动恢复 API Key</label></div>
+              <div class="model-field"><label for="model-api-format">API 格式</label><select id="model-api-format"><option value="chat">Chat Completions</option><option value="responses">Responses</option></select></div>
+              <div class="model-field"><label for="model-context-tokens">上下文预算</label><input id="model-context-tokens" type="number" min="12000" max="10000000" step="1000" value="64000" inputmode="numeric"></div>
+              <div class="model-field"><label for="model-max-tokens">最大输出</label><input id="model-max-tokens" type="number" min="256" max="10000000" step="1" value="24000" inputmode="numeric"></div>
+              <div class="model-field"><label for="model-temperature">温度</label><input id="model-temperature" type="number" min="0" max="2" step="0.1" value="0.7" inputmode="decimal"></div>
+              <div class="model-field"><label for="model-timeout">超时（秒）</label><input id="model-timeout" type="number" min="1" max="1800" step="1" value="120" inputmode="numeric"></div>
+              <div class="model-field full-span"><label for="model-embedding-provider">Embedding 运行方式</label><select id="model-embedding-provider"><option value="openai">云端 OpenAI-compatible API</option><option value="local">本地 FastEmbed</option></select></div>
+              <div class="model-field full-span" data-embedding-cloud><label for="model-embedding-base-url">Embedding Base URL</label><input id="model-embedding-base-url" type="url" placeholder="留空则沿用主模型 Base URL" spellcheck="false"></div>
+              <div class="model-field full-span"><label for="model-embedding-preset">Embedding 预设</label><select id="model-embedding-preset"></select><small id="model-embedding-preset-help" class="field-help embedding-preset-help"></small></div>
+              <div class="model-field full-span"><label for="model-embedding-name">Embedding 模型名称</label><input id="model-embedding-name" required value="text-embedding-3-small" spellcheck="false"></div>
+              <div class="model-field"><label for="model-embedding-dimension">Embedding 维度</label><input id="model-embedding-dimension" type="number" min="1" max="65536" step="1" value="1536" inputmode="numeric"></div>
+              <div class="model-field"><label for="model-embedding-max-tokens">Embedding Token 上限</label><input id="model-embedding-max-tokens" type="number" min="256" max="131072" step="1" value="8192" inputmode="numeric"></div>
+              <div class="model-field full-span"><label for="model-search-mode">检索策略</label><select id="model-search-mode"><option value="vector">向量 + 精确</option><option value="graph">图谱 + 向量</option></select></div>
+              <div class="model-field full-span" data-embedding-cloud><label for="model-embedding-api-key">Embedding API Key</label><input id="model-embedding-api-key" type="password" autocomplete="new-password" placeholder="留空则沿用主模型 Key" spellcheck="false"><small id="model-embedding-key-state" class="field-help">留空时沿用主模型 API Key</small></div>
+            </div>
+            <div class="dialog-actions model-profile-actions">
+              <select id="model-delete-fallback" aria-label="删除后的回退档案"></select>
+              <button id="model-profile-delete" class="danger-button" type="button">删除</button>
+              <span class="action-spacer"></span>
+              <button id="model-embedding-test" class="quiet-button" type="button">测试 Embedding</button>
+              <button id="model-test" class="quiet-button" type="button">测试连接</button>
+              <button id="model-submit" class="primary-button" type="submit">保存档案</button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="model-routes-pane" class="model-tab-pane" hidden>
+        <div id="model-route-grid" class="model-route-grid"></div>
+        <div class="dialog-actions"><button id="model-route-save" class="primary-button" type="button">保存任务路由</button></div>
+      </section>
+      <button id="model-cancel" type="button" hidden>取消</button>
+      <p id="model-progress" class="write-progress" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <dialog id="project-dialog" class="write-dialog setup-dialog">
+    <div class="dialog-header">
+        <div>
+          <p class="eyebrow">NOVEL PROJECT</p>
+          <h2>打开或创建作品</h2>
+        </div>
+        <button id="project-dialog-close" class="icon-button" type="button" aria-label="关闭作品选择" title="关闭">×</button>
+      </div>
+    <p class="dialog-note">作品数据应放在独立的私密目录；OpenWrite 框架仓库只保存程序代码。</p>
+    <form id="open-project-form" class="compact-form">
+      <label for="open-project-path">已有作品目录</label>
+      <div class="project-path-row">
+        <input id="open-project-path" required placeholder="~/my_novel">
+        <button id="open-project-submit" class="primary-button" type="submit">打开</button>
+      </div>
+      <div id="recent-projects" class="recent-projects"></div>
+      <p id="open-project-progress" class="write-progress" role="status"></p>
+    </form>
+    <div class="setup-divider"><span>或新建私密作品目录</span></div>
+    <form id="project-form" class="compact-form">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">NEW NOVEL</p>
+          <h3>创建新作品</h3>
+        </div>
+      </div>
+      <details class="project-location-details">
+        <summary>自定义作品目录（可选）</summary>
+        <label for="project-path">作品目录</label>
+        <input id="project-path" placeholder="../OpenWriteNovels/my_novel">
+        <small id="project-path-hint" class="field-help">留空时会自动创建独立作品目录。</small>
+      </details>
+      <label for="project-title">书名</label>
+      <input id="project-title" required maxlength="120" placeholder="请输入你的作品名称">
+      <label for="project-id">小说 ID</label>
+      <input id="project-id" required minlength="2" maxlength="64" pattern="[A-Za-z0-9][A-Za-z0-9_\-]+" placeholder="例如 mist_city">
+      <p class="dialog-note">创建后会引导你向 Goethe 描述故事，再生成和确认可写大纲。</p>
+      <button id="project-submit" class="primary-button" type="submit">创建小说工作区</button>
+      <p id="project-progress" class="write-progress" role="status"></p>
+    </form>
+  </dialog>
+
+  <dialog id="writing-targets-dialog" class="write-dialog writing-targets-dialog">
+    <form id="writing-targets-form">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">LENGTH PLAN</p>
+          <h2>字数规划</h2>
+        </div>
+        <button id="writing-targets-close" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <section class="writing-target-section" aria-labelledby="writing-target-body-title">
+        <div class="writing-target-section-heading">
+          <h3 id="writing-target-body-title">正文规模</h3>
+          <span>用于进度与章节写作</span>
+        </div>
+        <div class="writing-target-grid">
+          <label for="writing-target-book">全书目标字数
+            <span class="number-unit-field"><input id="writing-target-book" type="number" min="10000" max="5000000" step="10000" required inputmode="numeric"><span>字</span></span>
+          </label>
+          <label for="writing-target-chapter">每章正文默认
+            <span class="number-unit-field"><input id="writing-target-chapter" type="number" min="200" max="12000" step="100" required inputmode="numeric"><span>字</span></span>
+          </label>
+        </div>
+      </section>
+      <section class="writing-target-section" aria-labelledby="writing-target-outline-title">
+        <div class="writing-target-section-heading">
+          <h3 id="writing-target-outline-title">大纲详略</h3>
+          <span>各层节点的说明目标</span>
+        </div>
+        <div class="writing-target-grid outline-target-grid">
+          <label for="writing-target-volume">每卷
+            <span class="number-unit-field"><input id="writing-target-volume" type="number" min="100" max="5000" step="10" required inputmode="numeric"><span>字</span></span>
+          </label>
+          <label for="writing-target-act">每幕
+            <span class="number-unit-field"><input id="writing-target-act" type="number" min="80" max="3000" step="10" required inputmode="numeric"><span>字</span></span>
+          </label>
+          <label for="writing-target-section">每节
+            <span class="number-unit-field"><input id="writing-target-section" type="number" min="50" max="2000" step="10" required inputmode="numeric"><span>字</span></span>
+          </label>
+          <label for="writing-target-outline-chapter">每个章纲
+            <span class="number-unit-field"><input id="writing-target-outline-chapter" type="number" min="30" max="1000" step="10" required inputmode="numeric"><span>字</span></span>
+          </label>
+        </div>
+      </section>
+      <p class="writing-target-priority"><strong>正文目标优先级</strong><span>章纲内明确的“预估字数”优先于每章默认值。</span></p>
+      <div class="dialog-actions">
+        <button id="writing-targets-cancel" class="quiet-button" type="button">取消</button>
+        <button id="writing-targets-submit" class="primary-button" type="submit">保存规划</button>
+      </div>
+      <p id="writing-targets-status" class="write-progress" role="status" aria-live="polite"></p>
+    </form>
+  </dialog>
+
+  <dialog id="review-dialog" class="write-dialog review-dialog">
+    <div class="review-dialog-content">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">REVIEW</p>
+          <h2>章节审稿</h2>
+        </div>
+        <button id="review-close" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <div id="review-loading" class="review-loading" role="status">正在执行规则检查与深度审稿…</div>
+      <div id="review-result" hidden>
+        <div class="review-score-row">
+          <div><strong id="review-score">0</strong><span>/ 100</span></div>
+          <span id="review-verdict" class="status-pill"></span>
+        </div>
+        <p id="review-summary" class="review-summary"></p>
+        <div id="review-issues" class="review-issues"></div>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="revision-request-dialog" class="write-dialog revision-request-dialog">
+    <form id="revision-request-form">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">REVISION PROPOSAL</p>
+          <h2 id="revision-request-title">修订所选文字</h2>
+        </div>
+        <button id="revision-request-close" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <input id="revision-full-mode" type="hidden" value="0">
+      <input id="revision-selection-start" type="hidden">
+      <input id="revision-selection-end" type="hidden">
+      <textarea id="revision-original-text" hidden></textarea>
+      <label>修订方式
+        <select id="revision-action">
+          <option value="rewrite">重写</option>
+          <option value="expand">扩写</option>
+          <option value="compress">压缩</option>
+          <option value="pace">调整节奏</option>
+          <option value="dialogue">增强对话</option>
+          <option value="naturalize">减少模板化表达</option>
+          <option value="custom">自定义</option>
+        </select>
+      </label>
+      <label>具体要求
+        <textarea id="revision-instruction" rows="4" maxlength="4000" placeholder="保留事件结果，只调整表达和节奏"></textarea>
+      </label>
+      <label>目标字数（可选）
+        <input id="revision-target-units" type="number" min="0" max="12000" step="1" value="0">
+      </label>
+      <div class="revision-selection-box">
+        <strong>修改范围</strong>
+        <pre id="revision-selection-preview"></pre>
+      </div>
+      <p id="revision-request-status" class="dialog-note" role="status"></p>
+      <div class="dialog-actions">
+        <button id="revision-request-cancel" class="quiet-button" type="button">取消</button>
+        <button id="revision-request-submit" class="primary-button" type="submit">生成提案</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="revision-preview-dialog" class="write-dialog revision-preview-dialog">
+    <div class="revision-preview-content">
+      <div class="dialog-header">
+        <div>
+          <p class="eyebrow">DIFF PREVIEW</p>
+          <h2 id="revision-preview-title">修订提案</h2>
+        </div>
+        <button id="revision-preview-close" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="revision-preview-meta">
+        <span id="revision-preview-status" class="status-pill">等待确认</span>
+        <span id="revision-stats"></span>
+      </div>
+      <div class="revision-compare" aria-label="修订前后对照">
+        <section><strong>原文</strong><pre id="revision-before"></pre></section>
+        <section><strong>提案</strong><pre id="revision-after"></pre></section>
+      </div>
+      <section id="revision-hunks-section" class="revision-hunks" aria-labelledby="revision-hunks-title">
+        <div class="revision-hunks-heading">
+          <div><strong id="revision-hunks-title">选择要接受的修改</strong><span id="revision-hunks-status"></span></div>
+          <div>
+            <button id="revision-hunks-all" class="quiet-button" type="button">全选</button>
+            <button id="revision-hunks-none" class="quiet-button" type="button">全不选</button>
+          </div>
+        </div>
+        <div id="revision-hunks-list" class="revision-hunks-list"></div>
+      </section>
+      <details class="revision-unified">
+        <summary>查看统一 diff</summary>
+        <pre id="revision-unified-diff"></pre>
+      </details>
+      <p id="revision-rationale" class="revision-rationale"></p>
+      <p id="revision-risks" class="dialog-note"></p>
+      <div class="dialog-actions">
+        <button id="revision-reject" class="quiet-button" type="button">放弃</button>
+        <button id="revision-regenerate" class="quiet-button" type="button">重新生成</button>
+        <button id="revision-apply" class="primary-button" type="button">应用选中修改</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="revision-history-dialog" class="write-dialog revision-history-dialog">
+    <div class="revision-preview-content">
+      <div class="dialog-header">
+        <div><p class="eyebrow">REVISION HISTORY</p><h2>本章修订记录</h2></div>
+        <button id="revision-history-close" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="row-actions">
+        <button id="manuscript-checkpoint" class="quiet-button" type="button">创建 checkpoint</button>
+        <button id="manuscript-annotate" class="quiet-button" type="button">批注当前选区</button>
+      </div>
+      <h3>正文版本</h3>
+      <div id="manuscript-version-list" class="revision-history-list"></div>
+      <h3>批注</h3>
+      <div id="manuscript-annotation-list" class="revision-history-list"></div>
+      <h3>AI 修订提案</h3>
+      <div id="revision-history-list" class="revision-history-list"></div>
+    </div>
+  </dialog>
+
+  <dialog id="manuscript-annotation-dialog" class="write-dialog annotation-dialog">
+    <form id="manuscript-annotation-form" class="revision-preview-content">
+      <div class="dialog-header">
+        <div><p class="eyebrow">ANNOTATION</p><h2>批注当前选区</h2></div>
+        <button id="manuscript-annotation-close" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <p id="manuscript-annotation-quote" class="annotation-quote"></p>
+      <label class="field-label" for="manuscript-annotation-note">批注内容</label>
+      <textarea id="manuscript-annotation-note" rows="5" maxlength="10000" required></textarea>
+      <p id="manuscript-annotation-status" class="dialog-note">批注会绑定当前正文版本与选区。</p>
+      <div class="dialog-actions">
+        <button id="manuscript-annotation-cancel" class="quiet-button" type="button">取消</button>
+        <button id="manuscript-annotation-submit" class="primary-button" type="submit">保存批注</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="task-center-dialog" class="write-dialog task-center-dialog">
+    <div class="task-center-content">
+      <div class="dialog-header">
+        <div><p class="eyebrow">TASK CENTER</p><h2>任务中心</h2></div>
+        <button id="task-center-close" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <div class="task-center-toolbar">
+        <button id="controlled-write-open" class="primary-button" type="button">受控连续写作</button>
+        <div class="task-center-toolbar-actions">
+          <button id="task-clear-failed" class="danger-button" type="button" disabled>清除失败任务</button>
+          <button id="task-refresh" class="quiet-button" type="button">刷新</button>
+        </div>
+      </div>
+      <div id="task-list" class="task-list"></div>
+    </div>
+  </dialog>
+
+  <dialog id="task-detail-dialog" class="write-dialog task-detail-dialog">
+    <div class="task-center-content">
+      <div class="dialog-header">
+        <div><p class="eyebrow">TASK ACTIVITY</p><h2 id="task-detail-title">任务活动</h2></div>
+        <button id="task-detail-close" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <p id="task-detail-meta" class="dialog-note"></p>
+      <ol id="task-detail-events" class="task-detail-events"></ol>
+    </div>
+  </dialog>
+
+  <dialog id="controlled-write-dialog" class="write-dialog controlled-write-dialog">
+    <form id="controlled-write-form">
+      <div class="dialog-header">
+        <div><p class="eyebrow">CONTROLLED WRITING</p><h2>受控连续写作</h2></div>
+        <button id="controlled-write-close" class="icon-button" type="button" aria-label="关闭">×</button>
+      </div>
+      <label>最多推进章节
+        <input id="controlled-write-count" type="number" min="1" max="10" step="1" value="2">
+      </label>
+      <label>最低审稿分
+        <input id="controlled-write-score" type="number" min="0" max="100" step="1" value="82">
+      </label>
+      <label>每章目标字数
+        <input id="controlled-write-words" type="number" min="200" max="12000" step="100" value="3000">
+      </label>
+      <label>Token 上限（0 为不限制）
+        <input id="controlled-write-tokens" type="number" min="0" max="10000000" step="1000" value="0">
+      </label>
+      <label>成本上限 USD（0 为不限制）
+        <input id="controlled-write-cost" type="number" min="0" max="10000" step="0.01" value="0">
+      </label>
+      <label>连续失败上限
+        <input id="controlled-write-failures" type="number" min="1" max="10" step="1" value="2">
+      </label>
+      <label class="check-row"><input id="controlled-stop-blocker" type="checkbox" checked> 遇到阻断问题时停止</label>
+      <label class="check-row"><input id="controlled-stop-continuity" type="checkbox" checked> 遇到连续性错误时停止</label>
+      <label class="check-row"><input id="controlled-confirm-each" type="checkbox"> 每章完成后等待确认</label>
+      <p id="controlled-write-status" class="dialog-note" role="status"></p>
+      <div class="dialog-actions">
+        <button id="controlled-write-cancel" class="quiet-button" type="button">取消</button>
+        <button id="controlled-write-submit" class="primary-button" type="submit">开始任务</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div id="product-tour" class="product-tour" hidden aria-live="polite">
+    <div id="product-tour-spotlight" class="product-tour-spotlight" aria-hidden="true"></div>
+    <aside id="product-tour-card" class="product-tour-card" data-placement="bottom">
+      <p id="product-tour-progress" class="eyebrow"></p>
+      <h2 id="product-tour-title"></h2>
+      <p id="product-tour-copy"></p>
+      <div class="product-tour-actions">
+        <button id="product-tour-skip" class="quiet-button" type="button">跳过引导</button>
+        <div class="product-tour-navigation">
+          <button id="product-tour-back" class="quiet-button" type="button" hidden>上一步</button>
+          <button id="product-tour-next" class="primary-button" type="button" hidden>下一步</button>
+        </div>
+      </div>
+    </aside>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script id="openwrite-vditor-icons" src="/vendor/vditor/dist/js/icons/ant.js"></script>
+  <script src="/vendor/vditor/dist/index.min.js"></script>
+  <script type="module" src="/app.js?v=project-dialog-close-1"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+.git
+.DS_Store
+node_modules
+artifacts
+**/dist
+**/*.tsbuildinfo
+coverage
+.env
+.env.*
+!.env.example
+npm-debug.log*
+pnpm-debug.log*

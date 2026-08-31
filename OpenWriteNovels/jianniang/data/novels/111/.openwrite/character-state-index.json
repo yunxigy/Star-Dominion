@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "novel_id": "111",
+  "documents": [
+    {
+      "path": "data/manuscript/arc_001/ch_001.md",
+      "size": 19448,
+      "mtime_ns": 1787745131417481600
+    },
+    {
+      "path": "data/manuscript/arc_001/ch_002.md",
+      "size": 9608,
+      "mtime_ns": 1787576672042231500
+    },
+    {
+      "path": "src/characters/叶冰瑶.md",
+      "size": 1405,
+      "mtime_ns": 1787577095403197000
+    },
+    {
+      "path": "src/characters/拉菲.md",
+      "size": 1619,
+      "mtime_ns": 1787577095393204300
+    },
+    {
+      "path": "src/characters/林北.md",
+      "size": 1297,
+      "mtime_ns": 1787742104640303300
+    },
+    {
+      "path": "src/characters/灵汐.md",
+      "size": 2824,
+      "mtime_ns": 1787742104640303300
+    },
+    {
+      "path": "src/characters/老李.md",
+      "size": 1539,
+      "mtime_ns": 1787577095403197000
+    },
+    {
+      "path": "src/outline.md",
+      "size": 13238,
+      "mtime_ns": 1787745026165858000
+    },
+    {
+      "path": "src/story/author_intent.md",
+      "size": 1767,
+      "mtime_ns": 1787576544602985100
+    },
+    {
+      "path": "src/story/background.md",
+      "size": 1236,
+      "mtime_ns": 1787576544601970100
+    },
+    {
+      "path": "src/story/current_focus.md",
+      "size": 2112,
+      "mtime_ns": 1787724421566621000
+    },
+    {
+      "path": "src/story/foundation.md",
+      "size": 2660,
+      "mtime_ns": 1787724421561641600
+    },
+    {
+      "path": "src/story/open_questions.md",
+      "size": 1684,
+      "mtime_ns": 1787576544605456800
+    },
+    {
+      "path": "src/world/rules.md",
+      "size": 3518,
+      "mtime_ns": 1787745026163863500
+    },
+    {
+      "path": "src/world/terminology.md",
+      "size": 2164,
+      "mtime_ns": 1787745026164861600
+    },
+    {
+      "path": "src/world/timeline.md",
+      "size": 1825,
+      "mtime_ns": 1787745090254570900
+    }
+  ],
+  "records": [],
+  "diagnostics": []
+}

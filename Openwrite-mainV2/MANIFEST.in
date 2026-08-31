@@ -1,0 +1,12 @@
+include 启动?OpenWrite.command
+include 启动?OpenWrite.bat
+recursive-include tools/studio_assets *
+
+prune integrations/deepresearch/node_modules
+prune integrations/deepresearch/artifacts
+prune integrations/deepresearch/packages/*/node_modules
+prune integrations/deepresearch/packages/*/dist
+prune integrations/deepresearch/packages/*/artifacts
+
+global-exclude *.py[cod]
+global-exclude .DS_Store

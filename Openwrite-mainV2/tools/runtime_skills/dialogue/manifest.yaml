@@ -1,0 +1,14 @@
+schema_version: 1
+id: dialogue
+version: 1.0.0
+name: 对话质量
+description: 检查对白归属、节奏和信息释放。
+agents: [dante, writer, reviewer]
+tasks: [write, review, chapter.write, chapter.review]
+allow_tools: ["*"]
+output_contract: text
+requires: [runtime-default]
+budget:
+  max_instruction_chars: 3500
+  max_reference_chars: 0
+  max_tool_calls: 12

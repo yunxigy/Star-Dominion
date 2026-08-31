@@ -1,0 +1,30 @@
+node_modules/
+dist/
+build/
+*.log
+.DS_Store
+.env
+.env.local
+.env.*.local
+coverage/
+.turbo/
+.cache/
+.vite/
+*.bak
+*.tmp
+*.tsbuildinfo
+*.sqlite
+*.sqlite3
+*.db
+artifacts/
+external
+# Keep the two scrubbed, bounded real-run regression inputs under version control.
+# All other artifact directories and files remain ignored.
+!configs/regression/artifacts/
+configs/regression/artifacts/*
+!configs/regression/artifacts/live-ai-evaluation-20260715/
+configs/regression/artifacts/live-ai-evaluation-20260715/*
+!configs/regression/artifacts/live-ai-evaluation-20260715/evidence-quality-audit.json
+!configs/regression/artifacts/live-ai-evaluation-20260715/budget-audit.json
+examples/output/
+tests/**/node_modules/

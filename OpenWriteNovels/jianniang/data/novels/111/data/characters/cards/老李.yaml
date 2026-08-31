@@ -1,0 +1,19 @@
+id: 老李
+name: 老李
+tier: 关键配角
+age: null
+occupation: ''
+identity: ''
+brief: 魔都二中高三班主任、退役老兵。外表严厉，实际用最朴素的方式保护学生；赠送绿色稀有深水之井图纸。
+background: ''
+personality: []
+relationships:
+- target: 灵汐
+  kind: 师生
+  note: 赠送深水之井图纸并嘱咐活下来
+- target: 叶冰瑶
+  kind: 班主任与学生
+  note: 负责觉醒前的班级管理
+- target: 林北
+  kind: 班主任与学生
+  note: 负责觉醒前的班级管理

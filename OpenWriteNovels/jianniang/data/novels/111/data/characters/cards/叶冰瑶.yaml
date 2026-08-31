@@ -1,0 +1,16 @@
+id: 叶冰瑶
+name: 叶冰瑶
+tier: 核心配角
+age: null
+occupation: ''
+identity: ''
+brief: 灵汐从小一起长大的朋友，魔都二中甜美系校花。觉醒 A 级自然亲和与 A 级精灵之心，容易紧张，却会本能地保护灵汐。
+background: ''
+personality: []
+relationships:
+- target: 灵汐
+  kind: 朋友
+  note: 从小一起长大的朋友
+- target: 林北
+  kind: 同学
+  note: 共同关心灵汐，常互相吐槽

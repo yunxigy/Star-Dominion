@@ -1,0 +1,14 @@
+schema_version: 1
+id: reviewer
+version: 1.0.0
+name: 连续性审稿
+description: 以证据和可定位问题驱动审稿。
+agents: [dante, reviewer]
+tasks: [review, chapter.review]
+allow_tools: ["*"]
+output_contract: review_report
+requires: [runtime-default]
+budget:
+  max_instruction_chars: 4000
+  max_reference_chars: 0
+  max_tool_calls: 12

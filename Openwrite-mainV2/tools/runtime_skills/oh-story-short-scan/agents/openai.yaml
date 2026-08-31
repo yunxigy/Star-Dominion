@@ -1,0 +1,4 @@
+interface:
+  display_name: "Oh Story 短篇市场研究"
+  short_description: "用于研究短篇平台样本、核心情绪、传播入口和选题机会的方法"
+  default_prompt: "使用 $oh-story-short-scan 研究带来源和日期的短篇市场样本。"

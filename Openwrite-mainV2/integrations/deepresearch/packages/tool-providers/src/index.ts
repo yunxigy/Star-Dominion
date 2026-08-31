@@ -1,0 +1,30 @@
+export {
+  ArxivSearchProvider,
+  BingSearchProvider,
+  BochaSearchProvider,
+  BraveSearchProvider,
+  CompositeSearchProvider,
+  DuckDuckGoSearchProvider,
+  FallbackSearchProvider,
+  JinaSearchProvider,
+  canonicalizeUrl,
+  cleanText,
+  inferSourceTier,
+  isAllowedByPolicy,
+  normalizeSearchHit,
+  officialEuropeanLawHits,
+  type ArxivSearchOptions,
+  type BingSearchOptions,
+  type BochaSearchOptions,
+  type BraveSearchOptions,
+  type CompositeSearchOptions,
+  type FallbackSearchOptions,
+  type JinaSearchOptions,
+  type NormalizedSearchHit,
+  type SearchHit,
+  type SearchProvider,
+  type SourcePolicy,
+} from "@deepresearch/search-providers";
+
+export { FetchPageProvider, stripHtml, type FetchPageMode, type FetchPageProviderOptions } from "./fetch-page.js";
+export { UserFileProvider, type UserFileReadRequest, type UserFileReadResult } from "./user-file.js";

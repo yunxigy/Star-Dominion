@@ -1,0 +1,2667 @@
+{
+  "schema_version": 1,
+  "novel_id": "farm_ancient",
+  "source_project": "E:\\AI\\gp\\Openwrite-main",
+  "target_project": "E:\\AI\\gp\\OpenWriteNovels\\farm_ancient",
+  "source_novel": "E:\\AI\\gp\\Openwrite-main\\data\\novels\\farm_ancient",
+  "generated_at": "2026-08-30T14:54:38.075413+00:00",
+  "highest_chapter": 120,
+  "counts": {
+    "chapters": 120,
+    "backups": 0,
+    "history_files": 63,
+    "snapshots": 183,
+    "foreshadowing_files": 1,
+    "world_files": 3,
+    "hierarchy_files": 1
+  },
+  "files": [
+    {
+      "source_relative": "data/foreshadowing/dag.yaml",
+      "target_relative": "data/novels/farm_ancient/data/foreshadowing/dag.yaml",
+      "kind": "foreshadowing",
+      "size": 35,
+      "sha256": "2aab38b7e581fd49a08c160c88a868d61ec7912bb506a571f804904fd05aa43d",
+      "transformation": "legacy_foreshadowing_nodes_list_to_mapping",
+      "target_sha256": "5a0fd3253bb5e0b1fd331591531d620066f89f3cca9211f0cfc76b7094fa1724"
+    },
+    {
+      "source_relative": "data/hierarchy.yaml",
+      "target_relative": "data/novels/farm_ancient/data/hierarchy.yaml",
+      "kind": "hierarchy",
+      "size": 3998,
+      "sha256": "97ce398086d515118df0b7b9e2a8f291e378205a154a6973938e4d5ec65518e9"
+    },
+    {
+      "source_relative": "data/history/ch_045/v_0001_20260629_013225.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_045/v_0001_20260629_013225.md",
+      "kind": "history",
+      "size": 39660,
+      "sha256": "3c90826944b9b93e7e2ec0cee0388dcb54bbefb05564ab77cbf469eb589dbe09"
+    },
+    {
+      "source_relative": "data/history/ch_046/v_0001_20260629_013345.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_046/v_0001_20260629_013345.md",
+      "kind": "history",
+      "size": 18842,
+      "sha256": "0fb3151944e11b3127e39eac7081602f8f2facfd644cc0911fbe661c2e84d95d"
+    },
+    {
+      "source_relative": "data/history/ch_047/v_0001_20260629_013508.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_047/v_0001_20260629_013508.md",
+      "kind": "history",
+      "size": 10739,
+      "sha256": "0223bb8dd165457f47ebf0a756f7d0e00a5578f0a866ee8c7a65bbc57f82fa84"
+    },
+    {
+      "source_relative": "data/history/ch_048/v_0001_20260629_013644.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_048/v_0001_20260629_013644.md",
+      "kind": "history",
+      "size": 23152,
+      "sha256": "5e8819971bea3f2bc1d7edd6f40e15f7730627d1d5bf4c926e0e1688da7bb22a"
+    },
+    {
+      "source_relative": "data/history/ch_049/v_0001_20260629_013825.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_049/v_0001_20260629_013825.md",
+      "kind": "history",
+      "size": 15440,
+      "sha256": "15617089d0427d37f50a94aeaca2c52118f90fecd7975fa142569367cc13130b"
+    },
+    {
+      "source_relative": "data/history/ch_050/v_0001_20260629_014027.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_050/v_0001_20260629_014027.md",
+      "kind": "history",
+      "size": 12588,
+      "sha256": "4fda20e48722df7d109cbc1e811c1c26e3252b427caf6814044b703c4e8f64cb"
+    },
+    {
+      "source_relative": "data/history/ch_064/v_0001_20260629_021348.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_064/v_0001_20260629_021348.md",
+      "kind": "history",
+      "size": 15895,
+      "sha256": "29e522996b67ab4861afc8c39761f124d9d6f4d3cd761ab14825a393fb026111"
+    },
+    {
+      "source_relative": "data/history/ch_065/v_0001_20260629_021536.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_065/v_0001_20260629_021536.md",
+      "kind": "history",
+      "size": 11664,
+      "sha256": "81f0a447b4e3b8d3e344277a83ccde5630406694fbe45f884e76763fc3667543"
+    },
+    {
+      "source_relative": "data/history/ch_066/v_0001_20260629_021735.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_066/v_0001_20260629_021735.md",
+      "kind": "history",
+      "size": 16624,
+      "sha256": "cf25ed8ccfde6700d3a9d90daf0976c684286010ce2d2fe8810164b25e590f59"
+    },
+    {
+      "source_relative": "data/history/ch_067/v_0001_20260629_021943.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_067/v_0001_20260629_021943.md",
+      "kind": "history",
+      "size": 18472,
+      "sha256": "00b9b5e81b852a36424176cbc14ec44228c29f00976fa0b3086e6b495d9b5a48"
+    },
+    {
+      "source_relative": "data/history/ch_068/v_0001_20260629_022123.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_068/v_0001_20260629_022123.md",
+      "kind": "history",
+      "size": 33348,
+      "sha256": "0f7180b2b8fe108eb96aecac0e41ebb1c384fb53abb28639bb1273e8cea89270"
+    },
+    {
+      "source_relative": "data/history/ch_069/v_0001_20260629_022331.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_069/v_0001_20260629_022331.md",
+      "kind": "history",
+      "size": 14559,
+      "sha256": "2ee5904c5c221bd42450e9fc24af49b3eeffa4a3c33496aa97a8bc09ee2531c2"
+    },
+    {
+      "source_relative": "data/history/ch_070/v_0001_20260629_022537.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_070/v_0001_20260629_022537.md",
+      "kind": "history",
+      "size": 15227,
+      "sha256": "d65610f695d0b23ae5f9bba435776acbbb6ecaa1263c7775493a9e1c73085eed"
+    },
+    {
+      "source_relative": "data/history/ch_071/v_0001_20260629_022722.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_071/v_0001_20260629_022722.md",
+      "kind": "history",
+      "size": 20241,
+      "sha256": "84b3cd7757c512f09a97388fb6c5a3cfec18095665ca61fdf470b868b9db3758"
+    },
+    {
+      "source_relative": "data/history/ch_072/v_0001_20260629_022940.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_072/v_0001_20260629_022940.md",
+      "kind": "history",
+      "size": 20769,
+      "sha256": "af1ecdaa890d65ec94518e91d39e57bf2108bbaa8c881db8aecff9ce1d19a1fc"
+    },
+    {
+      "source_relative": "data/history/ch_073/v_0001_20260629_023124.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_073/v_0001_20260629_023124.md",
+      "kind": "history",
+      "size": 16611,
+      "sha256": "087ab4794cd09cbe1168ebb8017c6be8957e1310b8645d8c75b93654f19a3162"
+    },
+    {
+      "source_relative": "data/history/ch_074/v_0001_20260629_023308.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_074/v_0001_20260629_023308.md",
+      "kind": "history",
+      "size": 19573,
+      "sha256": "2cf4a21d8ee9f65a0f5aca4181850dd830537bdd72ef8afda69bc62f7c979139"
+    },
+    {
+      "source_relative": "data/history/ch_075/v_0001_20260629_023512.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_075/v_0001_20260629_023512.md",
+      "kind": "history",
+      "size": 22459,
+      "sha256": "32de1b863f2979d06ec46d7355ec404195a0d1ba6e4ad1dacf62c64e32c90f79"
+    },
+    {
+      "source_relative": "data/history/ch_076/v_0001_20260629_023708.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_076/v_0001_20260629_023708.md",
+      "kind": "history",
+      "size": 25201,
+      "sha256": "2ee59b7141c4e8be88ff5689e81d9981b4e8c17d402cec6b19961eba40d6cee8"
+    },
+    {
+      "source_relative": "data/history/ch_077/v_0001_20260629_023956.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_077/v_0001_20260629_023956.md",
+      "kind": "history",
+      "size": 17573,
+      "sha256": "db2a40a794b8117a4fd54ad7299910a609f2dd3f36ae94d7e7a0bdd39082e09b"
+    },
+    {
+      "source_relative": "data/history/ch_078/v_0001_20260629_024159.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_078/v_0001_20260629_024159.md",
+      "kind": "history",
+      "size": 17105,
+      "sha256": "3eb2206c7a6beae1b8ce201ddca86fcc05606faae2f215e039a500fac495e794"
+    },
+    {
+      "source_relative": "data/history/ch_079/v_0001_20260629_024327.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_079/v_0001_20260629_024327.md",
+      "kind": "history",
+      "size": 21430,
+      "sha256": "03c0f8b197b115e00d7d497bf2b96d6537c298f1a6cfdaf6ccbf75b0f58a4ea0"
+    },
+    {
+      "source_relative": "data/history/ch_080/v_0001_20260629_024521.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_080/v_0001_20260629_024521.md",
+      "kind": "history",
+      "size": 21214,
+      "sha256": "aa06e71f494a7eee13dbb2b19fdcbc1faa0ede91b2eea873fb7107ea705f5a5e"
+    },
+    {
+      "source_relative": "data/history/ch_081/v_0001_20260629_025508.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_081/v_0001_20260629_025508.md",
+      "kind": "history",
+      "size": 29251,
+      "sha256": "ee9fd3deacc9ac8698fef914b58a8f52ff958ace3517e2515571a15eb9d23ffd"
+    },
+    {
+      "source_relative": "data/history/ch_082/v_0001_20260629_025721.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_082/v_0001_20260629_025721.md",
+      "kind": "history",
+      "size": 16885,
+      "sha256": "195daf1d1ec734ff492d861f2cefd642cc26c9bd500d1a25444234df1d113573"
+    },
+    {
+      "source_relative": "data/history/ch_083/v_0001_20260629_025843.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_083/v_0001_20260629_025843.md",
+      "kind": "history",
+      "size": 14108,
+      "sha256": "e7a8e9d6c847271c94daaf223a1dbafde08c07b26b821686e2dc2c9fb0737bd9"
+    },
+    {
+      "source_relative": "data/history/ch_084/v_0001_20260629_030006.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_084/v_0001_20260629_030006.md",
+      "kind": "history",
+      "size": 19111,
+      "sha256": "a1ad49c33f808d8113f74f019b7434d2af422f72612828d621c9381e578caf83"
+    },
+    {
+      "source_relative": "data/history/ch_085/v_0001_20260629_030220.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_085/v_0001_20260629_030220.md",
+      "kind": "history",
+      "size": 12348,
+      "sha256": "65bae1af1f4b8d11869995d2495cfd0d37faa0f3852988755437c0a047a3308f"
+    },
+    {
+      "source_relative": "data/history/ch_086/v_0001_20260629_030412.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_086/v_0001_20260629_030412.md",
+      "kind": "history",
+      "size": 22496,
+      "sha256": "001fc61a56c0111bf8f2d7dc8b9200fb2104eca96348fbc1371746834d1b78e9"
+    },
+    {
+      "source_relative": "data/history/ch_087/v_0001_20260629_030607.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_087/v_0001_20260629_030607.md",
+      "kind": "history",
+      "size": 25038,
+      "sha256": "6ad3ec08d8c7cada3a8f1b4048b408828babe1b9d65f3f55db42e3af83b2c7d6"
+    },
+    {
+      "source_relative": "data/history/ch_088/v_0001_20260629_030753.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_088/v_0001_20260629_030753.md",
+      "kind": "history",
+      "size": 15528,
+      "sha256": "2295ade03cc0b8f1e41d866c6cba9747751159400256cc96545331a80769dc84"
+    },
+    {
+      "source_relative": "data/history/ch_089/v_0001_20260629_030922.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_089/v_0001_20260629_030922.md",
+      "kind": "history",
+      "size": 16419,
+      "sha256": "de6f3854d6ae8273a0fb9ae7e431cd253c98fda6f7f325f8c728a923ed4ba640"
+    },
+    {
+      "source_relative": "data/history/ch_090/v_0001_20260629_031039.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_090/v_0001_20260629_031039.md",
+      "kind": "history",
+      "size": 14890,
+      "sha256": "3ec196aa79c466be50a98e249b1ec435083f24cf252e844be81d9e7cd2ae0dc6"
+    },
+    {
+      "source_relative": "data/history/ch_091/v_0001_20260629_031222.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_091/v_0001_20260629_031222.md",
+      "kind": "history",
+      "size": 16036,
+      "sha256": "27b78ecba40c55fc36268ef3e4937d06cb9e0547d4a21ac81365153dedc28ffb"
+    },
+    {
+      "source_relative": "data/history/ch_092/v_0001_20260629_031334.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_092/v_0001_20260629_031334.md",
+      "kind": "history",
+      "size": 15145,
+      "sha256": "bf5843e3b7ee8252bd3115d0502168ba907939f867e0d025cc15a4bb2ce2b425"
+    },
+    {
+      "source_relative": "data/history/ch_093/v_0001_20260629_031524.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_093/v_0001_20260629_031524.md",
+      "kind": "history",
+      "size": 14286,
+      "sha256": "df157691509c57cb27c3a64db641618492c5c15a2c9b090b922aef7488d4a64c"
+    },
+    {
+      "source_relative": "data/history/ch_094/v_0001_20260629_031838.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_094/v_0001_20260629_031838.md",
+      "kind": "history",
+      "size": 18068,
+      "sha256": "9a5a21d7b969d54a5df58df82f94f13a258e8b90ab27abecf1fd53e0baaf5f74"
+    },
+    {
+      "source_relative": "data/history/ch_095/v_0001_20260629_032013.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_095/v_0001_20260629_032013.md",
+      "kind": "history",
+      "size": 21631,
+      "sha256": "b81449199f932c9459705a423ea2fa6e6e14dfe148d2925ca68a002684d90eaf"
+    },
+    {
+      "source_relative": "data/history/ch_096/v_0001_20260629_032155.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_096/v_0001_20260629_032155.md",
+      "kind": "history",
+      "size": 14616,
+      "sha256": "e3bfd45c2a569d757a7242e425403c8083f3ef6290ce327d9433060572963f28"
+    },
+    {
+      "source_relative": "data/history/ch_097/v_0001_20260629_032407.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_097/v_0001_20260629_032407.md",
+      "kind": "history",
+      "size": 26269,
+      "sha256": "c5391e5b897f2b759d1ee6f86e22607a75c0765c40d1c2d350f9a9f1f5248ac9"
+    },
+    {
+      "source_relative": "data/history/ch_098/v_0001_20260629_032604.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_098/v_0001_20260629_032604.md",
+      "kind": "history",
+      "size": 24639,
+      "sha256": "93022f4ee2f010cac2256b6d3b04acd7612c3e040a79027de0a925a1c7642631"
+    },
+    {
+      "source_relative": "data/history/ch_099/v_0001_20260629_032719.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_099/v_0001_20260629_032719.md",
+      "kind": "history",
+      "size": 17982,
+      "sha256": "3ddc6bedf972f88c5b1c18267fd6e760898ecb4c66c7076de7ce91eab8d2d1e6"
+    },
+    {
+      "source_relative": "data/history/ch_100/v_0001_20260629_032854.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_100/v_0001_20260629_032854.md",
+      "kind": "history",
+      "size": 24074,
+      "sha256": "1ad5181f3b185392d444cb30566c4d15edbd0d223a2a268ffb69cad753124e3d"
+    },
+    {
+      "source_relative": "data/history/ch_101/v_0001_20260629_033102.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_101/v_0001_20260629_033102.md",
+      "kind": "history",
+      "size": 18963,
+      "sha256": "79183277c2edbd11c630d445a5398db7cfa6229a4c4fb81f64455e61b38bc4a2"
+    },
+    {
+      "source_relative": "data/history/ch_102/v_0001_20260629_033243.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_102/v_0001_20260629_033243.md",
+      "kind": "history",
+      "size": 16461,
+      "sha256": "7a9ec304685c3eb9e0ce3d899f2940c60d0f11b0cee4f1cedb8d8f53e6fd8527"
+    },
+    {
+      "source_relative": "data/history/ch_103/v_0001_20260629_033528.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_103/v_0001_20260629_033528.md",
+      "kind": "history",
+      "size": 26483,
+      "sha256": "fbd03ee86679735e264b2ef29d4fa2129976147bf360492bf8996b4ca616057c"
+    },
+    {
+      "source_relative": "data/history/ch_104/v_0001_20260629_033806.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_104/v_0001_20260629_033806.md",
+      "kind": "history",
+      "size": 17479,
+      "sha256": "d1d20249bcfea431ebec3ca8b76914e31c94c2fb5f6b9ab0e3b87f3f245af310"
+    },
+    {
+      "source_relative": "data/history/ch_105/v_0001_20260629_034018.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_105/v_0001_20260629_034018.md",
+      "kind": "history",
+      "size": 16683,
+      "sha256": "1a26f82904f3265b88bdd705051e8943a386d9d053e8b00fc201cdef05141eac"
+    },
+    {
+      "source_relative": "data/history/ch_106/v_0001_20260629_034222.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_106/v_0001_20260629_034222.md",
+      "kind": "history",
+      "size": 16665,
+      "sha256": "3ade6a76a780c0bea49529dd0c93785e06caae3a084c67c9f46555066fbe7f4f"
+    },
+    {
+      "source_relative": "data/history/ch_107/v_0001_20260629_034400.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_107/v_0001_20260629_034400.md",
+      "kind": "history",
+      "size": 18097,
+      "sha256": "a0b1890817a511e6553133b0d45fc369ffb55d32acc87165d447bb8600dff873"
+    },
+    {
+      "source_relative": "data/history/ch_108/v_0001_20260629_034605.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_108/v_0001_20260629_034605.md",
+      "kind": "history",
+      "size": 23463,
+      "sha256": "0e6af22d2f8ce3fbec253252c1c6152740230c7612644528c44db481d78c0582"
+    },
+    {
+      "source_relative": "data/history/ch_109/v_0001_20260629_034758.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_109/v_0001_20260629_034758.md",
+      "kind": "history",
+      "size": 18782,
+      "sha256": "7d994c9d323497e63ed76dbef37795228422badfd8111ce0d82b8ce6493f8ce6"
+    },
+    {
+      "source_relative": "data/history/ch_110/v_0001_20260629_034958.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_110/v_0001_20260629_034958.md",
+      "kind": "history",
+      "size": 18253,
+      "sha256": "66b0c743556454cd4162ab861f8260a27c30661d3b51c32f983f148ccd81333c"
+    },
+    {
+      "source_relative": "data/history/ch_111/v_0001_20260629_035216.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_111/v_0001_20260629_035216.md",
+      "kind": "history",
+      "size": 15213,
+      "sha256": "384dc9f7aa557de012f0157c1098e7d8a9fbc59c192e6a29e57a149773b3166e"
+    },
+    {
+      "source_relative": "data/history/ch_112/v_0001_20260629_035451.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_112/v_0001_20260629_035451.md",
+      "kind": "history",
+      "size": 12126,
+      "sha256": "5a85b648c8470198c179e8af325ab68b5ac16c48259b9c786d9784d2e15217f2"
+    },
+    {
+      "source_relative": "data/history/ch_113/v_0001_20260629_035627.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_113/v_0001_20260629_035627.md",
+      "kind": "history",
+      "size": 17122,
+      "sha256": "58a6c8411c1771babd5627fd9d59f97c8dfe8b1c0c7916bb71610541aa3d8ee1"
+    },
+    {
+      "source_relative": "data/history/ch_114/v_0001_20260629_035815.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_114/v_0001_20260629_035815.md",
+      "kind": "history",
+      "size": 12914,
+      "sha256": "35a9de073964448d719774c840349a89c252c0eff8fa0c48e596a3b812e8c8bb"
+    },
+    {
+      "source_relative": "data/history/ch_115/v_0001_20260629_040051.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_115/v_0001_20260629_040051.md",
+      "kind": "history",
+      "size": 18615,
+      "sha256": "25b036647c7a1416ec4364029d720a9984f369ccaa497ec8f5d2202cb29a391b"
+    },
+    {
+      "source_relative": "data/history/ch_116/v_0001_20260629_040304.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_116/v_0001_20260629_040304.md",
+      "kind": "history",
+      "size": 15973,
+      "sha256": "6320d6d07eb20693c333ae6f5f2e3b44e80b6b807a54a016a8aa8e59369f4f65"
+    },
+    {
+      "source_relative": "data/history/ch_117/v_0001_20260629_040434.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_117/v_0001_20260629_040434.md",
+      "kind": "history",
+      "size": 12560,
+      "sha256": "ab4c9c48557d61fe86205222169a09f99ec0e9c0bea0310402e72aaab1e03202"
+    },
+    {
+      "source_relative": "data/history/ch_118/v_0001_20260629_040619.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_118/v_0001_20260629_040619.md",
+      "kind": "history",
+      "size": 19038,
+      "sha256": "0c15e1733b88acb32f8563ba01d8dd9b82c550ad1958ae528174c9a457f205b7"
+    },
+    {
+      "source_relative": "data/history/ch_119/v_0001_20260629_040753.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_119/v_0001_20260629_040753.md",
+      "kind": "history",
+      "size": 19693,
+      "sha256": "5a3167ce2edfd2a5e59c51686d8d5897837a37e0dd531a277a481ad995a6abcc"
+    },
+    {
+      "source_relative": "data/history/ch_120/v_0001_20260629_040927.md",
+      "target_relative": "data/novels/farm_ancient/data/history/ch_120/v_0001_20260629_040927.md",
+      "kind": "history",
+      "size": 13347,
+      "sha256": "789ca894fa27a70bba9e6b31b602f7c99b2eef7dab7cd3cb4c133c08aed92d17"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_001.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_001.md",
+      "kind": "manuscript",
+      "size": 36610,
+      "sha256": "ec4b07dbb19262076ef8d65506841eb24d9a043350f34d8bc820bbf1812ef6b3"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_002.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_002.md",
+      "kind": "manuscript",
+      "size": 16206,
+      "sha256": "27060ea05bfa7f000abcec093db446c073e7670e1395184ec4cc9b3d5d89b580"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_003.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_003.md",
+      "kind": "manuscript",
+      "size": 20483,
+      "sha256": "5c3510be59b92d57f019ae207ebf40d3237e234a29873eaf746ec93e5d9066a4"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_004.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_004.md",
+      "kind": "manuscript",
+      "size": 16933,
+      "sha256": "0e7bc102e60a98b3198ddf17c3dc37f84b23acd7fcb868c401c0311cd3a2cad5"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_005.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_005.md",
+      "kind": "manuscript",
+      "size": 11936,
+      "sha256": "e61525cd903f66139c2e01eae53a16dd62534764688fc5c40d3581e96d93b9b5"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_006.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_006.md",
+      "kind": "manuscript",
+      "size": 19975,
+      "sha256": "78fc862a01eb279205bfe2bc2e81f330b31e8e140f1dc0de032340b0e1e412df"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_007.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_007.md",
+      "kind": "manuscript",
+      "size": 10288,
+      "sha256": "a3af32413492421f10bfe993be3a0b7d440076170285c527f6b90d8a07dda4fa"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_008.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_008.md",
+      "kind": "manuscript",
+      "size": 37515,
+      "sha256": "66de74d46abd83f16059e1fa4e58bb02d72f06ecc72f9f4490a665c509c85e39"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_009.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_009.md",
+      "kind": "manuscript",
+      "size": 19187,
+      "sha256": "cbcb4a8f5cc128b342eea359955f77e2f50c7c12331a57eeed17aadcd06e1f5d"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_010.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_010.md",
+      "kind": "manuscript",
+      "size": 23819,
+      "sha256": "c10626a56b000e0aac130d5bc1d94b4f5d46111a54c81999cd5d2a238edc3cf0"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_011.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_011.md",
+      "kind": "manuscript",
+      "size": 8548,
+      "sha256": "79c89b8edad8250bd9906a866988a2fcf2b1d9449810366a553a31a806b717d5"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_012.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_012.md",
+      "kind": "manuscript",
+      "size": 11662,
+      "sha256": "0e23244882b1b0dc03628d269b761c1dbd71f7eb07ea89c5f5a98fde80da3239"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_013.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_013.md",
+      "kind": "manuscript",
+      "size": 15930,
+      "sha256": "df5838ca204d8b0f2a54dc69a3ff677df908a64a7bd8433b39a65ed8b93d9537"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_014.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_014.md",
+      "kind": "manuscript",
+      "size": 20426,
+      "sha256": "9f0cf1d86f486c74c2eedd8ac884a5cd3cc2c433c65bb80c0b711b5834895ab1"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_015.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_015.md",
+      "kind": "manuscript",
+      "size": 12709,
+      "sha256": "4f710e2dee984b6ae1ddffa03c0a25919fedd2da75bcd02207cf06fd6665f5fb"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_016.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_016.md",
+      "kind": "manuscript",
+      "size": 15937,
+      "sha256": "bac57f238aee02fccd9534de558516d1e030986a8b55c93b1b0c0cd9de09f0be"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_017.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_017.md",
+      "kind": "manuscript",
+      "size": 17765,
+      "sha256": "1d515346715d9ab4d3758e12c5ad94375d95067d4e31464281b7c0f400b1687c"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_018.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_018.md",
+      "kind": "manuscript",
+      "size": 22833,
+      "sha256": "1862ea5a3c4d73c2996907f1ca959dca043259b21cc298c9cde22f3ed55b3e85"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_019.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_019.md",
+      "kind": "manuscript",
+      "size": 24821,
+      "sha256": "17e9a9a4dc47ae08c29f62a9684c8e1712eaf4cdf2f6ed99251d5885c0a3fba4"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_020.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_020.md",
+      "kind": "manuscript",
+      "size": 24320,
+      "sha256": "cdb09edcc2025f8d8b56eee9886ee95bfcd1b0c9795580fbb8a2f844a0c97b8e"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_021.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_021.md",
+      "kind": "manuscript",
+      "size": 17409,
+      "sha256": "f18b02426091f0f7982e3f9382015df0951417419f88f3de960e9bb4d6b95fcc"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_022.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_022.md",
+      "kind": "manuscript",
+      "size": 22589,
+      "sha256": "8189934868d11a206dc369ba42fbd61f0212413619dead1bbbe1806c0c0bfaf1"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_023.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_023.md",
+      "kind": "manuscript",
+      "size": 14290,
+      "sha256": "b984748b3acc7feed14971110a520a274bcde1f674797f9e790194caed76dc05"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_024.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_024.md",
+      "kind": "manuscript",
+      "size": 10929,
+      "sha256": "6e9593f0564c7b56120846a9a11e11bb2c59a0a948bb8e9e06b91f369708c201"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_025.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_025.md",
+      "kind": "manuscript",
+      "size": 21179,
+      "sha256": "799c9077ab80d6b13a82ae9379583f77e0520fd4380765d1dffb934dc1b56ee8"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_026.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_026.md",
+      "kind": "manuscript",
+      "size": 24252,
+      "sha256": "078e1391fae36f3ae4d8666950ed33594c2cc3c49ec343bb32c6975589161afb"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_027.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_027.md",
+      "kind": "manuscript",
+      "size": 13907,
+      "sha256": "91c239491a4370f19e48ae7438cb556305aa35717dac0609a64964de394b2bf9"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_028.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_028.md",
+      "kind": "manuscript",
+      "size": 17647,
+      "sha256": "66f1cdae71d7486b5be4f95285ac7298332afd86e15f362e55971fa303b74b72"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_029.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_029.md",
+      "kind": "manuscript",
+      "size": 25871,
+      "sha256": "6758e7d0b39ac1782a5491a916dd8bd475296c66df9e72fa20ca2e1dd405a17e"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_030.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_030.md",
+      "kind": "manuscript",
+      "size": 21079,
+      "sha256": "71f8758a71df480a3d8c079c934676f5d185b44b377f0182ad88aac1481c0169"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_031.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_031.md",
+      "kind": "manuscript",
+      "size": 20486,
+      "sha256": "56f43939e980e667c081d895c62ae1fc96c57054167296a4ff5f163d0dfdf1cf"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_032.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_032.md",
+      "kind": "manuscript",
+      "size": 13983,
+      "sha256": "b6440f2e207482921897e6ff749c6ca0ec43bd0773ffa409108cb5c4011aca93"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_033.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_033.md",
+      "kind": "manuscript",
+      "size": 18837,
+      "sha256": "d995019330645a0d82e63d2fd20af9ebc69d887243d43c127bc1ee9e51e556f2"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_034.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_034.md",
+      "kind": "manuscript",
+      "size": 19793,
+      "sha256": "7bda8554f1979a6c02e4377d41cc4bc142ce32601b974d00744c286eb8a31565"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_035.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_035.md",
+      "kind": "manuscript",
+      "size": 15046,
+      "sha256": "28bff2ccc743cc13d00eb5c3a18bda4c9043d20f298b4a5b5fdeac6aa3e00d72"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_036.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_036.md",
+      "kind": "manuscript",
+      "size": 17701,
+      "sha256": "8657d86ef6f79517719394febcca24d93411e5f03be3914b207dc7e20a347f79"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_037.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_037.md",
+      "kind": "manuscript",
+      "size": 9997,
+      "sha256": "159e77ecb2fa3444eeef706745b7236ba6028c49def326c1d2f9d776b86d3840"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_038.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_038.md",
+      "kind": "manuscript",
+      "size": 19513,
+      "sha256": "7c90009cf905cca3d0a42901bcb801405d6d2c7ac5194ec19a852e2ea5bc4b6d"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_039.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_039.md",
+      "kind": "manuscript",
+      "size": 23174,
+      "sha256": "18d382f88a9a6422e3b3dee52a58123dd43df939ef09cea2e2e7556a1bb9230f"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_040.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_040.md",
+      "kind": "manuscript",
+      "size": 27688,
+      "sha256": "bb14917280b42f3402884aa4132b7e846fe63a0e952ca491ecf448bd834c163b"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_041.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_041.md",
+      "kind": "manuscript",
+      "size": 17600,
+      "sha256": "2d30513a33c4fdd24d8a92f182c1e63658bdf406964ed87469f078a41ed2ce94"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_042.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_042.md",
+      "kind": "manuscript",
+      "size": 17034,
+      "sha256": "22a4677c8e265cd02e6bd635a008c171e8fcdc4563a73e0faaf010dc2aef44ae"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_043.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_043.md",
+      "kind": "manuscript",
+      "size": 21368,
+      "sha256": "ebdeee5c8a0a640d3d84fd2f20e75eff40cf34fea7c649f6f3257ef2c7a6c8b6"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_044.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_044.md",
+      "kind": "manuscript",
+      "size": 8321,
+      "sha256": "541c08c5a969c4c772b9b4fe3bef1d97f3453db1a961a86c08a4b4ef5a6bdf48"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_045.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_045.md",
+      "kind": "manuscript",
+      "size": 13198,
+      "sha256": "3585e34aac5033ade0f7271c80a5a2c74442138e011313a01ae7726ab09ac2ce"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_046.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_046.md",
+      "kind": "manuscript",
+      "size": 14516,
+      "sha256": "44b68e1c5e6f13b6e4ba5f25dcdc85ef8d03c59eb68ea690700f1ffdb5030d84"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_047.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_047.md",
+      "kind": "manuscript",
+      "size": 16866,
+      "sha256": "deb1c7b73ea35a9c706b078c706a43eef8e1156f5261e3abf21740c632a10f89"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_048.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_048.md",
+      "kind": "manuscript",
+      "size": 15929,
+      "sha256": "154d2c26d780cf9d05d8580d89bffe8e09139008142f9e397b2e52646a66573b"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_049.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_049.md",
+      "kind": "manuscript",
+      "size": 22244,
+      "sha256": "8ae8d797338ed65d9ce36009edfd62c89ab4f000b8ecc671b329bffbe1cd212e"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_050.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_050.md",
+      "kind": "manuscript",
+      "size": 21074,
+      "sha256": "af5298ec8c68c9ea96b7eef2b93b4b672f764935b684fbb3d5957fe596fbe081"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_051.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_051.md",
+      "kind": "manuscript",
+      "size": 16499,
+      "sha256": "5d34021f1fdd56a33d8232b625e173c5745115db92b2f34198ebdfe78087246a"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_052.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_052.md",
+      "kind": "manuscript",
+      "size": 11216,
+      "sha256": "1a82684754c4e3e1e786e97de1b59b078bde2a556ee32f513566af7dabe8ff3e"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_053.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_053.md",
+      "kind": "manuscript",
+      "size": 10781,
+      "sha256": "8ebfad49de26fd9f376ec9c729487b06eb9fd7ee7707ca1515f5819e5727649e"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_054.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_054.md",
+      "kind": "manuscript",
+      "size": 10834,
+      "sha256": "c44aabe7971658cb09bcab792c617c9fc4f955bb8a6c7f646fd48dbd53fa0f51"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_055.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_055.md",
+      "kind": "manuscript",
+      "size": 8843,
+      "sha256": "d71075b1b546d3a5ff68132c8fd8ce77397cbb9f40b58809d4a416c82a8b9aa4"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_056.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_056.md",
+      "kind": "manuscript",
+      "size": 15699,
+      "sha256": "de646007afda2093dfcea4ec6e2d5dea22ff0c1bfbbccb9962b19da3137f5b30"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_057.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_057.md",
+      "kind": "manuscript",
+      "size": 14319,
+      "sha256": "7d8961fc39c3ca17c5716e9309a58c62b97562b52dfaadd5aac654195c20322e"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_058.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_058.md",
+      "kind": "manuscript",
+      "size": 14164,
+      "sha256": "2908f5f76d5bb1074c788ca4e7adccebcab799956616fd0370cc574b786e58ba"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_059.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_059.md",
+      "kind": "manuscript",
+      "size": 15994,
+      "sha256": "ed46254d6c764cbd2d5e9cabbeb8ba57c82899322c9a834241dbe2291bd1f05f"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_060.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_060.md",
+      "kind": "manuscript",
+      "size": 20545,
+      "sha256": "19102e7e8e915c364c7aef18bde239d34134f5800e0273d16ae9a46beb5a740e"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_061.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_061.md",
+      "kind": "manuscript",
+      "size": 15197,
+      "sha256": "76046b89dbcf795c8e98d8d7a1b7be7e630056ac593c6c4c54bc0884675a9693"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_062.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_062.md",
+      "kind": "manuscript",
+      "size": 19952,
+      "sha256": "27e82806b3abdc5801e01f0972c59b53a39703b52458ea233aab371c8e83b106"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_063.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_063.md",
+      "kind": "manuscript",
+      "size": 13252,
+      "sha256": "72f524f6aa07753ff7b8d114d2c0b97873d561e8c8dda8c0e750f929296d42e1"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_064.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_064.md",
+      "kind": "manuscript",
+      "size": 15904,
+      "sha256": "3819ede7158c0affd7524912e055f5fc21fec9557b37f7821565f8712273a6e4"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_065.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_065.md",
+      "kind": "manuscript",
+      "size": 15719,
+      "sha256": "891b229ca32bd778cd38a8e2c2f08c4043622024ed81138ad8a34aa39bdef254"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_066.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_066.md",
+      "kind": "manuscript",
+      "size": 19159,
+      "sha256": "c8646aa2faf831daf6a6cc57d488c8542761d8cc6a170043b119f2e144e4e41b"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_067.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_067.md",
+      "kind": "manuscript",
+      "size": 13908,
+      "sha256": "b6d2cab4e0075540ed474b9cf4c9a75b30f3c6f14b14f3f5fc5b658d2818fea8"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_068.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_068.md",
+      "kind": "manuscript",
+      "size": 18225,
+      "sha256": "8a0169fd6ccdd8f843d523ae0f72064d437de7e1023f23fcde0d6c2a7123855d"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_069.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_069.md",
+      "kind": "manuscript",
+      "size": 21698,
+      "sha256": "d226b70472302962777d1d00e4068102be77689fc8092901e9295262d4858d86"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_070.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_070.md",
+      "kind": "manuscript",
+      "size": 16819,
+      "sha256": "48a3b152c71650713878d300d98f00ba25e8caf4841db81016d9c481bfd48b0d"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_071.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_071.md",
+      "kind": "manuscript",
+      "size": 20077,
+      "sha256": "d95b253b8c9490c316f43bd2b847cba6997e5ba13c644845f6b0e88c3c891a45"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_072.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_072.md",
+      "kind": "manuscript",
+      "size": 15364,
+      "sha256": "42fb4c6989f886bef086f919306dd0738c9fce9bae1467b5e0151fbe27ba6975"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_073.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_073.md",
+      "kind": "manuscript",
+      "size": 14956,
+      "sha256": "dc69a5ad05a83bc3c2e4dc3d0c08a0abfb4cbb6d448c955766ea35331a33a5c7"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_074.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_074.md",
+      "kind": "manuscript",
+      "size": 16964,
+      "sha256": "72c0a9797ddfe1b20a2560213359a4c13018e9803f865681056d4722b077288a"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_075.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_075.md",
+      "kind": "manuscript",
+      "size": 17115,
+      "sha256": "b8a9eb91917f42b427c6f1d7e857c9a1936488ebf245e767ffde8add1fda78f3"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_076.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_076.md",
+      "kind": "manuscript",
+      "size": 27122,
+      "sha256": "abb8772b064862b596c81f2bea4762b082461bf13dea1c4c85262fbb0921722d"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_077.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_077.md",
+      "kind": "manuscript",
+      "size": 18005,
+      "sha256": "a4ef6b17075f9653e4ab4c6599c0299160b422c99ba843dd11066f149c9d6b35"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_078.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_078.md",
+      "kind": "manuscript",
+      "size": 14702,
+      "sha256": "d38b3975730588c81bfe27c9e95d9507ce48d5120018c10fdd4d2aa8feb904ad"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_079.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_079.md",
+      "kind": "manuscript",
+      "size": 18103,
+      "sha256": "a631798995137f76f549bc915f786bdccb9aeca23d42e8f9374430bf092c9c44"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_080.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_080.md",
+      "kind": "manuscript",
+      "size": 21176,
+      "sha256": "db369f2dc3e99c7807324af9f862a05cb6f567cb5965f5712fd645272581ccdf"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_081.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_081.md",
+      "kind": "manuscript",
+      "size": 20574,
+      "sha256": "deb7c6b33617bd391bcf6ad6d9adae41b16507a5602b3eb63f758d128fc12ff1"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_082.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_082.md",
+      "kind": "manuscript",
+      "size": 10741,
+      "sha256": "d2b598716bd62529ccac3450840fcb71bd08080d797cd54b817e479ee5dac591"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_083.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_083.md",
+      "kind": "manuscript",
+      "size": 13416,
+      "sha256": "ce685279dd0cf605d4c10017e0452f0b435b33b6f3e3d974ac6548077e41ca12"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_084.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_084.md",
+      "kind": "manuscript",
+      "size": 18617,
+      "sha256": "7e998b47de145e23bfc9773561355639770923baa8a9db7e03452347b236a27a"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_085.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_085.md",
+      "kind": "manuscript",
+      "size": 16706,
+      "sha256": "ed5b7c99ef56d0a3325af33d91960238cca7e0318ed7f68e7ae44150e027a70d"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_086.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_086.md",
+      "kind": "manuscript",
+      "size": 18000,
+      "sha256": "458a89f6fa74e9d552fbe5319bffe8393e70521f034581c0f9d51751b0a08d3f"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_087.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_087.md",
+      "kind": "manuscript",
+      "size": 15537,
+      "sha256": "e8ed83f01e394923c3bb2a29fb061c6cc4d4906d2ee17402456f35c793e4e0ad"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_088.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_088.md",
+      "kind": "manuscript",
+      "size": 11924,
+      "sha256": "b56e0e285ee0d3469d9c34fc486cf8164b7ed894afeb5024169d4be26eb7db7a"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_089.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_089.md",
+      "kind": "manuscript",
+      "size": 10124,
+      "sha256": "7757f34d58ca177c74b094694f7f3f286ed4b8168244ff37b30b242624748974"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_090.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_090.md",
+      "kind": "manuscript",
+      "size": 15383,
+      "sha256": "7186f2872c85f608afd6dc15b9f3cc7acb6f5015bb685d539369851b8231ae15"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_091.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_091.md",
+      "kind": "manuscript",
+      "size": 10270,
+      "sha256": "d9cf892953573260d44376c35beb88bc00175a0a383b52388fcf3847414cf2d5"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_092.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_092.md",
+      "kind": "manuscript",
+      "size": 17005,
+      "sha256": "0034c4792d208c167cc8e712aa063aafccb31ad7a16343dccdffada8bb17fc91"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_093.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_093.md",
+      "kind": "manuscript",
+      "size": 33530,
+      "sha256": "8790bddd6bcf2bd68ffa72982f92f1a364364f4dd16d23c2d6b3f9510cd24605"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_094.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_094.md",
+      "kind": "manuscript",
+      "size": 13292,
+      "sha256": "cba71aefade8b46dda43309d7b8175cdde796d7b4d8c9c7f397236ee7eb83104"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_095.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_095.md",
+      "kind": "manuscript",
+      "size": 15857,
+      "sha256": "328b444610478876200012638f5343b9c20345c079c6eb066f6a7ebee1a61792"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_096.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_096.md",
+      "kind": "manuscript",
+      "size": 20208,
+      "sha256": "888cbde07b92a4f694fb05b2b92b70a9ec58af8d52fb663f817f8e93c3f242b8"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_097.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_097.md",
+      "kind": "manuscript",
+      "size": 19352,
+      "sha256": "dbdc7ab16fefbac722e39643bd2e81badb04ff7a9d32d7a6540302944e4c5aa0"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_098.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_098.md",
+      "kind": "manuscript",
+      "size": 10083,
+      "sha256": "dbdc7fb8ccd8d38d4e44e0379d2bfe77a4c297472754b3a743d84cf017591d29"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_099.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_099.md",
+      "kind": "manuscript",
+      "size": 14861,
+      "sha256": "2a8fda120be8269552aadb32f9a8f33e9c8cdeeedc17d73a01c89f316c3c62e6"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_100.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_100.md",
+      "kind": "manuscript",
+      "size": 23276,
+      "sha256": "d92c713fda6d26f5a8cd495cf6712e63c8fc2074d16141d8e7ab4ef09dd88fa4"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_101.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_101.md",
+      "kind": "manuscript",
+      "size": 15567,
+      "sha256": "dc25a57daa1b40e24dbe2ad8c0a71d1d09647e230168c060b46f7a8516751867"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_102.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_102.md",
+      "kind": "manuscript",
+      "size": 29035,
+      "sha256": "0c017dc923b597210b35afa20bd88a3bcac68c955db8e2b52816ca6a830c65c7"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_103.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_103.md",
+      "kind": "manuscript",
+      "size": 26249,
+      "sha256": "d56a7d2bfe84fae5fa70c99a2371f2350c928d2447ca8f02fa35f9a745516f91"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_104.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_104.md",
+      "kind": "manuscript",
+      "size": 21640,
+      "sha256": "fb1ee9953bce5d2e6f4e4bbbe27a3a8592db5b6672228f273576b8e863d2c3df"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_105.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_105.md",
+      "kind": "manuscript",
+      "size": 20892,
+      "sha256": "ddf379307bc00aa3d7d1426c9160f28a768f1a0cba9c7bde518d14f259d44487"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_106.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_106.md",
+      "kind": "manuscript",
+      "size": 14366,
+      "sha256": "4c198e014ba0150ab3dd33e2fb7d27a17daaad7f88e41b8f9471cb2efdb380de"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_107.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_107.md",
+      "kind": "manuscript",
+      "size": 20609,
+      "sha256": "4dad4d11ac3f6cccc2c35eb04d8f0bc2a3732055c5400ae75f95824cd85cc41e"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_108.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_108.md",
+      "kind": "manuscript",
+      "size": 16284,
+      "sha256": "02364c24b74c16ca3176e32245d5258cebb3788e428b09ede2191fe53843312e"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_109.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_109.md",
+      "kind": "manuscript",
+      "size": 18063,
+      "sha256": "c65860102b3149af1b265806e8efdb7acc459def7fcb83beb02e674fe65f9fe4"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_110.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_110.md",
+      "kind": "manuscript",
+      "size": 23434,
+      "sha256": "c9c7b02a5d51d0231f2cdc388403869388636772bb29b147479709dfbdc0fe6f"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_111.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_111.md",
+      "kind": "manuscript",
+      "size": 26563,
+      "sha256": "d40204606063593d6138c985a7b1c3aca95428ecf974c455d064d5fd71487555"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_112.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_112.md",
+      "kind": "manuscript",
+      "size": 13847,
+      "sha256": "9d85440bbb3a5e6b532e77f68f24379ba793e46c8a109265de700bf8ed47bdc5"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_113.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_113.md",
+      "kind": "manuscript",
+      "size": 18073,
+      "sha256": "98453779dfb3e5a20ff81042e2246c3f590686520470cdfbc31f900f4f6a8529"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_114.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_114.md",
+      "kind": "manuscript",
+      "size": 27363,
+      "sha256": "ef1ca73f50f0e4cc8172c5cd1a47b8fe3e4b9074e87366fb8f469fed95c13853"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_115.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_115.md",
+      "kind": "manuscript",
+      "size": 17151,
+      "sha256": "834e92c14d0c1e2f890be6646411cd3a91849b2cbe0d764884634b9b78930ad0"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_116.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_116.md",
+      "kind": "manuscript",
+      "size": 10078,
+      "sha256": "497a587ed5bdb672ea7338ab82e34ab62472048d9ab72b6a98bff2980dbaa4e7"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_117.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_117.md",
+      "kind": "manuscript",
+      "size": 15004,
+      "sha256": "0077c02dd7708adb0941ee37e884d07d6ce4ea53d2dd9086e61141c6cbbe0f0d"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_118.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_118.md",
+      "kind": "manuscript",
+      "size": 6028,
+      "sha256": "74a4188331c07e2bb5e5f387dea218ef0648a02b813784dad9140c4c19b95399"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_119.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_119.md",
+      "kind": "manuscript",
+      "size": 6901,
+      "sha256": "fbed037c258487281fa1e7da98351be2ec4e4875c278d9129bc0aed8419897b4"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_120.md",
+      "target_relative": "data/novels/farm_ancient/data/manuscript/arc_001/ch_120.md",
+      "kind": "manuscript",
+      "size": 7615,
+      "sha256": "6fe192ff0ef0b1ebe5576da79d3bf778456c0a4d11cf81986b7ed94e557a8d6b"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_0_20260628_215516.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_0_20260628_215516.json",
+      "kind": "snapshot",
+      "size": 203,
+      "sha256": "a6aeffc9b68631e694cb2175969b5697d14472d88a95a132b7c7b2535f15a0d5"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_100_20260629_032832.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_100_20260629_032832.json",
+      "kind": "snapshot",
+      "size": 3461,
+      "sha256": "6e6c009f05ccf32e37eda654f1751a81679b6287d1252a45dd251c3fdc22e1ae"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_100_20260629_033233.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_100_20260629_033233.json",
+      "kind": "snapshot",
+      "size": 2948,
+      "sha256": "cbe109a334157a689dd11fb5da9d5ea526f947c0e07ca9db19e1dca0574299eb"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_101_20260629_033013.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_101_20260629_033013.json",
+      "kind": "snapshot",
+      "size": 3320,
+      "sha256": "34bbc86cdf8b43e437bdf80483429bd3c78327a41ff813bd3d4bf4ec3b058d3d"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_101_20260629_033515.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_101_20260629_033515.json",
+      "kind": "snapshot",
+      "size": 3185,
+      "sha256": "0926c6217075c40a0d06ea331501506fff1e51d93342360d212e98191a8e85eb"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_102_20260629_033235.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_102_20260629_033235.json",
+      "kind": "snapshot",
+      "size": 3296,
+      "sha256": "e5febbb3900e6d4cb66c15310df3f0da334cef6e4c1751b9372fb64a7a797edd"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_102_20260629_033757.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_102_20260629_033757.json",
+      "kind": "snapshot",
+      "size": 5783,
+      "sha256": "e64bbc02303198ceecccb1394ea55fc1abf7205d876fcf068506b38a79880a93"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_103_20260629_033428.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_103_20260629_033428.json",
+      "kind": "snapshot",
+      "size": 2858,
+      "sha256": "a224297645be7ca4a21a5a3ae3292837e7767710571bad5c3a1cd6993ddf576e"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_103_20260629_034005.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_103_20260629_034005.json",
+      "kind": "snapshot",
+      "size": 3914,
+      "sha256": "f2c70f9fc267d527fad5dfd60f183b68ddd079d60a7b39b76188b9210e13bb69"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_104_20260629_033619.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_104_20260629_033619.json",
+      "kind": "snapshot",
+      "size": 3689,
+      "sha256": "b83665fb4d6a5487656536482cceeb384d331f3969acc1bb910f9b3ab56e3729"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_104_20260629_034210.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_104_20260629_034210.json",
+      "kind": "snapshot",
+      "size": 3536,
+      "sha256": "1e477c383d11a3bf53dd877be798f1b49900e4203273940e597000ea88263ff6"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_105_20260629_033808.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_105_20260629_033808.json",
+      "kind": "snapshot",
+      "size": 4691,
+      "sha256": "24a20c6bd8c78ed0d15b52691be3cf35234aeb184e931cd04f9d9afd8376c123"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_105_20260629_034353.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_105_20260629_034353.json",
+      "kind": "snapshot",
+      "size": 2198,
+      "sha256": "7e6ad9dd6a79915c41f0a452af99fa5a5986680cf48811e498f2becdb144dd90"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_106_20260629_033959.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_106_20260629_033959.json",
+      "kind": "snapshot",
+      "size": 3005,
+      "sha256": "19db0cc17850152597b369e3525e095aa121f7bee6fe71d41c9a769bcee1ec04"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_106_20260629_034554.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_106_20260629_034554.json",
+      "kind": "snapshot",
+      "size": 1925,
+      "sha256": "6b198ccbf113b61bc8466fef28c424dc6c7f1ce4b310952a9779495f5c6bf3a4"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_107_20260629_034218.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_107_20260629_034218.json",
+      "kind": "snapshot",
+      "size": 3407,
+      "sha256": "afc8a697e308f61b81573ced0f3067faf109909e7c95bc2315da5d696f910706"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_107_20260629_034744.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_107_20260629_034744.json",
+      "kind": "snapshot",
+      "size": 2947,
+      "sha256": "a20827eb8b746f1b88cb1f43d76ec5c26385f6b0a3e4152323a916916c62e3a9"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_108_20260629_034417.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_108_20260629_034417.json",
+      "kind": "snapshot",
+      "size": 2414,
+      "sha256": "48527696c21b43888cec2d3879bb559f2559c12f7908401be0c006018e73fcf3"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_108_20260629_034949.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_108_20260629_034949.json",
+      "kind": "snapshot",
+      "size": 2375,
+      "sha256": "25dda6affd655dbe72a1d45e4bff689ad1bccc3800ca1637bae2262d5bffe82c"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_109_20260629_034611.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_109_20260629_034611.json",
+      "kind": "snapshot",
+      "size": 2270,
+      "sha256": "adbd20b09dc22851bfcb23f1d96195628c342e5cecc4617d748757087826926f"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_109_20260629_035209.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_109_20260629_035209.json",
+      "kind": "snapshot",
+      "size": 5363,
+      "sha256": "ec88a445029cf2fce57b4b4f768d20b3b11b2012a5c4864f888355a800fb7fe0"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_10_20260628_231432.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_10_20260628_231432.json",
+      "kind": "snapshot",
+      "size": 2025,
+      "sha256": "b729c5e4b820bfdabccf23b3101ee1691e61fbb00515069194a6b2fe626f6c1a"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_110_20260629_034811.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_110_20260629_034811.json",
+      "kind": "snapshot",
+      "size": 2375,
+      "sha256": "6b7e8d1f5856fc66395296d0237ab9ee92b90f880ee4365ff35f11aa36ee2338"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_110_20260629_035443.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_110_20260629_035443.json",
+      "kind": "snapshot",
+      "size": 3149,
+      "sha256": "0527932ec3372c701aa35049cba8a985600dab9968cd8a320d65b8a80180115c"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_111_20260629_034939.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_111_20260629_034939.json",
+      "kind": "snapshot",
+      "size": 3149,
+      "sha256": "538df0955105cc2034b9965379849f632d9795b686b9279363c0b6cb04ed86b5"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_111_20260629_035615.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_111_20260629_035615.json",
+      "kind": "snapshot",
+      "size": 3305,
+      "sha256": "58eda2e0a2f7b93609435ae593df9128e3b271c54e56a428e25bf9c585edee79"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_112_20260629_035145.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_112_20260629_035145.json",
+      "kind": "snapshot",
+      "size": 4172,
+      "sha256": "cb9145c11cd7ec0f0c61b131efe190275f15872bc5e25c187226b14037e1d1ac"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_112_20260629_035804.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_112_20260629_035804.json",
+      "kind": "snapshot",
+      "size": 4211,
+      "sha256": "d60058252111da8c32afda53c68a476f30fe075425ad1b01d2e36cf780a24cb8"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_113_20260629_035315.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_113_20260629_035315.json",
+      "kind": "snapshot",
+      "size": 2600,
+      "sha256": "aff5ac593d5f3d6d4ed26b50727e0172784b40fb6d7ea208f62aed64644a08ce"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_113_20260629_040044.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_113_20260629_040044.json",
+      "kind": "snapshot",
+      "size": 3947,
+      "sha256": "7a759e34f82b791d11db53b1481c5ef8b5381a6e21bd82787a755209ee6ec962"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_114_20260629_035512.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_114_20260629_035512.json",
+      "kind": "snapshot",
+      "size": 3032,
+      "sha256": "c9d99ae8d2c2ed00d60fdb1549d2ea3899ba3453193170e867307181ec08aa69"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_114_20260629_040249.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_114_20260629_040249.json",
+      "kind": "snapshot",
+      "size": 5492,
+      "sha256": "a2b4b867619a937e6ba250a499df0bc2e2f8d74db6f9e17e5d8304e6ec655a9c"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_115_20260629_035655.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_115_20260629_035655.json",
+      "kind": "snapshot",
+      "size": 1804,
+      "sha256": "da399105ed918ac18e4a91b5cef999742adcd196af08827112f57a68965f7b88"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_115_20260629_040419.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_115_20260629_040419.json",
+      "kind": "snapshot",
+      "size": 4937,
+      "sha256": "cd1d4bf2851d7cbe45caf84bb8da9c1e7d7906e8e6eecfd6496d92b3966d5218"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_116_20260629_035818.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_116_20260629_035818.json",
+      "kind": "snapshot",
+      "size": 2977,
+      "sha256": "eae5c489532903daa88c57a03f63d61eef54282286ae388238f0b7d9618ea58d"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_116_20260629_040611.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_116_20260629_040611.json",
+      "kind": "snapshot",
+      "size": 4244,
+      "sha256": "c0c06b395e98026db9ac845f50cb70f4a92c9b0d3f193643593c700e34ad3f03"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_117_20260629_035955.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_117_20260629_035955.json",
+      "kind": "snapshot",
+      "size": 2120,
+      "sha256": "89058c8f60ade21ea5f908f20ebc8b953b733d80642ddee4c38257753b51f9e0"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_117_20260629_040740.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_117_20260629_040740.json",
+      "kind": "snapshot",
+      "size": 4886,
+      "sha256": "b3dca98d4423f1321e9252061261d5343761ef78ee6cf53582e17b2e4954ca8d"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_118_20260629_040039.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_118_20260629_040039.json",
+      "kind": "snapshot",
+      "size": 2594,
+      "sha256": "9d4c71a3fbd08df211f5ca7962b275b9ba0f4683c1f5de8773647e6c4d9be992"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_118_20260629_040920.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_118_20260629_040920.json",
+      "kind": "snapshot",
+      "size": 4967,
+      "sha256": "f4073a978b2e0be31582d2ca3ad28aba857493319c4c701aaf4f7e023fa25b26"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_119_20260629_040201.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_119_20260629_040201.json",
+      "kind": "snapshot",
+      "size": 3617,
+      "sha256": "111f53f70c997bc9fc7ab51448831510f71e4034a8afd37ab62ce91a64359436"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_119_20260629_041056.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_119_20260629_041056.json",
+      "kind": "snapshot",
+      "size": 2642,
+      "sha256": "b524c19265639badf8bbb9c1cdc5693babe2583fd6b7937606b6cfcf79837c9d"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_11_20260628_231610.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_11_20260628_231610.json",
+      "kind": "snapshot",
+      "size": 3348,
+      "sha256": "072183a7156fa507d7a04b4459ca71695e32f679868fe8ecfaadc4277719af2e"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_12_20260628_231804.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_12_20260628_231804.json",
+      "kind": "snapshot",
+      "size": 2319,
+      "sha256": "157ea95c2abd995631a2fecd5e9f7c838834e53fdc1cb6fb9a6573cb7875b2e6"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_13_20260628_232035.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_13_20260628_232035.json",
+      "kind": "snapshot",
+      "size": 2492,
+      "sha256": "7152cd5c3a6353ff23b3f1243159045b0eef6b43aa15a726563938b16eb23817"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_14_20260628_232225.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_14_20260628_232225.json",
+      "kind": "snapshot",
+      "size": 3710,
+      "sha256": "3c3c242b1942371eeb469f2b294fa0dcefffa3bca16870f873fe48850fef5cdf"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_15_20260629_000139.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_15_20260629_000139.json",
+      "kind": "snapshot",
+      "size": 2883,
+      "sha256": "c4b46b8b0c17597ce9990e7c3ad34df6cde6f1f51d468157feda0bc524e387aa"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_16_20260629_000407.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_16_20260629_000407.json",
+      "kind": "snapshot",
+      "size": 4119,
+      "sha256": "97c126b6f17af6247fdadfc0ad284e8264d1011d586fbd3933bcefd893d42899"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_17_20260629_000641.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_17_20260629_000641.json",
+      "kind": "snapshot",
+      "size": 6906,
+      "sha256": "559b77fbf08cb7c25387c567684a856ed62d15257023ca052fd4492a80a5a8b9"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_18_20260629_000914.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_18_20260629_000914.json",
+      "kind": "snapshot",
+      "size": 3672,
+      "sha256": "6718d133bf3aee65210c2e4df766e58b10de8dd55012608fcab138cbbe6ab955"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_19_20260629_001040.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_19_20260629_001040.json",
+      "kind": "snapshot",
+      "size": 1794,
+      "sha256": "eded1b55b1920c8a70999a72e470b88187f0aaaccccd74706a30136635d1f475"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_1_20260628_221325.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_1_20260628_221325.json",
+      "kind": "snapshot",
+      "size": 1818,
+      "sha256": "c8db3e3674ef9aa97f99e34398f0cc2baaff7dab2fbd7fedd409c593d04058ca"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_20_20260629_001237.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_20_20260629_001237.json",
+      "kind": "snapshot",
+      "size": 2562,
+      "sha256": "da3c6ee799b4be98e01cf869acc9fd3f4556856dbc13344e62c1eff59e2f9479"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_21_20260629_001454.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_21_20260629_001454.json",
+      "kind": "snapshot",
+      "size": 4075,
+      "sha256": "cc314c7bfd651b022484429c3e6d850b0ae21675db9f7bdfd950ff08e2808097"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_22_20260629_001635.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_22_20260629_001635.json",
+      "kind": "snapshot",
+      "size": 3915,
+      "sha256": "66a5b342fd5e659c5cc29f943bd6b66b10638c0b3f9a5d3d585bd792535b4dc9"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_23_20260629_001801.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_23_20260629_001801.json",
+      "kind": "snapshot",
+      "size": 3779,
+      "sha256": "ccdb06aba26993db63bd94e86b743021cd9fbf65bf79769020a2a727d359fb0d"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_24_20260629_002000.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_24_20260629_002000.json",
+      "kind": "snapshot",
+      "size": 5104,
+      "sha256": "62a7feda5a20af34a13cba9a72d74d26b672ac2d3722ca9edf06f78224d557a8"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_25_20260629_002210.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_25_20260629_002210.json",
+      "kind": "snapshot",
+      "size": 3625,
+      "sha256": "550903162a846c0094fe2de83d41b50a2a13b8f0a53cfb41a4e95693ebb0d504"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_26_20260629_002355.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_26_20260629_002355.json",
+      "kind": "snapshot",
+      "size": 3358,
+      "sha256": "a2187b285952805088c15212830f531d2b2536abb1295c9cb55f7a323370bb7e"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_27_20260629_002549.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_27_20260629_002549.json",
+      "kind": "snapshot",
+      "size": 7306,
+      "sha256": "ff24e9af90e676729ac9f2c33ba2a0b9a63def72ff832bcaa4a2552472702382"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_28_20260629_002812.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_28_20260629_002812.json",
+      "kind": "snapshot",
+      "size": 6386,
+      "sha256": "a945802209946d1d51da932d6e32b1ee7e777d1f35b5e5c9b6bdcc5a040151f2"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_29_20260629_003016.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_29_20260629_003016.json",
+      "kind": "snapshot",
+      "size": 4779,
+      "sha256": "27135d989d9a13f3c4a89fa6faa776e2ea641c7a2c912ab8cf1f3d7b95c4d53d"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_2_20260628_221553.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_2_20260628_221553.json",
+      "kind": "snapshot",
+      "size": 1881,
+      "sha256": "269955e418f621ef03cecf1095981b835b4b2687a0d9ceca425a793514426571"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_30_20260629_005724.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_30_20260629_005724.json",
+      "kind": "snapshot",
+      "size": 6915,
+      "sha256": "5104efa6e6b414bb37a02a33d3b2f0764a6c3f183197593a641fe7960558ce64"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_31_20260629_005852.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_31_20260629_005852.json",
+      "kind": "snapshot",
+      "size": 1362,
+      "sha256": "c3d33baf904339550212fc9cbbee25c05e2ff71c329950a5eedd16b65e0a045b"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_32_20260629_010058.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_32_20260629_010058.json",
+      "kind": "snapshot",
+      "size": 1557,
+      "sha256": "0ff024b59e0ee7fbbae6940fce4de2c52d8c83e654296b3f3517863eb14f89bc"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_33_20260629_010254.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_33_20260629_010254.json",
+      "kind": "snapshot",
+      "size": 2310,
+      "sha256": "b8bb22d602d0420bd06bd0807d554846a2cb4e1682f4cdd5bbde574c5db36e91"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_34_20260629_010435.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_34_20260629_010435.json",
+      "kind": "snapshot",
+      "size": 2480,
+      "sha256": "f0ee426570fc638aef0133f6da7482851e26e331c14f05e16a2a615d5bfb3276"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_35_20260629_010632.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_35_20260629_010632.json",
+      "kind": "snapshot",
+      "size": 3888,
+      "sha256": "ac13257ecdb064fa93196ac9e713e0046d550f90b3729d27874869c435e47b83"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_36_20260629_010746.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_36_20260629_010746.json",
+      "kind": "snapshot",
+      "size": 4701,
+      "sha256": "51a22f8d2edbdf8069572249c6f2f828633c8b8050de8eaa4200c3ab3ac40ac5"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_37_20260629_010951.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_37_20260629_010951.json",
+      "kind": "snapshot",
+      "size": 2061,
+      "sha256": "f3ee1e8af4cf49e8086bf8fbf9236edbcd8fcb64c89273af106df2b0fc512034"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_38_20260629_011216.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_38_20260629_011216.json",
+      "kind": "snapshot",
+      "size": 2777,
+      "sha256": "f173b277ed37bd79dfccf3ccad8aacea7c15744ebd4f15de26bb0090daa86214"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_39_20260629_011448.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_39_20260629_011448.json",
+      "kind": "snapshot",
+      "size": 3149,
+      "sha256": "4e97d476b71442080a2120490adb8d6da9f013a8bca2b522f4ac5e256aae0503"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_3_20260628_221748.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_3_20260628_221748.json",
+      "kind": "snapshot",
+      "size": 2295,
+      "sha256": "de935e59bd3ccba79415af2d544f088843904eb4110cf0eb6a3b5a52e3c45961"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_40_20260629_011640.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_40_20260629_011640.json",
+      "kind": "snapshot",
+      "size": 4100,
+      "sha256": "4778b82ff8722d65360ac0215dbb941e7fbc549cbb98413e4ddddf3add06da06"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_41_20260629_011821.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_41_20260629_011821.json",
+      "kind": "snapshot",
+      "size": 5168,
+      "sha256": "5490944c8250556f8ac57bbccb3ccececee712a28479835082657295696cfa05"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_42_20260629_012028.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_42_20260629_012028.json",
+      "kind": "snapshot",
+      "size": 2997,
+      "sha256": "44ed6fb5d3b4fc74457a2440c4a7693d983bc90119eb62e7eae02b367439923f"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_43_20260629_012128.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_43_20260629_012128.json",
+      "kind": "snapshot",
+      "size": 4104,
+      "sha256": "8d227b2083aa9fcaf61b3a896feb92a597fdfbcf4396304382744a7ca2289ab6"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_44_20260629_012443.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_44_20260629_012443.json",
+      "kind": "snapshot",
+      "size": 4332,
+      "sha256": "b59e376374c5fccf92b6c3548ad8af29e8ee43f72019c69fecdca21d00b0ebe8"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_44_20260629_013338.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_44_20260629_013338.json",
+      "kind": "snapshot",
+      "size": 2292,
+      "sha256": "e43309c91213cc864b6849741fe7a6b881a8eb95ecf86ed0ca631f76d412201b"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_45_20260629_012626.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_45_20260629_012626.json",
+      "kind": "snapshot",
+      "size": 3825,
+      "sha256": "2e50c5c6b0cf56cd9460eca67d50e33dc9b01bb20cb66048149d874d51b85269"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_45_20260629_013501.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_45_20260629_013501.json",
+      "kind": "snapshot",
+      "size": 3087,
+      "sha256": "8aeaf0330f191464d8147b073fb05b75146fdad7c079e5e0dce6748d90c92cb5"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_46_20260629_012730.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_46_20260629_012730.json",
+      "kind": "snapshot",
+      "size": 2376,
+      "sha256": "8772f08d50649f5bbe80ca83127323a647dbfdc3d3721cb5b4bf6781517db48e"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_46_20260629_013633.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_46_20260629_013633.json",
+      "kind": "snapshot",
+      "size": 2832,
+      "sha256": "9d321d2de28c46de3d911362468aaea1d60e3f3d3370cf216deaf9bc4ea9eb2b"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_47_20260629_012939.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_47_20260629_012939.json",
+      "kind": "snapshot",
+      "size": 2742,
+      "sha256": "0155f91bf22259d7289ddec13dada138bafeb569373b047579ef00f1cd5bfd45"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_47_20260629_013815.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_47_20260629_013815.json",
+      "kind": "snapshot",
+      "size": 2415,
+      "sha256": "0d47b93f29283905411d376bd6c8fe98497c71a7c66185a72c7c4d479bb4bb27"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_48_20260629_013114.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_48_20260629_013114.json",
+      "kind": "snapshot",
+      "size": 4752,
+      "sha256": "06b06538f8626ef214feca2800a6cfeded30b191ced6fe003f92d733987012db"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_48_20260629_014021.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_48_20260629_014021.json",
+      "kind": "snapshot",
+      "size": 3537,
+      "sha256": "5f2ae32e3b9b33004f72d1a6371a9962e0d0b8e1147d95d65c1fb09b5f23f735"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_49_20260629_013230.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_49_20260629_013230.json",
+      "kind": "snapshot",
+      "size": 1758,
+      "sha256": "2184fa26e426427e8696a9e2913d536abb5541998f09e5996b71615bdb1e1373"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_49_20260629_014230.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_49_20260629_014230.json",
+      "kind": "snapshot",
+      "size": 5616,
+      "sha256": "aa6f1c9d64effcb6cae187cbfa75860e7ee5e17cdbdc098f8d76d82ccdf54f2d"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_4_20260628_221936.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_4_20260628_221936.json",
+      "kind": "snapshot",
+      "size": 3376,
+      "sha256": "ebde207915bb51b029a83950ca8753a27ee80029ec50b89e4c6bf20f2d72080c"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_50_20260629_014403.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_50_20260629_014403.json",
+      "kind": "snapshot",
+      "size": 7065,
+      "sha256": "a466bcee61fa136b4d350f9d1a4b34aad1b0f6faed2a9ab7de7719205d4e2b28"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_51_20260629_014519.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_51_20260629_014519.json",
+      "kind": "snapshot",
+      "size": 2610,
+      "sha256": "93d7beba7802f3841bf64885922e09bda4a2f231bb68047511e9433ae7b1b526"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_52_20260629_014635.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_52_20260629_014635.json",
+      "kind": "snapshot",
+      "size": 2868,
+      "sha256": "09f7acacb9606daf01ef3dc9dadcc1f16fbd9e28191e7276faa29550f40ab1f8"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_53_20260629_014746.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_53_20260629_014746.json",
+      "kind": "snapshot",
+      "size": 3096,
+      "sha256": "8066d682890bbadaf4a7f539686b7c7b47eba1929fb8cb103a7ee2b0ab0b3cee"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_54_20260629_014852.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_54_20260629_014852.json",
+      "kind": "snapshot",
+      "size": 3300,
+      "sha256": "02e9ca084ad351ac82787540a18246fbb763782d0b1ae4b118373961d699e9bc"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_55_20260629_015027.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_55_20260629_015027.json",
+      "kind": "snapshot",
+      "size": 3924,
+      "sha256": "b7b5e48152742761c8d13d7c177ce59a8709cb87f6f3c2bcd4b923e98a1f8d66"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_56_20260629_015206.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_56_20260629_015206.json",
+      "kind": "snapshot",
+      "size": 3498,
+      "sha256": "280dc6b36a959e17bb87366949d6a6d06a8bf2d1e2862058e4400b44eb05cab4"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_57_20260629_015333.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_57_20260629_015333.json",
+      "kind": "snapshot",
+      "size": 3798,
+      "sha256": "bb83a115e736836042339884efe2fecf484598e592ef7e7d97ac34f36625ed44"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_58_20260629_015504.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_58_20260629_015504.json",
+      "kind": "snapshot",
+      "size": 3996,
+      "sha256": "29876a8e81b27592373439b450c2bba3cc8262e487f1dea6cc89558830968df8"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_59_20260629_015700.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_59_20260629_015700.json",
+      "kind": "snapshot",
+      "size": 5193,
+      "sha256": "1ed2dd7136fee1e549d1e826ae09a4dc7560646b7f8caeb6b80fb7593825f707"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_5_20260628_230305.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_5_20260628_230305.json",
+      "kind": "snapshot",
+      "size": 3934,
+      "sha256": "4e2fe8810a9e90b3fe10866c4a14f463a913c6c2724dd27fa8345c3017189ae9"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_60_20260629_015832.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_60_20260629_015832.json",
+      "kind": "snapshot",
+      "size": 3591,
+      "sha256": "5c5bc05cb55f40757719d14753aa89f9573bb54751b1aeb61c2314916f6218f4"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_61_20260629_020030.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_61_20260629_020030.json",
+      "kind": "snapshot",
+      "size": 4812,
+      "sha256": "000c0080c3c4fb54e512039895fdd34f2dbb748a6c0a861077eb0009f9228ef9"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_62_20260629_020204.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_62_20260629_020204.json",
+      "kind": "snapshot",
+      "size": 3339,
+      "sha256": "779c3e6922830712fec32bd9751e8c8739fe997c5c8bccd8b29b0da1a401ba67"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_63_20260629_020349.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_63_20260629_020349.json",
+      "kind": "snapshot",
+      "size": 3466,
+      "sha256": "133829c5ed5a052f7abfa3a2e4d9dda4c20e63141cb52ea51c682fb99cbdcfdf"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_63_20260629_021525.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_63_20260629_021525.json",
+      "kind": "snapshot",
+      "size": 5957,
+      "sha256": "e5cc538e9635d216b7b4db3fc6691ad0f8ae996b620241b9cdcc0ca1556b37fe"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_64_20260629_020515.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_64_20260629_020515.json",
+      "kind": "snapshot",
+      "size": 4809,
+      "sha256": "5a3078a727093957317605da93adb80484b68e1ace87a6a660502a629bfe378f"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_64_20260629_021722.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_64_20260629_021722.json",
+      "kind": "snapshot",
+      "size": 5930,
+      "sha256": "b87012e5b3eb2d57f9b17c0322308c52b14f48fa147dc0f62609b11f3ab2b36c"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_65_20260629_020710.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_65_20260629_020710.json",
+      "kind": "snapshot",
+      "size": 2766,
+      "sha256": "3f5d16eea7a6db76769d934d82695c230fe9c8290753abbefe3fb3bc06436f51"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_65_20260629_021930.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_65_20260629_021930.json",
+      "kind": "snapshot",
+      "size": 6197,
+      "sha256": "9ab073c20fab2b66b1beeb394c1825484a73e562191988bd8d8bdba9cdd8d5f8"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_66_20260629_020926.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_66_20260629_020926.json",
+      "kind": "snapshot",
+      "size": 3442,
+      "sha256": "3d8ba298b2e0022586e7f91335853e8de7c6c1cc47fe3e125684774aca7d2137"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_66_20260629_022111.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_66_20260629_022111.json",
+      "kind": "snapshot",
+      "size": 9135,
+      "sha256": "ece7b729f1470c108473c4d683d86ba66c6ce5ea7f7de039e89d2b3b52c61ed4"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_67_20260629_021255.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_67_20260629_021255.json",
+      "kind": "snapshot",
+      "size": 5192,
+      "sha256": "7f6b510392e881e2292c7bf981a5b1bc9f134577f659aa2f6b89b26687d2fd0b"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_67_20260629_022320.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_67_20260629_022320.json",
+      "kind": "snapshot",
+      "size": 8666,
+      "sha256": "9e522f147afe8899afb47d207efe3014a900116462cdd64e3fc8908e6e915959"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_68_20260629_021433.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_68_20260629_021433.json",
+      "kind": "snapshot",
+      "size": 5468,
+      "sha256": "d7d169f4ed7777ffa67bbfc1089797c211bb86dfc4f26efcfd102e5f53c23418"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_68_20260629_022523.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_68_20260629_022523.json",
+      "kind": "snapshot",
+      "size": 3599,
+      "sha256": "5c6c67926e2999391211be975b44cbc3e905a845f3c8164be11aacd89b1aa033"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_69_20260629_021617.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_69_20260629_021617.json",
+      "kind": "snapshot",
+      "size": 6357,
+      "sha256": "d74724762c65a61c1038c4f7a5a3c1c6b2af4b8c570f0d85362530a8c64ce119"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_69_20260629_022715.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_69_20260629_022715.json",
+      "kind": "snapshot",
+      "size": 4678,
+      "sha256": "9d5144faf462315965a673b55797f79a4c6051657e1db43cade42887952bd5ee"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_6_20260628_230436.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_6_20260628_230436.json",
+      "kind": "snapshot",
+      "size": 4931,
+      "sha256": "55a645c3c49ba1f77c78e8a3c919c9339949f956590d937e84fa9b38bb9328a9"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_70_20260629_021826.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_70_20260629_021826.json",
+      "kind": "snapshot",
+      "size": 6795,
+      "sha256": "255816f01bd15bb8e2e8537154c4d7d482fcc28ced2384033da3a791da076ab4"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_70_20260629_022929.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_70_20260629_022929.json",
+      "kind": "snapshot",
+      "size": 3561,
+      "sha256": "eeb3452162cdf4233e69616d2f269a3ddc88b718546f3a4271e4ac565aa15af9"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_71_20260629_022048.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_71_20260629_022048.json",
+      "kind": "snapshot",
+      "size": 7539,
+      "sha256": "2acd5a8ba8aad8bce855a801a83596445651afdd67d6d1d6aef108f18b4d7111"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_71_20260629_023115.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_71_20260629_023115.json",
+      "kind": "snapshot",
+      "size": 7642,
+      "sha256": "6f03225efe6943db5f515eaedd42ce510de477aab229de3f25815a305751c7b4"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_72_20260629_022254.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_72_20260629_022254.json",
+      "kind": "snapshot",
+      "size": 5423,
+      "sha256": "becc0b26cbc0aa11b80501c79746bebd45f272b872103666e53ef7fae57a08f4"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_72_20260629_023255.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_72_20260629_023255.json",
+      "kind": "snapshot",
+      "size": 6420,
+      "sha256": "a897dab787a33f2e27bad1103be714cbafc29e7ed3912c3dde075018eb5ade93"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_73_20260629_022445.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_73_20260629_022445.json",
+      "kind": "snapshot",
+      "size": 7451,
+      "sha256": "2517df6eea24fc63631ccb08c40c5fada0f4250e4ae337be281c8c23d55e2775"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_73_20260629_023500.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_73_20260629_023500.json",
+      "kind": "snapshot",
+      "size": 6096,
+      "sha256": "ba38c34ce23f0c1ff4c76819e1d70847a628b8c596097efcbd96ced10f69d141"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_74_20260629_022700.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_74_20260629_022700.json",
+      "kind": "snapshot",
+      "size": 3063,
+      "sha256": "b3c80daf94323db8be4e87eae445470d158536fd7d0c39eff5b5496599eddece"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_74_20260629_023655.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_74_20260629_023655.json",
+      "kind": "snapshot",
+      "size": 6429,
+      "sha256": "8ed7b168159cc7d96d46edd3bdb7c36f8a1f6f5950f0e40b84be3c7125c24d26"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_75_20260629_022940.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_75_20260629_022940.json",
+      "kind": "snapshot",
+      "size": 3039,
+      "sha256": "29cc649dc0ad48dc4249ea1a8913ba6c8611c46ce0f90e8a7187ae59c87f439f"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_75_20260629_023943.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_75_20260629_023943.json",
+      "kind": "snapshot",
+      "size": 7260,
+      "sha256": "70aebbf30193602dfce192bb7bccdbf3a401010747a6a606e78b71414b4bc80c"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_76_20260629_023144.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_76_20260629_023144.json",
+      "kind": "snapshot",
+      "size": 4110,
+      "sha256": "f68cd2baea1791157abf33ac403e86798767f0ce8aa1ac8da8559906d640f23e"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_76_20260629_024145.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_76_20260629_024145.json",
+      "kind": "snapshot",
+      "size": 6144,
+      "sha256": "a5163e5a0bbe5617755a4d0ca90bc82dffec989ba3584a1f97de0c87269fb706"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_77_20260629_023339.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_77_20260629_023339.json",
+      "kind": "snapshot",
+      "size": 4725,
+      "sha256": "21fd43bdaca808a8908f27abe924a25351406587d211518ae5c46bc99fc9eeed"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_77_20260629_024315.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_77_20260629_024315.json",
+      "kind": "snapshot",
+      "size": 3915,
+      "sha256": "9b76e65c98444124c4855e5e4f4ffc5ce3c47b2279c93956063088c795dd71d6"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_78_20260629_023605.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_78_20260629_023605.json",
+      "kind": "snapshot",
+      "size": 4962,
+      "sha256": "6d0e2a0dd08dffc7d00aae4b145e4c86b2d47115489f48d86396778424ee5ccc"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_78_20260629_024511.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_78_20260629_024511.json",
+      "kind": "snapshot",
+      "size": 1815,
+      "sha256": "7fd5849f3bdb7bd3befdd393921ba3a58b9455fdf40f8df5d69aa8842acaade5"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_79_20260629_023814.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_79_20260629_023814.json",
+      "kind": "snapshot",
+      "size": 2493,
+      "sha256": "6056dba02829e4ae668f13bac96e394df5f6344407d5fd8d1d1d391e8b797ecd"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_79_20260629_024719.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_79_20260629_024719.json",
+      "kind": "snapshot",
+      "size": 3909,
+      "sha256": "abb36befbfa9f3c349a657019cf8a692adb75f5e4c263b4b0dc1a2737bf2afb9"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_7_20260628_230821.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_7_20260628_230821.json",
+      "kind": "snapshot",
+      "size": 6262,
+      "sha256": "19a4c3be6eab76e7ac6d78ba343906f80e4483fa3eb914b2bf7c2ac90ac37ef2"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_80_20260629_025007.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_80_20260629_025007.json",
+      "kind": "snapshot",
+      "size": 5856,
+      "sha256": "13c3633235bbb94aae272e776245b2fdac7679859fa6161267321c80def59494"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_80_20260629_025710.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_80_20260629_025710.json",
+      "kind": "snapshot",
+      "size": 2187,
+      "sha256": "19d99c10bbe0e2ab5780ee60ff29963b34a2b65e48aa6d31d992a33bcd7cc81b"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_81_20260629_025151.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_81_20260629_025151.json",
+      "kind": "snapshot",
+      "size": 4758,
+      "sha256": "2bdaa88bee8670bf7abfe816cca8d54f6656ffe97aeb1fe70ef961d92c50e8ec"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_81_20260629_025832.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_81_20260629_025832.json",
+      "kind": "snapshot",
+      "size": 2955,
+      "sha256": "4d01e71203e03b2f2ef1b01f1c9e9e3dfa4e572ae67cb1dd131289b38762f659"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_82_20260629_025319.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_82_20260629_025319.json",
+      "kind": "snapshot",
+      "size": 2721,
+      "sha256": "a8d086cecac6d1a0d443ba71fe2b11c4f90217fac8f7b1e7e5a0b01f30c88871"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_82_20260629_025958.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_82_20260629_025958.json",
+      "kind": "snapshot",
+      "size": 2694,
+      "sha256": "3d1609007af51ac82d54630b2ffdf45c5924a103b42cfa4ac87de8024838b49f"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_83_20260629_025515.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_83_20260629_025515.json",
+      "kind": "snapshot",
+      "size": 2487,
+      "sha256": "b553a5da3b44fa2d7bb37accaea10bc9048a1f56ed1743722f93634e62d885d6"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_83_20260629_030206.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_83_20260629_030206.json",
+      "kind": "snapshot",
+      "size": 3665,
+      "sha256": "522162c5877c1d574581b267979d8a7cc32bf02f2d19c46adc60b9b0fbc43e9c"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_84_20260629_025644.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_84_20260629_025644.json",
+      "kind": "snapshot",
+      "size": 2868,
+      "sha256": "bf6217b4f958ee92b4aac7b54eddbd2b1edc12bbefe98c2607181e148b96e5a1"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_84_20260629_030400.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_84_20260629_030400.json",
+      "kind": "snapshot",
+      "size": 2170,
+      "sha256": "5518d2827a1a8d00e384d7e2da68201ae6c85202b125538dd0a29a6db6e41c68"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_85_20260629_025853.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_85_20260629_025853.json",
+      "kind": "snapshot",
+      "size": 3063,
+      "sha256": "c8550b60f6c20d6b04059511b72a1b5a155f00959c5b99d0098d326a5c7b47d0"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_85_20260629_030557.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_85_20260629_030557.json",
+      "kind": "snapshot",
+      "size": 3625,
+      "sha256": "d3dabad9fcf622b758c3c3a0122e01e368474073a678877da77d097191d89fd7"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_86_20260629_030141.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_86_20260629_030141.json",
+      "kind": "snapshot",
+      "size": 2190,
+      "sha256": "b6024c31949c8dbb0ac7515e31d5d87363de596a003373b5ef3051d3cb1c9aee"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_86_20260629_030743.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_86_20260629_030743.json",
+      "kind": "snapshot",
+      "size": 4519,
+      "sha256": "319d5555dc296abc3e9dedc85e2796d5982a6eb9a55526396c246049f62d0c1c"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_87_20260629_030328.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_87_20260629_030328.json",
+      "kind": "snapshot",
+      "size": 3789,
+      "sha256": "8d0a19c44953d5574678523064f6d7bd5e8f3a774304835c637a79ae46dcc3e9"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_87_20260629_030912.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_87_20260629_030912.json",
+      "kind": "snapshot",
+      "size": 3003,
+      "sha256": "b71860e83faf79f672ce2bab1cb29c6dc29f439d4c1c5a03081a7423c7e9e510"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_88_20260629_030523.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_88_20260629_030523.json",
+      "kind": "snapshot",
+      "size": 3954,
+      "sha256": "9b924d1242365438ff71f9d0a9ca7d50dc2cc6115ebf1b47c9b549ae09171f88"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_88_20260629_031031.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_88_20260629_031031.json",
+      "kind": "snapshot",
+      "size": 5634,
+      "sha256": "5cc0df14f96fec7ec64b887e11450868ac626bfa8acdcb400ab07c54a5cf0ea1"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_89_20260629_030705.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_89_20260629_030705.json",
+      "kind": "snapshot",
+      "size": 4713,
+      "sha256": "8e0cbf3596db80e36a0268d9f89e9e11c6cd469d7b37597411a5aae2620e4e10"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_89_20260629_031210.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_89_20260629_031210.json",
+      "kind": "snapshot",
+      "size": 3432,
+      "sha256": "8b7c58d825de7624c3d31baaa2bf54a3e6cc8665185a1019cf264688694a7ce8"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_8_20260628_231033.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_8_20260628_231033.json",
+      "kind": "snapshot",
+      "size": 7758,
+      "sha256": "211f39affc99d67aa62411bfb540c37ec8c1f0ded85588c54c7f8b257eaec064"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_90_20260629_030859.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_90_20260629_030859.json",
+      "kind": "snapshot",
+      "size": 3987,
+      "sha256": "85d990c6d61e34bf95a9c8406125d6d19871e2a83b049975518a49c164311156"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_90_20260629_031323.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_90_20260629_031323.json",
+      "kind": "snapshot",
+      "size": 2924,
+      "sha256": "b359fa8345d275141d5602acbda0afaf8ebce2b0a33742eece88d06748f1f9e8"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_91_20260629_031041.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_91_20260629_031041.json",
+      "kind": "snapshot",
+      "size": 3348,
+      "sha256": "e014b805c988f189a466947cca9f8a82c3c301779c2b948d69ac5e75c209c34f"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_91_20260629_031514.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_91_20260629_031514.json",
+      "kind": "snapshot",
+      "size": 4103,
+      "sha256": "894f8aecb8dc0f89a8f0f27d7e99e84a424174cca0272345700b720a2a3cac85"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_92_20260629_031214.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_92_20260629_031214.json",
+      "kind": "snapshot",
+      "size": 4230,
+      "sha256": "1516e8a14906d5d6de11758b215f14e43f9f891d892249041b1a9e4b602a561b"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_92_20260629_031828.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_92_20260629_031828.json",
+      "kind": "snapshot",
+      "size": 4752,
+      "sha256": "1b926c60a44ff6b10a84a8b115df7fbd08f9740553b4adb37426ef75bd18d893"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_93_20260629_031407.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_93_20260629_031407.json",
+      "kind": "snapshot",
+      "size": 3732,
+      "sha256": "01ac6b5d12f13cf586a99f06a8fd809ea47b9ea8dc52fe40e4c0c221eadd3be1"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_93_20260629_032001.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_93_20260629_032001.json",
+      "kind": "snapshot",
+      "size": 7998,
+      "sha256": "cefe8cdc440880f5d021af75007cdb2975945229c04290d5059812b0d6e11991"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_94_20260629_031618.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_94_20260629_031618.json",
+      "kind": "snapshot",
+      "size": 4407,
+      "sha256": "c7fd4280ee317e59df05408a9bbf19cd7a5713a1ef3ad0b002d0b2c2677fb27c"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_94_20260629_032149.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_94_20260629_032149.json",
+      "kind": "snapshot",
+      "size": 5664,
+      "sha256": "981fd372aefa72963c715509cd5ce3c5834d0b88b2fd158af7ef2f424f7cea22"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_95_20260629_031752.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_95_20260629_031752.json",
+      "kind": "snapshot",
+      "size": 5846,
+      "sha256": "e56e52027703cb8f249b43962e883c040c33ae6145dc0ee35f63aa3c69325319"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_95_20260629_032358.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_95_20260629_032358.json",
+      "kind": "snapshot",
+      "size": 4125,
+      "sha256": "d5a6ec532d06e296971125b29f3d56c432c74f396fe8a175ab2895553ed36c84"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_96_20260629_032024.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_96_20260629_032024.json",
+      "kind": "snapshot",
+      "size": 2687,
+      "sha256": "85ea0a80b194ac30c0320c3bd9db7086d0fae39493a0fd8558a5d6b96b4f7f3d"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_96_20260629_032558.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_96_20260629_032558.json",
+      "kind": "snapshot",
+      "size": 4962,
+      "sha256": "cc15f92856125a102c519f923a86408fcfc207bc756452c4242e4b3b9f26e074"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_97_20260629_032253.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_97_20260629_032253.json",
+      "kind": "snapshot",
+      "size": 3696,
+      "sha256": "925d6056744a60476f36de11fa7d8ca661499f62e806783c39752f80d3a3b768"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_97_20260629_032712.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_97_20260629_032712.json",
+      "kind": "snapshot",
+      "size": 5127,
+      "sha256": "c1299e365ea156b1b57b97a0d88bd165e9cca69c12ac953040b5173c912c6387"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_98_20260629_032448.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_98_20260629_032448.json",
+      "kind": "snapshot",
+      "size": 3954,
+      "sha256": "2e11e774a8eb7e1427e7353647f505ad11a65496f75d4a261b4ea557912cbde8"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_98_20260629_032847.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_98_20260629_032847.json",
+      "kind": "snapshot",
+      "size": 3432,
+      "sha256": "6f0ae008868348cf7b6883c4bbb73514db32b2df478b6b6e8b150176c424d1df"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_99_20260629_032711.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_99_20260629_032711.json",
+      "kind": "snapshot",
+      "size": 6048,
+      "sha256": "ce8833c3e89419e570b4e17d832ee66cff27a64c84effdf0bd52a9d2e4c7241d"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_99_20260629_033055.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_99_20260629_033055.json",
+      "kind": "snapshot",
+      "size": 4200,
+      "sha256": "3f99aefffe386eeb66dee5465a8b9145b6d58d2c46ec02b2d6b4878d38b9c90e"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_9_20260628_231305.json",
+      "target_relative": "data/novels/farm_ancient/data/snapshots/snapshot_9_20260628_231305.json",
+      "kind": "snapshot",
+      "size": 3193,
+      "sha256": "c09dfb54ca8063f387bf7680fb4d35e97b8019dca7cd7838bcb9f4b04c1eea9b"
+    },
+    {
+      "source_relative": "data/style/fingerprint.yaml",
+      "target_relative": "data/novels/farm_ancient/data/style/fingerprint.yaml",
+      "kind": "asset",
+      "size": 92,
+      "sha256": "8b8e15a80b187ad4749225d0a449298b88faa1c71a59dc5d7bee86af1cc951a9"
+    },
+    {
+      "source_relative": "data/world/current_state.md",
+      "target_relative": "data/novels/farm_ancient/data/world/current_state.md",
+      "kind": "world",
+      "size": 1743,
+      "sha256": "916d751a1dd24478b6e764446efaa6f2346150408e1d79335537b2bf2797beb8",
+      "target_sha256": "54401eeb136dc9808841cf2984485a31276270121f7e3055d3bb7ffdefe60650",
+      "transformation": "v2_runtime_normalization"
+    },
+    {
+      "source_relative": "data/world/ledger.md",
+      "target_relative": "data/novels/farm_ancient/data/world/ledger.md",
+      "kind": "world",
+      "size": 957,
+      "sha256": "6bf7bdf857285cc7107a55a3d8093e58746eb1d79b75ea4755ad7746055a43ec",
+      "target_sha256": "95037acbcc5d439c830150d4a6a6b441d0124f2790ea261000ba2fd1187b6711",
+      "transformation": "v2_runtime_normalization"
+    },
+    {
+      "source_relative": "data/world/relationships.md",
+      "target_relative": "data/novels/farm_ancient/data/world/relationships.md",
+      "kind": "world",
+      "size": 623,
+      "sha256": "17a37ce09155c92deafccf32be8b524c869d202f971a4a9fb49c4b30e7194a4a",
+      "target_sha256": "3fdf58a714a41929700e5b4322fc2299b3aad8b578b02a2e98357cb15a1b72ac",
+      "transformation": "v2_runtime_normalization"
+    },
+    {
+      "source_relative": "novel_config.yaml",
+      "target_relative": "novel_config.yaml",
+      "kind": "config",
+      "size": 91,
+      "sha256": "a84a1635f10ea22c2fc9ebfc052cff71add541daa2a7789e27c73feb8e34416d"
+    },
+    {
+      "source_relative": "src/outline.md",
+      "target_relative": "data/novels/farm_ancient/src/outline.md",
+      "kind": "source",
+      "size": 2762,
+      "sha256": "ab2bd58cb286f2431875a7c3d77fd7f96ebfb466bf649695d4f831a925f033be"
+    },
+    {
+      "source_relative": "src/world/rules.md",
+      "target_relative": "data/novels/farm_ancient/src/world/rules.md",
+      "kind": "source",
+      "size": 316,
+      "sha256": "f5d832c5d0e6b59d2af180d4f3743ce8bb1ef2bd903db07bb8979c48cf3fee31"
+    },
+    {
+      "source_relative": "src/world/terminology.md",
+      "target_relative": "data/novels/farm_ancient/src/world/terminology.md",
+      "kind": "source",
+      "size": 239,
+      "sha256": "63a2513210c08ece83e28de7891ea78743608a817bba80d4988961793cf0dd7d"
+    },
+    {
+      "source_relative": "src/world/timeline.md",
+      "target_relative": "data/novels/farm_ancient/src/world/timeline.md",
+      "kind": "source",
+      "size": 279,
+      "sha256": "abda84972e6df8f8001ca036924f07947fc1eb5fe1c1ec9c71b275c0c426f659"
+    }
+  ]
+}

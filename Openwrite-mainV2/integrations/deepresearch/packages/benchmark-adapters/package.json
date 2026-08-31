@@ -1,0 +1,41 @@
+{
+  "name": "@deepresearch/benchmark-adapters",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "deepresearch-bench": "tsx src/cli/deepresearch-bench.ts",
+    "deepresearch-bench-ii": "tsx src/cli/deepresearch-bench-ii.ts",
+    "quality-regression": "tsx src/cli/quality-regression.ts",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@deepresearch/contracts": "workspace:*",
+    "@deepresearch/embedding-providers": "workspace:*",
+    "@deepresearch/orchestrator": "workspace:*",
+    "@deepresearch/report-evaluator": "workspace:*",
+    "@deepresearch/search-providers": "workspace:*",
+    "@deepresearch/testing": "workspace:*",
+    "undici": "8.4.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.1",
+    "vitest": "^1.6.1"
+  },
+  "files": [
+    "dist",
+    "!dist/tests",
+    "!dist/__tests__",
+    "!dist/**/__tests__"
+  ]
+}

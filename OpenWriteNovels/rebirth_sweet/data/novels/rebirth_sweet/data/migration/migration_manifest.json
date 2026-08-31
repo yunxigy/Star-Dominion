@@ -1,0 +1,2016 @@
+{
+  "schema_version": 1,
+  "novel_id": "rebirth_sweet",
+  "source_project": "E:\\AI\\gp\\Openwrite-main",
+  "target_project": "E:\\AI\\gp\\OpenWriteNovels\\rebirth_sweet",
+  "source_novel": "E:\\AI\\gp\\Openwrite-main\\data\\novels\\rebirth_sweet",
+  "generated_at": "2026-08-30T14:54:38.878850+00:00",
+  "highest_chapter": 120,
+  "counts": {
+    "chapters": 120,
+    "backups": 1,
+    "history_files": 12,
+    "snapshots": 140,
+    "foreshadowing_files": 1,
+    "world_files": 3,
+    "hierarchy_files": 1
+  },
+  "files": [
+    {
+      "source_relative": "data/foreshadowing/dag.yaml",
+      "target_relative": "data/novels/rebirth_sweet/data/foreshadowing/dag.yaml",
+      "kind": "foreshadowing",
+      "size": 35,
+      "sha256": "2aab38b7e581fd49a08c160c88a868d61ec7912bb506a571f804904fd05aa43d",
+      "transformation": "legacy_foreshadowing_nodes_list_to_mapping",
+      "target_sha256": "5a0fd3253bb5e0b1fd331591531d620066f89f3cca9211f0cfc76b7094fa1724"
+    },
+    {
+      "source_relative": "data/hierarchy.yaml",
+      "target_relative": "data/novels/rebirth_sweet/data/hierarchy.yaml",
+      "kind": "hierarchy",
+      "size": 4805,
+      "sha256": "afdae052df066c6e55c2b0efb279e436f3ee6aa18babdf2b5b38df286ea947b3"
+    },
+    {
+      "source_relative": "data/history/ch_028/v_0001_20260629_002830.md",
+      "target_relative": "data/novels/rebirth_sweet/data/history/ch_028/v_0001_20260629_002830.md",
+      "kind": "history",
+      "size": 17939,
+      "sha256": "225e5cd679a0406f1db8f131ad5b4506abfc443f8c261d05f467b213071dc460"
+    },
+    {
+      "source_relative": "data/history/ch_029/v_0001_20260629_002954.md",
+      "target_relative": "data/novels/rebirth_sweet/data/history/ch_029/v_0001_20260629_002954.md",
+      "kind": "history",
+      "size": 10457,
+      "sha256": "60240b2cc0bfee192911dabef2599f9b0ae2c710963ab6a4dbc02291b943da7c"
+    },
+    {
+      "source_relative": "data/history/ch_030/v_0001_20260629_003149.md",
+      "target_relative": "data/novels/rebirth_sweet/data/history/ch_030/v_0001_20260629_003149.md",
+      "kind": "history",
+      "size": 12756,
+      "sha256": "b7e8c72e249dab65b9933e2c7effcf9d4a8e2cddd3741b019c6caacb4e29a3b0"
+    },
+    {
+      "source_relative": "data/history/ch_036/v_0001_20260629_004533.md",
+      "target_relative": "data/novels/rebirth_sweet/data/history/ch_036/v_0001_20260629_004533.md",
+      "kind": "history",
+      "size": 21571,
+      "sha256": "c40367a84b1936b07301515760fa3022cadddd31f24896a57b0963f5abfc4cff"
+    },
+    {
+      "source_relative": "data/history/ch_037/v_0001_20260629_004755.md",
+      "target_relative": "data/novels/rebirth_sweet/data/history/ch_037/v_0001_20260629_004755.md",
+      "kind": "history",
+      "size": 20677,
+      "sha256": "8674f1481e2c35917bebfb281ebf3bd00a8a5cbf8bd454ce94cb52084f581669"
+    },
+    {
+      "source_relative": "data/history/ch_038/v_0001_20260629_004922.md",
+      "target_relative": "data/novels/rebirth_sweet/data/history/ch_038/v_0001_20260629_004922.md",
+      "kind": "history",
+      "size": 12742,
+      "sha256": "f0506d5d53fad488f0497f9c1d4ad8d32506ae65fe3532774250f081df01e11a"
+    },
+    {
+      "source_relative": "data/history/ch_039/v_0001_20260629_005129.md",
+      "target_relative": "data/novels/rebirth_sweet/data/history/ch_039/v_0001_20260629_005129.md",
+      "kind": "history",
+      "size": 23849,
+      "sha256": "be848d8f06ef6f4d91c9ece8a007eb6fdd30403f3a656af990bd9ac6ea92e467"
+    },
+    {
+      "source_relative": "data/history/ch_040/v_0001_20260629_005254.md",
+      "target_relative": "data/novels/rebirth_sweet/data/history/ch_040/v_0001_20260629_005254.md",
+      "kind": "history",
+      "size": 17723,
+      "sha256": "4a122eb33cd1e509f3512aea808509c1ce028da2c4c7dafd2dbb05e8e1a80882"
+    },
+    {
+      "source_relative": "data/history/ch_077/v_0001_20260629_020517.md",
+      "target_relative": "data/novels/rebirth_sweet/data/history/ch_077/v_0001_20260629_020517.md",
+      "kind": "history",
+      "size": 15778,
+      "sha256": "8239a1e6ce91f9c97801501cc4af70fca6af1fa95f3ea970c326487e2f8a64f2"
+    },
+    {
+      "source_relative": "data/history/ch_078/v_0001_20260629_020658.md",
+      "target_relative": "data/novels/rebirth_sweet/data/history/ch_078/v_0001_20260629_020658.md",
+      "kind": "history",
+      "size": 19554,
+      "sha256": "e65dc78cc069889eb94e9ae9e96a17460def2519f7905ad771302e0c7964c413"
+    },
+    {
+      "source_relative": "data/history/ch_079/v_0001_20260629_020844.md",
+      "target_relative": "data/novels/rebirth_sweet/data/history/ch_079/v_0001_20260629_020844.md",
+      "kind": "history",
+      "size": 13853,
+      "sha256": "e8fb0cd7abaaa61e6e6a7a55c69407177ae1dc378761435c7c5207a91fab44cb"
+    },
+    {
+      "source_relative": "data/history/ch_080/v_0001_20260629_021112.md",
+      "target_relative": "data/novels/rebirth_sweet/data/history/ch_080/v_0001_20260629_021112.md",
+      "kind": "history",
+      "size": 16146,
+      "sha256": "ae2b597cdef37e93b28e1895e4a3e5f6f95a1a72d6d4f78fc052ac3028c8fc7b"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_001.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_001.md",
+      "kind": "manuscript",
+      "size": 8968,
+      "sha256": "27a26ee5358f0feda98cefda0a0ac05f9ea6886c23f16f194eac7844f810720d"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_002.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_002.md",
+      "kind": "manuscript",
+      "size": 55312,
+      "sha256": "e24de4ca13c95f8e7d0da54f774fb7a917f27f56b0b0c9d16a7413471056b5cb"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_003.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_003.md",
+      "kind": "manuscript",
+      "size": 15546,
+      "sha256": "f1b819b684335698265d3de1fc8c734a556158902b1ceb9775929c264db3f280"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_004.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_004.md",
+      "kind": "manuscript",
+      "size": 17755,
+      "sha256": "27b456fd357dcd7a040a2ad69435289b83504b794df6b8e079ef7beab3ef5e7e"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_005.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_005.md",
+      "kind": "manuscript",
+      "size": 10753,
+      "sha256": "4c2f8176ade7f4246d02f4a603c6a30beb1615ef0e5e39d7b6fba78dd643fa6b"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_006.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_006.md",
+      "kind": "manuscript",
+      "size": 12032,
+      "sha256": "553907482f76db0789d17191e3a222571079c72b21f54c6b93b6923a15348bd1"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_007.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_007.md",
+      "kind": "manuscript",
+      "size": 29400,
+      "sha256": "d6ddbd608b6009cc4236bb468d0acf20b66375608e481d7c1eb6a14c2294de86"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_008.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_008.md",
+      "kind": "manuscript",
+      "size": 12858,
+      "sha256": "ab2b50d4f754d6bcb8c782f4ae3b6fe1d120da83293d0d6ebb1d3852337b5ee7"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_008.md.bak",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_008.md.bak",
+      "kind": "manuscript",
+      "size": 54606,
+      "sha256": "4bee0c7ac924b969ada47b83227889311932fa60753fcf2590288b4f640d1817"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_009.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_009.md",
+      "kind": "manuscript",
+      "size": 20478,
+      "sha256": "e41d1c78c3701b3b667a18f8557bb2ad36a1c8bd91763c3972182150100a2574"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_010.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_010.md",
+      "kind": "manuscript",
+      "size": 17029,
+      "sha256": "95f3318f8ef5f35d8d515dd6559b6d4c7f79d4d7f7f09c2c43e77c7280862e5e"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_011.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_011.md",
+      "kind": "manuscript",
+      "size": 13694,
+      "sha256": "88e3d4292c4b344ee416a1ea26b579c2d3f715d1f273d694a9735a37e79e5c56"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_012.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_012.md",
+      "kind": "manuscript",
+      "size": 17404,
+      "sha256": "15eb4e63fa84414c592a2aed75ca665823881a9b9510612602e7d0954efea93b"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_013.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_013.md",
+      "kind": "manuscript",
+      "size": 10368,
+      "sha256": "9ab99fed04d5384ca9e93dc15aa2339a17b91485651bf948ab2122956a5873ae"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_014.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_014.md",
+      "kind": "manuscript",
+      "size": 20084,
+      "sha256": "49c5c2a25fa53f64350cb58bd75cd5138192bc37256a99caf10c6222939a8c02"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_015.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_015.md",
+      "kind": "manuscript",
+      "size": 18540,
+      "sha256": "e7044adb1a3bdc01187c9f016cf0e46e4002a564a58b96f1c24c2b90881716b2"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_016.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_016.md",
+      "kind": "manuscript",
+      "size": 14581,
+      "sha256": "8975bf31ea3302c425aba5490d218bf49c715089a02b1cb3942007dbc4393e47"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_017.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_017.md",
+      "kind": "manuscript",
+      "size": 15131,
+      "sha256": "22526f5b0b863e8c214bc769228bebe2f78e332e77c292aadf910b1836bf0f04"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_018.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_018.md",
+      "kind": "manuscript",
+      "size": 18181,
+      "sha256": "4c35e2389d81f872537d3c15f002b7e5f548bb46e16db77661ef04c528908c47"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_019.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_019.md",
+      "kind": "manuscript",
+      "size": 19922,
+      "sha256": "7066be9c08fa0a337ab0cd6c9813b2af703159b77c1c233ab79e6b1a7a192428"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_020.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_020.md",
+      "kind": "manuscript",
+      "size": 24894,
+      "sha256": "c31fca43c0cdb7553e63e48eadb065de444d3d6f8bb15a7e138436b656e49b55"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_021.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_021.md",
+      "kind": "manuscript",
+      "size": 12757,
+      "sha256": "4a01e3cae1d3c7b0ee0e7114277b353df823965cc1e44b7a1751b81b41d98f2d"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_022.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_022.md",
+      "kind": "manuscript",
+      "size": 20445,
+      "sha256": "404ca557d571a18b5baeaa15773a228e2d7c14982c45bb637999edb4e1b0ed8f"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_023.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_023.md",
+      "kind": "manuscript",
+      "size": 14019,
+      "sha256": "4d1d3a77fbb47037e51eaf05a543f8262cd22f8f999e39b9b8aed8509b3531b4"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_024.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_024.md",
+      "kind": "manuscript",
+      "size": 14451,
+      "sha256": "248238dd7179dfccc12198d45e924357ba5d7185c4fc09223991f8eae4b1bd60"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_025.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_025.md",
+      "kind": "manuscript",
+      "size": 19880,
+      "sha256": "2d8b7d0e98356248a824108eddcff0b5a0f030e0f1a9c1a40999ca546a2852c0"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_026.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_026.md",
+      "kind": "manuscript",
+      "size": 15534,
+      "sha256": "3892ea282c1e19a2259448728010f7c51785856509ed45897905be410beaa918"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_027.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_027.md",
+      "kind": "manuscript",
+      "size": 10686,
+      "sha256": "161a45c7189184281a2f83386a1d0392314359b48bf41bb3dae60412a19cafa4"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_028.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_028.md",
+      "kind": "manuscript",
+      "size": 14024,
+      "sha256": "830bf11c46529c85d8efacfa56875265f2c92ae2213d66a0c87ac80525de182f"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_029.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_029.md",
+      "kind": "manuscript",
+      "size": 17201,
+      "sha256": "0fe696c6c08e024f16a4db29ab1c206c056b6d0b9674c4ce61df4728853f91b4"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_030.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_030.md",
+      "kind": "manuscript",
+      "size": 17457,
+      "sha256": "31cc4df9b4a72a54a324240abf093003c4a8175a4123ae69c6dee561ee2e093c"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_031.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_031.md",
+      "kind": "manuscript",
+      "size": 16889,
+      "sha256": "76e368615722ce98a2e1248f4823348b054b38d898ad1c1c5cf73047157873eb"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_032.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_032.md",
+      "kind": "manuscript",
+      "size": 18599,
+      "sha256": "db40a533118c8ea4c60732298ae3b790805f3edb0b78e098db384932806c9862"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_033.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_033.md",
+      "kind": "manuscript",
+      "size": 20705,
+      "sha256": "07d343b25aca8c069c798278db42cf4c58c09a64415f8f78c729c14d59aad5be"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_034.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_034.md",
+      "kind": "manuscript",
+      "size": 15305,
+      "sha256": "e6aaac9271acab30afc0ff871ee150dc9227a5dbf3abd1f1a8404fcb3130e92a"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_035.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_035.md",
+      "kind": "manuscript",
+      "size": 16532,
+      "sha256": "85865c562b17891e25f56ed25e79a30c63e49c42f2f79525d28d9571504ba0fa"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_036.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_036.md",
+      "kind": "manuscript",
+      "size": 25142,
+      "sha256": "bde949216e2a5ad08048072324b48aa4c2ac05f416484257535d10eaea6d8b89"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_037.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_037.md",
+      "kind": "manuscript",
+      "size": 14655,
+      "sha256": "c381284b150355ddb29501a074b2f2783fa86482790c63d002377a854f7ff6a3"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_038.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_038.md",
+      "kind": "manuscript",
+      "size": 21506,
+      "sha256": "2ccfe065416a41c255abaa4e88fd1230eb3342d109421de43458377a8d608dca"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_039.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_039.md",
+      "kind": "manuscript",
+      "size": 14682,
+      "sha256": "a369c2dbeae449b96a480a97323f41742bd72470b4c27330c17ee0701a82c665"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_040.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_040.md",
+      "kind": "manuscript",
+      "size": 17017,
+      "sha256": "1282c476c9e7454629e46465523ee26279131784d8a514b29e993d2a1dd1b4e7"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_041.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_041.md",
+      "kind": "manuscript",
+      "size": 22883,
+      "sha256": "cca5816bc5e92fd531d9962bfe683beaefa1fa74472cf8b7b96ce0639478e1a0"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_042.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_042.md",
+      "kind": "manuscript",
+      "size": 18121,
+      "sha256": "8cc5bf7ece6d3ffb3bdaa5f875324f820c6d203c9d00ab0337750f71fa66943a"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_043.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_043.md",
+      "kind": "manuscript",
+      "size": 22273,
+      "sha256": "34cffece7988fa8e7315231efae9e451648fdf37198cba281b5b3fbba5ace6ea"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_044.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_044.md",
+      "kind": "manuscript",
+      "size": 29083,
+      "sha256": "6e23ef061d9fb7232071443f3a66751efe7b7ba4e0b3823bf3a2b22d934b1f55"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_045.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_045.md",
+      "kind": "manuscript",
+      "size": 15879,
+      "sha256": "cad942e596001aa0fb96560224225bd2e9ee63e602908dcdba632226c968fe57"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_046.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_046.md",
+      "kind": "manuscript",
+      "size": 13752,
+      "sha256": "e1c1d9aeb50decbcd974e4afbd63a85f738240fe21f03d5a7a39ed67b81a6743"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_047.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_047.md",
+      "kind": "manuscript",
+      "size": 18438,
+      "sha256": "3cdae906d3dbd20c96009961cff5a7c61f280aeff3101ae5261e68cd368cecd7"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_048.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_048.md",
+      "kind": "manuscript",
+      "size": 19209,
+      "sha256": "79f0713f84702fddf491e32e0333a27e3c13f024aa1deeca77c81112a772a90b"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_049.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_049.md",
+      "kind": "manuscript",
+      "size": 20291,
+      "sha256": "6390c0e27f7b4525a1e3d583ad84f48c4241e115e185ae37f80af09bd620f66d"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_050.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_050.md",
+      "kind": "manuscript",
+      "size": 17406,
+      "sha256": "50bebdd446866f3098882a8cac082faa8f473595cff9e6ae396de9994232a30e"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_051.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_051.md",
+      "kind": "manuscript",
+      "size": 17201,
+      "sha256": "964e678b1b885328ba106c0b152f7cefac7e05ca70c927ed2b12eb1b1f9c6a10"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_052.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_052.md",
+      "kind": "manuscript",
+      "size": 15974,
+      "sha256": "48f7c405deb153bf28584cd919ddc41ddb3efd21ca1216f3c7545e6a579b37ec"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_053.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_053.md",
+      "kind": "manuscript",
+      "size": 16338,
+      "sha256": "3f0b1af8617e9880c947cbbc2330476eb1c20575276caefd519e52b2b900e323"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_054.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_054.md",
+      "kind": "manuscript",
+      "size": 15234,
+      "sha256": "cc01dd2585f661d49b02ab14332abd3dbcc8572c84c79421ac191ff2f6afdd75"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_055.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_055.md",
+      "kind": "manuscript",
+      "size": 51643,
+      "sha256": "64614988c64c390679f8f176ef206a39e49fab1f279299358f5f19c343f1c686"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_056.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_056.md",
+      "kind": "manuscript",
+      "size": 15138,
+      "sha256": "d88879bc50bbbbc9568043e457367367f4750c062039e945727e8f9e8e336c9f"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_057.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_057.md",
+      "kind": "manuscript",
+      "size": 13502,
+      "sha256": "107864681f80fac52f93e02f67fc1023ee7bde7627898adc6beb075edfeb2c98"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_058.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_058.md",
+      "kind": "manuscript",
+      "size": 16256,
+      "sha256": "f275b7d47110c030ae610bcfe01da8ea025401c3464ce88d0f6df5ca2c2dcd08"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_059.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_059.md",
+      "kind": "manuscript",
+      "size": 10622,
+      "sha256": "32e838598a75645cc6e2b3f278fe486d6c53a5f47a42283582c699f3973a5668"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_060.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_060.md",
+      "kind": "manuscript",
+      "size": 20132,
+      "sha256": "099d73def6cab3bf985fa14f497bf648ba19967e49ab1d1cffbe1e47c2ad4d77"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_061.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_061.md",
+      "kind": "manuscript",
+      "size": 15273,
+      "sha256": "96742b9be577fd1b552f3aa2b0edc55cc65da973bf47f94428b9661838c66e3a"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_062.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_062.md",
+      "kind": "manuscript",
+      "size": 21968,
+      "sha256": "217c5dc6db93f7a0421d83ccc54b49c46b85f753a40e262feee56e4f01a044c5"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_063.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_063.md",
+      "kind": "manuscript",
+      "size": 13076,
+      "sha256": "895d79299a33bfd284d65d8c0bac7e14ed9bd0b4d77f1bfd2b452231f93ce5dd"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_064.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_064.md",
+      "kind": "manuscript",
+      "size": 12420,
+      "sha256": "4d293258d70f1162c4c772879fac6eabf6161783d28d5205e5ad7f3435cdf005"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_065.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_065.md",
+      "kind": "manuscript",
+      "size": 15586,
+      "sha256": "aee18171a1d80b2a08fac23b585638dd8d3bfb968e5bbbb92e6a9e908b397e30"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_066.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_066.md",
+      "kind": "manuscript",
+      "size": 20031,
+      "sha256": "8df82832db9e3eca75265aa1ce57e21e7ab9ef76549245e5ab23cbd4c5b74eb2"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_067.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_067.md",
+      "kind": "manuscript",
+      "size": 21214,
+      "sha256": "465d4ae5f99773752aecb2538e8edd3950d0dcc952b187b6b78312c6b62e52f8"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_068.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_068.md",
+      "kind": "manuscript",
+      "size": 18049,
+      "sha256": "4dd24bfdf2b29c43a4071eb9acb920284e1054ebe29d430f662fd34967395d3b"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_069.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_069.md",
+      "kind": "manuscript",
+      "size": 21527,
+      "sha256": "90dab02a6036e68c7388d448820eb5009caff4d4285a403a59b0b6139adca517"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_070.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_070.md",
+      "kind": "manuscript",
+      "size": 19147,
+      "sha256": "c9be6aad158b9b8fca9be8906eb61d0130a66729fde966bd684f4613aad1e992"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_071.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_071.md",
+      "kind": "manuscript",
+      "size": 14795,
+      "sha256": "e595b73d27c6a6ed1b65f57508fa587508719d0c06e5c6c056c80dc448ee6f8d"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_072.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_072.md",
+      "kind": "manuscript",
+      "size": 17222,
+      "sha256": "439718dd3720e2a061c77c5fa39d69b3536e0b14df649147a3e778d9e45acf60"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_073.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_073.md",
+      "kind": "manuscript",
+      "size": 11569,
+      "sha256": "a4307cc1b477eda57c7939820bc476d61640a1e1b91612f8ddbc0092a9f4a9c8"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_074.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_074.md",
+      "kind": "manuscript",
+      "size": 18183,
+      "sha256": "b3ab8377d47e6e297981463fbb4f7e6fdc072d8fcc33fb248723f741f9cb1848"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_075.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_075.md",
+      "kind": "manuscript",
+      "size": 14772,
+      "sha256": "92579418c91934e6566887c5988ff6d96dc01494cd7fb88d2fea333d9be1f8a9"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_076.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_076.md",
+      "kind": "manuscript",
+      "size": 22956,
+      "sha256": "cc52193dd98f65f4f9a4a26dc52e0d6ab76413861162008866843433905da13d"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_077.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_077.md",
+      "kind": "manuscript",
+      "size": 16251,
+      "sha256": "7d598ea8f4cf45af2ef3b0772bbcc7891024263f9a4d42916007903e8f7a4e89"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_078.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_078.md",
+      "kind": "manuscript",
+      "size": 17609,
+      "sha256": "dcf04cda5e28b7435f0c0aa890500bfb4ffe2936fb91a688b55c13cb30b73e36"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_079.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_079.md",
+      "kind": "manuscript",
+      "size": 27018,
+      "sha256": "2ea9b7d77f4ccfc60f85f6686b6a522355724ff11332e37b6e2f5a0ebedb3ac7"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_080.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_080.md",
+      "kind": "manuscript",
+      "size": 17717,
+      "sha256": "ff881d0363fc59f9185eb27cc63ba9264b4906712754f591328689dbd2dc15e6"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_081.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_081.md",
+      "kind": "manuscript",
+      "size": 13290,
+      "sha256": "1dc6d2b4eb2b38289d4d484ff063da0422f78f0242fd9a3105d1f3d0d04cb5a6"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_082.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_082.md",
+      "kind": "manuscript",
+      "size": 22341,
+      "sha256": "3acc8413fba8b884411d5bfdb6d0e24627b7ef4cf8a75cf7da74eff34bb0ad91"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_083.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_083.md",
+      "kind": "manuscript",
+      "size": 16325,
+      "sha256": "9e64ab852723adf11ca603ed28536d03ac917fe998700ed6365780fa6d3e515e"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_084.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_084.md",
+      "kind": "manuscript",
+      "size": 16673,
+      "sha256": "2286dfd286df2277360d27287361873ba8a9f34db98f9e81ae085c53a0b2da6a"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_085.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_085.md",
+      "kind": "manuscript",
+      "size": 15932,
+      "sha256": "1c47ff23f5c07a2968b7315484544420615e4fe11411838422cef88ab36fdda6"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_086.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_086.md",
+      "kind": "manuscript",
+      "size": 14688,
+      "sha256": "9ddf7d83812616e3c31a0eee612da2c108b6bcec7706ca105a2c9043c2402832"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_087.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_087.md",
+      "kind": "manuscript",
+      "size": 11401,
+      "sha256": "91c4c2f36cbd1134776817be8d8931efbe5bc9e1bc858f662141b8fcac91874c"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_088.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_088.md",
+      "kind": "manuscript",
+      "size": 19160,
+      "sha256": "c728ff62dda7b4713f50c51ee878510f38757bc2d7e2ecf04365dafc3c193e09"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_089.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_089.md",
+      "kind": "manuscript",
+      "size": 14955,
+      "sha256": "e4f2cc9036513a89036eb3b5875ba822efb2a126fd5382d7b397d277f3dab059"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_090.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_090.md",
+      "kind": "manuscript",
+      "size": 17100,
+      "sha256": "c0731fb4f7e863c00e916c58cafdfe02d6f97c412fcb5351bfb3ca3ff2b736ef"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_091.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_091.md",
+      "kind": "manuscript",
+      "size": 20839,
+      "sha256": "1c9be7d3b8bcf3069bb0eba389596693d69245de182f8db1a8a7548062317613"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_092.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_092.md",
+      "kind": "manuscript",
+      "size": 12134,
+      "sha256": "94e7446bfef3e2b1d66ea3336ee092bdf23f39c86098e437f20eddc77feff243"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_093.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_093.md",
+      "kind": "manuscript",
+      "size": 16467,
+      "sha256": "3c540f19f22fd8ac22af6bf3886720d646716d7bd97ac1e496929d69e9623d32"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_094.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_094.md",
+      "kind": "manuscript",
+      "size": 13272,
+      "sha256": "b45075879ecf7a35c78cac4a5ace980e23fe5473ce150807be01c89300f699cb"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_095.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_095.md",
+      "kind": "manuscript",
+      "size": 18415,
+      "sha256": "2c957e9e9c273c00d65e94c375a67b11e7b1ae7264e0b10aabf7300f7828fb72"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_096.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_096.md",
+      "kind": "manuscript",
+      "size": 17831,
+      "sha256": "ad242921ad881351161e3a7fc8e3dc7e2d77bf3bbcae1d39a14007cef0c4a200"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_097.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_097.md",
+      "kind": "manuscript",
+      "size": 24174,
+      "sha256": "fc5ecbdef0aa0c5a17c18640d9656bc0e0c0acb2b7f7ae852730b76f2364823c"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_098.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_098.md",
+      "kind": "manuscript",
+      "size": 29029,
+      "sha256": "0da98f5a849cae72b7810b823ff0ad08ad43671414d9eb15f274c627ce6e9832"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_099.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_099.md",
+      "kind": "manuscript",
+      "size": 8692,
+      "sha256": "201e3da98ff9b6abff23103cf881510d6009a3e8d04c5b7b3ac3a4a6dbe3746d"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_100.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_100.md",
+      "kind": "manuscript",
+      "size": 14994,
+      "sha256": "19550622f53360265842bbb01fc169ac8e7ddb0f8744fd180388d262c6673593"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_101.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_101.md",
+      "kind": "manuscript",
+      "size": 14782,
+      "sha256": "9665c1a7add5dbf13c760ee8bd49b64fbfc428c465e172fc5c6c6686c0f7fd18"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_102.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_102.md",
+      "kind": "manuscript",
+      "size": 17174,
+      "sha256": "4fd63f48fdfe23f465c3427457460ee54c3c975b29d6197fc9981570ef8dc289"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_103.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_103.md",
+      "kind": "manuscript",
+      "size": 19782,
+      "sha256": "b2545f01052ff5d8909ae16feee37e1c5f9f471a306abf068505e4f65a102f93"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_104.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_104.md",
+      "kind": "manuscript",
+      "size": 14748,
+      "sha256": "7c0d522193e38bfc84e30910fcc2c7b6467516e4bd6a30e13e926e5a102207fe"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_105.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_105.md",
+      "kind": "manuscript",
+      "size": 20768,
+      "sha256": "e1fad0809fda863941ec850df824a293c995818fc656969db1e2928c556c95e3"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_106.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_106.md",
+      "kind": "manuscript",
+      "size": 18864,
+      "sha256": "0ff8a59c01ada94e05551bc072a8887bc9ff774617fe59ed45391ce77fe1d9f7"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_107.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_107.md",
+      "kind": "manuscript",
+      "size": 15082,
+      "sha256": "bfd48e4d855cb1bc4921b6c97672f7207f9503f799a53c70c4dfa95b8cffdad9"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_108.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_108.md",
+      "kind": "manuscript",
+      "size": 21823,
+      "sha256": "6dae6cb63bb8746a710a738d242483eea87acf5a16c531e2906dca7bbb837d9d"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_109.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_109.md",
+      "kind": "manuscript",
+      "size": 13771,
+      "sha256": "cb8d8c7b952ca9bf8743a73036bb8e3861c42ecc416377385d89a225c983ff8c"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_110.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_110.md",
+      "kind": "manuscript",
+      "size": 20366,
+      "sha256": "1ed34e179cd10b8657e026bc5247db41168588ff9742583c2c777f289f0bb644"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_111.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_111.md",
+      "kind": "manuscript",
+      "size": 13558,
+      "sha256": "b68a20c2e42c241ee77c4a167c98b2fbeb7b30aef694ed7ade5cca787b63b859"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_112.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_112.md",
+      "kind": "manuscript",
+      "size": 16512,
+      "sha256": "2d02aebe09a79d9e40ae577d5d6332d552bc9ab2355ac3695461c78f5e9b8e2b"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_113.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_113.md",
+      "kind": "manuscript",
+      "size": 8592,
+      "sha256": "b67cdbc0119df54796d205884ab1b0757c9ffe821dce418aaab6fe81cad823fc"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_114.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_114.md",
+      "kind": "manuscript",
+      "size": 15096,
+      "sha256": "6a6c4b8bd3380834f485292a8fb1487a9727a20d6d9f1fad0a1636db03a4585d"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_115.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_115.md",
+      "kind": "manuscript",
+      "size": 19740,
+      "sha256": "56130af6ec4b9ef8ebf60ca116f9dc04e8e573f77c548fd186fafa6cca6286c6"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_116.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_116.md",
+      "kind": "manuscript",
+      "size": 15809,
+      "sha256": "b8d4c7f84f66ffc23ae425eda69db736efa5b5e4ba0c07e5002adf7c715f8df3"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_117.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_117.md",
+      "kind": "manuscript",
+      "size": 16150,
+      "sha256": "a1fbf06e1a49fff32a47c8147ecdb4945de179980e3121dd2c67a15f535448d0"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_118.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_118.md",
+      "kind": "manuscript",
+      "size": 15774,
+      "sha256": "569ed463bc83569497717bc9f6c35f18a5c2ff378754aa5cc0afd4363a3c3d1b"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_119.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_119.md",
+      "kind": "manuscript",
+      "size": 9967,
+      "sha256": "c2aa808935b730c2753c45a7db4ede7aee993589e866634475cf504e908061a9"
+    },
+    {
+      "source_relative": "data/manuscript/arc_001/ch_120.md",
+      "target_relative": "data/novels/rebirth_sweet/data/manuscript/arc_001/ch_120.md",
+      "kind": "manuscript",
+      "size": 18278,
+      "sha256": "e7c81acd902aeb6db1a140eb22ae1bb15a4db349fdd2d774fdf45a451de546ca"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_0_20260628_212610.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_0_20260628_212610.json",
+      "kind": "snapshot",
+      "size": 203,
+      "sha256": "0b871b6085c3602907138a144d64ae4cd19fc37650e3994d77957d7eca4c60ee"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_0_20260628_213527.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_0_20260628_213527.json",
+      "kind": "snapshot",
+      "size": 4225,
+      "sha256": "1ab5e1d8b62db83ed51d9af2808ac06f593e9f4a9755210063c9b13c94a0a16e"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_0_20260628_213809.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_0_20260628_213809.json",
+      "kind": "snapshot",
+      "size": 679,
+      "sha256": "8ef44a3936d836b3f4debd99e64ffa7e20eaf20eee4bbc0b3b57a93825a8eb16"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_0_20260628_214157.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_0_20260628_214157.json",
+      "kind": "snapshot",
+      "size": 2656,
+      "sha256": "f7485ea2d742ac78a9769bf1463896918e3af56bbd3b42425f0c1738b7674027"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_0_20260628_214456.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_0_20260628_214456.json",
+      "kind": "snapshot",
+      "size": 2794,
+      "sha256": "a1770952f6840616b537d0cc7505a4855aa910d077897afc91d0eab00965da31"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_0_20260628_214805.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_0_20260628_214805.json",
+      "kind": "snapshot",
+      "size": 3019,
+      "sha256": "72a16b67fc2d7c1e617409fa86476554cfe9fcc1d3392d7858d4aeac1546c307"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_0_20260628_215035.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_0_20260628_215035.json",
+      "kind": "snapshot",
+      "size": 4249,
+      "sha256": "041465e33c0484928a1890b617868980cdf94b86611ea2f335c0f3542ebfe1f6"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_100_20260629_024613.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_100_20260629_024613.json",
+      "kind": "snapshot",
+      "size": 2714,
+      "sha256": "a3b4aae7bdb9f3fed299b7276cc430609728aed2bf8af0ce0f86c4932042d172"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_101_20260629_024756.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_101_20260629_024756.json",
+      "kind": "snapshot",
+      "size": 3042,
+      "sha256": "1ca5999b17fd581282958f1d0205851a4c10e6e68b6739a5a71bc1014f98fadb"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_102_20260629_024943.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_102_20260629_024943.json",
+      "kind": "snapshot",
+      "size": 2791,
+      "sha256": "5887ed10e28974447d4b15ce1606ec67ab852c962092919f0de709bd66bef6ad"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_103_20260629_025108.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_103_20260629_025108.json",
+      "kind": "snapshot",
+      "size": 3421,
+      "sha256": "83b77b638272941e814c91784403dc78aa66404a8a9a68a4f2f03d0d6d2c626b"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_104_20260629_025300.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_104_20260629_025300.json",
+      "kind": "snapshot",
+      "size": 3224,
+      "sha256": "c5430472fe12e28bbc1a8829bdb741ddda2aab7dbb76390799257f12cf423de6"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_105_20260629_025443.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_105_20260629_025443.json",
+      "kind": "snapshot",
+      "size": 4820,
+      "sha256": "02601589bd5c266325e0dc7bbc072f462a195e8e217e60d768685c7180ab097c"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_106_20260629_025609.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_106_20260629_025609.json",
+      "kind": "snapshot",
+      "size": 1887,
+      "sha256": "aa06e9e061f7bcee341def8b49e61a9891f51fb989df17333d2c66c3a6d7f6f5"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_107_20260629_025807.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_107_20260629_025807.json",
+      "kind": "snapshot",
+      "size": 2601,
+      "sha256": "4361e05f4088c92c9d3fe945237061f67f22e0c70c791957bb31a790c9776369"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_108_20260629_025927.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_108_20260629_025927.json",
+      "kind": "snapshot",
+      "size": 3498,
+      "sha256": "a2083ac94be0a3aa8dc30c8baecc5085170dfb832bf8fd91ed3a62e029dcef67"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_109_20260629_030137.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_109_20260629_030137.json",
+      "kind": "snapshot",
+      "size": 5151,
+      "sha256": "6a41ad5b0c20e13f1376181d107c57be299c0e075107a55c6a8f8337943f4975"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_10_20260628_225939.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_10_20260628_225939.json",
+      "kind": "snapshot",
+      "size": 3885,
+      "sha256": "1aa9b522fa78d51adc4c9fb6790dcdc75fca0626907d44e36876bce2cdd8e08a"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_110_20260629_030312.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_110_20260629_030312.json",
+      "kind": "snapshot",
+      "size": 2774,
+      "sha256": "7124d5ca3f642c5b40719d387b513c14747fc07ed8d568480a6c50f6e1f7f9ac"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_111_20260629_030458.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_111_20260629_030458.json",
+      "kind": "snapshot",
+      "size": 2766,
+      "sha256": "96c1e8e45ccb28fd6952991a87071f128097f2542c517fa4d22bf9e52b885ee9"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_112_20260629_030610.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_112_20260629_030610.json",
+      "kind": "snapshot",
+      "size": 3155,
+      "sha256": "242a7e337c05f182893f88d10828baac56b1134548f5ea28480e0370179dd6d1"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_113_20260629_030747.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_113_20260629_030747.json",
+      "kind": "snapshot",
+      "size": 2816,
+      "sha256": "4ce1f0354bedc4eec55a9257ed7544ffb7a690815d5f68b14ce3401658a656eb"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_114_20260629_030939.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_114_20260629_030939.json",
+      "kind": "snapshot",
+      "size": 2237,
+      "sha256": "fcaa3f130a84c1bcb8c7bd5c3ecf1b8a7dc29c5a76bd1fb48be8ace2ce84cc2e"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_115_20260629_031113.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_115_20260629_031113.json",
+      "kind": "snapshot",
+      "size": 2096,
+      "sha256": "2c79bf61c743b098b78c7dad22055f56f47e673434f2034357087d84626f9ab8"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_116_20260629_031246.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_116_20260629_031246.json",
+      "kind": "snapshot",
+      "size": 2960,
+      "sha256": "7515b47cdbd9a04483dbc1fac497703bf13a2a8eb50151daa31d609909a65ce0"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_117_20260629_031426.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_117_20260629_031426.json",
+      "kind": "snapshot",
+      "size": 3071,
+      "sha256": "d4518b99612ae53adbbeb277d7936ddaa75af1b77a72d2221fb63c497704ee7e"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_118_20260629_031534.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_118_20260629_031534.json",
+      "kind": "snapshot",
+      "size": 2400,
+      "sha256": "511552515606fdd94ab48bb0b1b4301c25332b801ced8e95249ada0abf7c82d3"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_119_20260629_031713.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_119_20260629_031713.json",
+      "kind": "snapshot",
+      "size": 2076,
+      "sha256": "e5420f474b01a2ef1ea684912f25b54cfce8d930e4d56612a579ed4cf17cbc82"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_11_20260628_230153.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_11_20260628_230153.json",
+      "kind": "snapshot",
+      "size": 5769,
+      "sha256": "d2cb17e4504cd67b79b00223561b90bd4b347d92e9114544fcb6e8bac6e9cbe4"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_12_20260628_230318.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_12_20260628_230318.json",
+      "kind": "snapshot",
+      "size": 5540,
+      "sha256": "dfeb12d38c21fdbaf808b6a89aa8237ecd5a6ba15180f601f465fe0949aec004"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_13_20260628_230542.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_13_20260628_230542.json",
+      "kind": "snapshot",
+      "size": 4541,
+      "sha256": "4f2d11c6e5e0c0f5a95fe3b1ee4d7e4875d5cf6b078b991154662b8e5a315012"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_14_20260628_230747.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_14_20260628_230747.json",
+      "kind": "snapshot",
+      "size": 7563,
+      "sha256": "21ff1ce9aa4a84aef095a47fce11ff3e88ef61cfb33e162de665724cdea83eba"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_15_20260628_234554.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_15_20260628_234554.json",
+      "kind": "snapshot",
+      "size": 3075,
+      "sha256": "e6ed0b2bf8ef2a65f7328f3f6c9cc2afec274bffcdae5b4d3061e75d30e12bb7"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_16_20260628_234747.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_16_20260628_234747.json",
+      "kind": "snapshot",
+      "size": 1467,
+      "sha256": "40a5cc5e2b1bfc8dc784c59bae6d9569587fe6b03f092460866a3bfff09ea493"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_17_20260628_234946.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_17_20260628_234946.json",
+      "kind": "snapshot",
+      "size": 1809,
+      "sha256": "321e16da4e754937434c2c5b3ee97bcc4c87617e61e59a960337fdd5b0e97313"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_18_20260628_235152.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_18_20260628_235152.json",
+      "kind": "snapshot",
+      "size": 3378,
+      "sha256": "5beeee524370227beb771f6c852b4b78493d6778d5e3f2a379ee48643085049c"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_19_20260628_235425.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_19_20260628_235425.json",
+      "kind": "snapshot",
+      "size": 3969,
+      "sha256": "c7c03ea33e023e972a79b3b11079d6f8a156f1e4251c1efd9418e7dd6b1bb573"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_1_20260628_212950.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_1_20260628_212950.json",
+      "kind": "snapshot",
+      "size": 2377,
+      "sha256": "8e676325a240c59127a2ae0b2a7edef23830a0533bb10f82cb399189c47e19ff"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_1_20260628_220252.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_1_20260628_220252.json",
+      "kind": "snapshot",
+      "size": 2078,
+      "sha256": "da34a9f5d47087e00eb2780a1f00bcd020072c56c74776f4c929890c087dd6a4"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_20_20260628_235600.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_20_20260628_235600.json",
+      "kind": "snapshot",
+      "size": 2496,
+      "sha256": "53af20ae731b592fc68e65751f8929c14a35878dc6585092313705fc136b6c30"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_21_20260628_235808.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_21_20260628_235808.json",
+      "kind": "snapshot",
+      "size": 3246,
+      "sha256": "492515b4d6a3972686b333aa86ccb61d3ff0b5ccb9a10f5159270503e0b7de81"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_22_20260628_235949.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_22_20260628_235949.json",
+      "kind": "snapshot",
+      "size": 3342,
+      "sha256": "533b48f4170466d1503f107fa1bf23e33518ebc2999f45352475d179f5325f7c"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_23_20260629_000149.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_23_20260629_000149.json",
+      "kind": "snapshot",
+      "size": 3108,
+      "sha256": "cc59447b43b1d0b286c863a41bc390674477d7c7feee9304119d97e619271597"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_24_20260629_000425.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_24_20260629_000425.json",
+      "kind": "snapshot",
+      "size": 5911,
+      "sha256": "1c70199ea3f3026be8769e01d5f1341392d29b5ec228a8f20c86319042aa24d1"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_25_20260629_000619.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_25_20260629_000619.json",
+      "kind": "snapshot",
+      "size": 6439,
+      "sha256": "69eee68658fa2e7b2a3cdf5f905ad9dc0ff9a965d9f8d2dc0b6b2373d286e0aa"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_26_20260629_000742.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_26_20260629_000742.json",
+      "kind": "snapshot",
+      "size": 3470,
+      "sha256": "a49b8cecb256b624ebea7876e11d5ba57d3810421097595b38a322550f0ce75d"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_27_20260629_000930.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_27_20260629_000930.json",
+      "kind": "snapshot",
+      "size": 3005,
+      "sha256": "f46bfc466babdeee8367b70277dda105cea7e2ca65f46acf3ccbc5428cd5e53e"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_27_20260629_002943.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_27_20260629_002943.json",
+      "kind": "snapshot",
+      "size": 4068,
+      "sha256": "6dc960a8501f23c8aebae101f58fcd90877fbced6a30f0f9c4ce71c5e04ec689"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_28_20260629_001054.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_28_20260629_001054.json",
+      "kind": "snapshot",
+      "size": 3444,
+      "sha256": "a86c1bb15cce2fbee7a1aba7b51b3e671263ef2ab6e5b7c7555f14ac71cbf613"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_28_20260629_003131.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_28_20260629_003131.json",
+      "kind": "snapshot",
+      "size": 2973,
+      "sha256": "ac219dad35adc28681d16dc843c0cec5b6314acc2bdd0ed9fb72647edb2f309a"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_29_20260629_001217.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_29_20260629_001217.json",
+      "kind": "snapshot",
+      "size": 3885,
+      "sha256": "ffca71ebdc9177333e92c8e0ad3c8c6cb9c0e981322dd9e192ebef866a84e46e"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_29_20260629_003322.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_29_20260629_003322.json",
+      "kind": "snapshot",
+      "size": 3269,
+      "sha256": "59305019c2adea1126daed1d10c073aa531003e1d997750209673b99ccb4e48f"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_2_20260628_213238.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_2_20260628_213238.json",
+      "kind": "snapshot",
+      "size": 2878,
+      "sha256": "c7193758882bfe003814b67bf3f1d3fdf1b1d55483f95412e731dd913290a47b"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_2_20260628_220450.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_2_20260628_220450.json",
+      "kind": "snapshot",
+      "size": 2232,
+      "sha256": "ee94bac7875f5549c8a3d15a9fc02cdfb0dcb0f6152d5b94e712b81889c80fb3"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_30_20260629_003500.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_30_20260629_003500.json",
+      "kind": "snapshot",
+      "size": 3926,
+      "sha256": "04a1b27239d646a3b24fe8aaaf51d24cd36ef764d340ab74124579d3ec0ce0dd"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_31_20260629_003655.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_31_20260629_003655.json",
+      "kind": "snapshot",
+      "size": 3059,
+      "sha256": "b0ed62c55aada4d1eb6a21d53e92233c3d15280ff46a175f03080fc75202ac8d"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_32_20260629_003859.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_32_20260629_003859.json",
+      "kind": "snapshot",
+      "size": 4024,
+      "sha256": "6b71dc7c2b2728789f69f06458b4c7d4aa440d9ed9051c71eb7e1db4910c3cb5"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_33_20260629_004037.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_33_20260629_004037.json",
+      "kind": "snapshot",
+      "size": 4376,
+      "sha256": "311c97728c5238d95b5a060573171ea585f04adc2c41667e3317be46fccbce9d"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_34_20260629_004214.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_34_20260629_004214.json",
+      "kind": "snapshot",
+      "size": 2594,
+      "sha256": "20a9722e8f117f85abe04c43b1e5795e59813d96c944627d103175af6e76e12f"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_35_20260629_004418.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_35_20260629_004418.json",
+      "kind": "snapshot",
+      "size": 2505,
+      "sha256": "a094ccba6fd59c83791bb6922b4076b36dc9a4fa43c1418827af220c40ca0fea"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_35_20260629_004734.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_35_20260629_004734.json",
+      "kind": "snapshot",
+      "size": 2649,
+      "sha256": "726607ded891ce78edf3cea60b6900b48c795a16e5326ebe3027f7e03d0f2d23"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_36_20260629_004612.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_36_20260629_004612.json",
+      "kind": "snapshot",
+      "size": 2307,
+      "sha256": "24968687e300f0c760c11b02f14cfd686ea87d1761bf845776e86bcac54dbc9a"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_36_20260629_004912.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_36_20260629_004912.json",
+      "kind": "snapshot",
+      "size": 3210,
+      "sha256": "791d604cc8135d558bb7eadf7af52e4968af2b98e693ef6ad8cb6d98e7ba8636"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_37_20260629_004739.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_37_20260629_004739.json",
+      "kind": "snapshot",
+      "size": 2568,
+      "sha256": "5038ac0b4ad1aa51e870057b8fc65aa95e8254e61cbfc80e13a838d6b90fdc78"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_37_20260629_005112.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_37_20260629_005112.json",
+      "kind": "snapshot",
+      "size": 2381,
+      "sha256": "63191f98248f8bdf35b4dfec07560bea44a6f6783a413c527c6cf7558e578883"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_38_20260629_004939.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_38_20260629_004939.json",
+      "kind": "snapshot",
+      "size": 3028,
+      "sha256": "1c645d1151b15964fcb73a7755049afd559211677a288673a803e184778a142d"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_38_20260629_005245.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_38_20260629_005245.json",
+      "kind": "snapshot",
+      "size": 3066,
+      "sha256": "4a89f3e66dbe60ce0b5977a44f4ff7964565a957adf292156ab14f4522e8d616"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_39_20260629_005111.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_39_20260629_005111.json",
+      "kind": "snapshot",
+      "size": 2598,
+      "sha256": "bec625dbf6ef5883ab2ed484a99262077ae4a29e1d4fa2824bad0316e8a2112f"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_39_20260629_005422.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_39_20260629_005422.json",
+      "kind": "snapshot",
+      "size": 3753,
+      "sha256": "02251dc30d348ca805a667f637fecf3c1620e3dce47782a15311d983b089b438"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_3_20260628_220652.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_3_20260628_220652.json",
+      "kind": "snapshot",
+      "size": 5487,
+      "sha256": "9cc0d512d0c39afb119fa53d107519ec0470618529640c449b911bd366011234"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_40_20260629_005633.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_40_20260629_005633.json",
+      "kind": "snapshot",
+      "size": 4223,
+      "sha256": "de3034516bca2bb3faaa94b0e14f7ea4ff3f0321605975d6645b86b26e7a42fe"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_41_20260629_005823.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_41_20260629_005823.json",
+      "kind": "snapshot",
+      "size": 4753,
+      "sha256": "57c8279bdb9a67aa9a715c4e933bfcb84f38ca01115cfe1286fcf9401a76c3cb"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_42_20260629_010029.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_42_20260629_010029.json",
+      "kind": "snapshot",
+      "size": 4287,
+      "sha256": "8259d38659b878ae3cbf0fa65f552daaef49ee0aec668eb537f92980e4f08564"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_43_20260629_010307.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_43_20260629_010307.json",
+      "kind": "snapshot",
+      "size": 3485,
+      "sha256": "cabb8a4a209716e70d5122284d4d9bb43028c8ac0fa4bb8a72b631823b3fbc53"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_44_20260629_010446.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_44_20260629_010446.json",
+      "kind": "snapshot",
+      "size": 2517,
+      "sha256": "8a969700af35c91788390b144ecab455b497ac0f382acd0802fb12dda048b004"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_45_20260629_010615.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_45_20260629_010615.json",
+      "kind": "snapshot",
+      "size": 3336,
+      "sha256": "32c932a25dc198f6bbaef863869d3cdf59f76405eb7d697549c3160f6c921d61"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_46_20260629_010800.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_46_20260629_010800.json",
+      "kind": "snapshot",
+      "size": 3871,
+      "sha256": "d8c3c4dc2736ae94b6074ecc1f72e8a23e0ad6577f865cadbb0e041f6c9d0e48"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_47_20260629_010952.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_47_20260629_010952.json",
+      "kind": "snapshot",
+      "size": 2650,
+      "sha256": "c79153e0a47521ee5b65ae887429ad9b15dba08766b0ae7865cfcf301dbbbfd2"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_48_20260629_011152.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_48_20260629_011152.json",
+      "kind": "snapshot",
+      "size": 4117,
+      "sha256": "47acca4566ac5b3ec5eea9d9e0c80261587cd66d2213298655f34c4938ac1b2b"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_49_20260629_011339.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_49_20260629_011339.json",
+      "kind": "snapshot",
+      "size": 4288,
+      "sha256": "5cec8d949cfb45b3e8d24a8475dfc76cf48cda55dc04b4e1c7eeede7f0281790"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_4_20260628_220834.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_4_20260628_220834.json",
+      "kind": "snapshot",
+      "size": 7523,
+      "sha256": "e7664086bda86630e91bfb6ef88741509f151d773ec38fb479ded32010896a1a"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_50_20260629_012348.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_50_20260629_012348.json",
+      "kind": "snapshot",
+      "size": 3616,
+      "sha256": "c972e88cfdef4b7e9bce9c5dea25041d6dbf8844343de31bfafac44be8307237"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_51_20260629_012530.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_51_20260629_012530.json",
+      "kind": "snapshot",
+      "size": 5536,
+      "sha256": "d0fdbe38e384321f700b7441344cd251b1c0e882ce1122bd3dd4a6e861908acd"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_52_20260629_012709.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_52_20260629_012709.json",
+      "kind": "snapshot",
+      "size": 8228,
+      "sha256": "06314001e4b5ea418dd44f456dbf76aaa67d026b446c5cd55a6cd09ad8108e3e"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_53_20260629_012831.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_53_20260629_012831.json",
+      "kind": "snapshot",
+      "size": 6426,
+      "sha256": "3343174f8bad6b2f867237ce313e92d1786f5b89010744b92724bcc07f520af5"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_54_20260629_013219.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_54_20260629_013219.json",
+      "kind": "snapshot",
+      "size": 3790,
+      "sha256": "56e9204d69ff2947b322ffd7c0c8dc0b0209902fd7e77242775c1fc85c36fcc3"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_55_20260629_013350.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_55_20260629_013350.json",
+      "kind": "snapshot",
+      "size": 2737,
+      "sha256": "e540a49d1cb8272d37eaa6b6d5bff2cd187902dfb8e3ae52b65248aebe232546"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_56_20260629_013505.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_56_20260629_013505.json",
+      "kind": "snapshot",
+      "size": 2982,
+      "sha256": "63f5109b1b298defc03246ad5b071bf1154c3c69b01e838e905134bc52abd2bc"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_57_20260629_013632.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_57_20260629_013632.json",
+      "kind": "snapshot",
+      "size": 2473,
+      "sha256": "2be625709b0b3a7c1ba77c62c9e505d9b8a447bc4488f3a59eeb60b906fdd740"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_58_20260629_013741.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_58_20260629_013741.json",
+      "kind": "snapshot",
+      "size": 2821,
+      "sha256": "ba6044b51d6ef36301f238d5131609d527454b6f84f586b50c51a6c6bf3d28f8"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_59_20260629_013928.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_59_20260629_013928.json",
+      "kind": "snapshot",
+      "size": 3823,
+      "sha256": "a41e1dd24468c6f860387d287dab6d722c0e723121417e569f294206f6d33da9"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_5_20260628_224647.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_5_20260628_224647.json",
+      "kind": "snapshot",
+      "size": 7790,
+      "sha256": "13d540b789b64d3f014c490bb4ae1e46ca9cf6201152ec61bddc19582908027a"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_60_20260629_014057.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_60_20260629_014057.json",
+      "kind": "snapshot",
+      "size": 4472,
+      "sha256": "00e2273f8e38726f140f3e7fa3432adc943e7759f48ee472890ab43ae28fdcca"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_61_20260629_014251.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_61_20260629_014251.json",
+      "kind": "snapshot",
+      "size": 2263,
+      "sha256": "18e93e7c55e0da843d9186e4980767a8f99869ec843c7d889cb653143cf18049"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_62_20260629_014408.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_62_20260629_014408.json",
+      "kind": "snapshot",
+      "size": 2016,
+      "sha256": "3c23d061fe516f8d44dd3307cda332cd5338c5e1740efa410f727e1239e8b436"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_63_20260629_014518.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_63_20260629_014518.json",
+      "kind": "snapshot",
+      "size": 2727,
+      "sha256": "5c4955b955983fed323d4020c77e5c57343d6c2ed2f3b8f753690052f23cdeb9"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_64_20260629_014646.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_64_20260629_014646.json",
+      "kind": "snapshot",
+      "size": 2934,
+      "sha256": "4eaac053a87aa6d7641355c820c7b3b887422e83cf8491c62285d387755b82e1"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_65_20260629_014834.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_65_20260629_014834.json",
+      "kind": "snapshot",
+      "size": 3358,
+      "sha256": "7226bb3004f6bcaecf0e9046cf4289653a3c8a60d78cb6b09d286530ccd013f4"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_66_20260629_015019.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_66_20260629_015019.json",
+      "kind": "snapshot",
+      "size": 4345,
+      "sha256": "233560393f3a648bb0521a68f9071d04efa4970fd1f79af2c90331f522e70326"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_67_20260629_015157.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_67_20260629_015157.json",
+      "kind": "snapshot",
+      "size": 4351,
+      "sha256": "f72ca638caef15a8035add9ae1df689e4bb6951a1eec70173c697bb13cf66132"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_68_20260629_015352.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_68_20260629_015352.json",
+      "kind": "snapshot",
+      "size": 4852,
+      "sha256": "6e597194b831a2f1ff3a3246fe6005882975581c7e8681afa1389fb0abf7c70e"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_69_20260629_015539.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_69_20260629_015539.json",
+      "kind": "snapshot",
+      "size": 5666,
+      "sha256": "bc73e27a6f6e9825d4ed5411f866cf20b712a9512334c2bf8a5135fa2eb8b6d4"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_6_20260628_225003.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_6_20260628_225003.json",
+      "kind": "snapshot",
+      "size": 7235,
+      "sha256": "eee2dd64a8a41b63b7160cf47653db0f156a1b68e577a6558df997cc7fcb8476"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_70_20260629_015706.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_70_20260629_015706.json",
+      "kind": "snapshot",
+      "size": 7345,
+      "sha256": "7ba4b46b9f51da81e961a4335e720e848a62a317b1868c4a6ff807f8827a3275"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_71_20260629_015841.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_71_20260629_015841.json",
+      "kind": "snapshot",
+      "size": 6426,
+      "sha256": "85c318b07f63f261bd722d26f24edb90fc47884b7f65ad79a0f0ba3a0c3119ef"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_72_20260629_015950.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_72_20260629_015950.json",
+      "kind": "snapshot",
+      "size": 2621,
+      "sha256": "103a503a6a8d3fd334f95e387fa89ea071aabede17958b9cae787c6bb4b6858a"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_73_20260629_020141.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_73_20260629_020141.json",
+      "kind": "snapshot",
+      "size": 3480,
+      "sha256": "dfd39e39c94bdf3ecdad5b577f49ef10a0848ceb5a48b3c652872cc935d1f884"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_74_20260629_020302.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_74_20260629_020302.json",
+      "kind": "snapshot",
+      "size": 2778,
+      "sha256": "79467631257d80edf0ed4d1221a08787803736a6cc5e21f40fa7769d8ef537d2"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_75_20260629_020507.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_75_20260629_020507.json",
+      "kind": "snapshot",
+      "size": 2227,
+      "sha256": "76a32c4ee2906758a672a8433ec067958e6872f40ad66713d21944abc4e2d285"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_76_20260629_020510.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_76_20260629_020510.json",
+      "kind": "snapshot",
+      "size": 1927,
+      "sha256": "4467ac62415a2b6d52fa8c5f508a58c9b5f0444d2f692851118ff4ca32c52682"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_76_20260629_020643.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_76_20260629_020643.json",
+      "kind": "snapshot",
+      "size": 2037,
+      "sha256": "77babe3c4990a2df9c2f7b7f71bbf93b365ddf0a95faebc2e9024ba1088344d7"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_77_20260629_020652.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_77_20260629_020652.json",
+      "kind": "snapshot",
+      "size": 1860,
+      "sha256": "429a65cb5b21a8204eefffdd2288408ad2a86d6b676554eaf21b631b8bbf1614"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_77_20260629_020830.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_77_20260629_020830.json",
+      "kind": "snapshot",
+      "size": 1992,
+      "sha256": "d704e7b09fa6bd7050ef5af49d90eda4399faac744b45fae5381d86b9fa35cb6"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_78_20260629_020815.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_78_20260629_020815.json",
+      "kind": "snapshot",
+      "size": 2004,
+      "sha256": "c6acdb4ca41e0e3eb6ab96dbe754bdac79312ce3d972a42cacf12ee369d3cbc9"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_78_20260629_021100.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_78_20260629_021100.json",
+      "kind": "snapshot",
+      "size": 3378,
+      "sha256": "042860faeb7627a80a3c84b6fe63876d6af7891abdb083b30536ffe0df0edd79"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_79_20260629_020953.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_79_20260629_020953.json",
+      "kind": "snapshot",
+      "size": 2499,
+      "sha256": "e0db13d0b15fd0337fa83c7f059e9eebfdeb4631c84740e0c1bd9c5cca1c8607"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_79_20260629_021241.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_79_20260629_021241.json",
+      "kind": "snapshot",
+      "size": 2025,
+      "sha256": "7c024d3bedeceba27bc29bcf7e08aa5baecf6d196eee4185f34863c145e9fd08"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_7_20260628_225349.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_7_20260628_225349.json",
+      "kind": "snapshot",
+      "size": 6818,
+      "sha256": "73477a3ac142566ab92017f8309f911bea59cb77d0057acee38944c1e08359c8"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_80_20260629_021118.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_80_20260629_021118.json",
+      "kind": "snapshot",
+      "size": 2117,
+      "sha256": "8b5325a55b2ece86f5e741b2eacb4027260b5bf3b09eb5dd2d628e51170f5c80"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_81_20260629_021322.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_81_20260629_021322.json",
+      "kind": "snapshot",
+      "size": 2117,
+      "sha256": "86753de8e96725d158d2ffc8374e0b9a99c7fb17f91cf9bcb52761255070336f"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_82_20260629_021509.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_82_20260629_021509.json",
+      "kind": "snapshot",
+      "size": 2118,
+      "sha256": "5f54172ac7f51eec8018c208a76553297be8caff94a411cd2d38deec1b81486b"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_83_20260629_021656.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_83_20260629_021656.json",
+      "kind": "snapshot",
+      "size": 2509,
+      "sha256": "7b6986c870d6e02f5a78280244ee4695ee36584cdf351c79217b2a7e228b6f46"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_84_20260629_021828.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_84_20260629_021828.json",
+      "kind": "snapshot",
+      "size": 3207,
+      "sha256": "f4aad14f76e00e27aee8284d19feba17c53bfccf353aee1268b97a2d363713fd"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_85_20260629_022001.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_85_20260629_022001.json",
+      "kind": "snapshot",
+      "size": 3399,
+      "sha256": "cc7a70b92607e90cbe5a5ae02f43b6d77efd50716b14403141f5000e723cf095"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_86_20260629_022109.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_86_20260629_022109.json",
+      "kind": "snapshot",
+      "size": 4290,
+      "sha256": "13b1e38c0fb24f78fb2fdff4c5ea0eb08f3e0a9ba6f0fb5a92bb568a5d43e853"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_87_20260629_022246.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_87_20260629_022246.json",
+      "kind": "snapshot",
+      "size": 2592,
+      "sha256": "4ef735431c5aba68c31e0120ca3ac9e573f1f9d71e99e20a51968312b6f99b47"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_88_20260629_022427.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_88_20260629_022427.json",
+      "kind": "snapshot",
+      "size": 2729,
+      "sha256": "b62dff7dcef2699785343f96cb7c7a81c61ea1d1f7a509b98e19649b42db90e5"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_89_20260629_022602.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_89_20260629_022602.json",
+      "kind": "snapshot",
+      "size": 2153,
+      "sha256": "9ff5d802d454e9544644fe4ea33c7974d699afef36d1671c9708545b4ac08f2d"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_8_20260628_225601.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_8_20260628_225601.json",
+      "kind": "snapshot",
+      "size": 5440,
+      "sha256": "674b459ae2b4c29c785f018f8766f1d52ea6150cf815ab387cacdcd436996743"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_90_20260629_022810.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_90_20260629_022810.json",
+      "kind": "snapshot",
+      "size": 2856,
+      "sha256": "038f5e226ff27cc98d85735c70e9c1adad37209d6b21c36ffdb188781a5c0a10"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_91_20260629_022928.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_91_20260629_022928.json",
+      "kind": "snapshot",
+      "size": 3261,
+      "sha256": "172af7ca7b1ccd9060da58d52652fd78d6963d16551dec0cd808261f61807344"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_92_20260629_023108.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_92_20260629_023108.json",
+      "kind": "snapshot",
+      "size": 1617,
+      "sha256": "c1b890a2fbd145a94e2e73984388fa11cafe1fc26a3496a2d830239a884a3d46"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_93_20260629_023237.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_93_20260629_023237.json",
+      "kind": "snapshot",
+      "size": 1981,
+      "sha256": "75a127f0728af8c93b97e6c7574fb7c2e5289780e40b8fe0547c19925d971a83"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_94_20260629_023424.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_94_20260629_023424.json",
+      "kind": "snapshot",
+      "size": 2302,
+      "sha256": "7c78e9cfe76a878f0498bce21e575bbceca215460e61b9cdd2a7dde069388637"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_95_20260629_023620.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_95_20260629_023620.json",
+      "kind": "snapshot",
+      "size": 3145,
+      "sha256": "4a909f6c14c907370c049d96b06ddfbb6d9e7f69e7054c09bf0ccab56445ed3b"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_96_20260629_023825.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_96_20260629_023825.json",
+      "kind": "snapshot",
+      "size": 4610,
+      "sha256": "2d14c9ff69199249547090cdfa82df17f4aa32062dd17ed6313ceb4f6e981d8e"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_97_20260629_024054.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_97_20260629_024054.json",
+      "kind": "snapshot",
+      "size": 3524,
+      "sha256": "868a2049a1e2d9744d37126a983e17383baa24ed5d0332677a5c03d0e613276c"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_98_20260629_024201.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_98_20260629_024201.json",
+      "kind": "snapshot",
+      "size": 2267,
+      "sha256": "754d09aaccde5dc99a5e639c432a7ff31da45782fbd3817aae11b7f1c580cd49"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_99_20260629_024340.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_99_20260629_024340.json",
+      "kind": "snapshot",
+      "size": 2941,
+      "sha256": "31e6779108312f1fdefe41591ae58ce0de7fa99823a6050becf63e13c1d916b2"
+    },
+    {
+      "source_relative": "data/snapshots/snapshot_9_20260628_225752.json",
+      "target_relative": "data/novels/rebirth_sweet/data/snapshots/snapshot_9_20260628_225752.json",
+      "kind": "snapshot",
+      "size": 3883,
+      "sha256": "2db8ac07c0d542912f831c4146b52728e0fd38e93ad58ed6dd1621d396812ae2"
+    },
+    {
+      "source_relative": "data/style/fingerprint.yaml",
+      "target_relative": "data/novels/rebirth_sweet/data/style/fingerprint.yaml",
+      "kind": "asset",
+      "size": 92,
+      "sha256": "8b8e15a80b187ad4749225d0a449298b88faa1c71a59dc5d7bee86af1cc951a9"
+    },
+    {
+      "source_relative": "data/world/current_state.md",
+      "target_relative": "data/novels/rebirth_sweet/data/world/current_state.md",
+      "kind": "world",
+      "size": 1189,
+      "sha256": "09b7f8f2ce0cf7d6b41866369ef9cec9ed2fa465bc5e7a2f74b0cd9e98e587a5",
+      "target_sha256": "a0321fc00512b31feb4d4378af879f2f9e02222a0612031063d082892cda95f1",
+      "transformation": "v2_runtime_normalization"
+    },
+    {
+      "source_relative": "data/world/ledger.md",
+      "target_relative": "data/novels/rebirth_sweet/data/world/ledger.md",
+      "kind": "world",
+      "size": 643,
+      "sha256": "452aa64050fcc1385566756a802e618f907c77e35be9870bac305fafc7b1ea56",
+      "target_sha256": "453c24d5a3cf21434f3f3ef80af23eedcac067af412a24d3a52e1e7ea172e009",
+      "transformation": "v2_runtime_normalization"
+    },
+    {
+      "source_relative": "data/world/relationships.md",
+      "target_relative": "data/novels/rebirth_sweet/data/world/relationships.md",
+      "kind": "world",
+      "size": 398,
+      "sha256": "11488b498809bda8ccdf580e0b29cbf062cbd2d018d8342e262047852d91e1ba",
+      "target_sha256": "70248849857087b5f1ef0434df8bc3d5a3156ed43cc423810b558ec145f8fe78",
+      "transformation": "v2_runtime_normalization"
+    },
+    {
+      "source_relative": "novel_config.yaml",
+      "target_relative": "novel_config.yaml",
+      "kind": "config",
+      "size": 93,
+      "sha256": "5be8f53864a67e4544c68ab17fc1e8a42fc991652a4bddd4c866e51abe5e3419"
+    },
+    {
+      "source_relative": "src/outline.md",
+      "target_relative": "data/novels/rebirth_sweet/src/outline.md",
+      "kind": "source",
+      "size": 3663,
+      "sha256": "d19192bbbbc2ebf7a6b538da10337c8e1bc5a1b5beb118ec3e290be1c9195727"
+    },
+    {
+      "source_relative": "src/world/rules.md",
+      "target_relative": "data/novels/rebirth_sweet/src/world/rules.md",
+      "kind": "source",
+      "size": 316,
+      "sha256": "f5d832c5d0e6b59d2af180d4f3743ce8bb1ef2bd903db07bb8979c48cf3fee31"
+    },
+    {
+      "source_relative": "src/world/terminology.md",
+      "target_relative": "data/novels/rebirth_sweet/src/world/terminology.md",
+      "kind": "source",
+      "size": 239,
+      "sha256": "63a2513210c08ece83e28de7891ea78743608a817bba80d4988961793cf0dd7d"
+    },
+    {
+      "source_relative": "src/world/timeline.md",
+      "target_relative": "data/novels/rebirth_sweet/src/world/timeline.md",
+      "kind": "source",
+      "size": 279,
+      "sha256": "abda84972e6df8f8001ca036924f07947fc1eb5fe1c1ec9c71b275c0c426f659"
+    }
+  ]
+}

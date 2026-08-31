@@ -1,0 +1,305 @@
+{
+  "documents": {
+    "data/foreshadowing/dag.yaml": {
+      "category": "continuity_clues",
+      "category_label": "伏笔与线索",
+      "chunk_ids": [
+        "chunk-dd811287766788246326563a39b205d2ddc00a8a2e36f333370e573dcaa7cc61",
+        "chunk-7451f4c3633186cce1ceee330e1587ac0b2506ea497c3aceac2aaaf7f16cc3b3",
+        "chunk-5b7c189ef6c668eff807a52afdf08dc39c105b55f45e550baee1e42f78f5911b"
+      ],
+      "doc_id": "doc-62fefa20b71452d909222bd5ed00d0985f16d880fd5ebb0c7873ca3dc5905f25",
+      "revision": "ba869645192117a189cbe081107970ee875a47df5283a19c94d3c0a5d8188f26",
+      "scope": "continuity",
+      "source_key": "openwrite-827c46da3cfeecd510432195.yaml",
+      "title": "伏笔DAG"
+    },
+    "data/manuscript/arc_001/ch_001.md": {
+      "category": "core_reference",
+      "category_label": "补充资料",
+      "chunk_ids": [
+        "chunk-b9224c5d996ac2eaf08b7648b1212d46fc684a3e61f1f18f726e8ce01e3a5556",
+        "chunk-52a50a08cf9357fbdb4d4a30cfb483ce1f187fc95cd9d0ebb7916aed009c1f07",
+        "chunk-a60dcaeb7195519862090324e8bd1e10d165ee9c67da1f66f92f01ee3e4fff44",
+        "chunk-6b035a50be5e010b5d9af31cd01a077eb83ec901e03a048e42f70400326667ad",
+        "chunk-967e77991ca29240aa17e665a9c047e1fc9ede7f9b8a76504a1d8e5922fecd12",
+        "chunk-428dfac8b8fade6859856a2dcc6fe9de3467758e9278de586a41704b83f85004",
+        "chunk-375a8d4f38aee72809eec83e2b658017e46720cd03b79dd973aeaff493a65812",
+        "chunk-d87b75441230c9587aa52823175dd82d73195e9cc638df774961c8097b98855e",
+        "chunk-ef5cf3f3ade06fb4fead478ca212bb1f8d97d8660b017239d7888978a0bef03c",
+        "chunk-0ee73f4eb21633cb8024d34f59b00f8efc8c19e8a2eb58c1f71f8b4c39ad6430",
+        "chunk-b8df63e4cc0b01d73950093fb76e7020e1e605d821ec53344e7b04cf8309ad3b",
+        "chunk-f801993543cdde639b1217d03f46d6ac5db25cae17172f71f0ac4e57f23fcf8d",
+        "chunk-d3cefc49e9b014dced447f2e012d9d1cd7d47249d99f003b671b29e420e8fe2a",
+        "chunk-96b0e35834e9c70fef516ea0d2cd64f122754bd9bd0ff32c09349b76173cf9ea",
+        "chunk-fc950ad9558bfc250dd688399f5c035fe672c6a9325d6edefc4da80865fbb303"
+      ],
+      "doc_id": "doc-5ad4e958f1a6387d7b92243cf45a24540c7147d703df02938692eac325e90849",
+      "revision": "4b22500aad1a5499ad0b91ef2228fbb578dc7f28da9beae00553527b87510aeb",
+      "scope": "chapters",
+      "source_key": "openwrite-9015e589c8b02d9aa9c02788.md",
+      "title": "ch 001"
+    },
+    "data/manuscript/arc_001/ch_002.md": {
+      "category": "core_reference",
+      "category_label": "补充资料",
+      "chunk_ids": [
+        "chunk-6d15914f82bedbdb46400d67fd1f7f182345c94b69616956b6612f7bb39cae92",
+        "chunk-8e5803336c6670cb4540d70113221e161f659e4c95e465cbd221ad374310032d",
+        "chunk-a6bbc88ed429bdcd00a1bb8e271022e4b3c5ceace4dd59eab8e8022e3f69d0f7",
+        "chunk-0d040294c04f45ed7d28dc6dc19c25377d40025c6697cd1a309f312cc32da66c",
+        "chunk-f8419455328a670b622c264fe68cc8a9869ba9993f607c69683b096038d04220",
+        "chunk-789a17eb05a96b8bf44721de7add8e28d2bc0216c658dd07b57cb8bbf587ee59",
+        "chunk-aa44e59ebcdb9ae5d85fc4d1fde6afb02b7aefdffb7981b1b687e87b65f0eee6",
+        "chunk-19b3d164bfa0d6e4032818e652b2274c55bf770977fa8f5714212f024aaa2aa8"
+      ],
+      "doc_id": "doc-5f32fb176a06278dcb8ec68254b1b61ad912d7e0407b643d5671568336ca7f60",
+      "revision": "e449e3dfbad53f1771d08e05bb41ba2c705adf9bc6785febc73c06cef1767ae7",
+      "scope": "chapters",
+      "source_key": "openwrite-c9ca69310def0dd3f3207df3.md",
+      "title": "ch 002"
+    },
+    "data/style/fingerprint.yaml": {
+      "category": "source_text",
+      "category_label": "参考原文",
+      "chunk_ids": [
+        "chunk-ace01484edf0333acc06382269b38be99cce884f9df508cd1793e1bd8dc665a4"
+      ],
+      "doc_id": "doc-efbd0a715ddfc1671ae95a2b139185d4ad8debac561579f9b8c19e8045d4e54d",
+      "revision": "1040bf00e2417f1bf749bf58962deb7c85a66c3ee1cb867b5bd49ef453a79672",
+      "scope": "sources",
+      "source_key": "openwrite-97545ce8b2927b49fee09f13.yaml",
+      "title": "作品风格指纹"
+    },
+    "data/world/current_state.md": {
+      "category": "continuity_state",
+      "category_label": "当前状态",
+      "chunk_ids": [
+        "chunk-7e64049c0bf5c59c1a266746cbccd976cbdc830c5b119a62b9f5c85d2c65a022",
+        "chunk-e31007872ff2ca2f9a854e756a511010410f5580c14a27a373ff741fe0bb3e36"
+      ],
+      "doc_id": "doc-4f774c474712b2e730b287b38991a1e8731e429d8c35453acfd6bf31c8e22ad7",
+      "revision": "2aa96ae099177c166598e65f75b8e0f2b83a4179f8cee498c92f204dde86c63e",
+      "scope": "continuity",
+      "source_key": "openwrite-07a83a2f5455f9aa53176fec.md",
+      "title": "当前状态"
+    },
+    "data/world/ledger.md": {
+      "category": "continuity_relations",
+      "category_label": "关系与资源",
+      "chunk_ids": [
+        "chunk-a0cadc41c0583c673cfa91e307a33ae892ecf7b452cb1ea0e9f9219eac314cd8"
+      ],
+      "doc_id": "doc-7d021ace52bd4d5f7b5ecd84a0eea0f7d047ff49d56801a7f5ebad8f7eeb0fb9",
+      "revision": "425115a472f0d7c0237719f246fdfd1cb6a6296b3a62e0e5498e29585413a147",
+      "scope": "continuity",
+      "source_key": "openwrite-72d0713540fb3431e6bf847c.md",
+      "title": "资源账本"
+    },
+    "data/world/relationships.md": {
+      "category": "continuity_relations",
+      "category_label": "关系与资源",
+      "chunk_ids": [
+        "chunk-0f7746cf1a526fa2c6fe7edf9c86fceadc76b829f64f3eaf5ae6d78fc0dfac2b"
+      ],
+      "doc_id": "doc-850390ef0e2a311b2f9cec5e1dda13c8bdf29c789233dce8c6219551898fb0a7",
+      "revision": "dfb9f5b87760961dc54bd2adcd3a16a46fa5b945c63bf869e78af5dbfbc972d5",
+      "scope": "continuity",
+      "source_key": "openwrite-7ab5658f8f6924e7a2eb2c36.md",
+      "title": "关系状态"
+    },
+    "src/characters/叶冰瑶.md": {
+      "category": "character_core",
+      "category_label": "核心角色",
+      "chunk_ids": [
+        "chunk-6625950f4f644771b018c464bbcf1a3660e39350d93039484ca93b59520ee436"
+      ],
+      "doc_id": "doc-1ca07c0889e50324115c7f81a1136324ee6c360d89773da0c7e300fdd443e840",
+      "revision": "4d74794918fbc14e2349c6297176b5a0652a6a2a6f956f3cc87d2776e275a2d3",
+      "scope": "characters",
+      "source_key": "openwrite-45a156224ce627832f778a7d.md",
+      "title": "叶冰瑶"
+    },
+    "src/characters/拉菲.md": {
+      "category": "character_core",
+      "category_label": "核心角色",
+      "chunk_ids": [
+        "chunk-9245d4148c1403c93599e8dc2697a4937bdfbb1a5bd48825ea698054b38777ed",
+        "chunk-83631ecf2c13251a5b39786bc5af959815a95389ac26aba509db9853a5e3b175"
+      ],
+      "doc_id": "doc-ca1a8199150f5ddc3ee63c94899203b4f8c777aeaa1db0c406f1b11aca71fd5c",
+      "revision": "f25fc54a0e865e1c03b77e6fa0dd6facd9e811a694a8fe893b7089cff033f0e6",
+      "scope": "characters",
+      "source_key": "openwrite-3f6dde83afd2400d3ef8596a.md",
+      "title": "拉菲"
+    },
+    "src/characters/林北.md": {
+      "category": "character_core",
+      "category_label": "核心角色",
+      "chunk_ids": [
+        "chunk-86154ebb5ab53315ab7d1f8c65b404a0a7348246378b9dd7d004596ddc02c330"
+      ],
+      "doc_id": "doc-3a08eb9662ef9e25ce9668c3662c752485791a0c117c8d2006434d3b9f40981d",
+      "revision": "3b192722061113930323fc4a7c9ebe6789d8c03b488fa93b6c8ba9345115200c",
+      "scope": "characters",
+      "source_key": "openwrite-dbaae9611344895b10a2ccd7.md",
+      "title": "林北"
+    },
+    "src/characters/灵汐.md": {
+      "category": "character_main",
+      "category_label": "主角",
+      "chunk_ids": [
+        "chunk-1544c6119f7a24d60a13b7af8fec47baeebd7f799a2f716e6e210a823ffdfb3a",
+        "chunk-d3c15bafd3f569b9a50963621e58ca9956e18652a97dd64978540cbcda96dbf7",
+        "chunk-0b07ae6a7311b841073db225a27d7627dc12613cfd0ac9c5088d006f50b54c4d"
+      ],
+      "doc_id": "doc-23661544f24f9346d88c7cf3bdc3dd9aeb23d70081ac3503f790563956bc742c",
+      "revision": "1063064c785bf5e9d29802d6d9de29e3e21c52260ec464147bfaa0d2d96a0865",
+      "scope": "characters",
+      "source_key": "openwrite-1b49db5ec2aba66f54dc7034.md",
+      "title": "灵汐"
+    },
+    "src/characters/老李.md": {
+      "category": "character_supporting",
+      "category_label": "配角",
+      "chunk_ids": [
+        "chunk-7dc128b0922be7954847d8626e2ef827a8c066e04fb0b5777224be341bd3cd13"
+      ],
+      "doc_id": "doc-7d09d6aa19c9eb28e87e650f837086d59ba2ed2767e9530dc8bc3311ad6ec679",
+      "revision": "634ec9037a9a27c7ed3e848550e50f296549e267699b76772097b315d0ad2c24",
+      "scope": "characters",
+      "source_key": "openwrite-aaf3c0c237e2396c9cc8a80a.md",
+      "title": "老李"
+    },
+    "src/outline.md": {
+      "category": "core_reference",
+      "category_label": "补充资料",
+      "chunk_ids": [
+        "chunk-2ac66c40dbad3030a25c4ec1543090c9613c83776c3dd91d44e09d745b6766b5",
+        "chunk-138d6d39bd522c608590957b26405404ae72715b93ab73288aa3a5e39d6f5f8f",
+        "chunk-7d411a6ed9e0c4f761af9f90bebde987f04fa7e74dc81124addabbc60e293281",
+        "chunk-dc1a0556ee7b329e69bd00cc966fd2760aa462f7d44a6f86afcc36aae7a7dbbc",
+        "chunk-70c73b805ea5c2c6e8aac227abde1162dfbd59501e8461292bfff3035d1c3aa6",
+        "chunk-c64a0abcf3c641e7af9dad7c3dc57c310854465ba4ce298a7b87d59f5ba879f3",
+        "chunk-2fc9dc9394ecbd40c0e92d485ad87c262d0f3ff45d12dca9ef1df6f247a42801",
+        "chunk-be496a9efda3cf0e3b7d0b43b7cb7aedcdbea7e6bfd46876583062668e3ce4ef",
+        "chunk-cc2e9b4fa7a798571a58b8900acc6f6dd54a75b858751c4821bb6f87a70ca661",
+        "chunk-b74e33fbeaac542f85f203c1d655d8233feb53423a9e749db708e849adc42fb9",
+        "chunk-e8588c14b88debef79f85c4c8d03a1474aed0a1fc99c1d4f068b5e378a84a2ac"
+      ],
+      "doc_id": "doc-7e8d860bd46057cfc3463ada5cc93f052d71dbd73082e18629198928a4c88855",
+      "revision": "507797900516ab4f03fe017b5f4300b3363b30268c8a771f07f4ec8bc7dc3ad9",
+      "scope": "outline",
+      "source_key": "openwrite-03c0b596745bbd65e32dc86e.md",
+      "title": "《领主纪元：舰娘枢纽》总纲"
+    },
+    "src/story/author_intent.md": {
+      "category": "core_promise",
+      "category_label": "创作承诺",
+      "chunk_ids": [
+        "chunk-2d903b3ce6ed49e1edd47a92d34407927031cd485ba116f44babebf4d0b62910",
+        "chunk-a9ff6e491a8ae63306cc591e51da74bd300f81ab9b9a2f86319edd93ad51c0b4"
+      ],
+      "doc_id": "doc-70d531ce493e5bd0f5ce6d5029ca3a53c350b34c7b3c26454268fe74c4995da9",
+      "revision": "28d7beae4ae097b446950ed414abc519b56cc8400ddd3a80783206e9891bb2e4",
+      "scope": "core",
+      "source_key": "openwrite-1c81466d1bd8585498d2cdf2.md",
+      "title": "作者意图"
+    },
+    "src/story/background.md": {
+      "category": "core_premise",
+      "category_label": "故事基础",
+      "chunk_ids": [
+        "chunk-baddaa4dd7bfe29514186bedfa68c5ec819ced037812126a5bf3190aef467e15"
+      ],
+      "doc_id": "doc-78f4ff63bb45b89856d21d755803a7e151179b9c1446d6325a5d1b1bdae5744a",
+      "revision": "7fd743da5d8fa803fd1f76c234e5ce40cbf168b2f1c7ecd5f3ec62f5bcdfcd4c",
+      "scope": "core",
+      "source_key": "openwrite-0523fdbb0f4b6f77d2e325b1.md",
+      "title": "故事背景"
+    },
+    "src/story/current_focus.md": {
+      "category": "core_promise",
+      "category_label": "创作承诺",
+      "chunk_ids": [
+        "chunk-c8eca18c62688179a08ae117a14fe6503a08282aeda9bf97272ad12c6517f636",
+        "chunk-aa28f8422113c9127353f79d0d3891f6a8ad00052028feea780c1106640a5524"
+      ],
+      "doc_id": "doc-561e8d25b93ab2643e80a3ca00695ee3ef317a119db2bdf4302749fc721599e7",
+      "revision": "1d29abb36e9c925362ccb88ad84e72dfbfadd4e9211ce00b30d636370f469bd8",
+      "scope": "core",
+      "source_key": "openwrite-d004b7c990aea60481084b84.md",
+      "title": "创作罗盘"
+    },
+    "src/story/foundation.md": {
+      "category": "core_premise",
+      "category_label": "故事基础",
+      "chunk_ids": [
+        "chunk-87a47b1be56ae173efa0e7705e8cc68b4f908bec204c9e275f7732f931ad0563",
+        "chunk-3a66db81b9bca2f78ed5f38e21b198f356fae68a3e3fcd3cfd1ce6ecaff9227f"
+      ],
+      "doc_id": "doc-8b43bcd636fdbbb732c38cd9a8a72d27d2ea0b4c7702a9129b7085b59365ceaa",
+      "revision": "c166d7e2abed304db1912c0bd9e0124149dcc165fc4d4526e568d33ee13b2e04",
+      "scope": "core",
+      "source_key": "openwrite-a31dbc3da488834b128d8082.md",
+      "title": "基础设定"
+    },
+    "src/story/open_questions.md": {
+      "category": "core_reference",
+      "category_label": "补充资料",
+      "chunk_ids": [
+        "chunk-1a96ad076e7aee8c2253287eea326218a6f0e36791e1d2eafe1f9b3889efee55",
+        "chunk-c7ef2a9e2f1522180f8ae04081d3022ab9ff28b185eae596d4c7cf967a1dd73b"
+      ],
+      "doc_id": "doc-b3f5b3a962bda6ee325ae9d32486b2495550f300401186bc8300f7ae2d89c813",
+      "revision": "da6e8548ce07c3452d90b830a9fccbd8853c1a4959e97246bb20cfaf5f50a914",
+      "scope": "core",
+      "source_key": "openwrite-64dda7a4be42d1665061d363.md",
+      "title": "待确认问题"
+    },
+    "src/world/rules.md": {
+      "category": "setting_systems",
+      "category_label": "规则与体系",
+      "chunk_ids": [
+        "chunk-c3fc617061a85b1aa2526eb8adef9a23781b592f415bc669e02c0c6b52652aff",
+        "chunk-70c38f386c916e89022414027bedfe9d62556a278ef1eead362bf0cf4b8a3339",
+        "chunk-b1b233767c9a4feb8ba310af61def9f6415b7b9f0d5bb890a004174bee00f2f4"
+      ],
+      "doc_id": "doc-1b59a87efc10b3eaea64a609ad629e822f0f1b16381e3268bb57beabfcbc7adc",
+      "revision": "1d838fe9fcc55d127cdbcd686b74c3d47da686f4cdba9d3a509650d7c7ca7177",
+      "scope": "settings",
+      "source_key": "openwrite-e51d03b2072e7b0b34c54c13.md",
+      "title": "世界底层规则"
+    },
+    "src/world/terminology.md": {
+      "category": "setting_terms",
+      "category_label": "物品与术语",
+      "chunk_ids": [
+        "chunk-e209bfaa2f21c9ba0597ac85efdf64f23f3feb214a98e207eca1e23742c784b5",
+        "chunk-a827677d0f9d251a6897eae2eb281fa2a2c72af692be4ef918ab13e35d66224f"
+      ],
+      "doc_id": "doc-c40410a2a6f27cbf9b6df8782ba2746aa9f55fba7b16dad02e9ce5a4903787a9",
+      "revision": "3f88abf38d3d6bffa673360aa640fc446e0ec7acd13fea4451b118555df532aa",
+      "scope": "settings",
+      "source_key": "openwrite-3713ca036e5dff5e3cb12b32.md",
+      "title": "术语表"
+    },
+    "src/world/timeline.md": {
+      "category": "setting_history",
+      "category_label": "历史与事件",
+      "chunk_ids": [
+        "chunk-9df6e08ee58650d0c232f78435dd99318af0d48a48a7a6388b23d9cc9820390a",
+        "chunk-34e7e1d89491fc14e8b8eeff6a3349deaa13cf757c099150a7106c3e1c1b47b8"
+      ],
+      "doc_id": "doc-70f3dfc6f4f6b3dc0da83309254fd3dcb42a812f0f66af5c727432c26871360e",
+      "revision": "e9689fa5eab14e26081bd20e1d27e4ed950dbc7e3c7c409ed1ce30fa8907db6d",
+      "scope": "settings",
+      "source_key": "openwrite-ac69fb3d2e7c5a4539b15fa3.md",
+      "title": "关键事件时间线"
+    }
+  },
+  "engine": "HKUDS/LightRAG",
+  "index_kind": "vector",
+  "version": 7,
+  "workspace": "search-4985e40ceed767a1"
+}

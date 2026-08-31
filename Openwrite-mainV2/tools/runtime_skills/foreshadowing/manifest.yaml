@@ -1,0 +1,14 @@
+schema_version: 1
+id: foreshadowing
+version: 1.0.0
+name: 伏笔连续性
+description: 跟踪伏笔的建立、推进和兑现。
+agents: [dante, goethe, writer, reviewer]
+tasks: [write, review, planning, chapter.write, chapter.review]
+allow_tools: ["*"]
+output_contract: text
+requires: [runtime-default]
+budget:
+  max_instruction_chars: 3500
+  max_reference_chars: 0
+  max_tool_calls: 12
