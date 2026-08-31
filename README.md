@@ -1,138 +1,202 @@
 # Star Dominion · 逐梦工具箱
 
-Star Dominion 是一个模块化 Web 单仓库：以在线工具箱为主入口，组合全站认证、A 股研究、AI 长篇写作、AI 角色陪伴、论文查重和 STM32/4G 设备监测。
+> 一个以在线工具箱为入口、把效率工具、股票研究、AI 写作、AI 角色陪伴和设备监测放在同一套本地优先架构里的 Web 单仓库。
 
-仓库中的业务模块保持独立进程与数据边界，通过统一登录、固定端口和 Nginx 路由组成完整网站。开发环境可使用一组 PowerShell 脚本启动、检查和停止全部服务。
+Star Dominion 适合两类使用方式：普通用户从 SD 主站直接打开工具；开发者或部署者按模块启停服务、检查数据边界，并通过统一登录和 Nginx 路由组成完整站点。
 
-## 核心模块
+本 README 是全仓库总览，重点说明“每个模块解决什么问题、如何互相协作、从哪里访问”。各模块的完整安装、环境变量、API、故障排查和生产部署，请以对应子项目 README 为准。
 
-| 模块 | 主要能力 | 技术栈 | 本地入口 |
-| --- | --- | --- | --- |
-| SD 主站 | 在线工具目录、统一导航、认证入口、STM32 页面 | React、TypeScript、Vite | `http://127.0.0.1:8013/` |
-| site-auth | 登录、会话、CSRF、管理员和用户管理 | FastAPI、SQLAlchemy、SQLite | `http://127.0.0.1:8013/auth/login` |
-| 研报中心 | GitHub 每周热门项目扫榜、综合榜及语言分榜 | React、FastAPI、SQLite | `http://127.0.0.1:8013/reports` |
-| 股票研究 | 九点猫研、个人策略、真实行情、K 线、AI 分析、宝妈指数 | React、FastAPI、AKShare | `http://127.0.0.1:8014/stock/` |
-| OpenWrite V2 | 长篇小说写作、审稿、角色、世界观和导出 | 原生 Web、FastAPI、Python CLI | `http://127.0.0.1:8013/openwrite/`（直连 `8001`） |
-| 守岸人 3.0 | AI 角色对话、互动剧情、语音、记忆和世界书 | FastAPI、原生 Web 前端 | `http://127.0.0.1:8006/` |
-| 论文查重 | TXT、DOCX、PDF 双文档相似度分析 | FastAPI、Python | 由 SD 主站调用 |
-| STM32/4G | 北斗、IMU、轨迹、告警、命令和设备 TCP 通信 | Python、WebSocket | `http://127.0.0.1:8013/stm32/` |
-| 视频解析下载 | 抖音/B站单个公开视频解析、清晰度选择和临时下载 | FastAPI、yt-dlp、FFmpeg | `http://127.0.0.1:8013/tool/video-parser-downloader` |
-| 站长工具服务 | 受控 HTTP、DNS、SSL、WebSocket 公网状态检查 | FastAPI、标准库网络栈 | 由 SD 主站调用 |
+## 你可以用它做什么
 
-## 五分钟快速启动
+- **快速处理文件**：PDF、图片、音频、视频、文档、表格、文本和代码工具大多直接在浏览器运行。
+- **完成研究工作流**：从 GitHub 周榜、A 股晨报和候选筛选，到个股结构化依据与可选 AI 分析。
+- **持续创作长篇内容**：OpenWrite V2 将规划、人物、世界观、写作、审稿、修订和导出放在同一工作台。
+- **进行角色陪伴和互动剧情**：守岸人支持角色、记忆、世界书、Persona、分支对话、语音和备份。
+- **连接真实设备**：STM32/4G 服务提供网页数据、设备命令、WebSocket 和受白名单保护的 TCP 长连接。
 
-### 1. 环境要求
+## 模块地图
 
-- Windows 10/11 与 PowerShell 5.1 或更高版本。
-- Python 3.11 或更高版本。
-- Node.js 20 或更高版本，并确保 `node`、`npm`、`npx.cmd` 可用。
+| 模块 | 解决的问题 | 主要能力 | 用户入口 | 详细文档 |
+| --- | --- | --- | --- | --- |
+| **SD 逐梦工具箱** | 临时找工具、处理文件或完成小任务 | 212 个工具、19 个分类、统一搜索、收藏/最近使用、游戏和专业工具 | `http://127.0.0.1:8013/` | [SD/README.md](SD/README.md) |
+| **site-auth** | 多模块共用一套账号与会话 | 登录、会话、CSRF、管理员、用户和服务间校验 | `http://127.0.0.1:8013/auth/login` | 认证约定见本 README 与各模块文档 |
+| **股票研究** | 把市场信息整理成可解释的研究结果 | 九点猫研、个人策略、主板目录、个股详情、AI 分析、宝妈指数 | `http://127.0.0.1:8014/stock/` | [stock-module/README.md](stock-research-package/stock-module/README.md) |
+| **OpenWrite V2** | 长篇小说容易失去设定、事实和写作节奏 | Goethe/Dante 双 Agent、正典资产、写作审稿闭环、版本和导出 | `http://127.0.0.1:8013/openwrite/` | [Openwrite-mainV2/README.md](Openwrite-mainV2/README.md) |
+| **守岸人 3.0** | 让角色对话和互动剧情可以长期维护 | 角色、群聊、记忆、世界书、Persona、Prompt Manager、语音、分支和备份 | `http://127.0.0.1:8013/wuwa/` | [守岸人3.0/README.md](守岸人3.0/README.md) |
+| **研报中心** | 追踪 GitHub 本周热门项目 | 综合榜、语言分榜、采集状态、管理员刷新和 AI 早报 | `http://127.0.0.1:8013/reports` | [research-reports/README.md](research-reports/README.md) |
+| **文档转换中心** | 在不同办公格式之间可靠转换 | Office/PDF/Markdown/HTML/OCR、表格提取和批量 ZIP | 由 SD 工具调用 | [document-converter/README.md](document-converter/README.md) |
+| **视频解析下载** | 处理单个公开短视频 | 抖音/B 站解析、清晰度选择、临时任务和安全下载令牌 | 由 SD 工具调用 | [video-downloader/README.md](video-downloader/README.md) |
+| **论文查重** | 比较两份文档的文本相似度 | TXT、DOCX、PDF 双文档分析 | 由 SD 工具调用 | 代码与测试见 `plagiarism/` |
+| **STM32/4G** | 查看设备数据并下发受控命令 | HTTP、WebSocket、北斗/IMU/轨迹/告警和设备 TCP | `http://127.0.0.1:8013/stm32/` | 代码与配置见 `4G/` |
+| **站长检测** | 在受控范围内检查公开网站状态 | HTTP、DNS、SSL、WebSocket 和基础网络状态 | 由 SD 工具调用 | 代码与测试见 `webmaster-inspector/` |
+
+## 服务、端口与代理（统一表）
+
+所有本地服务按 `8000` 起连续分配。SD 的 `8013` 是统一前端入口，股票前端单独使用 `8014`；生产环境对外只暴露 Nginx 的 `80/443`，后端端口保持内网或回环访问。
+
+| 端口 | 类型 | 服务 | 本地入口或用途 | SD/Nginx 代理路径 | 公网策略 |
+| ---: | --- | --- | --- | --- | --- |
+| **8000** | 后端 | site-auth | `/health`、统一登录与会话 | `/auth-api/` | 仅内部代理 |
+| **8001** | 后端 + 页面 | OpenWrite V2 Studio | `http://127.0.0.1:8001/` | `/openwrite/`、`/ow-api/`、`/ws/` | 仅内部代理 |
+| **8002** | 后端 | 股票主服务 | 晨报、目录、候选、宝妈指数、任务 | `/stock-api/` | 仅内部代理 |
+| **8003** | 后端 | 个股分析适配器 | 调用详细分析流水线 | 无，内部调用 | 不公开 |
+| **8004** | 后端 | 股票模型网关 | 验签并注入服务端模型密钥 | 无，内部调用 | 不公开 |
+| **8005** | 后端 | 论文查重 | 文档上传与相似度分析 | `/plagiarism-api/` | 仅内部代理 |
+| **8006** | 后端 + 页面 | 守岸人 3.0 | 角色聊天和互动剧情 | `/api/`、`/wuwa/` | 仅内部代理 |
+| **8007** | 后端 | STM32 HTTP/WebSocket | 网页数据、设备命令和实时状态 | `/stm32/api/` | 仅内部代理 |
+| **8008** | 设备 | STM32 原始 TCP | 4G 设备长连接 | 不经网页代理 | 只允许设备来源白名单 |
+| **8009** | 后端 | 研报服务 | GitHub 周榜和采集状态 | `/reports-api/` | 仅内部代理 |
+| **8010** | 后端 | 文档转换中心 | Office/PDF/Markdown/HTML/OCR | `/document-api/` | 仅内部代理 |
+| **8011** | 后端 | 视频解析下载 | 公开视频解析和临时任务下载 | `/video-api/` | 仅内部代理 |
+| **8012** | 后端 | 站长检测服务 | 受控 HTTP、DNS、SSL、WebSocket 检查 | `/webmaster-api/` | 仅内部代理 |
+| **8013** | 前端 | SD 主站 | `http://127.0.0.1:8013/` | 根路径统一入口 | Vite 仅用于开发 |
+| **8014** | 前端 | 股票研究前端 | `http://127.0.0.1:8014/stock/` | SD 的 `/stock/` 开发代理 | Vite 仅用于开发 |
+
+股票前端的 Vite `base` 是 `/stock/`：直接访问 `8014` 时打开 `/stock/`，从 SD 主站访问也使用 `/stock/` 代理。OpenWrite V2 页面和 API 在同一个 `8001` Studio 服务中，不再启动旧的独立前端。
+
+## 模块详解
+
+### SD 逐梦工具箱
+
+SD 是整个项目的主入口。当前注册表包含 **212 个工具、19 个分类**，工具名称、搜索标签、隐私级别和稳定状态都集中维护在 `SD/tools/registry.tsx`。
+
+覆盖范围包括：
+
+- **文件与媒体**：PDF 合并/拆分/压缩/加密、图片压缩/裁剪/格式转换、Base64、证件照、音频处理、字幕和公开视频解析。
+- **开发与数据**：JSON/YAML/TOML/CSV、编码与哈希、API/OpenAPI、网络诊断、Cron、CIDR、日志、SQL、Excel/CSV 和文件校验。
+- **办公与学术**：发票 OCR、表格清洗与对比、Word 检查、合同条款辅助、论文格式、参考文献、公式、文献笔记和术语一致性检查。
+- **生活与趣味**：单位换算、密码、条码二维码、压缩包、颜色、文本、抽奖、测评、塔罗星座、鼠标测试和本地小游戏。
+- **棋类游戏**：井字棋、四子棋、五子棋、黑白棋、国际象棋、中国象棋和跳棋，支持单机/双人及本地 AI，棋局不上传服务器。
+
+工具注册信息用 `privacy` 和 `status` 描述边界：`local` 表示浏览器本地处理，`third-party-api` 表示会调用外部服务，`backend-upload` 表示文件会发往本站后端；`stable`、`beta` 和 `experimental` 用于提示成熟度。涉及 OCR、AI、网络目标或媒体平台的工具会在页面中显示额外限制。
+
+页面路由：`/` 首页、`/gj` 完整目录、`/category/:categoryId` 分类、`/tool/:toolId` 工具详情、`/stm32/` 设备窗口、`/auth/login` 登录、`/ai` OpenWrite 入口、`/wuwa` 守岸人入口和 `/stock/` 股票入口。
+
+### site-auth 统一认证
+
+site-auth 是全站唯一的密码与会话来源，使用 FastAPI、SQLAlchemy 和 SQLite，负责：
+
+- 用户登录、登出、会话 Cookie、CSRF 校验和跨模块登录状态；
+- 管理员创建、密码重置、用户身份和权限；
+- 供股票、守岸人、研报等服务使用的内部服务密钥校验。
+
+其他模块不会复制统一账号密码。守岸人只维护一条按 `site_user_id` 绑定的本地影子资料，以兼容角色、聊天和记忆数据。仓库不提供默认管理员账号或密码，首次使用必须由管理员命令创建账号。
+
+### 股票研究
+
+股票模块面向沪深 A 股主板，排除科创板、创业板、北交所、ST 和退市股票。它由 `8002` 主服务、`8003` 分析适配器、`8004` 模型网关和 `8014` React 前端组成。
+
+核心研究链路：
+
+1. **九点猫研**读取隔夜主题、重要消息和上游晨报，形成可解释的候选依据。
+2. **个人策略**独立计算热门题材、2B 法则、首板沿 5 日线、龙头识别和小市值倍量吸筹，不与九研分数混用。
+3. **个股详情**先展示来源、维度分、历史统计、催化、风险和失效条件，再按用户明确选择的配置与模型创建 AI 分析任务。
+4. **宝妈指数**单独采集东方财富公开帖子和小红书只读搜索结果，作为反向情绪温度计，不改变候选排序。
+
+目录和行情优先使用真实数据源并写入 SQLite；上游失败时保留最近成功快照并明确标记状态，不用模拟数据覆盖真实结果。完整 Worker、模型网关、安全边界和故障排查见[股票研究模块 README](stock-research-package/stock-module/README.md)。
+
+### OpenWrite V2
+
+OpenWrite V2 是本地优先的长篇小说创作工作台。`8001` 同时提供 Studio 页面、REST API 和 WebSocket，SD 通过 `/openwrite/` 代理嵌入，不再依赖旧的独立前端。
+
+- **Goethe**负责整理灵感、作者意图、人物、世界观和滚动大纲。
+- **Dante**负责组装上下文、写章、审稿、生成修订建议并推进章节状态。
+- **单一真源**把 `src/` 中的正典资产与运行态手稿、工作流、缓存分开保存。
+- **可追踪创作**支持人物时态、关系、伏笔、章节记忆、版本、checkpoint、批注和 Diff。
+- **参考库与 Skills**支持本地或 OpenAI-compatible embedding，只有人工确认的参考信息才进入项目。
+- **导出与诊断**覆盖 Markdown、TXT、EPUB/PDF 等成书路径，并保留日志、版本和失败恢复边界。
+
+完整 Studio 页面、模型配置、迁移、CLI、Skills、测试和数据目录说明见 [Openwrite-mainV2/README.md](Openwrite-mainV2/README.md)。
+
+### 守岸人 3.0
+
+守岸人是基于 FastAPI、SQLite 和原生 HTML/CSS/JS 的 AI 角色陪伴与互动剧情模块。它把一次性聊天扩展成可恢复的长期会话：
+
+- 角色人设、音色、TTS、Whisper 本地 STT 和多角色群聊；
+- 消息编辑、重新生成、Swipe、分支切换、检查点和对话搜索；
+- 世界书关键词/正则触发、Persona 层级绑定、Prompt Manager 块排序和 Token 预算；
+- 用户记忆、角色羁绊、互动剧情、自定义主角和 Tavern Card PNG/JSON 导入导出；
+- JSONL 阅读导出与完整分支图备份，自动保留最近快照，不物理删除原分支。
+
+账号由 site-auth 统一管理，本地角色、聊天、Cookie、语音和数据库数据留在 `守岸人3.0/data/`，详细配置见[守岸人 README](守岸人3.0/README.md)。
+
+### 研报中心
+
+研报中心是独立 FastAPI 服务，为 SD 的 `/reports` 页面提供 GitHub Trending 周榜。它维护综合榜和 Python、JavaScript、TypeScript、Go、Rust 分榜，保存采集状态与日志，并按 `Asia/Shanghai` 时区每小时更新、每周一建立新一期。公开浏览无需管理员权限，手动刷新和采集诊断复用全站管理员会话。配置与运行方式见[研报服务 README](research-reports/README.md)。
+
+### 文档转换中心
+
+文档转换中心由 SD 的统一入口调用 `8010` 服务，能力由 `/api/v1/capabilities` 动态报告。支持：
+
+- PDF → Word（逐页渲染，保留视觉版式）；
+- Word、Excel、PPT → PDF（LibreOffice headless）；
+- PDF 表格 → Excel；
+- Markdown、HTML → Word；
+- 图片/扫描件 → Word（Tesseract OCR）；
+- 多文件批量转换并返回带 `manifest.json` 的 ZIP。
+
+缺少 LibreOffice、OCR 或表格抽取依赖时，前端会禁用对应模式而不是伪造成功。详细系统依赖、API 和部署见[文档转换中心 README](document-converter/README.md)。
+
+### 视频解析下载
+
+视频服务只处理无需登录即可访问的抖音、哔哩哔哩单个公开视频。浏览器只拿到短期解析令牌、质量选项和任务 ID，原始媒体地址与 yt-dlp 选择器留在后端；任务文件和凭证会自动过期。
+
+当前不承诺合集、多 P、会员/付费、私密、直播或批量内容，也不保证去除原视频水印。B 站部分高清源需要 FFmpeg 合并音视频。完整 API、限流、临时文件和安全边界见[视频服务 README](video-downloader/README.md)。
+
+### 论文查重、STM32/4G 与站长检测
+
+- **论文查重**：`8005` 提供 TXT、DOCX、PDF 双文档上传和相似度分析，SD 通过 `/plagiarism-api/` 调用，具体实现和测试位于 `plagiarism/`。
+- **STM32/4G**：`8007` 提供网页数据和 WebSocket，`8008` 提供设备 TCP 长连接；HTTP 服务默认回环监听，TCP 端口只接受设备来源白名单。
+- **站长检测**：`8012` 提供受控 HTTP、DNS、SSL 和 WebSocket 状态检查，SD 通过 `/webmaster-api/` 调用，目标范围和安全限制由后端统一控制。
+
+## 数据边界与隐私
+
+| 标记 | 数据如何处理 | 常见示例 |
+| --- | --- | --- |
+| `local` | 在当前浏览器内处理，不主动上传文件；页面刷新后是否保留取决于工具说明 | 图片压缩、格式转换、棋类游戏、很多文本/开发者工具 |
+| `backend-upload` | 文件上传到本站对应服务，按任务完成或过期策略清理 | 文档转换、论文查重、部分 OCR |
+| `third-party-api` | 内容发送到工具需要调用的外部平台或模型服务 | 视频解析、远程模型分析、小红书只读采集 |
+
+不要把真实 API Key、管理员密码、Cookie、登录态、数据库、日志或生成文件放进 Git。浏览器端 `VITE_*` 会进入构建产物，只能配置允许公开的值。生产环境应启用 HTTPS、Secure Cookie，并让除设备 TCP 端口外的服务只监听回环地址。
+
+## 本地启动
+
+### 环境要求
+
+- Windows 10/11 与 PowerShell 5.1+；
+- Python 3.11+；
+- Node.js 20+、npm 9+；
 - Git。
 
-小红书登录态采集由 Node.js 启动固定版本的 Playwright MCP，因此运行股票模块时也需要 npm。
-
-### 2. 克隆并安装依赖
-
-```powershell
-git clone https://github.com/yunxigy/Star-Dominion.git
-cd Star-Dominion
-
-python -m venv .venv
-Set-ExecutionPolicy -Scope Process Bypass
-.\.venv\Scripts\Activate.ps1
-python -m pip install --upgrade pip
-
-python -m pip install -e .\site-auth
-python -m pip install -r .\Openwrite-mainV2\requirements.txt
-python -m pip install -r .\plagiarism\requirements.txt
-python -m pip install -r .\4G\requirements.txt
-python -m pip install -r ".\守岸人3.0\server\requirements.txt"
-python -m pip install -e ".\video-downloader[dev]"
-
-Push-Location .\stock-research-package\stock-module\backend
-python -m pip install -e ".[dev,workers]"
-Pop-Location
-
-Push-Location .\stock-research-package\stock-module\analysis-service
-python -m pip install -e .
-Pop-Location
-
-npm ci --prefix .\SD
-npm ci --prefix .\stock-research-package\stock-module\frontend
-```
-
-后续启动前先激活同一个虚拟环境，确保启动脚本找到已安装依赖的 `python`。
-
-### 3. 准备本地配置
+依赖按模块拆分，首次安装请先阅读要启用模块的 README。准备好依赖和 `.env.local` 后，可以用根目录脚本统一管理服务：
 
 ```powershell
 Copy-Item .env.local.example .env.local
-python -c "import secrets; print(secrets.token_urlsafe(48))"
-```
 
-把命令输出填入 `.env.local` 的 `SITE_AUTH_INTERNAL_KEY`。该值至少需要 32 个字符，并且只用于服务间认证。
-
-开发环境中的股票模型主密钥、网关令牌和签名密钥留空时，会在被 Git 忽略的数据目录中自动生成。生产环境必须显式配置所有密钥。
-
-### 4. 启动并检查完整系统
-
-```powershell
+python -m venv .venv
 Set-ExecutionPolicy -Scope Process Bypass
 .\.venv\Scripts\Activate.ps1
 .\scripts\start-local.ps1
 .\scripts\check-local.ps1
 ```
 
-`Set-ExecutionPolicy -Scope Process Bypass` 只影响当前 PowerShell 进程，关闭窗口后自动失效，不会更改系统级执行策略。
-
-`start-local.ps1` 默认启动 12 个后端/设备进程和 2 个前端，共监听 15 个端口（其中 STM32 同时占用 8007、8008）。只需要后端时使用：
+只启动后端/设备服务：
 
 ```powershell
 .\scripts\start-local.ps1 -WithoutFrontends
 ```
 
-运行日志与进程元数据保存在 `.runtime/`，该目录不会提交到 Git。启动失败时优先查看 `.runtime/logs/*.err.log`。
-
-停止脚本只会终止由本仓库启动并记录的进程：
+停止由脚本记录的进程：
 
 ```powershell
 .\scripts\stop-local.ps1
 ```
 
-## 本地服务与访问地址
+脚本以 `scripts/local-services.json` 为唯一端口和健康检查清单；日志与运行元数据在被 Git 忽略的 `.runtime/` 中。完整安装命令、模型变量和单模块启动方式仍以各模块 README 为准。
 
-### 开发前端
+### 创建第一个管理员
 
-| 端口 | 服务 | 地址 |
-| ---: | --- | --- |
-| 8013 | SD 主站与统一登录 | `http://127.0.0.1:8013/` |
-| 8014 | 股票研究前端 | `http://127.0.0.1:8014/stock/` |
-| 8001 | OpenWrite V2 Studio（页面 + API） | `http://127.0.0.1:8001/` |
-
-股票前端的 Vite `base` 是 `/stock/`。直接访问 `http://127.0.0.1:8014/` 时出现路径提示属于正常行为，应打开 `/stock/`；从 SD 主站访问则使用 `/stock/` 代理入口。
-
-### 后端与设备服务
-
-| 端口 | 服务 | 用途 | 公网策略 |
-| ---: | --- | --- | --- |
-| 8000 | site-auth | 全站认证 | 仅经 `/auth-api/` |
-| 8001 | OpenWrite V2 Studio | 页面、写作 API 与 WebSocket | 仅经 `/openwrite/`、`/ow-api/`、`/ws/` |
-| 8002 | 股票主服务 | 晨报、目录、候选、宝妈指数和任务 | 仅经 `/stock-api/` |
-| 8003 | 个股分析适配器 | 调用详细分析流水线 | 内部服务，不公开 |
-| 8004 | 股票模型网关 | 校验签名并注入服务端模型密钥 | 内部服务，不公开 |
-| 8005 | 论文查重 | 文档上传与相似度分析 | 仅经 `/plagiarism-api/` |
-| 8006 | 守岸人 | 角色聊天 API 与页面 | 仅经 `/api/`、`/wuwa/` |
-| 8007 | STM32 HTTP/WebSocket | 网页数据和设备命令 | 仅经 `/stm32/api/` |
-| 8008 | STM32 原始 TCP | 4G 设备长连接 | 只允许设备来源白名单 |
-| 8009 | 研报服务 | GitHub 周榜、采集状态和管理员刷新 | 仅经 `/reports-api/` |
-| 8010 | 文档转换中心 | Office/PDF/Markdown/HTML/OCR 转换与批量打包 | 仅经 `/document-api/` |
-| 8011 | 视频解析下载 | 抖音/B站单个公开视频解析与临时任务下载 | 仅经 `/video-api/` |
-| 8012 | 站长检测服务 | 受控公开网站 HTTP、DNS、SSL、WebSocket 检查 | 仅经 `/webmaster-api/` |
-
-本地脚本会让 HTTP 服务监听 `127.0.0.1`。生产环境由 Nginx 提供统一 HTTPS/WSS 入口，8003 和 8004 不应配置公网反向代理。
-
-## 首次创建管理员
-
-仓库不提供默认管理员账号或默认密码。先准备 `.env.local`，然后在仓库根目录执行：
+仓库不提供默认账号。准备 `.env.local` 后，在根目录执行：
 
 ```powershell
 Get-Content .env.local |
@@ -143,196 +207,97 @@ Get-Content .env.local |
   }
 
 Push-Location site-auth
-python -m site_auth.cli create-admin `
-  --email <ADMIN_EMAIL> `
-  --username <ADMIN_USERNAME>
+python -m site_auth.cli create-admin --email <ADMIN_EMAIL> --username <ADMIN_USERNAME>
 Pop-Location
 ```
 
-命令行随后会显示两次隐藏的密码输入提示。密码至少需要 12 个字符：
+创建后从 `http://127.0.0.1:8013/auth/login` 登录。密码和内部服务密钥只放在本地忽略文件中。
 
-- 在提示后输入密码并按 Enter；终端不回显字符是正常的。
-- 不要在普通的 `PS>` 提示符后直接输入密码，否则 PowerShell 会把它当成命令。
-- 不要把真实密码写进 README、脚本、`.env.local.example` 或 Git。
-
-管理员创建完成后，在 `http://127.0.0.1:8013/auth/login` 使用用户名或邮箱登录。
-
-已有管理员需要修改密码时使用 `reset-admin`。只有明确要删除全部现有账号和会话时，才使用带 `--confirm-delete-all-users` 的 `recreate-admin`；操作前应备份 `site-auth` 数据库。
-
-如需让完整冒烟检查验证登录态，可仅在本地 `.env.local` 中填写：
-
-```dotenv
-SITE_ADMIN_IDENTITY=
-SITE_ADMIN_PASSWORD=
-```
-
-在等号后填写本地管理员用户名（或邮箱）和密码。这两个值只供 `scripts/check-local.ps1` 使用，`.env.local` 已被 Git 忽略。
-
-## 股票研究与宝妈指数
-
-股票模块当前面向沪深 A 股主板，排除科创板、创业板、北交所、ST 和退市股票。主要数据与页面能力包括：
-
-- 股票目录：通过 AKShare 获取真实沪深主板名单，支持代码、中文名称和拼音首字母搜索；工作日 07:45 自动更新，管理员可手动刷新。
-- 九点猫研：把隔夜市场主题映射到 A 股候选，展示完整晨报、候选依据与来源。
-- 个人策略：结合热门题材、2B 法则、首板沿 5 日线和龙头识别生成独立候选池。
-- 题材识别：优先使用同花顺热门概念和概念成分，故障时降级到其他真实行情源。
-- 个股详情：以页面大框展示研究依据、风险、失效条件和东方财富前复权日 K 线，支持 20、60、120 个交易日。
-- AI 分析：登录后选择个人或平台模型配置，对指定股票创建异步详细分析任务。
-
-更完整的 Worker、API、模型网关和故障排查说明见[股票研究模块文档](stock-research-package/stock-module/README.md)。
-
-### 宝妈指数
-
-宝妈指数是独立的反向社区情绪温度计，不参与九点猫研或个人策略候选排序。
-
-- 数据只来自东方财富真实公开帖子和小红书登录态真实搜索结果。
-- 小红书通过 `rednote-mcp` 的只读 Playwright MCP 接入，后端继续提供稳定的 `xhs_*` 适配接口。
-- 系统每天 `08:30` 按 `Asia/Shanghai` 时区自动采集。
-- 管理员可以在股票页面手动刷新。
-- 单个来源失败时保存另一来源的真实结果；两个来源都失败时保留最近真实快照，不用模拟数据覆盖。
-
-首次使用小红书时：
-
-```text
-登录管理员 → 打开 http://127.0.0.1:8014/stock/
-→ 找到“宝妈指数” → 点击“打开小红书登录窗口”
-→ 在 Playwright 浏览器窗口完成登录 → 点击“立即刷新宝妈指数”
-```
-
-登录态仅保存在 `STOCK_XHS_DATA_DIR` 指向的本地数据目录。该目录已被 Git 忽略，不应放入静态目录、公开备份或提交到仓库。
-
-## 项目架构
+## 架构关系
 
 ```mermaid
 flowchart TB
     Browser["浏览器"] --> SD["SD 主站 :8013"]
-    Browser --> OWUI["OpenWrite V2 :8001"]
-    Browser --> StockUI["股票研究 :8014"]
-
+    Browser --> StockUI["股票前端 :8014"]
     SD --> Auth["site-auth :8000"]
-    SD --> OpenWrite["OpenWrite API :8001"]
-    StockUI --> StockHub["股票主服务 :8002"]
-    StockHub --> Auth
-    StockHub --> Analysis["分析适配器 :8003"]
-    Analysis --> Gateway["模型网关 :8004"]
+    SD --> OW["OpenWrite V2 :8001"]
+    SD --> Stock["股票主服务 :8002"]
+    Stock --> DSA["分析适配器 :8003"]
+    DSA --> Gateway["模型网关 :8004"]
     SD --> Plagiarism["论文查重 :8005"]
     SD --> ShouAnRen["守岸人 :8006"]
-    SD --> STM32["STM32 HTTP/WS :8007"]
-    SD --> Video["视频解析下载 :8011"]
+    SD --> STM["STM32 HTTP/WS :8007"]
+    SD --> Reports["研报 :8009"]
+    SD --> Docs["文档转换 :8010"]
+    SD --> Video["视频 :8011"]
     SD --> Webmaster["站长检测 :8012"]
-    Device["STM32/4G 设备"] -->|"TCP :8008"| STM32
+    Device["STM32/4G 设备"] -->|"TCP :8008"| STM
 ```
 
-生产环境由 Nginx 将统一域名路径转发到这些服务。开发环境的 SD 与股票两个 Vite 前端各自运行，以便单独调试；OpenWrite V2 在 8001 自带 Studio 页面。
+生产环境由 Nginx 把统一域名的路径转发到这些服务。开发环境使用 SD 和股票两个 Vite 前端，OpenWrite V2 使用 `8001` 自带的 Studio 页面。
 
-## 仓库目录
+## 生产部署入口
 
-```text
-Star-Dominion/
-├── SD/                              # 主站与在线工具
-├── site-auth/                       # 全站认证服务
-├── stock-research-package/
-│   └── stock-module/
-│       ├── backend/                 # 股票主服务、Worker、模型网关
-│       ├── analysis-service/        # 个股分析适配器
-│       └── frontend/                # 股票研究页面
-├── Openwrite-mainV2/                # AI 长篇写作（Studio）
-├── 守岸人3.0/                        # AI 角色陪伴
-├── plagiarism/                      # 论文查重
-├── 4G/                              # STM32/4G 服务
-├── video-downloader/                # 视频解析与临时下载服务
-├── webmaster-inspector/             # 受控站长网络检测服务
-├── scripts/                         # 本地启动、检查、停止脚本
-├── deploy/                          # 当前生产部署示例
-├── .env.local.example              # 本地环境变量模板
-├── .env.production.example         # 生产环境变量模板
-└── nginx.conf                      # Nginx 路由参考
-```
+根目录只保留部署总览，避免重复维护每个模块的细节：
 
-`stock-research-package/upstreams/` 是本地上游检出目录，不属于主仓库提交内容。同花顺题材相关依赖与适配代码保留在股票模块中。
+- [宝塔上线操作手册](deploy/baota/README.md)：服务器进程、目录、Nginx 和上线顺序；
+- [DEPLOY.md](DEPLOY.md)：整合架构、环境变量和生产注意事项；
+- [nginx.conf](nginx.conf)：统一域名的路由参考配置；
+- 各模块 README：该模块的依赖、API、数据目录、密钥和故障排查。
 
-## 配置与敏感信息
+生产上线前至少执行 `nginx -t`，确认 `/openwrite/`、`/stock/`、各 API 前缀和 WebSocket 路由都指向正确的 8000 系列服务；8003、8004 和设备 TCP 端口不应直接暴露公网。
 
-- `.env.local`、`.env.production`、运行日志、缓存、SQLite 数据、构建产物和小红书登录态不得提交。
-- `.env.local.example` 和 `.env.production.example` 只能包含变量名与非敏感示例。
-- `SITE_AUTH_INTERNAL_KEY` 用于内部会话校验，不得复用管理员密码。
-- 股票个人模型 API Key 使用 Fernet 加密保存；平台模型 Key 只存在于服务端环境变量。
-- 浏览器端 `VITE_*` 变量会进入构建产物，只能放允许公开且已绑定域名的前端配置。
-- 生产环境必须启用 HTTPS、Secure Cookie，并让除设备 TCP 端口 8008 外的 HTTP 服务只监听回环地址。
+## 测试与维护
 
-提交前至少检查：
-
-```powershell
-git status --short
-git diff --check
-git diff --cached
-```
-
-不要提交 `.runtime/`、`data/`、`dist/`、`node_modules/`、日志、真实环境文件或 API 密钥。
-
-## 测试与检查
-
-完整系统启动后：
+完整系统启动后运行：
 
 ```powershell
 .\scripts\check-local.ps1
 ```
 
-该脚本检查端口 `8000`–`8014`、主要健康接口、股票目录、宝妈指数、文档转换与视频解析能力和匿名权限边界；本地配置管理员凭据后，还会检查跨服务登录会话。
-
-常用模块验证：
+常用模块校验：
 
 ```powershell
-# SD
+# SD 工具箱
 npm --prefix .\SD test
 npm --prefix .\SD run lint
 npm --prefix .\SD run validate
 npm --prefix .\SD run build
 
-# site-auth
-python -m pytest .\site-auth\tests
-
-# 股票主服务与分析适配器
+# 股票模块
 python -m pytest .\stock-research-package\stock-module\backend\tests
 python -m pytest .\stock-research-package\stock-module\analysis-service\tests
-
-# 股票前端
 npm --prefix .\stock-research-package\stock-module\frontend test
-npm --prefix .\stock-research-package\stock-module\frontend run build
 
-# OpenWrite V2
+# OpenWrite V2、研报、文档和视频
 python -m pytest .\Openwrite-mainV2\tests
-
-# Webmaster inspector
-python -m pytest .\webmaster-inspector\tests
+python -m pytest .\research-reports\tests
+python -m pytest .\video-downloader\tests
 ```
 
-修改端口、认证 Cookie、Nginx 路由、股票内部签名或跨模块代理后，必须重新运行完整冒烟检查。
+修改端口、认证 Cookie、Nginx 路由、股票签名或跨模块代理后，应重新运行端口契约、模块测试和完整冒烟检查。新增 SD 工具还必须在 `SD/tools/registry.tsx` 注册唯一 ID、图标、分类、隐私级别和状态，并通过 `validate`、测试、TypeScript 和生产构建。
 
-## 生产部署
+## 仓库目录
 
-当前整合架构的宝塔部署步骤见[宝塔上线操作手册](deploy/baota/README.md)。部署时：
-
-1. 从 `.env.production.example` 创建服务器私有环境文件并生成互不相同的密钥。
-2. 使用独立 Python 虚拟环境运行各后端进程。
-3. 构建 SD 与股票两个前端并由 Nginx 托管；OpenWrite V2 由 8001 Studio 服务提供页面和 API，不使用 Vite 开发服务器承载生产流量。
-4. 保留既有 `/stock/`、`/stock-api/` 路由，合并配置前先执行 `nginx -t`。
-5. 仅向设备白名单开放 8008，其他服务不直接暴露公网。
-6. 上线前备份认证、股票、守岸人和 OpenWrite 数据目录。
-
-根目录 `DEPLOY.md` 包含部分合并前的历史端口示例，只适合作为背景资料；当前端口与进程应以本 README、`deploy/baota/README.md`、`nginx.conf` 和实际启动脚本为准。
-
-## 子项目文档
-
-- [SD 主站](SD/README.md)
-- [股票研究模块](stock-research-package/stock-module/README.md)
-- [OpenWrite V2](Openwrite-mainV2/README.md)
-- [守岸人 3.0](守岸人3.0/README.md)
-- [视频解析下载服务](video-downloader/README.md)
-- [宝塔上线操作手册](deploy/baota/README.md)
+```text
+Star-Dominion/
+├── SD/                              # 主站与 212 个在线工具
+├── site-auth/                       # 全站认证服务
+├── stock-research-package/
+│   └── stock-module/                # 股票后端、分析适配器和前端
+├── Openwrite-mainV2/                # AI 长篇写作 Studio
+├── 守岸人3.0/                        # AI 角色陪伴与互动剧情
+├── research-reports/                # GitHub 周榜研报
+├── document-converter/              # 文档转换服务
+├── video-downloader/                # 视频解析下载服务
+├── plagiarism/                      # 论文查重服务
+├── 4G/                              # STM32/4G 服务
+├── webmaster-inspector/             # 站长网络检测服务
+├── scripts/                         # 启动、检查、停止脚本
+├── deploy/                          # 生产部署示例
+└── nginx.conf                       # Nginx 路由参考
+```
 
 ## 许可证与第三方项目
 
-本仓库当前没有统一的根许可证文件。股票模块整合了多个开源上游与数据适配器，各自的版权和许可状态可能不同。
-
-对外分发、商业部署或二次授权前，请逐项核对所使用子项目、npm/Python 依赖、数据源以及上游仓库的最新许可证和服务条款。小红书和东方财富采集仅应在合法授权、合理频率和只读场景下使用。
+本仓库当前没有统一的根许可证文件。股票、OpenWrite、前端依赖、模型、数据源和设备相关组件可能分别拥有不同许可证或服务条款。对外分发、商业部署或二次授权前，请逐项核对对应子项目和上游项目的最新许可；采集功能只应在合法授权、合理频率和只读场景下使用。
