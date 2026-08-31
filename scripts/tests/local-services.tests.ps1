@@ -7,7 +7,28 @@ Describe 'local service manifest' {
         $ports = @($manifest.services | ForEach-Object { $_.ports })
         @($ports | Sort-Object | Get-Unique).Count | Should Be $ports.Count
         ($ports -contains 8000) | Should Be $true
-        ($ports -contains 5175) | Should Be $true
+        ($ports -contains 8014) | Should Be $true
+        (@($ports | Where-Object { $_ -lt 8000 })).Count | Should Be 0
+        (@($ports | Sort-Object) -join ',') | Should Be ((8000..8014) -join ',')
+    }
+
+    It 'uses the V2 OpenWrite service and the 8000-series frontend ports' {
+        $manifest = Get-LocalServiceManifest -Path (Join-Path (Join-Path $PSScriptRoot '..') 'local-services.json')
+        $openwrite = @($manifest.services | Where-Object { $_.name -eq 'openwrite' })
+        $sd = @($manifest.services | Where-Object { $_.name -eq 'sd-frontend' })
+        $stock = @($manifest.services | Where-Object { $_.name -eq 'stock-frontend' })
+        $openwrite.Count | Should Be 1
+        [string]$openwrite[0].working_directory | Should Be 'Openwrite-mainV2'
+        (@($openwrite[0].ports) -contains 8001) | Should Be $true
+        [string]$openwrite[0].health_url | Should Be 'http://127.0.0.1:8001/api/health'
+        ($openwrite[0].arguments -join ' ') | Should Match '-m tools.cli studio'
+        ($openwrite[0].arguments -join ' ') | Should Match '--port 8001'
+        ($openwrite[0].arguments -join ' ') | Should Match '--no-open'
+        $sd.Count | Should Be 1
+        (@($sd[0].ports) -contains 8013) | Should Be $true
+        $stock.Count | Should Be 1
+        (@($stock[0].ports) -contains 8014) | Should Be $true
+        @($manifest.services | Where-Object { $_.name -eq 'openwrite-frontend' }).Count | Should Be 0
     }
 
     It 'declares a health contract for every service' {

@@ -9,7 +9,7 @@
 ```
 Star-Dominion/
 ├── SD/                 # 在线工具箱（前端）
-├── Openwrite-main/     # AI 写作平台（前后端）
+├── Openwrite-mainV2/   # AI 写作平台（Studio 前后端一体）
 └── 守岸人3.0/           # AI 角色陪伴（前后端）
 ```
 
@@ -19,16 +19,23 @@ Star-Dominion/
 
 | 服务 | 端口 | 说明 |
 |------|------|------|
-| 守岸人 后端 | **8000** | FastAPI + SQLite |
-| Openwrite 后端 | **8001** | FastAPI + 文件系统 |
-| SD 工具箱 | **5173** | Vite 开发服务器 |
-| Openwrite 前端 | **5174** | Vite 开发服务器 |
+| site-auth 认证服务 | **8000** | FastAPI + SQLite，会话与统一登录 |
+| Openwrite V2 Studio | **8001** | 页面、API 与 WebSocket 一体服务 |
+| 股票研究后端 | **8002–8004** | 编排、分析适配器与模型网关 |
+| 守岸人 后端 | **8006** | FastAPI + SQLite，角色对话与世界书 |
+| STM32/4G | **8007–8008** | HTTP/WebSocket 与设备 TCP |
+| 研报服务 | **8009** | GitHub 周榜与研报数据 |
+| 文档转换中心 | **8010** | Office/PDF/Markdown 等转换 |
+| 视频解析下载 | **8011** | 单个公开视频解析与临时下载 |
+| 站长检测 | **8012** | 受控公开网站检测 |
+| SD 工具箱 | **8013** | Vite 开发服务器 |
+| 股票研究前端 | **8014** | Vite 开发服务器 |
 
 **代理关系（通过 SD 入口）：**
-- `localhost:5173/api/*` → `localhost:8000`（守岸人 API）
-- `localhost:5173/openwrite/*` → `localhost:5174`（Openwrite 前端）
-- `localhost:5173/ow-api/*` → `localhost:8001`（Openwrite API）
-- `localhost:5173/wuwa/*` → `localhost:8000`（守岸人前端）
+- `localhost:8013/api/*` → `localhost:8006`（守岸人 API）
+- `localhost:8013/openwrite/*` → `localhost:8001`（OpenWrite V2 Studio）
+- `localhost:8013/ow-api/*` → `localhost:8001`（兼容 API 前缀）
+- `localhost:8013/wuwa/*` → `localhost:8006`（守岸人前端）
 
 ---
 
@@ -43,18 +50,12 @@ Star-Dominion/
 
 ## 依赖安装
 
-### Openwrite 后端
+### OpenWrite V2 Studio
 ```bash
-cd Openwrite-main
+cd Openwrite-mainV2
 pip install -r requirements.txt
 # 主要依赖: fastapi, uvicorn, pydantic, pyyaml, openai, anthropic
 # 导出依赖: ebooklib, markdown, fpdf2
-```
-
-### Openwrite 前端
-```bash
-cd Openwrite-main/frontend
-npm install
 ```
 
 ### SD 工具箱
@@ -74,7 +75,7 @@ pip install -r server/requirements.txt
 
 ## 环境变量
 
-### Openwrite（`.env` 文件，放在 `Openwrite-main/` 根目录）
+### OpenWrite V2（`.env` 文件，放在 `Openwrite-mainV2/` 根目录）
 
 ```env
 LLM_PROVIDER=openai
@@ -87,9 +88,9 @@ LLM_STREAM=true
 LLM_API_FORMAT=chat
 LLM_TIMEOUT_SECONDS=300
 LLM_MAX_RETRIES=3
-OPENWRITE_HOST=0.0.0.0
+OPENWRITE_HOST=127.0.0.1
 OPENWRITE_PORT=8001
-OPENWRITE_CORS_ORIGINS=https://你的域名,http://localhost:5173,http://localhost:5174
+OPENWRITE_CORS_ORIGINS=https://你的域名,http://localhost:8013,http://localhost:8014
 ```
 
 ### 守岸人（`data/config.yaml`，放在 `守岸人3.0/` 根目录）
@@ -119,35 +120,37 @@ llm:
 ### 开发模式
 
 ```bash
-# 1. 守岸人后端 (端口 8000)
+# 1. 统一认证服务（端口 8000）
+cd site-auth && python -m uvicorn site_auth.main:create_app --factory --host 127.0.0.1 --port 8000
+
+# 2. OpenWrite V2 Studio（端口 8001，页面与 API）
+cd Openwrite-mainV2 && python -m tools.cli studio --port 8001 --no-open
+
+# 3. 守岸人后端（端口 8006）
 cd 守岸人3.0 && python -m server.main
 
-# 2. Openwrite 后端 (端口 8001)
-cd Openwrite-main && python start.py
-
-# 3. Openwrite 前端 (端口 5174)
-cd Openwrite-main/frontend && npm run dev
-
-# 4. SD 工具箱 (端口 5173)
+# 4. SD 工具箱（端口 8013）
 cd SD && npm run dev
+
+# 5. 股票研究前端（端口 8014）
+cd stock-research-package/stock-module/frontend && npm run dev
 ```
 
 ### 生产模式
 
 ```bash
-# 1. 守岸人后端
+# 1. 统一认证服务（端口 8000）
+cd site-auth && python -m uvicorn site_auth.main:create_app --factory --host 127.0.0.1 --port 8000
+
+# 2. 守岸人后端（端口 8006）
 cd 守岸人3.0 && python -m server.main
 
-# 2. Openwrite 后端
-cd Openwrite-main && python start.py
+# 3. OpenWrite V2 Studio（页面和 API 由 8001 提供）
+cd Openwrite-mainV2 && python -m tools.cli studio --port 8001 --no-open
 
-# 3. 构建前端
-cd Openwrite-main/frontend && npm run build
-# 产物在 dist/，复制到 Openwrite-main/static/
-cp -r dist ../static
-
-# 4. 构建 SD
+# 4. 构建 SD 与股票前端
 cd SD && npm run build
+cd ../stock-research-package/stock-module/frontend && npm run build
 # 产物在 dist/，用 nginx 托管
 ```
 
@@ -171,10 +174,12 @@ server {
         try_files $uri $uri/ /index.html;
     }
 
-    # Openwrite 前端（静态文件）
+    # OpenWrite V2 Studio（页面和 API 均由 8001 提供）
     location /openwrite/ {
-        alias /path/to/Openwrite-main/static/;
-        try_files $uri $uri/ /openwrite/index.html;
+        proxy_pass http://127.0.0.1:8001/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Forwarded-Prefix /openwrite;
+        proxy_read_timeout 600s;
     }
 
     # Openwrite API（端口 8001）
@@ -195,18 +200,18 @@ server {
         proxy_read_timeout 86400;
     }
 
-    # 守岸人 API（端口 8000）
+    # 守岸人 API（端口 8006）
     location /api/ {
-        proxy_pass http://127.0.0.1:8000;
+        proxy_pass http://127.0.0.1:8006;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
         proxy_read_timeout 600s;
     }
 
-    # 守岸人 WebSocket（端口 8000，用独立前缀避免和 Openwrite 冲突）
+    # 守岸人 WebSocket（端口 8006，用独立前缀避免和 Openwrite 冲突）
     location /ws-shouren/ {
         rewrite ^/ws-shouren/(.*) /ws/$1 break;
-        proxy_pass http://127.0.0.1:8000;
+        proxy_pass http://127.0.0.1:8006;
         proxy_http_version 1.1;
         proxy_set_header Upgrade $http_upgrade;
         proxy_set_header Connection "upgrade";
@@ -274,7 +279,7 @@ server {
 | | `/ws/auto-write` | WS |
 | | `/ws/progress/{task_id}` | WS |
 
-### 守岸人（端口 8000）
+### 守岸人（端口 8006）
 
 | 端点 | 方法 | 说明 |
 |------|------|------|
@@ -296,7 +301,7 @@ server {
 
 ### Openwrite
 ```
-Openwrite-main/
+Openwrite-mainV2/
 ├── .env                    # LLM 配置（不提交）
 ├── novel_config.yaml       # 全局小说配置
 ├── data/
@@ -307,8 +312,7 @@ Openwrite-main/
 │   │   │   └── novel_config.yaml  # 小说独立配置（可选）
 │   │   └── ...
 │   └── trash/              # 回收站
-└── frontend/
-    └── src/                # 前端源码
+└── tools/studio_assets/    # Studio 静态资源
 ```
 
 ### 守岸人

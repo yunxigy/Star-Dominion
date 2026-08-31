@@ -16,20 +16,20 @@
 
 ```
 Star Dominion
-├── SD/                 # 在线工具箱（128+ 工具，端口 5173）
-├── Openwrite-main/     # AI 写作平台（端口 8001 + 5174）
-├── 守岸人3.0/           # AI 角色陪伴（端口 8000）
-└── stock-module/       # 股票研究子模块（端口 8002/8003/8004 + 5175）
+├── SD/                 # 在线工具箱（128+ 工具，端口 8013）
+├── Openwrite-mainV2/   # AI 写作平台（Studio 端口 8001）
+├── 守岸人3.0/           # AI 角色陪伴（端口 8006）
+└── stock-module/       # 股票研究子模块（端口 8002/8003/8004 + 8014）
 ```
 
 三个模块通过 SD 主站统一入口访问：
 
 | 入口 | 路由 | 说明 |
 |------|------|------|
-| SD 工具箱 | `http://localhost:5173` | 主站，工具箱 + 导航入口 |
-| 网文智能体 | `http://localhost:5173/ai` | iframe 嵌入 Openwrite |
-| AI 伴侣 | `http://localhost:5173/wuwa` | 新窗口打开守岸人 |
-| 股票研究 | `http://localhost:5175/stock/`（本地联调） | A 股主板候选、个股 AI 分析与独立宝妈指数入口 |
+| SD 工具箱 | `http://localhost:8013` | 主站，工具箱 + 导航入口 |
+| 网文智能体 | `http://localhost:8013/ai` | iframe 嵌入 OpenWrite V2 |
+| AI 伴侣 | `http://localhost:8013/wuwa` | 新窗口打开守岸人 |
+| 股票研究 | `http://localhost:8014/stock/`（本地联调） | A 股主板候选、个股 AI 分析与独立宝妈指数入口 |
 
 ---
 
@@ -80,37 +80,24 @@ AI 驱动的长篇小说创作平台，Web 端 + CLI 双模式。
 ### 架构
 
 ```
-Openwrite-main/
-├── server/                     # FastAPI 后端
-│   ├── main.py                 # 入口
-│   ├── routers/                # 15 个路由模块
-│   ├── services/               # 工具执行器服务
-│   └── models/                 # 请求/响应模型
-├── tools/                      # Python 工具层
-│   ├── cli.py                  # CLI + 28 个 executor
-│   ├── export.py               # EPUB/PDF 导出
-│   ├── writing_stats.py        # 写作统计
-│   ├── search.py               # 全局搜索
-│   ├── character_graph.py      # 角色关系图
-│   ├── chapter_history.py      # 版本历史
-│   ├── auto_writer.py          # 自动写作引擎
-│   ├── agent/                  # Dante/Goethe Agent
-│   └── llm/                    # LLM 客户端
-├── frontend/                   # React 前端
-│   ├── src/pages/              # 18 个页面
-│   ├── src/components/         # 布局 + 通用组件
-│   └── src/store/              # Zustand 状态管理
+Openwrite-mainV2/
+├── tools/                      # Studio 与 Python 工具层
+│   ├── cli.py                  # CLI 入口
+│   ├── studio_application.py  # Studio 应用服务
+│   ├── studio_http.py         # Studio HTTP 层
+│   ├── studio_assets/          # Studio 页面静态资源
+│   └── agent/                  # Dante/Goethe Agent
 ├── data/novels/{novel_id}/     # 小说数据
 │   ├── src/                    # 真源（大纲、角色、设定）
 │   └── data/                   # 运行态（手稿、工作流、缓存）
-└── start.py                    # 启动脚本
+└── 启动 OpenWrite.bat          # Windows 启动器
 ```
 
 ### API 端点
 
 40+ 个 REST API + 3 个 WebSocket，详见 [DEPLOY.md](DEPLOY.md)。
 
-**技术栈：** Python 3.11 + FastAPI + React 19 + Zustand + WebSocket
+**技术栈：** Python 3.11 + 原生 Web + Python HTTP 服务 + CLI
 
 ---
 
@@ -138,7 +125,7 @@ AI 角色对话与互动剧情平台。
 
 仅覆盖沪深 A 股主板。模块汇总九点猫研和用户策略候选，支持页面内配置硅基流动或其他 OpenAI 兼容 API，并要求每次个股分析都明确选择配置和模型。宝妈指数保持独立，不参与候选排序。
 
-本地采用四进程隔离：React 前端 `5175`、股票主服务 `8002`、个股分析适配器 `8003`、内部模型网关 `8004`。安装、启动、安全边界和 API 说明见 [股票研究模块 README](stock-module/README.md)。
+本地采用四进程隔离：React 前端 `8014`、股票主服务 `8002`、个股分析适配器 `8003`、内部模型网关 `8004`。安装、启动、安全边界和 API 说明见 [股票研究模块 README](stock-module/README.md)。
 
 **技术栈：** Python 3.11 + FastAPI + SQLite + React 19 + TypeScript + Vite 8
 
@@ -148,24 +135,31 @@ AI 角色对话与互动剧情平台。
 
 | 服务 | 端口 | 说明 |
 |------|------|------|
-| 守岸人后端 | **8000** | FastAPI + SQLite |
-| Openwrite 后端 | **8001** | FastAPI + 文件系统 |
-| SD 工具箱 | **5173** | Vite 开发服务器 |
-| Openwrite 前端 | **5174** | Vite 开发服务器 |
-| 股票研究前端 | **5175** | Vite 开发服务器 |
+| site-auth 认证服务 | **8000** | FastAPI + SQLite，会话与统一登录 |
+| OpenWrite V2 Studio | **8001** | 页面、API 与 WebSocket 一体服务 |
 | 股票主服务 | **8002** | 候选、模型配置与分析任务 API |
 | 个股分析适配器 | **8003** | 内部 daily_stock_analysis 适配层 |
 | 内部模型网关 | **8004** | 内部签名路由与 API Key 注入 |
+| 论文查重 | **8005** | 文档上传与相似度分析 |
+| 守岸人后端 | **8006** | AI 角色对话与互动剧情 |
+| STM32 HTTP/WebSocket | **8007** | 网页数据和设备命令 |
+| STM32 原始 TCP | **8008** | 4G 设备长连接 |
+| 研报服务 | **8009** | GitHub 周榜与研报数据 |
+| 文档转换中心 | **8010** | Office/PDF/Markdown 等转换 |
+| 视频解析下载 | **8011** | 单个公开视频解析与临时下载 |
+| 站长检测 | **8012** | 受控公开网站检测 |
+| SD 工具箱 | **8013** | Vite 开发服务器 |
+| 股票研究前端 | **8014** | Vite 开发服务器 |
 
 **代理关系（SD 主站入口）：**
 
 ```
-SD (5173)
-├── /api/*        → localhost:8000  (守岸人 API)
+SD (8013)
+├── /api/*        → localhost:8006  (守岸人 API)
 ├── /ow-api/*     → localhost:8001  (Openwrite API)
 ├── /ws/*         → localhost:8001  (Openwrite WebSocket)
-├── /openwrite/*  → localhost:5174  (Openwrite 前端)
-├── /wuwa         → localhost:8000  (守岸人前端)
+├── /openwrite/*  → localhost:8001  (OpenWrite V2 Studio)
+├── /wuwa         → localhost:8006  (守岸人前端)
 └── /stock-api/*  → localhost:8002  (股票研究公开 API)
 ```
 
@@ -182,38 +176,35 @@ SD (5173)
 ## 快速启动
 
 ```bash
-# 1. 守岸人后端（端口 8000）
+# 1. 统一认证服务（端口 8000）
+cd site-auth && python -m uvicorn site_auth.main:create_app --factory --host 127.0.0.1 --port 8000
+
+# 2. OpenWrite V2 Studio（端口 8001）
+cd Openwrite-mainV2 && python -m tools.cli studio --port 8001 --no-open
+
+# 3. 守岸人后端（端口 8006）
 cd 守岸人3.0 && python -m server.main
 
-# 2. Openwrite 后端（端口 8001）
-cd Openwrite-main && python start.py
-
-# 3. Openwrite 前端（端口 5174）
-cd Openwrite-main/frontend && npm run dev
-
-# 4. SD 工具箱（端口 5173）
+# 4. SD 工具箱（端口 8013）
 cd SD && npm run dev
 
 # 5. 股票研究模块
-# 详见 stock-module/README.md，需要分别启动 8002、8003、8004 和 5175
+# 详见 stock-module/README.md，需要分别启动 8002、8003、8004 和 8014
 ```
 
 访问：
-- **SD 工具箱：** `http://localhost:5173`
-- **Openwrite：** `http://localhost:5174/openwrite/`
-- **守岸人：** `http://localhost:8000`
-- **股票研究：** `http://localhost:5175/stock/`
+- **SD 工具箱：** `http://localhost:8013`
+- **OpenWrite V2：** `http://localhost:8013/openwrite/`（直连 `http://localhost:8001/`）
+- **守岸人：** `http://localhost:8006`
+- **股票研究：** `http://localhost:8014/stock/`
 
 ---
 
 ## 依赖安装
 
 ```bash
-# Openwrite 后端
-cd Openwrite-main && pip install -r requirements.txt
-
-# Openwrite 前端
-cd Openwrite-main/frontend && npm install
+# OpenWrite V2 Studio
+cd Openwrite-mainV2 && pip install -r requirements.txt
 
 # SD 工具箱
 cd SD && npm install
@@ -276,10 +267,9 @@ Star-Dominion/
 │   ├── pages/                  # 页面
 │   ├── tools/registry.tsx      # 工具注册表
 │   └── vite.config.ts
-├── Openwrite-main/             # AI 写作平台
-│   ├── server/                 # FastAPI 后端
-│   ├── tools/                  # Python 工具层
-│   ├── frontend/               # React 前端
+├── Openwrite-mainV2/           # AI 写作平台（Studio）
+│   ├── tools/                  # Python 工具层与 Studio
+│   ├── tools/studio_assets/    # Studio 静态页面
 │   ├── data/novels/            # 小说数据
 │   └── .env                    # LLM 配置
 ├── 守岸人3.0/                   # AI 角色陪伴

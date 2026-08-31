@@ -35,6 +35,21 @@ def test_studio_id_patterns_escape_hyphens_for_browser_v_mode():
     assert 'pattern="[A-Za-z0-9][A-Za-z0-9_-]' not in html
 
 
+def test_studio_assets_are_mountable_under_openwrite_proxy_prefix():
+    assets = Path(__file__).parents[1] / "tools" / "studio_assets"
+    html = (assets / "index.html").read_text(encoding="utf-8")
+    app = (assets / "app.js").read_text(encoding="utf-8")
+    core = (assets / "js" / "core.js").read_text(encoding="utf-8")
+    application = (assets / "js" / "application.js").read_text(encoding="utf-8")
+
+    assert 'href="./styles.css' in html
+    assert 'src="./app.js' in html
+    assert 'import "./js/application.js' in app
+    assert "export function studioPath" in core
+    assert "fetch(studioPath(path)" in core
+    assert "studioPath(`/api/export" in application
+
+
 def test_studio_checkboxes_are_not_stretched_by_dialog_input_styles():
     styles_path = Path(__file__).parents[1] / "tools" / "studio_assets" / "styles.css"
     styles = styles_path.read_text(encoding="utf-8")

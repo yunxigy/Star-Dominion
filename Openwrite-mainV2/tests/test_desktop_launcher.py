@@ -31,12 +31,17 @@ def test_runtime_directory_is_separate_for_macos_and_windows(tmp_path: Path):
 
 
 def test_select_port_reuses_openwrite_or_skips_busy_port(monkeypatch):
-    monkeypatch.setattr(desktop_launcher, "_is_openwrite_server", lambda port: port == 4567)
-    assert desktop_launcher.select_port(4567) == (4567, True)
+    monkeypatch.setattr(desktop_launcher, "_is_openwrite_server", lambda port: port == 8001)
+    assert desktop_launcher.select_port(8001) == (8001, True)
 
     monkeypatch.setattr(desktop_launcher, "_is_openwrite_server", lambda port: False)
-    monkeypatch.setattr(desktop_launcher, "_port_available", lambda port: port == 4569)
-    assert desktop_launcher.select_port(4567) == (4569, False)
+    monkeypatch.setattr(desktop_launcher, "_port_available", lambda port: port == 8003)
+    assert desktop_launcher.select_port(8001) == (8003, False)
+
+
+def test_studio_launcher_defaults_to_port_8001():
+    assert desktop_launcher.DEFAULT_PORT == 8001
+    assert desktop_launcher.build_parser().parse_args([]).port == 8001
 
 
 def test_ensure_runtime_skips_install_when_stamp_and_environment_are_healthy(

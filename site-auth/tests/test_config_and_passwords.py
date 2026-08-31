@@ -13,7 +13,7 @@ def test_internal_key_has_no_default(tmp_path: Path) -> None:
         Settings.from_env(
             {
                 "SITE_AUTH_DATA_DIR": str(tmp_path),
-                "SITE_AUTH_ALLOWED_ORIGINS": "http://127.0.0.1:5173",
+                "SITE_AUTH_ALLOWED_ORIGINS": "http://127.0.0.1:8013",
             }
         )
 
@@ -24,7 +24,7 @@ def test_settings_parse_local_environment(tmp_path: Path) -> None:
             "SITE_AUTH_DATA_DIR": str(tmp_path),
             "SITE_AUTH_INTERNAL_KEY": "k" * 32,
             "SITE_AUTH_ALLOWED_ORIGINS": (
-                "http://127.0.0.1:5173,https://zhumenggy.top"
+                "http://127.0.0.1:8013,https://zhumenggy.top"
             ),
             "SITE_AUTH_COOKIE_SECURE": "false",
         }
@@ -34,7 +34,7 @@ def test_settings_parse_local_environment(tmp_path: Path) -> None:
     assert settings.database_path == tmp_path.resolve() / "auth.db"
     assert settings.internal_service_key == "k" * 32
     assert settings.allowed_origins == (
-        "http://127.0.0.1:5173",
+        "http://127.0.0.1:8013",
         "https://zhumenggy.top",
     )
     assert settings.cookie_secure is False

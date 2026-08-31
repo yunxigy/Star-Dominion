@@ -1,4 +1,6 @@
-const VDITOR_CDN = `${location.origin}/vendor/vditor`;
+import { studioPath } from "./core.js";
+
+const VDITOR_CDN = studioPath("/vendor/vditor");
 
 const editors = new Set();
 const editorsByHost = new WeakMap();

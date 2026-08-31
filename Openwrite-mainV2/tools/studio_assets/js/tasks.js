@@ -1,4 +1,4 @@
-import { $, api, showToast, state } from "/js/core.js";
+import { $, api, showToast, state } from "./core.js";
 
 const watchers = new Map();
 let refreshWorkspace = async () => {};

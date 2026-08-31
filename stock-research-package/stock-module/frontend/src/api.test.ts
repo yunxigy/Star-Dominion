@@ -203,10 +203,10 @@ describe("morning report API contracts", () => {
   });
 
   it("uses the configured main-site origin for local login", () => {
-    vi.stubEnv("VITE_SITE_URL", "http://127.0.0.1:5173/");
+    vi.stubEnv("VITE_SITE_URL", "http://127.0.0.1:8013/");
 
     expect(buildSiteLoginUrl("/stock/")).toBe(
-      "http://127.0.0.1:5173/auth/login?next=%2Fstock%2F",
+      "http://127.0.0.1:8013/auth/login?next=%2Fstock%2F",
     );
   });
 });

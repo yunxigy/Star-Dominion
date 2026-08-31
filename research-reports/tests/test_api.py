@@ -98,12 +98,12 @@ def test_manual_collection_requires_admin(tmp_path: Path) -> None:
         client.cookies.set("sd_csrf", "csrf")
         user = client.post(
             "/api/v1/admin/collections",
-            headers={"Origin": "http://127.0.0.1:5173", "X-CSRF-Token": "csrf"},
+            headers={"Origin": "http://127.0.0.1:8013", "X-CSRF-Token": "csrf"},
         )
         client.cookies.set("sd_session", "admin-token")
         admin = client.post(
             "/api/v1/admin/collections",
-            headers={"Origin": "http://127.0.0.1:5173", "X-CSRF-Token": "csrf"},
+            headers={"Origin": "http://127.0.0.1:8013", "X-CSRF-Token": "csrf"},
         )
 
     assert anonymous.status_code == 401
@@ -118,7 +118,7 @@ def test_overlapping_manual_collection_returns_conflict(tmp_path: Path) -> None:
     with TestClient(app) as client:
         client.cookies.set("sd_session", "admin-token")
         client.cookies.set("sd_csrf", "csrf")
-        headers = {"Origin": "http://127.0.0.1:5173", "X-CSRF-Token": "csrf"}
+        headers = {"Origin": "http://127.0.0.1:8013", "X-CSRF-Token": "csrf"}
         first = client.post("/api/v1/admin/collections", headers=headers)
         second = client.post("/api/v1/admin/collections", headers=headers)
 

@@ -47,23 +47,23 @@ def test_studio_assets_load_shared_core_as_an_es_module():
     tasks = (assets / "js" / "tasks.js").read_text(encoding="utf-8")
     structured_assets = (assets / "js" / "assets.js").read_text(encoding="utf-8")
 
-    assert '<script type="module" src="/app.js?v=project-dialog-close-1"></script>' in html
-    assert 'import "/js/application.js?v=project-dialog-close-1"' in app
-    assert 'from "/js/core.js"' in application
+    assert '<script type="module" src="./app.js?v=project-dialog-close-1"></script>' in html
+    assert 'import "./js/application.js?v=project-dialog-close-1"' in app
+    assert 'from "./core.js"' in application
     assert "export const state" in core
     assert "export async function api" in core
     assert "error.requestId" in core
-    assert 'from "/js/revisions.js?v=editor-find-1"' in application
+    assert 'from "./revisions.js?v=editor-find-1"' in application
     assert "showRevisionPreview" in revisions
     assert "DOCUMENT_CONFLICT" in revisions
-    assert 'from "/js/tasks.js"' in application
+    assert 'from "./tasks.js"' in application
     assert "enqueueTask" in tasks
     assert "/api/tasks" in tasks
-    assert 'from "/js/assets.js?v=editor-find-1"' in application
-    assert 'from "/js/markdown-editor.js?v=editor-find-1"' in application
+    assert 'from "./assets.js?v=editor-find-1"' in application
+    assert 'from "./markdown-editor.js?v=editor-find-1"' in application
     for module in ("assets.js", "revisions.js"):
         module_text = (assets / "js" / module).read_text(encoding="utf-8")
-        assert 'from "/js/markdown-editor.js?v=editor-find-1"' in module_text
+        assert 'from "./markdown-editor.js?v=editor-find-1"' in module_text
     assert "openStructuredAsset" in structured_assets
     assert "/api/assets/package/preview" in structured_assets
     assert "data-package-action" in structured_assets
@@ -528,9 +528,9 @@ def test_studio_uses_local_vditor_for_markdown_editing_surfaces():
     editor_adapter = (assets / "js" / "markdown-editor.js").read_text(encoding="utf-8")
     styles = (assets / "styles.css").read_text(encoding="utf-8")
 
-    assert 'href="/vendor/vditor/dist/index.css"' in html
-    assert 'src="/vendor/vditor/dist/js/icons/ant.js"' in html
-    assert 'src="/vendor/vditor/dist/index.min.js"' in html
+    assert 'href="./vendor/vditor/dist/index.css"' in html
+    assert 'src="./vendor/vditor/dist/js/icons/ant.js"' in html
+    assert 'src="./vendor/vditor/dist/index.min.js"' in html
     assert '<div id="document-editor" class="document-editor"' in html
     assert '<textarea id="document-editor"' not in html
     assert (assets / "vendor" / "vditor" / "dist" / "index.min.js").is_file()
@@ -1428,6 +1428,8 @@ def test_studio_http_serves_ui_api_and_blocks_unsigned_writes(tmp_path: Path):
             assert 'id="agent-session-delete"' in html
             assert 'id="inspector-collapse"' in html
             assert "default-src 'self'" in response.headers["Content-Security-Policy"]
+            assert response.headers["X-Frame-Options"] == "SAMEORIGIN"
+            assert "frame-ancestors 'self'" in response.headers["Content-Security-Policy"]
 
         with opener.open(f"{base}/js/core.js") as response:
             core_module = response.read().decode("utf-8")

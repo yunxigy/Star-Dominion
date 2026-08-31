@@ -67,7 +67,7 @@ foreach ($service in @($manifest.services)) {
 }
 
 Test-Http 'site-auth health' 'http://127.0.0.1:8000/health' 200 | Out-Null
-Test-Http 'Openwrite health' 'http://127.0.0.1:8001/health' 200 | Out-Null
+Test-Http 'Openwrite health' 'http://127.0.0.1:8001/api/health' 200 | Out-Null
 Test-Http 'stock public health' 'http://127.0.0.1:8002/api/v1/health' 200 | Out-Null
 Test-Http 'stock directory search' 'http://127.0.0.1:8002/api/v1/stocks/search?q=600' 200 | Out-Null
 Test-Http 'mom index history' 'http://127.0.0.1:8002/api/v1/mom-index/history?limit=1' 200 | Out-Null
@@ -100,7 +100,7 @@ if (-not [string]::IsNullOrWhiteSpace($env:SITE_ADMIN_IDENTITY) -and
         $loginBody = @{ identity=$env:SITE_ADMIN_IDENTITY; password=$env:SITE_ADMIN_PASSWORD } | ConvertTo-Json
         $login = Invoke-WebRequest -Uri 'http://127.0.0.1:8000/api/v1/session/login' `
             -Method POST -ContentType 'application/json' -Body $loginBody `
-            -Headers @{ Origin='http://127.0.0.1:5173' } -WebSession $session `
+            -Headers @{ Origin='http://127.0.0.1:8013' } -WebSession $session `
             -UseBasicParsing -TimeoutSec 5
         Report 'site-auth login' ($login.StatusCode -eq 204) "HTTP $($login.StatusCode)"
         Test-Http 'site-auth authenticated me' 'http://127.0.0.1:8000/api/v1/session/me' 200 $session | Out-Null

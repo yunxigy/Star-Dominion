@@ -20,7 +20,7 @@ python -m uvicorn research_reports.main:create_app --factory --host 127.0.0.1 --
 Pop-Location
 ```
 
-主站通过 `/reports-api` 代理访问服务，页面地址为 `http://127.0.0.1:5173/reports`。
+主站通过 `/reports-api` 代理访问服务，页面地址为 `http://127.0.0.1:8013/reports`。
 
 ## 配置
 

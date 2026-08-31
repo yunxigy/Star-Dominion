@@ -65,8 +65,8 @@ function StockAccessGate({ children }: { children: ReactNode }) {
     return <main className="stock-access-gate"><div className="stock-access-card"><span className="section-kicker">股票研究</span><h1>正在验证登录状态</h1><p>股票研究包含个人策略、模型配置和分析结果，正在确认当前账号。</p></div></main>;
   }
   if (state === "denied") {
-    const loginUrl = window.location.port === "5175"
-      ? `${window.location.protocol}//${window.location.hostname}:5173/auth/login?next=%2Fstock%2F`
+    const loginUrl = window.location.port === "8014"
+      ? `${window.location.protocol}//${window.location.hostname}:8013/auth/login?next=%2Fstock%2F`
       : "/auth/login?next=%2Fstock%2F";
     return <main className="stock-access-gate"><div className="stock-access-card"><span className="section-kicker">股票研究</span><h1>请先登录</h1><p>登录后才能查看九点猫研、宝妈指数、个人策略和个股分析。</p><a className="primary-button" href={loginUrl}>前往统一登录</a></div></main>;
   }

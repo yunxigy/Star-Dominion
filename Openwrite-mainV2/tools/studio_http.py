@@ -480,12 +480,14 @@ class StudioRequestHandler(SimpleHTTPRequestHandler):
 
     def _security_headers(self) -> None:
         self.send_header("X-Content-Type-Options", "nosniff")
-        self.send_header("X-Frame-Options", "DENY")
+        # Studio is embedded by the same-origin SD shell at /openwrite/.
+        # Keep clickjacking protection while allowing that supported shell frame.
+        self.send_header("X-Frame-Options", "SAMEORIGIN")
         self.send_header("Referrer-Policy", "no-referrer")
         self.send_header(
             "Content-Security-Policy",
             "default-src 'self'; img-src 'self' data:; style-src 'self'; "
-            "script-src 'self'; connect-src 'self'; frame-ancestors 'none'",
+            "script-src 'self'; connect-src 'self'; frame-ancestors 'self'",
         )
         self.send_header("Cache-Control", "no-store")
 

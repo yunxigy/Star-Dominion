@@ -657,7 +657,7 @@ def _add_desk_command(subparsers):
 def _add_studio_command(subparsers):
     """studio 命令 - 本地 Web 小说工作台。"""
     p = subparsers.add_parser("studio", help="启动本地 Web 小说工作台")
-    p.add_argument("--port", "-p", type=int, default=4567, help="监听端口（默认 4567）")
+    p.add_argument("--port", "-p", type=int, default=8001, help="监听端口（默认 8001）")
     p.add_argument("--no-open", action="store_true", help="不自动打开浏览器")
     p.add_argument("--project", help="作品项目目录；可与框架代码目录分离")
     p.add_argument("--debug", action="store_true", help="启用 Studio 后台 debug 日志")

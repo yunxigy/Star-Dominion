@@ -1,6 +1,6 @@
-import { $, api, formatNumber, showToast, state } from "/js/core.js";
-import { enqueueTask } from "/js/tasks.js";
-import { getPrimaryMarkdownEditor } from "/js/markdown-editor.js?v=editor-find-1";
+import { $, api, formatNumber, showToast, state } from "./core.js";
+import { enqueueTask } from "./tasks.js";
+import { getPrimaryMarkdownEditor } from "./markdown-editor.js?v=editor-find-1";
 
 let refreshWorkspace = async () => {};
 let reopenDocument = async () => {};

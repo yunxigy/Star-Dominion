@@ -2,7 +2,7 @@
   "version": 1,
   "services": [
     {"name":"site-auth","working_directory":"site-auth","executable":"python","arguments":["-m","uvicorn","site_auth.main:create_app","--factory","--host","127.0.0.1","--port","8000"],"ports":[8000],"health_url":"http://127.0.0.1:8000/health"},
-    {"name":"openwrite","working_directory":"Openwrite-main","executable":"python","arguments":["start.py"],"ports":[8001],"health_url":"http://127.0.0.1:8001/health"},
+    {"name":"openwrite","working_directory":"Openwrite-mainV2","executable":"python","arguments":["-m","tools.cli","studio","--port","8001","--no-open"],"ports":[8001],"health_url":"http://127.0.0.1:8001/api/health"},
     {"name":"stock-hub","working_directory":"stock-research-package/stock-module/backend","executable":"python","arguments":["-m","uvicorn","app.main:app","--host","127.0.0.1","--port","8002"],"ports":[8002],"health_url":"http://127.0.0.1:8002/api/v1/health"},
     {"name":"stock-analysis","working_directory":"stock-research-package/stock-module/analysis-service","executable":"python","arguments":["-m","uvicorn","analysis_service.main:app","--host","127.0.0.1","--port","8003"],"ports":[8003],"health_url":"http://127.0.0.1:8003/api/v1/health"},
     {"name":"stock-gateway","working_directory":"stock-research-package/stock-module/backend","executable":"python","arguments":["-m","uvicorn","app.gateway_main:app","--host","127.0.0.1","--port","8004"],"ports":[8004],"tcp_only":true},
@@ -13,8 +13,7 @@
     {"name":"document-converter","working_directory":"document-converter","executable":"python","arguments":["-m","uvicorn","document_converter.app:app","--host","127.0.0.1","--port","8010"],"ports":[8010],"health_url":"http://127.0.0.1:8010/health"},
     {"name":"video-downloader","working_directory":"video-downloader","executable":"python","arguments":["-m","uvicorn","video_downloader.app:app","--host","127.0.0.1","--port","8011","--workers","1"],"ports":[8011],"health_url":"http://127.0.0.1:8011/health"},
     {"name":"webmaster-inspector","working_directory":"webmaster-inspector","executable":"python","arguments":["-m","uvicorn","webmaster_inspector.app:app","--host","127.0.0.1","--port","8012","--workers","1"],"ports":[8012],"health_url":"http://127.0.0.1:8012/health"},
-    {"name":"sd-frontend","working_directory":"SD","executable":"node","arguments":["node_modules/vite/bin/vite.js","--host","127.0.0.1","--port","5173"],"ports":[5173],"health_url":"http://127.0.0.1:5173/" ,"frontend":true},
-    {"name":"openwrite-frontend","working_directory":"Openwrite-main/frontend","executable":"node","arguments":["node_modules/vite/bin/vite.js","--host","127.0.0.1","--port","5174"],"ports":[5174],"health_url":"http://127.0.0.1:5174/", "frontend":true},
-    {"name":"stock-frontend","working_directory":"stock-research-package/stock-module/frontend","executable":"node","arguments":["node_modules/vite/bin/vite.js","--host","127.0.0.1","--port","5175"],"ports":[5175],"health_url":"http://127.0.0.1:5175/", "frontend":true}
+    {"name":"sd-frontend","working_directory":"SD","executable":"node","arguments":["node_modules/vite/bin/vite.js","--host","127.0.0.1","--port","8013"],"ports":[8013],"health_url":"http://127.0.0.1:8013/" ,"frontend":true},
+    {"name":"stock-frontend","working_directory":"stock-research-package/stock-module/frontend","executable":"node","arguments":["node_modules/vite/bin/vite.js","--host","127.0.0.1","--port","8014"],"ports":[8014],"health_url":"http://127.0.0.1:8014/", "frontend":true}
   ]
 }

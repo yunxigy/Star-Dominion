@@ -30,7 +30,7 @@
 
 ```mermaid
 flowchart LR
-    UI["React 股票前端<br/>:5175 /stock/"] -->|/stock-api| HUB["股票主服务<br/>FastAPI :8002"]
+    UI["React 股票前端<br/>:8014 /stock/"] -->|/stock-api| HUB["股票主服务<br/>FastAPI :8002"]
 
     HUB --> MORNING["九点猫研完整晨报<br/>新闻 / 主题 / 候选证据"]
     HUB --> CANDIDATES["个人策略候选<br/>与九研独立计分"]
@@ -78,7 +78,7 @@ stock-module/
 │   ├── app/gateway_main.py  # :8004
 │   └── tests/
 ├── analysis-service/        # daily_stock_analysis 隔离适配器，:8003
-├── frontend/                # React 19 + TypeScript + Vite，:5175
+├── frontend/                # React 19 + TypeScript + Vite，:8014
 └── data/                    # 运行时自动生成，已被 gitignore，不随源码搬迁
 ```
 
@@ -258,7 +258,7 @@ cd E:\AI\gp\stock-research-package\stock-module\frontend
 npm.cmd run dev
 ```
 
-打开 `http://127.0.0.1:5175/stock/`。Vite 将 `/stock-api/*` 转发到 `127.0.0.1:8002`。
+打开 `http://127.0.0.1:8014/stock/`。Vite 将 `/stock-api/*` 转发到 `127.0.0.1:8002`。
 
 ## 使用晨报、详情和硅基流动
 

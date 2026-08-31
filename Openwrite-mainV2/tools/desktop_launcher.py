@@ -19,7 +19,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 MIN_PYTHON = (3, 10)
-DEFAULT_PORT = 4567
+DEFAULT_PORT = 8001
 PORT_SCAN_LIMIT = 20
 LAUNCHER_VERSION = 1
 UPDATE_CHECK_INTERVAL_SECONDS = 24 * 60 * 60

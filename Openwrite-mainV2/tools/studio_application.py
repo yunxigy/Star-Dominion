@@ -4060,12 +4060,13 @@ class LegacyStudioRequestHandler(SimpleHTTPRequestHandler):
 
     def _security_headers(self) -> None:
         self.send_header("X-Content-Type-Options", "nosniff")
-        self.send_header("X-Frame-Options", "DENY")
+        # Keep the legacy handler aligned with the modular Studio transport.
+        self.send_header("X-Frame-Options", "SAMEORIGIN")
         self.send_header("Referrer-Policy", "no-referrer")
         self.send_header(
             "Content-Security-Policy",
             "default-src 'self'; img-src 'self' data:; style-src 'self'; "
-            "script-src 'self'; connect-src 'self'; frame-ancestors 'none'",
+            "script-src 'self'; connect-src 'self'; frame-ancestors 'self'",
         )
         self.send_header("Cache-Control", "no-store")
 
@@ -4082,7 +4083,7 @@ def create_server(
     project_root: Path,
     *,
     host: str = "127.0.0.1",
-    port: int = 4567,
+    port: int = 8001,
     writer_executor: Callable[[Path, dict[str, Any]], dict[str, Any]] | None = None,
     review_executor: Callable[[Path, dict[str, Any]], dict[str, Any]] | None = None,
     chat_executor: Callable[[Path, str, str, str], dict[str, Any]] | None = None,
@@ -4127,7 +4128,7 @@ def create_server(
 def run_studio(
     project_root: Path,
     *,
-    port: int = 4567,
+    port: int = 8001,
     open_browser: bool = True,
     debug: bool = False,
 ) -> int:

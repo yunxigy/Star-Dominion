@@ -700,7 +700,7 @@ def build_cases(catalogs: dict[str, list[str]]) -> list[ToolCase]:
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--base-url", default="http://127.0.0.1:4572")
+    parser.add_argument("--base-url", default="http://127.0.0.1:8001")
     parser.add_argument("--timeout", type=int, default=600)
     parser.add_argument("--retries", type=int, default=1)
     parser.add_argument("--allow-writes", action="store_true")

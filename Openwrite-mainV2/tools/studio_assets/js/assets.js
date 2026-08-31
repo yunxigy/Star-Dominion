@@ -1,7 +1,7 @@
-import { $, $$, api, showToast, state } from "/js/core.js";
+import { $, $$, api, showToast, state, studioPath } from "./core.js";
 import {
   destroyMarkdownEditorsWithin, markdownEditorFor, mountMarkdownEditor,
-} from "/js/markdown-editor.js?v=editor-find-1";
+} from "./markdown-editor.js?v=editor-find-1";
 
 let refreshWorkspace = async () => {};
 let refreshContinuity = async () => {};
@@ -905,7 +905,7 @@ function exportSelected() {
   const selected = state.assets.selected;
   if (!selected?.kind || !selected?.id) return;
   const value = `${selected.kind}:${selected.id}`;
-  window.location.href = `/api/assets/package/export?select=${encodeURIComponent(value)}`;
+  window.location.href = studioPath(`/api/assets/package/export?select=${encodeURIComponent(value)}`);
 }
 
 function syncExportButton() {

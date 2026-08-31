@@ -86,6 +86,20 @@ export const state = {
 export const $ = (selector) => document.querySelector(selector);
 export const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
+const OPENWRITE_MOUNT_PATH = "/openwrite";
+
+export function studioPath(path) {
+  const value = String(path || "");
+  if (!value.startsWith("/")) return value;
+  const currentPath = window.location.pathname;
+  const mounted = currentPath === OPENWRITE_MOUNT_PATH
+    || currentPath.startsWith(`${OPENWRITE_MOUNT_PATH}/`);
+  if (!mounted || value === OPENWRITE_MOUNT_PATH || value.startsWith(`${OPENWRITE_MOUNT_PATH}/`)) {
+    return value;
+  }
+  return `${OPENWRITE_MOUNT_PATH}${value}`;
+}
+
 export const labels = {
   outline: "可写大纲",
   core: "作品核心",
@@ -136,7 +150,7 @@ export async function api(path, options = {}) {
     headers["Content-Type"] = "application/json";
     headers["X-OpenWrite-Studio"] = "1";
   }
-  const response = await fetch(path, { ...options, headers });
+  const response = await fetch(studioPath(path), { ...options, headers });
   const contentType = response.headers.get("Content-Type") || "";
   const body = contentType.includes("application/json") ? await response.json() : null;
   if (!response.ok) {

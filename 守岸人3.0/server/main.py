@@ -156,7 +156,7 @@ allowed_origins = [
     origin.strip()
     for origin in os.getenv(
         "SITE_ALLOWED_ORIGINS",
-        "http://127.0.0.1:5173,http://localhost:5173,https://zhumenggy.top",
+        "http://127.0.0.1:8013,http://localhost:8013,http://127.0.0.1:8014,http://localhost:8014,https://zhumenggy.top",
     ).split(",")
     if origin.strip()
 ]

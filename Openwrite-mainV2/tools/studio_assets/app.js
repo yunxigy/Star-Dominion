@@ -1,1 +1,1 @@
-import "/js/application.js?v=project-dialog-close-1";
+import "./js/application.js?v=project-dialog-close-1";

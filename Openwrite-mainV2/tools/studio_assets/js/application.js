@@ -1,21 +1,21 @@
 import {
   $, $$, api, countWritingUnits, formatNumber, labels,
-  readinessLabels, setSaveState, showToast, state,
-} from "/js/core.js";
+  readinessLabels, setSaveState, showToast, state, studioPath,
+} from "./core.js";
 import {
   appendReviewIssueActions, bindRevisionUI, showRevisionPreview, syncRevisionControls,
-} from "/js/revisions.js?v=editor-find-1";
-import { bindTaskCenter, enqueueTask, refreshTasks } from "/js/tasks.js";
-import { bindAssetUI, openStructuredAsset } from "/js/assets.js?v=editor-find-1";
+} from "./revisions.js?v=editor-find-1";
+import { bindTaskCenter, enqueueTask, refreshTasks } from "./tasks.js";
+import { bindAssetUI, openStructuredAsset } from "./assets.js?v=editor-find-1";
 import {
   bindModelProfilesUI, openModelProfilesDialog, renderModelProfilesUI,
   updateRoutedModelIndicator,
-} from "/js/models.js";
+} from "./models.js";
 
 import {
   destroyMarkdownEditorsWithin, getPrimaryMarkdownEditor,
   initializePrimaryMarkdownEditor, mountMarkdownEditor, setMarkdownEditorTheme,
-} from "/js/markdown-editor.js?v=editor-find-1";
+} from "./markdown-editor.js?v=editor-find-1";
 
 const libraryViews = ["core", "characters", "settings"];
 const legacyLibraryViews = { story: "core", world: "settings", assets: "characters" };
@@ -3985,7 +3985,7 @@ function syncExportFormat() {
   download.textContent = labels[selected];
   download.classList.toggle("disabled", !chapters);
   download.setAttribute("aria-disabled", String(!chapters));
-  if (chapters) download.href = `/api/export?format=${encodeURIComponent(selected)}`;
+  if (chapters) download.href = studioPath(`/api/export?format=${encodeURIComponent(selected)}`);
   else download.removeAttribute("href");
 }
 
@@ -5980,7 +5980,7 @@ function toggleInspectorCollapsed(collapsed, options = {}) {
 
 function applyTheme(theme) {
   document.documentElement.dataset.theme = theme;
-  $(".brand-logo").src = theme === "dark" ? "/brand/logo-dark.svg" : "/brand/logo.svg";
+  $(".brand-logo").src = studioPath(theme === "dark" ? "/brand/logo-dark.svg" : "/brand/logo.svg");
   setMarkdownEditorTheme(theme);
   writeLocalValue("openwrite-theme", theme);
 }

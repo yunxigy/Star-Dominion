@@ -7,7 +7,7 @@
     "prepare:mediapipe": "node scripts/copy-mediapipe-assets.mjs",
     "predev": "npm run prepare:mediapipe",
     "prebuild": "npm run prepare:mediapipe",
-    "dev": "vite",
+    "dev": "vite --host 127.0.0.1 --port 8013",
     "lint": "tsc --noEmit",
     "build:app": "tsc && vite build",
     "generate:static": "tsx scripts/generate-static-pages.ts",

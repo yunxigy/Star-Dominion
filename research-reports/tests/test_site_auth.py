@@ -10,7 +10,7 @@ def test_site_auth_forwards_cookie_and_request_context() -> None:
         assert request.url.path == "/internal/v1/session/verify"
         assert request.headers["X-Site-Service-Key"] == "k" * 32
         assert request.headers["X-Site-Request-Method"] == "POST"
-        assert request.headers["X-Site-Request-Origin"] == "http://127.0.0.1:5173"
+        assert request.headers["X-Site-Request-Origin"] == "http://127.0.0.1:8013"
         assert request.headers["X-Site-CSRF"] == "csrf-value"
         assert "sd_session=session-value" in request.headers["Cookie"]
         return httpx.Response(
@@ -33,7 +33,7 @@ def test_site_auth_forwards_cookie_and_request_context() -> None:
             session_token="session-value",
             csrf_cookie="csrf-value",
             method="POST",
-            origin="http://127.0.0.1:5173",
+            origin="http://127.0.0.1:8013",
             csrf_header="csrf-value",
         )
     )

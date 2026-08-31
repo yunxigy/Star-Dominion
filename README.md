@@ -8,15 +8,15 @@ Star Dominion 是一个模块化 Web 单仓库：以在线工具箱为主入口�
 
 | 模块 | 主要能力 | 技术栈 | 本地入口 |
 | --- | --- | --- | --- |
-| SD 主站 | 在线工具目录、统一导航、认证入口、STM32 页面 | React、TypeScript、Vite | `http://127.0.0.1:5173/` |
-| site-auth | 登录、会话、CSRF、管理员和用户管理 | FastAPI、SQLAlchemy、SQLite | `http://127.0.0.1:5173/auth/login` |
-| 研报中心 | GitHub 每周热门项目扫榜、综合榜及语言分榜 | React、FastAPI、SQLite | `http://127.0.0.1:5173/reports` |
-| 股票研究 | 九点猫研、个人策略、真实行情、K 线、AI 分析、宝妈指数 | React、FastAPI、AKShare | `http://127.0.0.1:5175/stock/` |
-| OpenWrite | 长篇小说写作、审稿、角色、世界观和导出 | React、FastAPI、Python CLI | `http://127.0.0.1:5174/openwrite/` |
+| SD 主站 | 在线工具目录、统一导航、认证入口、STM32 页面 | React、TypeScript、Vite | `http://127.0.0.1:8013/` |
+| site-auth | 登录、会话、CSRF、管理员和用户管理 | FastAPI、SQLAlchemy、SQLite | `http://127.0.0.1:8013/auth/login` |
+| 研报中心 | GitHub 每周热门项目扫榜、综合榜及语言分榜 | React、FastAPI、SQLite | `http://127.0.0.1:8013/reports` |
+| 股票研究 | 九点猫研、个人策略、真实行情、K 线、AI 分析、宝妈指数 | React、FastAPI、AKShare | `http://127.0.0.1:8014/stock/` |
+| OpenWrite V2 | 长篇小说写作、审稿、角色、世界观和导出 | 原生 Web、FastAPI、Python CLI | `http://127.0.0.1:8013/openwrite/`（直连 `8001`） |
 | 守岸人 3.0 | AI 角色对话、互动剧情、语音、记忆和世界书 | FastAPI、原生 Web 前端 | `http://127.0.0.1:8006/` |
 | 论文查重 | TXT、DOCX、PDF 双文档相似度分析 | FastAPI、Python | 由 SD 主站调用 |
-| STM32/4G | 北斗、IMU、轨迹、告警、命令和设备 TCP 通信 | Python、WebSocket | `http://127.0.0.1:5173/stm32/` |
-| 视频解析下载 | 抖音/B站单个公开视频解析、清晰度选择和临时下载 | FastAPI、yt-dlp、FFmpeg | `http://127.0.0.1:5173/tool/video-parser-downloader` |
+| STM32/4G | 北斗、IMU、轨迹、告警、命令和设备 TCP 通信 | Python、WebSocket | `http://127.0.0.1:8013/stm32/` |
+| 视频解析下载 | 抖音/B站单个公开视频解析、清晰度选择和临时下载 | FastAPI、yt-dlp、FFmpeg | `http://127.0.0.1:8013/tool/video-parser-downloader` |
 | 站长工具服务 | 受控 HTTP、DNS、SSL、WebSocket 公网状态检查 | FastAPI、标准库网络栈 | 由 SD 主站调用 |
 
 ## 五分钟快速启动
@@ -42,7 +42,7 @@ Set-ExecutionPolicy -Scope Process Bypass
 python -m pip install --upgrade pip
 
 python -m pip install -e .\site-auth
-python -m pip install -r .\Openwrite-main\requirements.txt
+python -m pip install -r .\Openwrite-mainV2\requirements.txt
 python -m pip install -r .\plagiarism\requirements.txt
 python -m pip install -r .\4G\requirements.txt
 python -m pip install -r ".\守岸人3.0\server\requirements.txt"
@@ -57,7 +57,6 @@ python -m pip install -e .
 Pop-Location
 
 npm ci --prefix .\SD
-npm ci --prefix .\Openwrite-main\frontend
 npm ci --prefix .\stock-research-package\stock-module\frontend
 ```
 
@@ -85,7 +84,7 @@ Set-ExecutionPolicy -Scope Process Bypass
 
 `Set-ExecutionPolicy -Scope Process Bypass` 只影响当前 PowerShell 进程，关闭窗口后自动失效，不会更改系统级执行策略。
 
-`start-local.ps1` 默认启动 12 个后端/设备进程和 3 个前端，共监听 16 个端口（其中 STM32 同时占用 8007、8008）。只需要后端时使用：
+`start-local.ps1` 默认启动 12 个后端/设备进程和 2 个前端，共监听 15 个端口（其中 STM32 同时占用 8007、8008）。只需要后端时使用：
 
 ```powershell
 .\scripts\start-local.ps1 -WithoutFrontends
@@ -105,19 +104,18 @@ Set-ExecutionPolicy -Scope Process Bypass
 
 | 端口 | 服务 | 地址 |
 | ---: | --- | --- |
-| 5173 | SD 主站与统一登录 | `http://127.0.0.1:5173/` |
-| 5174 | OpenWrite 前端 | `http://127.0.0.1:5174/openwrite/` |
-| 5175 | 股票研究前端 | `http://127.0.0.1:5175/stock/` |
+| 8013 | SD 主站与统一登录 | `http://127.0.0.1:8013/` |
+| 8014 | 股票研究前端 | `http://127.0.0.1:8014/stock/` |
+| 8001 | OpenWrite V2 Studio（页面 + API） | `http://127.0.0.1:8001/` |
 
-股票前端的 Vite `base` 是 `/stock/`。直接访问 `http://127.0.0.1:5175/` 时出现路径提示属于正常行为，应打开 `/stock/`。
+股票前端的 Vite `base` 是 `/stock/`。直接访问 `http://127.0.0.1:8014/` 时出现路径提示属于正常行为，应打开 `/stock/`；从 SD 主站访问则使用 `/stock/` 代理入口。
 
 ### 后端与设备服务
 
 | 端口 | 服务 | 用途 | 公网策略 |
 | ---: | --- | --- | --- |
 | 8000 | site-auth | 全站认证 | 仅经 `/auth-api/` |
-| 8009 | 研报服务 | GitHub 周榜、采集状态和管理员刷新 | 仅经 `/reports-api/` |
-| 8001 | OpenWrite | 写作 API 与 WebSocket | 仅经 `/ow-api/`、`/ws/` |
+| 8001 | OpenWrite V2 Studio | 页面、写作 API 与 WebSocket | 仅经 `/openwrite/`、`/ow-api/`、`/ws/` |
 | 8002 | 股票主服务 | 晨报、目录、候选、宝妈指数和任务 | 仅经 `/stock-api/` |
 | 8003 | 个股分析适配器 | 调用详细分析流水线 | 内部服务，不公开 |
 | 8004 | 股票模型网关 | 校验签名并注入服务端模型密钥 | 内部服务，不公开 |
@@ -125,6 +123,7 @@ Set-ExecutionPolicy -Scope Process Bypass
 | 8006 | 守岸人 | 角色聊天 API 与页面 | 仅经 `/api/`、`/wuwa/` |
 | 8007 | STM32 HTTP/WebSocket | 网页数据和设备命令 | 仅经 `/stm32/api/` |
 | 8008 | STM32 原始 TCP | 4G 设备长连接 | 只允许设备来源白名单 |
+| 8009 | 研报服务 | GitHub 周榜、采集状态和管理员刷新 | 仅经 `/reports-api/` |
 | 8010 | 文档转换中心 | Office/PDF/Markdown/HTML/OCR 转换与批量打包 | 仅经 `/document-api/` |
 | 8011 | 视频解析下载 | 抖音/B站单个公开视频解析与临时任务下载 | 仅经 `/video-api/` |
 | 8012 | 站长检测服务 | 受控公开网站 HTTP、DNS、SSL、WebSocket 检查 | 仅经 `/webmaster-api/` |
@@ -156,7 +155,7 @@ Pop-Location
 - 不要在普通的 `PS>` 提示符后直接输入密码，否则 PowerShell 会把它当成命令。
 - 不要把真实密码写进 README、脚本、`.env.local.example` 或 Git。
 
-管理员创建完成后，在 `http://127.0.0.1:5173/auth/login` 使用用户名或邮箱登录。
+管理员创建完成后，在 `http://127.0.0.1:8013/auth/login` 使用用户名或邮箱登录。
 
 已有管理员需要修改密码时使用 `reset-admin`。只有明确要删除全部现有账号和会话时，才使用带 `--confirm-delete-all-users` 的 `recreate-admin`；操作前应备份 `site-auth` 数据库。
 
@@ -195,7 +194,7 @@ SITE_ADMIN_PASSWORD=
 首次使用小红书时：
 
 ```text
-登录管理员 → 打开 http://127.0.0.1:5175/stock/
+登录管理员 → 打开 http://127.0.0.1:8014/stock/
 → 找到“宝妈指数” → 点击“打开小红书登录窗口”
 → 在 Playwright 浏览器窗口完成登录 → 点击“立即刷新宝妈指数”
 ```
@@ -206,9 +205,9 @@ SITE_ADMIN_PASSWORD=
 
 ```mermaid
 flowchart TB
-    Browser["浏览器"] --> SD["SD 主站 :5173"]
-    Browser --> OWUI["OpenWrite :5174"]
-    Browser --> StockUI["股票研究 :5175"]
+    Browser["浏览器"] --> SD["SD 主站 :8013"]
+    Browser --> OWUI["OpenWrite V2 :8001"]
+    Browser --> StockUI["股票研究 :8014"]
 
     SD --> Auth["site-auth :8000"]
     SD --> OpenWrite["OpenWrite API :8001"]
@@ -224,7 +223,7 @@ flowchart TB
     Device["STM32/4G 设备"] -->|"TCP :8008"| STM32
 ```
 
-生产环境由 Nginx 将统一域名路径转发到这些服务。开发环境的三个 Vite 前端各自运行，以便单独调试。
+生产环境由 Nginx 将统一域名路径转发到这些服务。开发环境的 SD 与股票两个 Vite 前端各自运行，以便单独调试；OpenWrite V2 在 8001 自带 Studio 页面。
 
 ## 仓库目录
 
@@ -237,7 +236,7 @@ Star-Dominion/
 │       ├── backend/                 # 股票主服务、Worker、模型网关
 │       ├── analysis-service/        # 个股分析适配器
 │       └── frontend/                # 股票研究页面
-├── Openwrite-main/                  # AI 长篇写作
+├── Openwrite-mainV2/                # AI 长篇写作（Studio）
 ├── 守岸人3.0/                        # AI 角色陪伴
 ├── plagiarism/                      # 论文查重
 ├── 4G/                              # STM32/4G 服务
@@ -279,7 +278,7 @@ git diff --cached
 .\scripts\check-local.ps1
 ```
 
-该脚本检查端口 `8000`–`8011`、主要健康接口、股票目录、宝妈指数、文档转换与视频解析能力和匿名权限边界；本地配置管理员凭据后，还会检查跨服务登录会话。
+该脚本检查端口 `8000`–`8014`、主要健康接口、股票目录、宝妈指数、文档转换与视频解析能力和匿名权限边界；本地配置管理员凭据后，还会检查跨服务登录会话。
 
 常用模块验证：
 
@@ -301,9 +300,8 @@ python -m pytest .\stock-research-package\stock-module\analysis-service\tests
 npm --prefix .\stock-research-package\stock-module\frontend test
 npm --prefix .\stock-research-package\stock-module\frontend run build
 
-# OpenWrite
-python -m pytest .\Openwrite-main\tests
-npm --prefix .\Openwrite-main\frontend run build
+# OpenWrite V2
+python -m pytest .\Openwrite-mainV2\tests
 
 # Webmaster inspector
 python -m pytest .\webmaster-inspector\tests
@@ -317,7 +315,7 @@ python -m pytest .\webmaster-inspector\tests
 
 1. 从 `.env.production.example` 创建服务器私有环境文件并生成互不相同的密钥。
 2. 使用独立 Python 虚拟环境运行各后端进程。
-3. 构建三个前端并由 Nginx 托管，不使用 Vite 开发服务器承载生产流量。
+3. 构建 SD 与股票两个前端并由 Nginx 托管；OpenWrite V2 由 8001 Studio 服务提供页面和 API，不使用 Vite 开发服务器承载生产流量。
 4. 保留既有 `/stock/`、`/stock-api/` 路由，合并配置前先执行 `nginx -t`。
 5. 仅向设备白名单开放 8008，其他服务不直接暴露公网。
 6. 上线前备份认证、股票、守岸人和 OpenWrite 数据目录。
@@ -328,7 +326,7 @@ python -m pytest .\webmaster-inspector\tests
 
 - [SD 主站](SD/README.md)
 - [股票研究模块](stock-research-package/stock-module/README.md)
-- [OpenWrite](Openwrite-main/README.md)
+- [OpenWrite V2](Openwrite-mainV2/README.md)
 - [守岸人 3.0](守岸人3.0/README.md)
 - [视频解析下载服务](video-downloader/README.md)
 - [宝塔上线操作手册](deploy/baota/README.md)

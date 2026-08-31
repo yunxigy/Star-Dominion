@@ -78,13 +78,12 @@ export const AIAgentPage: React.FC = () => {
               </div>
               <h3 className="text-xl font-bold text-slate-200 mb-3">无法连接到 OpenWrite</h3>
               <p className="text-slate-400 mb-6 leading-relaxed">
-                请确保 OpenWrite 服务已启动。需要同时运行前端 (端口 5174) 和后端 (端口 8001)。
+                请确保新版 OpenWrite V2 Studio 已启动（端口 8001）。它会同时提供页面和 API，无需另起前端。
               </p>
               <div className="bg-slate-800/50 rounded-lg p-4 text-left mb-6 border border-slate-700/50">
                 <p className="text-xs text-slate-500 mb-2 font-mono">启动命令：</p>
-                <p className="text-sm text-cyan-400 font-mono">cd Openwrite-main</p>
-                <p className="text-sm text-cyan-400 font-mono">python start.py  (默认端口 8001)</p>
-                <p className="text-sm text-cyan-400 font-mono mt-1">cd frontend && npm run dev</p>
+                <p className="text-sm text-cyan-400 font-mono">cd Openwrite-mainV2</p>
+                <p className="text-sm text-cyan-400 font-mono">python -m tools.cli studio --port 8001 --no-open</p>
               </div>
               <button
                 onClick={handleRefresh}

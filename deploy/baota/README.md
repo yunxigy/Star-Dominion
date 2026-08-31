@@ -15,6 +15,7 @@
 | 8006 | 守岸人 | 否，仅经 `/api/`、`/wuwa/` |
 | 8007 | STM32 HTTP/WebSocket | 否，仅经 `/stm32/api/` |
 | 8008 | STM32 设备 TCP | 按设备来源设置防火墙白名单 |
+| 8009 | 研报服务 | 否，仅经 `/reports-api/` |
 | 8010 | 文档转换中心 | 否，仅经 `/document-api/` |
 | 8011 | 视频解析下载 | 否，仅经 `/video-api/` |
 | 8012 | 站长检测服务 | 否，仅经 `/webmaster-api/` |
@@ -52,7 +53,6 @@ STOCK_TIMEZONE="Asia/Shanghai"
 
 ```bash
 cd <SITE_ROOT>/SD && npm ci && npm run build
-cd <SITE_ROOT>/Openwrite-main/frontend && npm ci && npm run build
 cd <SITE_ROOT>/stock-research-package/stock-module/frontend && npm ci && npm run build
 ```
 
@@ -72,7 +72,7 @@ npx --version
 | 服务 | 工作目录 | 启动命令 |
 | --- | --- | --- |
 | site-auth | `<SITE_ROOT>/site-auth` | `<PYTHON> -m uvicorn site_auth.main:create_app --factory --host 127.0.0.1 --port 8000` |
-| Openwrite | `<SITE_ROOT>/Openwrite-main` | `<PYTHON> start.py` |
+| OpenWrite V2 Studio | `<SITE_ROOT>/Openwrite-mainV2` | `<PYTHON> -m tools.cli studio --port 8001 --no-open` |
 | stock-hub | `<SITE_ROOT>/stock-research-package/stock-module/backend` | `<PYTHON> -m uvicorn app.main:app --host 127.0.0.1 --port 8002` |
 | stock-analysis | `<SITE_ROOT>/stock-research-package/stock-module/analysis-service` | `<PYTHON> -m uvicorn analysis_service.main:app --host 127.0.0.1 --port 8003` |
 | stock-gateway | `<SITE_ROOT>/stock-research-package/stock-module/backend` | `<PYTHON> -m uvicorn app.gateway_main:app --host 127.0.0.1 --port 8004` |
@@ -83,7 +83,7 @@ npx --version
 | video-downloader | `<SITE_ROOT>/video-downloader` | `<PYTHON> -m uvicorn video_downloader.app:app --host 127.0.0.1 --port 8011 --workers 1` |
 | webmaster-inspector | `<SITE_ROOT>/webmaster-inspector` | `<PYTHON> -m pip install -e .` 后运行 `<PYTHON> -m uvicorn webmaster_inspector.app:app --host 127.0.0.1 --port 8012 --workers 1` |
 
-`<PYTHON>` 必须替换为对应虚拟环境的绝对路径。不要使用开发服务器承载三个前端；将构建产物交给 Nginx。
+`<PYTHON>` 必须替换为对应虚拟环境的绝对路径。OpenWrite V2 的 Studio 进程在 8001 同时提供页面和 API；不要使用开发服务器承载 SD 与股票前端的生产流量，将两个构建产物交给 Nginx。
 
 ## 5. 只创建一个管理员
 

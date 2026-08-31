@@ -1,4 +1,4 @@
-import { $, $$, api, formatNumber, modelPresets, showToast, state } from "/js/core.js";
+import { $, $$, api, formatNumber, modelPresets, showToast, state } from "./core.js";
 
 const routeLabels = {
   goethe: "Goethe 规划",
