@@ -2,6 +2,7 @@ import type {
   AnswerMap,
   AssessmentDefinition,
   AssessmentOption,
+  AssessmentQuestion,
   AssessmentScoreResult,
   MbtiPair,
 } from './types';
@@ -24,6 +25,7 @@ function resolveMbtiLetter(
   pair: MbtiPair,
   answers: AnswerMap,
   dimensionScores: Record<string, number | null>,
+  questions: readonly AssessmentQuestion[],
 ): string {
   const leftScore = dimensionScores[pair.left];
   const rightScore = dimensionScores[pair.right];
@@ -33,7 +35,7 @@ function resolveMbtiLetter(
     if (rightScore > leftScore) return pair.right;
   }
 
-  const tieQuestion = definition.questions.find((question) => question.id === pair.tieQuestionId);
+  const tieQuestion = questions.find((question) => question.id === pair.tieQuestionId);
   const tieAnswerId = answers[pair.tieQuestionId];
   const tieOption = tieQuestion?.options.find((option) => option.id === tieAnswerId);
   if (tieOption) {
@@ -49,6 +51,7 @@ function resolveMbtiLetter(
 export function scoreAssessment(
   definition: AssessmentDefinition,
   answers: AnswerMap,
+  questions: readonly AssessmentQuestion[] = definition.questions,
 ): AssessmentScoreResult {
   const dimensionScores: Record<string, number | null> = {};
   const insufficientDimensionIds: string[] = [];
@@ -60,7 +63,7 @@ export function scoreAssessment(
     let linkedQuestionCount = 0;
     let answeredQuestionCount = 0;
 
-    for (const question of definition.questions) {
+    for (const question of questions) {
       const linked = question.options.some((option) => hasOwn(option.scores, dimension.id));
       if (!linked) continue;
       linkedQuestionCount += 1;
@@ -119,7 +122,7 @@ export function scoreAssessment(
   if (definition.mode === 'mbti') {
     const pairs = definition.mbtiPairs ?? [];
     result.mbtiType = pairs
-      .map((pair) => resolveMbtiLetter(definition, pair, answers, dimensionScores))
+      .map((pair) => resolveMbtiLetter(definition, pair, answers, dimensionScores, questions))
       .join('');
     result.closeDimensionIds = pairs
       .filter((pair) => {
@@ -128,6 +131,17 @@ export function scoreAssessment(
         return leftScore !== null && rightScore !== null && Math.abs(leftScore - rightScore) <= 10;
       })
       .map((pair) => pair.id);
+  }
+
+  if (definition.scoreType === 'quiz') {
+    const availableScores = definition.dimensions
+      .map((dimension) => dimensionScores[dimension.id])
+      .filter((value): value is number => value !== null);
+    if (availableScores.length > 0) {
+      result.overallPercentage = Math.round(
+        availableScores.reduce((sum, value) => sum + value, 0) / availableScores.length,
+      );
+    }
   }
 
   return result;

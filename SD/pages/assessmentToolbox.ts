@@ -1,4 +1,5 @@
 import type { AssessmentGroup } from '../components/tools/test/assessment/types';
+import type { AssessmentHistoryRecord } from '../components/tools/test/assessment/assessmentHistory';
 import type { ToolDef } from '../tools/registry';
 
 export const ASSESSMENT_GROUPS = [
@@ -34,4 +35,12 @@ export function syncAssessmentParam(
     next.delete('assessment');
   }
   return next;
+}
+
+export function formatAssessmentHistorySummary(record: AssessmentHistoryRecord): string {
+  const variantLabel = record.variantId === 'quick' ? '简易测试' : '完整测试';
+  if (record.status === 'in-progress') {
+    return `继续第 ${Math.min(record.currentIndex + 1, record.totalQuestions)} 题 · ${variantLabel}`;
+  }
+  return `${record.resultLabel ?? '已完成测评'} · ${variantLabel}`;
 }

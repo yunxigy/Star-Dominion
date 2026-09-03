@@ -2649,6 +2649,38 @@
   font-size: 0.72rem;
 }
 
+.lottery-presets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.8rem;
+}
+
+.lottery-presets__label {
+  color: var(--text-soft);
+  font-size: 0.72rem;
+  font-weight: 800;
+}
+
+.lottery-preset-button {
+  padding: 0.35rem 0.6rem;
+  border: 1px solid var(--fun-border);
+  border-radius: 999px;
+  color: var(--accent-strong);
+  background: var(--fun-soft);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 750;
+  transition: transform 160ms ease, border-color 160ms ease, background-color 160ms ease;
+}
+
+.lottery-preset-button:hover:not(:disabled) {
+  border-color: var(--accent);
+  background: var(--surface-hover);
+  transform: translateY(-1px);
+}
+
 .lottery-options {
   display: grid;
   grid-template-columns: minmax(100px, 0.75fr) minmax(0, 1.25fr);
@@ -2759,6 +2791,25 @@
 
 .lottery-switch-control > input:checked + .lottery-switch span {
   transform: translateX(0.98rem);
+}
+
+.lottery-elimination-note {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--berry) 28%, var(--fun-border));
+  border-radius: 0.85rem;
+  color: var(--berry);
+  background: color-mix(in srgb, var(--berry-soft) 45%, transparent);
+  font-size: 0.75rem;
+  font-weight: 750;
+}
+
+.lottery-elimination-note .lottery-text-button {
+  flex: 0 0 auto;
 }
 
 .lottery-action-row,
@@ -3122,6 +3173,97 @@
   text-align: center;
 }
 
+.lottery-card-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 1;
+  min-height: 20rem;
+  padding: 2rem 1rem 1.2rem;
+  overflow: hidden;
+}
+
+.lottery-card-stage::before {
+  position: absolute;
+  width: 17rem;
+  height: 17rem;
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  border-radius: 50%;
+  content: '';
+}
+
+.lottery-card-stage__stack {
+  position: absolute;
+  width: min(100%, 15rem);
+  height: 12rem;
+  transform: translate(1.1rem, 1rem) rotate(7deg);
+}
+
+.lottery-card-stage__stack span {
+  position: absolute;
+  inset: 0;
+  border: 1px solid color-mix(in srgb, var(--berry) 35%, var(--fun-border));
+  border-radius: 1.35rem;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--berry-soft) 70%, var(--surface)), var(--surface));
+  box-shadow: 0 18px 35px var(--shadow);
+}
+
+.lottery-card-stage__stack span:nth-child(1) { transform: translate(-0.8rem, 0.8rem) rotate(-8deg); }
+.lottery-card-stage__stack span:nth-child(2) { transform: translate(-0.35rem, 0.35rem) rotate(-3deg); }
+
+.lottery-draw-card {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: min(100%, 20rem);
+  min-height: 13rem;
+  padding: 2rem 1.4rem;
+  border: 1px solid color-mix(in srgb, var(--berry) 50%, var(--fun-border));
+  border-radius: 1.5rem;
+  color: var(--fun-ink);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--surface) 84%, var(--berry-soft)), var(--surface)),
+    repeating-linear-gradient(135deg, transparent 0 12px, color-mix(in srgb, var(--berry) 7%, transparent) 12px 14px);
+  box-shadow: 0 24px 48px color-mix(in srgb, var(--berry) 16%, var(--shadow)), inset 0 1px 0 rgb(255 255 255 / 25%);
+  text-align: center;
+  transition: transform 180ms ease, box-shadow 180ms ease;
+}
+
+.lottery-card-stage.is-drawing .lottery-draw-card {
+  box-shadow: 0 24px 52px color-mix(in srgb, var(--berry) 28%, var(--shadow)), 0 0 0 8px color-mix(in srgb, var(--berry) 7%, transparent);
+  transform: rotate(1.5deg) scale(1.02);
+}
+
+.lottery-draw-card__label,
+.lottery-draw-card > span:last-child {
+  color: var(--text-soft);
+  font-size: 0.75rem;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+}
+
+.lottery-draw-card strong {
+  max-width: 100%;
+  margin: 0.6rem 0;
+  overflow: hidden;
+  color: var(--berry);
+  font-size: clamp(2rem, 6vw, 3.3rem);
+  font-weight: 950;
+  letter-spacing: -0.06em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lottery-card-stage__caption {
+  position: relative;
+  z-index: 2;
+  margin: 0.3rem 0 0;
+  color: var(--text-soft);
+  font-size: 0.72rem;
+  text-align: center;
+}
+
 .lottery-result-card,
 .lottery-history-card,
 .dice-history-card {
@@ -3134,6 +3276,13 @@
   display: flex;
   align-items: center;
   gap: 0.7rem;
+}
+
+.lottery-result-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.4rem;
 }
 
 .lottery-result-card__trophy {
@@ -3583,7 +3732,8 @@
   }
 
   .lottery-rolling-stage,
-  .lottery-wheel-stage {
+  .lottery-wheel-stage,
+  .lottery-card-stage {
     min-height: 18rem;
   }
 

@@ -1,13 +1,14 @@
 import type { AssessmentDefinition } from '../types';
+import { withAssessmentModes } from '../modes';
 import { agreementQuestion } from './builders';
 
-export const orientationSpectrumDefinition: AssessmentDefinition = {
+const orientationSpectrumDefinitionBase: AssessmentDefinition = {
   id: 'orientation-spectrum-test',
   title: '吸引倾向光谱探索',
   subtitle: '温和观察性吸引可能指向哪里，以及它是否稳定或低频',
   group: 'orientation',
-  questionCount: 18,
-  estimatedMinutes: 4,
+  questionCount: 24,
+  estimatedMinutes: 6,
   mode: 'dimensions',
   sensitive: true,
   intro: '本测评建议 16+ 使用。请按最近一段时间真实、舒服的感受作答；任何题目都可以跳过，也不需要急着选择身份标签。',
@@ -39,6 +40,12 @@ export const orientationSpectrumDefinition: AssessmentDefinition = {
     agreementQuestion('os-16', '现有的常见标签未必能完整描述我。', 'fluidExploring'),
     agreementQuestion('os-17', '当我诚实观察感受时，同性吸引是值得被看见的一部分。', 'sameGender'),
     agreementQuestion('os-18', '我更重视实际出现的感受，而不是先套用固定结论。', 'differentGender'),
+    agreementQuestion('os-19', '我愿意诚实观察自己对同性别者的心动或亲密想象。', 'sameGender'),
+    agreementQuestion('os-20', '我愿意诚实观察自己对不同性别者的心动或亲密想象。', 'differentGender'),
+    agreementQuestion('os-21', '我认为吸引可以同时受到个体特质和性别范围的影响。', 'multiGender'),
+    agreementQuestion('os-22', '没有明确性吸引时，我也能认可自己的亲密需要。', 'lowAttraction'),
+    agreementQuestion('os-23', '我允许自己的理解随着新的感受慢慢调整。', 'fluidExploring'),
+    agreementQuestion('os-24', '我不需要为了让别人理解而马上确定一个标签。', 'fluidExploring'),
   ],
   results: [
     { id: 'sameGender', title: '同性吸引线索较清晰', description: '你的回答里，对相同性别的吸引线索相对更容易被你觉察。这只是当前感受的一个侧面，不要求你立刻采用任何身份标签。', keywords: ['同性线索', '真实感受', '自我接纳'], suggestion: '可以继续记录让你感到心动、亲近或舒适的具体时刻。' },
@@ -48,3 +55,9 @@ export const orientationSpectrumDefinition: AssessmentDefinition = {
     { id: 'fluidExploring', title: '仍在探索或感受较流动', description: '你可能仍在理解自己的吸引模式，或发现它会随时间与情境变化。不确定本身也是有效状态。', keywords: ['持续探索', '流动感', '允许不确定'], suggestion: '给自己时间，把标签当作可选工具而不是必须交出的答案。' },
   ],
 };
+
+export const orientationSpectrumDefinition = withAssessmentModes(
+  orientationSpectrumDefinitionBase,
+  orientationSpectrumDefinitionBase.questions.slice(0, 12).map((question) => question.id),
+  3,
+);

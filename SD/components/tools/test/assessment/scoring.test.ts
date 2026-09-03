@@ -135,6 +135,52 @@ const sensitiveFixture: AssessmentDefinition = {
   ],
 };
 
+const quizFixture: AssessmentDefinition = {
+  id: 'quiz-fixture',
+  title: 'Quiz Fixture',
+  subtitle: 'Fixture',
+  group: 'fun',
+  questionCount: 3,
+  estimatedMinutes: 1,
+  mode: 'dimensions',
+  scoreType: 'quiz',
+  sensitive: false,
+  intro: 'Fixture',
+  disclaimer: 'Fixture',
+  minAnsweredRatio: 1,
+  dimensions: [
+    { id: 'memory', label: '记忆', color: '#ef4444', description: '记忆' },
+    { id: 'logic', label: '逻辑', color: '#14b8a6', description: '逻辑' },
+  ],
+  questions: [
+    {
+      id: 'q1',
+      prompt: 'Q1',
+      options: [
+        { id: 'correct', label: '正确', scores: { memory: 1 } },
+        { id: 'wrong', label: '错误', scores: { memory: 0 } },
+      ],
+    },
+    {
+      id: 'q2',
+      prompt: 'Q2',
+      options: [
+        { id: 'correct', label: '正确', scores: { logic: 1 } },
+        { id: 'wrong', label: '错误', scores: { logic: 0 } },
+      ],
+    },
+    {
+      id: 'q3',
+      prompt: 'Q3',
+      options: [
+        { id: 'correct', label: '正确', scores: { memory: 1 } },
+        { id: 'wrong', label: '错误', scores: { memory: 0 } },
+      ],
+    },
+  ],
+  results: [],
+};
+
 describe('scoreAssessment', () => {
   it('normalizes answered questions and applies stable dominant tie order', () => {
     const result = scoreAssessment(dominantFixture, { q1: 'a', q2: 'b' });
@@ -182,5 +228,17 @@ describe('scoreAssessment', () => {
 
     expect(result.dimensionScores.insight).toBeNull();
     expect(result.insufficientDimensionIds).toEqual(['insight']);
+  });
+
+  it('scores only the selected quiz variant and exposes an overall percentage', () => {
+    const result = scoreAssessment(
+      quizFixture,
+      { q1: 'correct', q2: 'wrong' },
+      quizFixture.questions.slice(0, 2),
+    );
+
+    expect(result.overallPercentage).toBe(50);
+    expect(result.dimensionScores.memory).toBe(100);
+    expect(result.dimensionScores.logic).toBe(0);
   });
 });

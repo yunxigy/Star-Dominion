@@ -1,11 +1,12 @@
 import type { AssessmentDefinition } from '../types';
+import { withAssessmentModes } from '../modes';
 import { scenarioQuestion } from './builders';
 
-export const lifeEnergyDefinition: AssessmentDefinition = {
+const lifeEnergyDefinitionBase: AssessmentDefinition = {
   id: 'life-energy-test',
   title: '生活能量类型',
   subtitle: '你通常靠什么方式启动、维持和恢复能量？',
-  group: 'fun', questionCount: 18, estimatedMinutes: 4, mode: 'dominant', sensitive: false,
+  group: 'fun', questionCount: 24, estimatedMinutes: 6, mode: 'dominant', sensitive: false,
   intro: '这份测评关注你在日常节奏里的自然偏好：有人靠行动充电，有人靠稳定、探索、仪式、连接或安静恢复。',
   disclaimer: '结果仅供自我探索和娱乐，不构成心理诊断或专业建议。',
   minAnsweredRatio: 1,
@@ -126,6 +127,42 @@ export const lifeEnergyDefinition: AssessmentDefinition = {
       ['和重要的人共享经历与情绪', 'social', 'action'],
       ['安静清醒，给内心足够空间', 'quiet', 'steady'],
     ]),
+    scenarioQuestion('energy-19', '一周结束时，你最想用什么恢复？', [
+      ['完成一个小目标，找回推进感', 'action', 'social'],
+      ['按熟悉的方式休息，慢慢稳定下来', 'steady', 'ritual'],
+      ['去一个没去过的地方或尝试新活动', 'explore', 'action'],
+      ['准备一顿舒服的饭或整理生活细节', 'ritual', 'quiet'],
+    ]),
+    scenarioQuestion('energy-20', '遇到卡住的任务时，你会先？', [
+      ['找人聊聊，获得反馈和新的动力', 'social', 'action'],
+      ['关掉干扰，安静把问题想清楚', 'quiet', 'steady'],
+      ['先做最明显的一步，边走边调整', 'action', 'social'],
+      ['重新安排时间和节奏，避免透支', 'steady', 'ritual'],
+    ]),
+    scenarioQuestion('energy-21', '理想的休息空间应该？', [
+      ['能随时发现新内容和新灵感', 'explore', 'action'],
+      ['细节有质感，让人慢慢放松', 'ritual', 'quiet'],
+      ['有熟悉的人可以自然交流', 'social', 'action'],
+      ['安静、低刺激，让心情慢慢沉下来', 'quiet', 'steady'],
+    ]),
+    scenarioQuestion('energy-22', '和朋友见面后，你通常？', [
+      ['继续安排下一个想做的活动', 'social', 'action'],
+      ['需要一点独处，安静恢复注意力', 'quiet', 'steady'],
+      ['马上做一个小目标，延续行动感', 'action', 'social'],
+      ['回到熟悉的日常，让身体恢复节奏', 'steady', 'ritual'],
+    ]),
+    scenarioQuestion('energy-23', '面对生活变化，你最需要？', [
+      ['把变化当成认识新可能的入口', 'explore', 'action'],
+      ['通过整理环境和仪式开启新阶段', 'ritual', 'quiet'],
+      ['和重要的人保持联系，一起适应', 'social', 'action'],
+      ['减少额外活动，留出安静消化空间', 'quiet', 'steady'],
+    ]),
+    scenarioQuestion('energy-24', '你希望长期保持哪种状态？', [
+      ['每天都有明确的推进和完成', 'action', 'social'],
+      ['生活规律，身心有足够恢复空间', 'steady', 'ritual'],
+      ['持续学习、发现和尝试新事物', 'explore', 'action'],
+      ['认真感受日常，并把生活过得有质感', 'ritual', 'quiet'],
+    ]),
   ],
   results: [
     { id: 'action', title: '行动派', description: '你常在“开始做”之后获得清晰和能量。推进、完成和看得见的变化，会让你迅速找回掌控感。', keywords: ['启动快', '执行力', '推进感'], suggestion: '行动前留一个短暂停顿确认方向，能减少无效消耗。' },
@@ -137,3 +174,9 @@ export const lifeEnergyDefinition: AssessmentDefinition = {
   ],
   tieBreakOrder: ['action', 'steady', 'explore', 'ritual', 'social', 'quiet'],
 };
+
+export const lifeEnergyDefinition = withAssessmentModes(
+  lifeEnergyDefinitionBase,
+  lifeEnergyDefinitionBase.questions.slice(0, 12).map((question) => question.id),
+  3,
+);

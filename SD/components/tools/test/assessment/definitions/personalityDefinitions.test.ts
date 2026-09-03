@@ -23,11 +23,11 @@ function answersFavoring(definition: AssessmentDefinition, dimensionId: string):
 }
 
 describe('personality assessment definitions', () => {
-  it('provides three valid 18-question personality definitions', () => {
+  it('provides three valid 24-question personality definitions', () => {
     for (const definition of definitions) {
       expect(validateAssessmentDefinition(definition)).toEqual([]);
       expect(definition.group).toBe('personality');
-      expect(definition.questions).toHaveLength(18);
+      expect(definition.questions).toHaveLength(24);
       expect(definition.results.every((result) => result.keywords.length >= 3 && result.keywords.length <= 5)).toBe(true);
     }
   });
@@ -65,7 +65,7 @@ describe('personality assessment definitions', () => {
         .flatMap((question) => question.options)
         .filter((option) => option.scores[dimension.id] === 2)
         .length;
-      expect(primaryCount).toBe(12);
+      expect(primaryCount).toBe(16);
       expect(scoreAssessment(coreValuesDefinition, answersFavoring(coreValuesDefinition, dimension.id)).primaryResultId)
         .toBe(dimension.id);
     }

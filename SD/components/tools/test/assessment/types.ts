@@ -1,5 +1,6 @@
 export type AssessmentGroup = 'fun' | 'personality' | 'orientation';
 export type AssessmentMode = 'dominant' | 'dimensions' | 'mbti';
+export type AssessmentVariantId = 'quick' | 'complete';
 export type AnswerMap = Record<string, string | null>;
 
 export interface AssessmentDimension {
@@ -29,6 +30,14 @@ export interface AssessmentResultProfile {
   suggestion?: string;
 }
 
+export interface AssessmentVariant {
+  id: AssessmentVariantId;
+  label: string;
+  description: string;
+  estimatedMinutes: number;
+  questions: AssessmentQuestion[];
+}
+
 export interface MbtiPair {
   id: string;
   left: string;
@@ -51,6 +60,8 @@ export interface AssessmentDefinition {
   dimensions: AssessmentDimension[];
   questions: AssessmentQuestion[];
   results: AssessmentResultProfile[];
+  variants?: Partial<Record<AssessmentVariantId, AssessmentVariant>>;
+  scoreType?: 'profile' | 'quiz';
   tieBreakOrder?: string[];
   mbtiPairs?: MbtiPair[];
 }
@@ -63,4 +74,5 @@ export interface AssessmentScoreResult {
   mbtiType?: string;
   closeDimensionIds: string[];
   insufficientDimensionIds: string[];
+  overallPercentage?: number;
 }

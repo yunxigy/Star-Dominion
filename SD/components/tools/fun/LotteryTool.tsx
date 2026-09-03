@@ -6,23 +6,29 @@ import {
   Dices,
   Gift,
   History,
+  Layers,
+  RotateCcw,
   RotateCw,
+  Share2,
   Sparkles,
   Trash2,
   Trophy,
   Users,
 } from 'lucide-react';
 
-import { buildLotteryPool, drawWinners, getWheelRotation, parseLotteryEntries } from './lottery';
-
-type LotteryMode = 'rolling' | 'wheel';
-
-type HistoryEntry = {
-  id: number;
-  mode: LotteryMode;
-  winners: string[];
-  time: string;
-};
+import {
+  buildLotteryPool,
+  drawWinners,
+  getAvailableLotteryEntries,
+  getLotteryShareText,
+  getWheelRotation,
+  loadLotteryHistory,
+  LOTTERY_PRESETS,
+  parseLotteryEntries,
+  saveLotteryHistory,
+  type LotteryHistoryEntry,
+  type LotteryMode,
+} from './lottery';
 
 const SAMPLE_NAMES = '小红\n小明\n阿杰\n小雨\n安安\n阿宁';
 const WHEEL_COLORS = ['#d95f67', '#e29a4d', '#c6a950', '#719a73', '#5e8e9f', '#8974a8', '#bd718b', '#d37752'];
@@ -33,6 +39,7 @@ const WHEEL_SPIN_DURATION = 1700;
 const MODE_OPTIONS: Array<{ id: LotteryMode; name: string; description: string; icon: React.ReactNode }> = [
   { id: 'rolling', name: '滚动开奖', description: '像抽奖箱一样快速滚动', icon: <RotateCw aria-hidden="true" /> },
   { id: 'wheel', name: '幸运转盘', description: '看着指针停在谁身上', icon: <Dices aria-hidden="true" /> },
+  { id: 'card', name: '翻牌抽奖', description: '一张张翻开好运', icon: <Layers aria-hidden="true" /> },
 ];
 
 function formatTime(date: Date): string {
@@ -54,9 +61,12 @@ const LotteryTool: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const [isDrawing, setIsDrawing] = useState(false);
   const [wheelRotation, setWheelRotation] = useState(0);
   const [activeWheelIndex, setActiveWheelIndex] = useState<number | null>(null);
-  const [history, setHistory] = useState<HistoryEntry[]>([]);
+  const [removeAfterDraw, setRemoveAfterDraw] = useState(false);
+  const [eliminatedEntries, setEliminatedEntries] = useState<string[]>([]);
+  const [history, setHistory] = useState<LotteryHistoryEntry[]>(loadLotteryHistory);
   const [notice, setNotice] = useState('');
   const [copied, setCopied] = useState(false);
+  const [shareCopied, setShareCopied] = useState(false);
 
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -64,7 +74,11 @@ const LotteryTool: React.FC<{ onClose: () => void }> = ({ onClose }) => {
   const historyIdRef = useRef(0);
 
   const entries = useMemo(() => parseLotteryEntries(names), [names]);
-  const pool = useMemo(() => buildLotteryPool(entries, removeDup), [entries, removeDup]);
+  const basePool = useMemo(() => buildLotteryPool(entries, removeDup), [entries, removeDup]);
+  const pool = useMemo(
+    () => getAvailableLotteryEntries(basePool, removeAfterDraw ? eliminatedEntries : []),
+    [basePool, eliminatedEntries, removeAfterDraw],
+  );
   const safeCount = clampCount(count, pool.length);
   const wheelBackground = useMemo(() => {
     if (pool.length === 0) return 'conic-gradient(from -90deg, #d9c8b4 0 100%)';
@@ -90,6 +104,10 @@ const LotteryTool: React.FC<{ onClose: () => void }> = ({ onClose }) => {
 
   useEffect(() => clearTimers, [clearTimers]);
 
+  useEffect(() => {
+    saveLotteryHistory(history);
+  }, [history]);
+
   const completeDraw = useCallback((result: string[], drawMode: LotteryMode, sessionId: number) => {
     if (sessionRef.current !== sessionId) return;
     clearTimers();
@@ -99,23 +117,26 @@ const LotteryTool: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     setActiveWheelIndex(null);
     setHistory(previous => [
       {
-        id: historyIdRef.current++,
+        id: Date.now() + historyIdRef.current++,
         mode: drawMode,
         winners: result,
         time: formatTime(new Date()),
       },
       ...previous,
     ].slice(0, 8));
-  }, [clearTimers]);
+    if (removeAfterDraw) {
+      setEliminatedEntries(previous => [...new Set([...previous, ...result])]);
+    }
+  }, [clearTimers, removeAfterDraw]);
 
-  const startRolling = useCallback((items: string[], result: string[], sessionId: number) => {
+  const startRolling = useCallback((items: string[], result: string[], sessionId: number, drawMode: LotteryMode = 'rolling') => {
     let tick = 0;
     setCurrentLabel(items[0]);
     intervalRef.current = setInterval(() => {
       setCurrentLabel(items[Math.floor(Math.random() * items.length)]);
       tick += 1;
       if (tick >= ROLLING_TICKS) {
-        completeDraw(result, 'rolling', sessionId);
+        completeDraw(result, drawMode, sessionId);
       }
     }, ROLLING_INTERVAL);
   }, [completeDraw]);
@@ -154,6 +175,7 @@ const LotteryTool: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     const result = winnerIndexes.map(index => pool[index]);
     setWinners([]);
     setCopied(false);
+    setShareCopied(false);
     setNotice(safeCount < count ? `候选名单共 ${pool.length} 位，本轮按最多 ${safeCount} 人开奖。` : '');
     setCurrentLabel('');
     setActiveWheelIndex(null);
@@ -162,7 +184,7 @@ const LotteryTool: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     if (mode === 'wheel') {
       startWheel(pool, winnerIndexes, result, sessionId);
     } else {
-      startRolling(pool, result, sessionId);
+      startRolling(pool, result, sessionId, mode);
     }
   };
 
@@ -176,6 +198,17 @@ const LotteryTool: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     }
   };
 
+  const copyShareText = async () => {
+    if (winners.length === 0) return;
+    try {
+      await navigator.clipboard.writeText(getLotteryShareText(winners, mode, formatTime(new Date())));
+      setShareCopied(true);
+      setNotice('分享文案已复制，可以直接发给朋友。');
+    } catch {
+      setNotice('当前环境不支持自动复制，请手动选择中奖名单。');
+    }
+  };
+
   const clearHistory = () => setHistory([]);
 
   const fillSample = () => {
@@ -184,10 +217,28 @@ const LotteryTool: React.FC<{ onClose: () => void }> = ({ onClose }) => {
     setNotice('已填入一组示例名单，可以直接试抽。');
   };
 
+  const applyPreset = (presetId: string) => {
+    if (isDrawing) return;
+    const preset = LOTTERY_PRESETS.find((candidate) => candidate.id === presetId);
+    if (!preset) return;
+    setNames(preset.entries.join('\n'));
+    setCount(preset.count);
+    setEliminatedEntries([]);
+    setWinners([]);
+    setNotice(`已载入「${preset.label}」场景，可以直接开始。`);
+  };
+
+  const resetEliminatedEntries = () => {
+    if (isDrawing) return;
+    setEliminatedEntries([]);
+    setNotice('已恢复全部候选人。');
+  };
+
   const clearNames = () => {
     if (isDrawing) return;
     setNames('');
     setWinners([]);
+    setEliminatedEntries([]);
     setNotice('');
   };
 
@@ -254,6 +305,22 @@ const LotteryTool: React.FC<{ onClose: () => void }> = ({ onClose }) => {
             <span className="lottery-input-hint">一行一个，空行会自动忽略</span>
           </div>
 
+          <div className="lottery-presets" aria-label="快速场景">
+            <span className="lottery-presets__label">快速场景</span>
+            {LOTTERY_PRESETS.map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                className="lottery-preset-button"
+                onClick={() => applyPreset(preset.id)}
+                disabled={isDrawing}
+                title={preset.description}
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
+
           <div className="lottery-options">
             <label className="lottery-number-control">
               <span>抽取人数</span>
@@ -281,12 +348,32 @@ const LotteryTool: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               <span className="lottery-switch" aria-hidden="true"><span /></span>
               <span><strong>候选名单去重</strong><small>同名只保留一次</small></span>
             </label>
+            <label className="lottery-switch-control">
+              <input
+                type="checkbox"
+                checked={removeAfterDraw}
+                aria-label="中奖后移除"
+                onChange={event => setRemoveAfterDraw(event.target.checked)}
+                disabled={isDrawing}
+              />
+              <span className="lottery-switch" aria-hidden="true"><span /></span>
+              <span><strong>中奖后移除</strong><small>适合连续抽取不重复</small></span>
+            </label>
           </div>
+
+          {eliminatedEntries.length > 0 && removeAfterDraw && (
+            <div className="lottery-elimination-note">
+              <span>已暂时移除 {eliminatedEntries.length} 位中奖者</span>
+              <button type="button" className="lottery-text-button" onClick={resetEliminatedEntries} disabled={isDrawing}>
+                <RotateCcw aria-hidden="true" /> 恢复全部
+              </button>
+            </div>
+          )}
 
           <div className="lottery-action-row">
             <button type="button" className="lottery-primary-button" onClick={startLottery} disabled={isDrawing}>
               <Gift aria-hidden="true" />
-              {isDrawing ? '正在开奖…' : mode === 'wheel' ? '开始转盘抽奖' : '开始滚动开奖'}
+              {isDrawing ? '正在开奖…' : mode === 'wheel' ? '开始转盘抽奖' : mode === 'card' ? '开始翻牌抽奖' : '开始滚动开奖'}
             </button>
             <button type="button" className="lottery-quiet-button" onClick={onClose} disabled={isDrawing}>关闭</button>
           </div>
@@ -297,12 +384,12 @@ const LotteryTool: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           id={`lottery-panel-${mode}`}
           className="lottery-stage-card"
           role="region"
-          aria-label={mode === 'wheel' ? '幸运转盘' : '滚动开奖'}
+          aria-label={mode === 'wheel' ? '幸运转盘' : mode === 'card' ? '翻牌抽奖' : '滚动开奖'}
           aria-live="polite"
         >
           <div className="lottery-stage-card__topline">
             <div>
-              <p className="lottery-eyebrow">02 · {mode === 'wheel' ? '幸运转盘' : '滚动开奖'}</p>
+              <p className="lottery-eyebrow">02 · {mode === 'wheel' ? '幸运转盘' : mode === 'card' ? '翻牌抽奖' : '滚动开奖'}</p>
               <h3>{isDrawing ? '好运正在靠近…' : winners.length > 0 ? '本轮已经开奖' : '准备好了吗？'}</h3>
             </div>
             <span className="lottery-stage-card__pool"><Clock3 aria-hidden="true" /> {pool.length > 0 ? `候选池 ${pool.length}` : '等待名单'}</span>
@@ -336,6 +423,18 @@ const LotteryTool: React.FC<{ onClose: () => void }> = ({ onClose }) => {
               </div>
               <p className="lottery-wheel-stage__caption">转盘会按抽取人数逐次停下</p>
             </div>
+          ) : mode === 'card' ? (
+            <div className={`lottery-card-stage ${isDrawing ? 'is-drawing' : ''}`}>
+              <div className="lottery-card-stage__stack" aria-hidden="true">
+                <span /><span /><span />
+              </div>
+              <div className="lottery-draw-card">
+                <span className="lottery-draw-card__label">{isDrawing ? '正在翻开' : winners.length > 0 ? '翻牌结果' : '准备翻牌'}</span>
+                <strong>{isDrawing ? currentLabel || '…' : winners[0] || '命运卡片'}</strong>
+                <span>{isDrawing ? '下一张好运马上出现' : winners.length > 0 ? `本轮共 ${winners.length} 位` : '输入名单后点击开始'}</span>
+              </div>
+              <p className="lottery-card-stage__caption">一张张翻开好运，支持连续抽取</p>
+            </div>
           ) : (
             <div className={`lottery-rolling-stage ${isDrawing ? 'is-drawing' : ''}`}>
               <div className="lottery-rolling-stage__spark spark-one" aria-hidden="true">✦</div>
@@ -367,10 +466,16 @@ const LotteryTool: React.FC<{ onClose: () => void }> = ({ onClose }) => {
                 <h3 id="lottery-result-title">中奖名单</h3>
               </div>
             </div>
-            <button type="button" className="lottery-copy-button" onClick={copyWinners}>
-              {copied ? <Check aria-hidden="true" /> : <Clipboard aria-hidden="true" />}
-              {copied ? '已复制' : '复制名单'}
-            </button>
+            <div className="lottery-result-card__actions">
+              <button type="button" className="lottery-copy-button" onClick={copyWinners}>
+                {copied ? <Check aria-hidden="true" /> : <Clipboard aria-hidden="true" />}
+                {copied ? '已复制' : '复制名单'}
+              </button>
+              <button type="button" className="lottery-copy-button" onClick={copyShareText}>
+                {shareCopied ? <Check aria-hidden="true" /> : <Share2 aria-hidden="true" />}
+                {shareCopied ? '文案已复制' : '复制分享文案'}
+              </button>
+            </div>
           </div>
           <div className="lottery-winners-grid">
             {winners.map((winner, index) => (
@@ -401,7 +506,7 @@ const LotteryTool: React.FC<{ onClose: () => void }> = ({ onClose }) => {
           <ol className="lottery-history-list">
             {history.map(entry => (
               <li key={entry.id}>
-                <span className="lottery-history-list__mode">{entry.mode === 'wheel' ? '转盘' : '滚动'}</span>
+                <span className="lottery-history-list__mode">{entry.mode === 'wheel' ? '转盘' : entry.mode === 'card' ? '翻牌' : '滚动'}</span>
                 <time>{entry.time}</time>
                 <span className="lottery-history-list__winners">{entry.winners.join('、')}</span>
               </li>

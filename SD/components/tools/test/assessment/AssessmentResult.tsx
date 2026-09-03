@@ -1,12 +1,13 @@
 import React from 'react';
-import { AlertCircle, Compass, RotateCcw, Sparkles, X } from 'lucide-react';
+import { AlertCircle, Check, Compass, RotateCcw, Share2, Sparkles, X } from 'lucide-react';
 
 import { AssessmentRadarChart } from './AssessmentRadarChart';
-import type { AssessmentDefinition, AssessmentScoreResult } from './types';
+import type { AssessmentDefinition, AssessmentScoreResult, AssessmentVariant } from './types';
 
 interface AssessmentResultProps {
   definition: AssessmentDefinition;
   score: AssessmentScoreResult;
+  variant?: AssessmentVariant;
   onRestart: () => void;
   onClose: () => void;
 }
@@ -38,10 +39,12 @@ const groupStyles = {
 export function AssessmentResult({
   definition,
   score,
+  variant,
   onRestart,
   onClose,
 }: AssessmentResultProps) {
   const style = groupStyles[definition.group];
+  const [copied, setCopied] = React.useState(false);
   const profilesById = new Map(definition.results.map((profile) => [profile.id, profile]));
   const highlightedIds = definition.mode === 'dimensions'
     ? score.rankedDimensionIds.slice(0, 2)
@@ -52,6 +55,23 @@ export function AssessmentResult({
     .map((id) => profilesById.get(id))
     .filter((profile): profile is NonNullable<typeof profile> => Boolean(profile));
 
+  const copyResult = async () => {
+    const primaryLabel = score.mbtiType ?? highlightedProfiles[0]?.title ?? '多维度探索结果';
+    const lines = [
+      `${definition.title}${variant ? ` · ${variant.label}` : ''}`,
+      `我的结果：${primaryLabel}`,
+      score.overallPercentage !== undefined ? `综合正确率：${score.overallPercentage}%` : '',
+      '来自 SD 工具箱，仅供娱乐和自我探索。',
+    ].filter(Boolean);
+
+    try {
+      await navigator.clipboard.writeText(lines.join('\n'));
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       <section className={`relative overflow-hidden rounded-[2rem] border ${style.border} bg-gradient-to-br ${style.wash} p-6 sm:p-9`}>
@@ -61,9 +81,23 @@ export function AssessmentResult({
             <Sparkles className="h-4 w-4" />
             测评结果
           </div>
+          {variant && (
+            <span className="mb-4 inline-flex rounded-full border border-white/80 bg-white/65 px-3 py-1 text-xs font-bold text-[#6d5a47]">
+              本次完成：{variant.label} · {variant.questions.length} 题
+            </span>
+          )}
           {definition.mode === 'mbti' && (
             <div className="mb-3 font-serif text-6xl font-black tracking-[0.08em] text-[#2f241b] sm:text-7xl">
               {score.mbtiType}
+            </div>
+          )}
+          {definition.scoreType === 'quiz' && (
+            <div className="mx-auto mb-5 max-w-sm rounded-2xl border border-white/80 bg-white/60 px-5 py-4 shadow-sm">
+              <p className="text-xs font-black tracking-[0.18em] text-[#8b735c]">综合正确率</p>
+              <p className="mt-1 font-serif text-5xl font-black text-[#2f241b]">
+                {score.overallPercentage ?? '—'}%
+              </p>
+              <p className="mt-1 text-sm leading-6 text-[#6d5a47]">这是本次题目的答题表现，不代表固定智力或标准化分数。</p>
             </div>
           )}
           {highlightedProfiles.length > 0 ? (
@@ -181,7 +215,15 @@ export function AssessmentResult({
 
       <p className="text-center text-sm leading-6 text-[#7b6854]">{definition.disclaimer}</p>
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-3 sm:grid-cols-3">
+        <button
+          type="button"
+          onClick={copyResult}
+          className="inline-flex items-center justify-center gap-2 rounded-2xl border border-[#c9d5bd] bg-[#edf2e6] px-5 py-3.5 font-bold text-[#4d6036] transition hover:bg-[#e2ead9] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#8da472]/35"
+        >
+          {copied ? <Check className="h-5 w-5" /> : <Share2 className="h-5 w-5" />}
+          {copied ? '已复制结果' : '复制结果分享'}
+        </button>
         <button
           type="button"
           onClick={onRestart}

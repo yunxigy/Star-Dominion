@@ -1,13 +1,14 @@
 import type { AssessmentDefinition } from '../types';
+import { withAssessmentModes } from '../modes';
 import { scenarioQuestion } from './builders';
 
-export const animalPersonalityDefinition: AssessmentDefinition = {
+const animalPersonalityDefinitionBase: AssessmentDefinition = {
   id: 'animal-personality-test',
   title: '动物人格测试',
   subtitle: '如果性格有一种动物气质，你更接近哪一种？',
   group: 'fun',
-  questionCount: 18,
-  estimatedMinutes: 4,
+  questionCount: 24,
+  estimatedMinutes: 6,
   mode: 'dominant',
   sensitive: false,
   intro: '从日常选择、社交方式和面对变化的反应中，拼出一张轻松有趣的动物人格画像。请选择最像你自然反应的答案。',
@@ -130,6 +131,42 @@ export const animalPersonalityDefinition: AssessmentDefinition = {
       ['内心的兴奋感和行动活力', 'otter', 'deer'],
       ['决定是否符合自己的感受与善意', 'deer', 'otter'],
     ]),
+    scenarioQuestion('animal-19', '刚接手一个陌生任务时，你会先？', [
+      ['确认自己的空间和边界，再开始安排', 'cat', 'deer'],
+      ['找熟悉的人对齐目标和分工', 'dog', 'otter'],
+      ['研究规则，寻找更灵活的解法', 'fox', 'cat'],
+      ['明确责任和期限，建立推进节奏', 'wolf', 'dog'],
+    ]),
+    scenarioQuestion('animal-20', '一群人准备庆祝时，你更可能？', [
+      ['想一个新鲜玩法，让大家都参与', 'otter', 'dog'],
+      ['留意谁需要被照顾或安静一点', 'deer', 'cat'],
+      ['观察每个人的兴趣，调整安排', 'cat', 'fox'],
+      ['负责把重要事项落实到位', 'dog', 'wolf'],
+    ]),
+    scenarioQuestion('animal-21', '计划遇到阻碍时，你倾向于？', [
+      ['重新拆解问题，找出隐藏的突破口', 'fox', 'cat'],
+      ['守住核心目标，同时承担关键部分', 'wolf', 'dog'],
+      ['把气氛放松一点，再继续想办法', 'otter', 'deer'],
+      ['先确认大家的感受和实际困难', 'deer', 'otter'],
+    ]),
+    scenarioQuestion('animal-22', '需要恢复状态时，你会选择？', [
+      ['独处一会儿，按自己的节奏安静下来', 'cat', 'deer'],
+      ['和信任的人吃饭聊天，获得陪伴', 'dog', 'otter'],
+      ['换个环境，做点有趣的新尝试', 'fox', 'cat'],
+      ['完成一件小事，重新找回掌控感', 'wolf', 'dog'],
+    ]),
+    scenarioQuestion('animal-23', '面对一个新机会，你最先关注？', [
+      ['它是否能带来有趣的体验和连接', 'otter', 'dog'],
+      ['它是否符合自己的舒适度和价值感', 'deer', 'cat'],
+      ['它还有哪些别人没看到的可能', 'cat', 'fox'],
+      ['它是否值得长期投入并承担责任', 'dog', 'wolf'],
+    ]),
+    scenarioQuestion('animal-24', '别人把重要事情交给你时，你会？', [
+      ['先理解全局，再设计一条聪明路径', 'fox', 'cat'],
+      ['确认目标后稳定推进到结果', 'wolf', 'dog'],
+      ['让合作过程保持轻松有参与感', 'otter', 'deer'],
+      ['关注参与者的状态，减少无形压力', 'deer', 'otter'],
+    ]),
   ],
   results: [
     { id: 'cat', title: '猫系观察家', description: '你习惯先观察再靠近，珍惜独处、自由和清晰边界。你不一定热衷成为焦点，却常能察觉环境里细微的变化。', keywords: ['独立', '敏锐', '边界感'], suggestion: '保留自己的节奏，也可以更直接地告诉重要的人你需要怎样的陪伴。' },
@@ -141,3 +178,9 @@ export const animalPersonalityDefinition: AssessmentDefinition = {
   ],
   tieBreakOrder: ['cat', 'dog', 'fox', 'wolf', 'otter', 'deer'],
 };
+
+export const animalPersonalityDefinition = withAssessmentModes(
+  animalPersonalityDefinitionBase,
+  animalPersonalityDefinitionBase.questions.slice(0, 12).map((question) => question.id),
+  3,
+);

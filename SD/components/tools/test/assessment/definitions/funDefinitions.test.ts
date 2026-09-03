@@ -23,25 +23,25 @@ function answersFavoring(definition: AssessmentDefinition, dimensionId: string):
 }
 
 describe('fun assessment definitions', () => {
-  it('provides three valid 18-question local definitions', () => {
+  it('provides three valid 24-question local definitions', () => {
     for (const definition of definitions) {
       expect(validateAssessmentDefinition(definition)).toEqual([]);
       expect(definition.group).toBe('fun');
       expect(definition.mode).toBe('dominant');
       expect(definition.sensitive).toBe(false);
-      expect(definition.questions).toHaveLength(18);
+      expect(definition.questions).toHaveLength(24);
       expect(definition.results).toHaveLength(6);
     }
   });
 
-  it('balances each result as a primary option twelve times', () => {
+  it('balances each result as a primary option sixteen times', () => {
     for (const definition of definitions) {
       for (const dimension of definition.dimensions) {
         const primaryCount = definition.questions
           .flatMap((question) => question.options)
           .filter((option) => option.scores[dimension.id] === 2)
           .length;
-        expect(primaryCount, `${definition.id}/${dimension.id}`).toBe(12);
+        expect(primaryCount, `${definition.id}/${dimension.id}`).toBe(16);
       }
     }
   });

@@ -1,8 +1,14 @@
+// @vitest-environment jsdom
+
 import React from 'react';
+import { render } from '@testing-library/react';
+import { screen, fireEvent } from '@testing-library/react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { describe, expect, it } from 'vitest';
+import { afterEach, describe, expect, it } from 'vitest';
 
 import { AssessmentRunner } from './AssessmentRunner';
+import { saveAssessmentProgress } from './assessmentHistory';
+import { withAssessmentModes } from './modes';
 import type { AssessmentDefinition } from './types';
 
 const definition: AssessmentDefinition = {
@@ -37,6 +43,11 @@ const definition: AssessmentDefinition = {
 };
 
 describe('AssessmentRunner', () => {
+  afterEach(() => {
+    document.body.innerHTML = '';
+    window.localStorage.clear();
+  });
+
   it('renders the local-only introduction before answering', () => {
     const html = renderToStaticMarkup(<AssessmentRunner definition={definition} onClose={() => {}} />);
 
@@ -52,5 +63,38 @@ describe('AssessmentRunner', () => {
 
     expect(html).toContain('测评配置加载失败');
     expect(html).toContain('关闭');
+  });
+
+  it('lets users choose a quick or complete question set before starting', () => {
+    const definitionWithModes = withAssessmentModes(definition, ['q1'], 1);
+    render(<AssessmentRunner definition={definitionWithModes} onClose={() => {}} />);
+
+    expect(screen.getAllByRole('radio')).toHaveLength(2);
+    expect(screen.getByText('简易测试')).toBeTruthy();
+    expect(screen.getByText('完整测试')).toBeTruthy();
+
+    fireEvent.click(screen.getByRole('radio', { name: /简易测试/ }));
+
+    expect(screen.getByRole('radio', { name: /简易测试/ }).getAttribute('aria-checked')).toBe('true');
+    fireEvent.click(screen.getByRole('button', { name: /开始简易测试/ }));
+
+    expect(screen.getByText('1 / 1')).toBeTruthy();
+    expect(screen.getByText('你会直接表达吗？')).toBeTruthy();
+  });
+
+  it('offers to resume an unfinished local assessment', () => {
+    saveAssessmentProgress({
+      definitionId: definition.id,
+      variantId: 'complete',
+      currentIndex: 0,
+      totalQuestions: 1,
+      answers: {},
+    });
+
+    render(<AssessmentRunner definition={definition} onClose={() => {}} />);
+
+    expect(screen.getByRole('button', { name: /继续上次进度/ })).toBeTruthy();
+    fireEvent.click(screen.getByRole('button', { name: /继续上次进度/ }));
+    expect(screen.getByText('1 / 1')).toBeTruthy();
   });
 });

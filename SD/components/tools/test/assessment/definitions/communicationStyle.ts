@@ -1,11 +1,12 @@
 import type { AssessmentDefinition } from '../types';
+import { withAssessmentModes } from '../modes';
 import { agreementQuestion } from './builders';
 
-export const communicationStyleDefinition: AssessmentDefinition = {
+const communicationStyleDefinitionBase: AssessmentDefinition = {
   id: 'communication-style-test',
   title: '沟通风格测试',
   subtitle: '你更习惯直接表达、理性分析、共情倾听，还是协作协调？',
-  group: 'personality', questionCount: 18, estimatedMinutes: 4, mode: 'dominant', sensitive: false,
+  group: 'personality', questionCount: 24, estimatedMinutes: 6, mode: 'dominant', sensitive: false,
   intro: '沟通风格会随着关系与情境变化。这份测评帮助你看见自己最常使用的表达路径，以及可以补充的另一种能力。',
   disclaimer: '结果仅供自我探索，不构成心理诊断、能力评定或专业建议。',
   minAnsweredRatio: 1,
@@ -34,6 +35,12 @@ export const communicationStyleDefinition: AssessmentDefinition = {
     agreementQuestion('communication-16', '我愿意调整表达方式以推动合作。', 'collaborative'),
     agreementQuestion('communication-17', '在压力下，我的表达容易变得含糊。', 'direct', true),
     agreementQuestion('communication-18', '我会邀请沉默的人参与讨论。', 'collaborative'),
+    agreementQuestion('communication-19', '我能把一个模糊的请求改写成具体可执行的话。', 'direct'),
+    agreementQuestion('communication-20', '我会在表达结论前说明自己依据的事实。', 'analytical'),
+    agreementQuestion('communication-21', '对方说完后，我会先复述自己的理解再回应。', 'empathetic'),
+    agreementQuestion('communication-22', '多人协作时，我会主动确认下一步由谁负责。', 'collaborative'),
+    agreementQuestion('communication-23', '为了避免冲突，我经常答应自己其实做不到的事。', 'direct', true),
+    agreementQuestion('communication-24', '我会根据对方的关注点调整同一个信息的表达方式。', 'collaborative'),
   ],
   results: [
     { id: 'direct', title: '直接表达型', description: '你重视清晰、效率和明确行动，通常愿意把结论与需求直接说出来。你的优势是减少猜测，让事情快速进入可讨论状态。', keywords: ['清晰', '坦率', '行动导向'], suggestion: '重要观点前加一句背景或感受，直接会更容易被听见。' },
@@ -43,3 +50,9 @@ export const communicationStyleDefinition: AssessmentDefinition = {
   ],
   tieBreakOrder: ['direct', 'analytical', 'empathetic', 'collaborative'],
 };
+
+export const communicationStyleDefinition = withAssessmentModes(
+  communicationStyleDefinitionBase,
+  communicationStyleDefinitionBase.questions.slice(0, 12).map((question) => question.id),
+  3,
+);

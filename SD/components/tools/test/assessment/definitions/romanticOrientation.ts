@@ -1,11 +1,12 @@
 import type { AssessmentDefinition } from '../types';
+import { withAssessmentModes } from '../modes';
 import { agreementQuestion } from './builders';
 
-export const romanticOrientationDefinition: AssessmentDefinition = {
+const romanticOrientationDefinitionBase: AssessmentDefinition = {
   id: 'romantic-orientation-test',
   title: '浪漫倾向探索',
   subtitle: '分开观察浪漫心动、深度连接、低频体验与探索状态',
-  group: 'orientation', questionCount: 18, estimatedMinutes: 4, mode: 'dimensions', sensitive: true,
+  group: 'orientation', questionCount: 24, estimatedMinutes: 6, mode: 'dimensions', sensitive: true,
   intro: '本测评建议 16+ 使用。浪漫吸引和性吸引并不总是同步；请按自己的真实感受作答，任何题目都可以跳过。',
   disclaimer: '结果仅供自我探索，不用于确认或诊断身份。浪漫倾向没有标准强度，你也无需为了结果采用任何标签。',
   minAnsweredRatio: 0.5,
@@ -34,6 +35,12 @@ export const romanticOrientationDefinition: AssessmentDefinition = {
     agreementQuestion('ro-16', '我允许自己暂时不知道最适合的浪漫关系形态。', 'fluidExploring'),
     agreementQuestion('ro-17', '当我喜欢一个人时，浪漫表达通常是重要的一部分。', 'frequentRomantic'),
     agreementQuestion('ro-18', '比起迅速心动，我更习惯让关系慢慢长出意义。', 'bondFirst'),
+    agreementQuestion('ro-19', '我会自然期待和喜欢的人建立带有浪漫意味的日常。', 'frequentRomantic'),
+    agreementQuestion('ro-20', '没有长期信任和安全感时，我很难确认浪漫感受。', 'bondFirst'),
+    agreementQuestion('ro-21', '对我来说，友情、家人或社群也能承载深度情感。', 'lowRomantic'),
+    agreementQuestion('ro-22', '我愿意让自己的浪漫体验保持开放，不急于归类。', 'fluidExploring'),
+    agreementQuestion('ro-23', '我能区分“喜欢这个人”和“想与这个人建立浪漫关系”。', 'frequentRomantic'),
+    agreementQuestion('ro-24', '我会根据实际感受，而不是外界期待理解自己的浪漫需要。', 'fluidExploring'),
   ],
   results: [
     { id: 'frequentRomantic', title: '浪漫心动线索较清晰', description: '你较容易觉察浪漫心动、想象和表达需求。它可以成为关系的重要语言，但并不要求你遵循固定模板。', keywords: ['浪漫心动', '情感表达', '关系想象'], suggestion: '把期待说得具体，同时为对方保留不同表达方式。' },
@@ -42,3 +49,9 @@ export const romanticOrientationDefinition: AssessmentDefinition = {
     { id: 'fluidExploring', title: '浪漫倾向仍在探索', description: '你可能尚未找到完全贴合的描述，或浪漫体验会随时期和关系变化。暂时开放并不意味着缺少答案。', keywords: ['开放探索', '流动体验', '允许不确定'], suggestion: '持续观察什么让你舒适、期待或感到压力。' },
   ],
 };
+
+export const romanticOrientationDefinition = withAssessmentModes(
+  romanticOrientationDefinitionBase,
+  romanticOrientationDefinitionBase.questions.slice(0, 12).map((question) => question.id),
+  3,
+);

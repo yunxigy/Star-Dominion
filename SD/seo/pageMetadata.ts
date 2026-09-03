@@ -3,13 +3,22 @@ import { absoluteSiteUrl, SITE } from '../lib/siteConfig';
 import { buildToolSeoDescription } from '../lib/toolSeo';
 import { CATEGORY_CONTENT } from './categoryContent';
 
+export const DEFAULT_THEME_COLOR = '#f6eee2';
+export const DEFAULT_KEYWORDS = '在线工具,逐梦工具箱,免费工具';
+
 export type PageMetadata = {
   title: string;
   description: string;
   canonical: string;
   type: 'website' | 'article';
+  keywords?: string;
+  themeColor?: string;
   jsonLd: Record<string, unknown>[];
 };
+
+function joinKeywords(values: string[]): string {
+  return Array.from(new Set(values.map((value) => value.trim()).filter(Boolean))).join(',');
+}
 
 export function buildToolMetadata(tool: ToolDef): PageMetadata {
   const category = CATEGORIES.find(item => item.id === tool.category);
@@ -22,6 +31,14 @@ export function buildToolMetadata(tool: ToolDef): PageMetadata {
     description,
     canonical,
     type: 'website',
+    keywords: joinKeywords([
+      tool.name,
+      ...(tool.tags ?? []),
+      categoryName,
+      '在线工具',
+      '逐梦工具箱',
+    ]),
+    themeColor: DEFAULT_THEME_COLOR,
     jsonLd: [{
       '@context': 'https://schema.org',
       '@type': 'WebApplication',
@@ -46,6 +63,13 @@ export function buildCategoryMetadata(category: (typeof CATEGORIES)[number]): Pa
     description,
     canonical,
     type: 'website',
+    keywords: joinKeywords([
+      category.name,
+      ...tools.slice(0, 10).map((tool) => tool.name),
+      '在线工具',
+      '逐梦工具箱',
+    ]),
+    themeColor: DEFAULT_THEME_COLOR,
     jsonLd: [{
       '@context': 'https://schema.org',
       '@type': 'CollectionPage',
@@ -62,6 +86,8 @@ export const HOME_METADATA: PageMetadata = {
   description: '逐梦工具箱提供免费在线工具，覆盖 PDF、图片、开发、办公、学术、计算和日常效率场景。多数工具优先在浏览器本地处理，打开网页即可快速完成任务。',
   canonical: absoluteSiteUrl('/'),
   type: 'website',
+  keywords: '在线工具,PDF工具,图片工具,OCR,开发者工具,办公工具,测评,逐梦工具箱',
+  themeColor: DEFAULT_THEME_COLOR,
   jsonLd: [{
     '@context': 'https://schema.org',
     '@type': 'WebSite',
@@ -80,6 +106,8 @@ export const TOOLBOX_METADATA: PageMetadata = {
   description: '浏览逐梦工具箱的免费在线工具目录，支持按分类、名称、拼音和常见别名搜索。多数工具在浏览器本地处理，适合学习、办公、开发和日常创作。',
   canonical: absoluteSiteUrl('/gj'),
   type: 'website',
+  keywords: DEFAULT_KEYWORDS,
+  themeColor: DEFAULT_THEME_COLOR,
   jsonLd: [{
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',

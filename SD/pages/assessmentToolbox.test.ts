@@ -1,8 +1,10 @@
 import { describe, expect, it } from 'vitest';
 
 import type { ToolDef } from '../tools/registry';
+import type { AssessmentHistoryRecord } from '../components/tools/test/assessment/assessmentHistory';
 import {
   filterAssessmentTools,
+  formatAssessmentHistorySummary,
   isAssessmentGroup,
   syncAssessmentParam,
 } from './assessmentToolbox';
@@ -47,5 +49,27 @@ describe('assessment toolbox helpers', () => {
     expect(syncAssessmentParam(params, 'pdf', '', 'fun').has('assessment')).toBe(false);
     expect(syncAssessmentParam(params, 'test', '人格', 'fun').has('assessment')).toBe(false);
     expect(syncAssessmentParam(params, 'test', '', null).has('assessment')).toBe(false);
+  });
+
+  it('summarizes unfinished and completed assessment history for the toolbox', () => {
+    const draft: AssessmentHistoryRecord = {
+      id: 'draft',
+      definitionId: 'brain-power-test',
+      variantId: 'quick',
+      status: 'in-progress',
+      currentIndex: 2,
+      totalQuestions: 10,
+      answers: {},
+      updatedAt: 1,
+    };
+    const result: AssessmentHistoryRecord = {
+      ...draft,
+      id: 'result',
+      status: 'completed',
+      resultLabel: '专注型解题者',
+    };
+
+    expect(formatAssessmentHistorySummary(draft)).toBe('继续第 3 题 · 简易测试');
+    expect(formatAssessmentHistorySummary(result)).toBe('专注型解题者 · 简易测试');
   });
 });

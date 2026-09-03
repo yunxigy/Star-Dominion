@@ -3,6 +3,7 @@ import type {
   AssessmentQuestion,
   AssessmentResultProfile,
 } from '../types';
+import { withAssessmentModes } from '../modes';
 import { pairedTendencyOptions } from './builders';
 
 function pairedQuestion(
@@ -86,7 +87,7 @@ const rows = [
   ['jp-10', '我更满足于事情已经定下来', '我更满足于仍有调整空间', 'J', 'P'],
 ] as const;
 
-export const mbtiDefinition: AssessmentDefinition = {
+const mbtiDefinitionBase: AssessmentDefinition = {
   id: 'mbti-test',
   title: 'MBTI 40 题扩展版',
   subtitle: '从四个偏好维度了解你的性格倾向',
@@ -114,3 +115,14 @@ export const mbtiDefinition: AssessmentDefinition = {
     { id: 'JP', left: 'J', right: 'P', tieQuestionId: 'jp-10' },
   ],
 };
+
+export const mbtiDefinition = withAssessmentModes(
+  mbtiDefinitionBase,
+  [
+    'ei-01', 'ei-02', 'ei-03', 'ei-10',
+    'sn-01', 'sn-02', 'sn-03', 'sn-10',
+    'tf-01', 'tf-02', 'tf-03', 'tf-10',
+    'jp-01', 'jp-02', 'jp-03', 'jp-10',
+  ],
+  4,
+);

@@ -1,11 +1,12 @@
 import type { AssessmentDefinition } from '../types';
+import { withAssessmentModes } from '../modes';
 import { scenarioQuestion } from './builders';
 
-export const coreValuesDefinition: AssessmentDefinition = {
+const coreValuesDefinitionBase: AssessmentDefinition = {
   id: 'core-values-test',
   title: '核心价值观测试',
   subtitle: '自由、稳定、成就、联结、探索与贡献，什么最能驱动你？',
-  group: 'personality', questionCount: 18, estimatedMinutes: 5, mode: 'dominant', sensitive: false,
+  group: 'personality', questionCount: 24, estimatedMinutes: 7, mode: 'dominant', sensitive: false,
   intro: '价值观不是道德排名，而是你在取舍时更想守住的东西。面对每个情境，请选择最接近你真实优先级的答案。',
   disclaimer: '结果仅供自我探索，不构成职业、关系或人生决策建议。',
   minAnsweredRatio: 1,
@@ -126,6 +127,42 @@ export const coreValuesDefinition: AssessmentDefinition = {
       ['发现了一个新问题或新世界', 'exploration', 'autonomy'],
       ['让某个人或某件事因为我变好一点', 'contribution', 'connection'],
     ]),
+    scenarioQuestion('values-19', '做一个重要选择时，你首先想守住？', [
+      ['我仍然拥有决定方式和节奏的权利', 'autonomy', 'exploration'],
+      ['生活底盘不会因为选择而失去稳定', 'stability', 'connection'],
+      ['这条路能让我持续成长并产生成果', 'achievement', 'autonomy'],
+      ['重要的人能理解并参与这份选择', 'connection', 'contribution'],
+    ]),
+    scenarioQuestion('values-20', '你愿意投入时间的事情通常是？', [
+      ['能打开视野、带来未知体验的事情', 'exploration', 'autonomy'],
+      ['能真实改善别人处境的事情', 'contribution', 'connection'],
+      ['可以按自己的方式做出独特成果的事情', 'autonomy', 'exploration'],
+      ['能让长期生活更可靠的建设', 'stability', 'connection'],
+    ]),
+    scenarioQuestion('values-21', '面对一段低谷期，你最需要什么？', [
+      ['完成一个仍然重要的小目标', 'achievement', 'autonomy'],
+      ['来自重要关系的理解和陪伴', 'connection', 'contribution'],
+      ['找到新的解释和可能路径', 'exploration', 'autonomy'],
+      ['确认日常仍有可靠的支点', 'contribution', 'connection'],
+    ]),
+    scenarioQuestion('values-22', '你更愿意加入哪种团队？', [
+      ['允许自主判断、试验和探索', 'autonomy', 'exploration'],
+      ['规则清楚、节奏稳定、长期可靠', 'stability', 'connection'],
+      ['目标有挑战，成果可以被看见', 'achievement', 'autonomy'],
+      ['成员互相支持，努力能帮助更多人', 'connection', 'contribution'],
+    ]),
+    scenarioQuestion('values-23', '学习或工作有了进展时，你最开心的是？', [
+      ['发现了一个原本不知道的新方向', 'exploration', 'autonomy'],
+      ['这份努力切实帮助了某个人', 'contribution', 'connection'],
+      ['自己获得了更大的选择空间', 'autonomy', 'exploration'],
+      ['方法成熟了，之后可以稳定复制', 'stability', 'connection'],
+    ]),
+    scenarioQuestion('values-24', '你希望别人如何记住你的投入？', [
+      ['我做成了有难度、值得骄傲的事', 'achievement', 'autonomy'],
+      ['我让重要的人感到被珍惜和支持', 'connection', 'contribution'],
+      ['我始终保有好奇，打开了新的可能', 'exploration', 'autonomy'],
+      ['我让身边的人或环境变得更好一点', 'contribution', 'connection'],
+    ]),
   ],
   results: [
     { id: 'autonomy', title: '自主驱动', description: '你很看重选择权、独立判断和按自己方式生活。只有当决定真正出自内心，你才容易长期投入。', keywords: ['自由', '独立', '选择权'], suggestion: '自主与连接可以共存，提前说明边界会减少不必要的对抗。' },
@@ -137,3 +174,9 @@ export const coreValuesDefinition: AssessmentDefinition = {
   ],
   tieBreakOrder: ['autonomy', 'stability', 'achievement', 'connection', 'exploration', 'contribution'],
 };
+
+export const coreValuesDefinition = withAssessmentModes(
+  coreValuesDefinitionBase,
+  coreValuesDefinitionBase.questions.slice(0, 12).map((question) => question.id),
+  3,
+);

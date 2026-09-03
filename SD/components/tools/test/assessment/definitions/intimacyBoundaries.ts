@@ -1,11 +1,12 @@
 import type { AssessmentDefinition } from '../types';
+import { withAssessmentModes } from '../modes';
 import { agreementQuestion } from './builders';
 
-export const intimacyBoundariesDefinition: AssessmentDefinition = {
+const intimacyBoundariesDefinitionBase: AssessmentDefinition = {
   id: 'intimacy-boundaries-test',
   title: '亲密边界风格',
   subtitle: '了解你在自主、靠近、透明沟通与慢节奏之间的偏好',
-  group: 'orientation', questionCount: 18, estimatedMinutes: 4, mode: 'dominant', sensitive: true,
+  group: 'orientation', questionCount: 24, estimatedMinutes: 6, mode: 'dominant', sensitive: true,
   intro: '本测评建议 16+ 使用。请按你觉得舒服的亲密互动方式作答，任何题目都可以跳过；边界会因关系与阶段而变化。',
   disclaimer: '结果仅供自我探索，不用于确认或诊断身份。四种风格没有哪一种更健康或更成熟，关键是知情、自愿、可沟通且彼此尊重。',
   minAnsweredRatio: 0.5,
@@ -34,6 +35,12 @@ export const intimacyBoundariesDefinition: AssessmentDefinition = {
     agreementQuestion('ib-16', '面对新的亲密互动，我更偏好先观察再决定。', 'slowPace'),
     agreementQuestion('ib-17', '我希望关系能支持彼此拥有独立兴趣与朋友圈。', 'autonomy'),
     agreementQuestion('ib-18', '共同安排较多时间会让我感到被重视。', 'closeness'),
+    agreementQuestion('ib-19', '即使关系亲密，我也希望保留自己的兴趣和朋友圈。', 'autonomy'),
+    agreementQuestion('ib-20', '当我感到不安时，及时的陪伴和回应会很有帮助。', 'closeness'),
+    agreementQuestion('ib-21', '我希望重要的边界在变化时能够被重新确认。', 'transparent'),
+    agreementQuestion('ib-22', '我通常需要多次稳定互动，才会愿意进一步靠近。', 'slowPace'),
+    agreementQuestion('ib-23', '我会直接说明自己此刻能接受和不能接受的互动。', 'transparent'),
+    agreementQuestion('ib-24', '我希望亲密关系的推进始终可以暂停、调整或重新选择。', 'slowPace'),
   ],
   results: [
     { id: 'autonomy', title: '自主空间型', description: '你倾向在亲密中保留清晰的个人空间与选择权。独立对你不是疏远，而是保持稳定与真实的重要条件。', keywords: ['个人空间', '独立选择', '稳定自我'], suggestion: '主动说明独处需求和预计恢复联系的时间，能减少误解。' },
@@ -43,3 +50,9 @@ export const intimacyBoundariesDefinition: AssessmentDefinition = {
   ],
   tieBreakOrder: ['autonomy', 'closeness', 'transparent', 'slowPace'],
 };
+
+export const intimacyBoundariesDefinition = withAssessmentModes(
+  intimacyBoundariesDefinitionBase,
+  intimacyBoundariesDefinitionBase.questions.slice(0, 12).map((question) => question.id),
+  3,
+);

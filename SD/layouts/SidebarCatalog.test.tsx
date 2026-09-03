@@ -16,6 +16,7 @@ describe('SidebarCatalog', () => {
     );
 
     expect(screen.getByRole('link', { name: /PDF 工具/ }).getAttribute('href')).toBe('/gj?category=pdf');
+    expect(screen.getByRole('link', { name: /趣味游戏/ }).getAttribute('href')).toBe('/games');
     fireEvent.change(screen.getByRole('searchbox', { name: '搜索工具' }), { target: { value: 'JSON 格式化' } });
     expect(screen.getByRole('link', { name: /JSON 格式化/ }).getAttribute('href')).toBe('/tool/json-format');
   });

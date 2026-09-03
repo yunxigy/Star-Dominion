@@ -19,6 +19,8 @@ describe('PageSeo', () => {
           description: '足够长的页面摘要',
           canonical: 'https://zhumenggy.top/test',
           type: 'website',
+          keywords: '测试,工具箱',
+          themeColor: '#f6eee2',
           jsonLd: [{ '@context': 'https://schema.org', '@type': 'WebPage' }],
         }}
       />,
@@ -27,6 +29,9 @@ describe('PageSeo', () => {
     expect(document.title).toBe('页面标题');
     expect(document.querySelector('link[rel="canonical"]')?.getAttribute('href')).toBe('https://zhumenggy.top/test');
     expect(document.querySelector('meta[property="og:url"]')?.getAttribute('content')).toBe('https://zhumenggy.top/test');
+    expect(document.querySelector('meta[name="keywords"]')?.getAttribute('content')).toBe('测试,工具箱');
+    expect(document.querySelector('meta[name="theme-color"]')?.getAttribute('content')).toBe('#f6eee2');
+    expect(document.querySelector('meta[name="application-name"]')?.getAttribute('content')).toBe('逐梦工具箱');
     expect(document.querySelector('script[data-page-json-ld]')).not.toBeNull();
   });
 });

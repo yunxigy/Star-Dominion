@@ -54,4 +54,18 @@ describe('assessment state', () => {
     expect(finished.phase).toBe('result');
     expect(assessmentReducer(finished, { type: 'restart' })).toEqual(createAssessmentState());
   });
+
+  it('restores a saved draft at its last answered question', () => {
+    const restored = assessmentReducer(createAssessmentState(), {
+      type: 'restore',
+      currentIndex: 4,
+      answers: { q1: 'a', q2: null },
+    });
+
+    expect(restored).toEqual({
+      phase: 'questions',
+      currentIndex: 4,
+      answers: { q1: 'a', q2: null },
+    });
+  });
 });

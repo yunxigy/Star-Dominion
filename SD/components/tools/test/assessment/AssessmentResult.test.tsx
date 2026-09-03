@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 
 import { AssessmentResult } from './AssessmentResult';
 import { communicationStyleDefinition } from './definitions/communicationStyle';
+import { brainPowerDefinition } from './definitions/cognitiveDefinitions';
 import { mbtiDefinition } from './definitions/mbti';
 import type { AssessmentScoreResult } from './types';
 
@@ -67,5 +68,53 @@ describe('AssessmentResult visualization', () => {
     expect(html).not.toContain('维度雷达图');
     expect(html).toContain('E · 60');
     expect(html).toContain('I · 40');
+  });
+
+  it('shows accuracy for cognitive challenges without presenting an IQ score', () => {
+    const html = renderToStaticMarkup(
+      <AssessmentResult
+        definition={brainPowerDefinition}
+        score={{
+          ...baseResult,
+          dimensionScores: { memory: 100, attention: 80, logic: 60, flexibility: 40 },
+          overallPercentage: 70,
+          rankedDimensionIds: ['memory', 'attention', 'logic', 'flexibility'],
+        }}
+        onRestart={() => {}}
+        onClose={() => {}}
+      />,
+    );
+
+    expect(html).toContain('综合正确率');
+    expect(html).toContain('70%');
+    expect(html).not.toContain('IQ 分数');
+    expect(html).toContain('复制结果分享');
+  });
+
+  it('keeps the selected test length visible on the result screen', () => {
+    const html = renderToStaticMarkup(
+      <AssessmentResult
+        definition={communicationStyleDefinition}
+        variant={{
+          id: 'quick',
+          label: '简易测试',
+          description: '快速',
+          estimatedMinutes: 3,
+          questions: communicationStyleDefinition.questions.slice(0, 12),
+        }}
+        score={{
+          ...baseResult,
+          dimensionScores: { direct: 70, analytical: 60, empathetic: 50, collaborative: 40 },
+          rankedDimensionIds: ['direct', 'analytical', 'empathetic', 'collaborative'],
+          primaryResultId: 'direct',
+          secondaryResultId: 'analytical',
+        }}
+        onRestart={() => {}}
+        onClose={() => {}}
+      />,
+    );
+
+    expect(html).toContain('本次完成：简易测试');
+    expect(html).toContain('12 题');
   });
 });

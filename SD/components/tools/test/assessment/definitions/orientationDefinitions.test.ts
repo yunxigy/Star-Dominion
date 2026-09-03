@@ -30,11 +30,11 @@ function answersFavoring(
 }
 
 describe('orientation and intimacy assessment definitions', () => {
-  it('provides three valid 18-question sensitive definitions', () => {
+  it('provides three valid 24-question sensitive definitions', () => {
     for (const definition of definitions) {
       expect(validateAssessmentDefinition(definition)).toEqual([]);
       expect(definition.group).toBe('orientation');
-      expect(definition.questions).toHaveLength(18);
+      expect(definition.questions).toHaveLength(24);
       expect(definition.sensitive).toBe(true);
       expect(definition.intro).toContain('16+');
       expect(definition.disclaimer).toContain('仅供自我探索');

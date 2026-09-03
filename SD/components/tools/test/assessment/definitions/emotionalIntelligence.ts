@@ -1,11 +1,12 @@
 import type { AssessmentDefinition } from '../types';
+import { withAssessmentModes } from '../modes';
 import { agreementQuestion } from './builders';
 
-export const emotionalIntelligenceDefinition: AssessmentDefinition = {
+const emotionalIntelligenceDefinitionBase: AssessmentDefinition = {
   id: 'emotional-intelligence-test',
   title: '情绪智力测试',
   subtitle: '从觉察、调节、共情和关系管理四个维度认识自己',
-  group: 'personality', questionCount: 18, estimatedMinutes: 4, mode: 'dimensions', sensitive: false,
+  group: 'personality', questionCount: 24, estimatedMinutes: 6, mode: 'dimensions', sensitive: false,
   intro: '情绪智力不是固定天赋，而是一组可以练习的能力。请按近期真实表现作答，不必选择你认为更成熟的答案。',
   disclaimer: '结果仅供自我探索，不用于心理诊断、治疗判断或能力认证。',
   minAnsweredRatio: 1,
@@ -34,6 +35,12 @@ export const emotionalIntelligenceDefinition: AssessmentDefinition = {
     agreementQuestion('eq-16', '关系紧张时，我常回避沟通直到问题自行消失。', 'relationship', true),
     agreementQuestion('eq-17', '我的情绪变化经常让我自己也摸不着头脑。', 'awareness', true),
     agreementQuestion('eq-18', '受到刺激后，我常需要很久才能停止反复回想。', 'regulation', true),
+    agreementQuestion('eq-19', '我能分辨“我现在感到什么”和“我需要什么”之间的区别。', 'awareness'),
+    agreementQuestion('eq-20', '情绪强烈时，我会先选择一个能让我缓下来的动作。', 'regulation'),
+    agreementQuestion('eq-21', '我会考虑同一件事对不同人的意义可能不一样。', 'empathy'),
+    agreementQuestion('eq-22', '我能把自己的边界和期待说得让对方听得懂。', 'relationship'),
+    agreementQuestion('eq-23', '我常把情绪当成麻烦，直到它积累到无法忽略。', 'awareness', true),
+    agreementQuestion('eq-24', '关系出现误会时，我愿意尽早澄清而不是冷处理。', 'relationship'),
   ],
   results: [
     { id: 'awareness', title: '自我觉察', description: '你较能看见情绪正在发生，并理解它与身体信号、需要和触发情境的关系。觉察是后续选择的起点。', keywords: ['识别', '内省', '情绪命名'], suggestion: '继续用简短记录连接“事件—感受—需要”，觉察会更稳定。' },
@@ -42,3 +49,9 @@ export const emotionalIntelligenceDefinition: AssessmentDefinition = {
     { id: 'relationship', title: '关系管理', description: '你较能表达需要、邀请支持并在冲突后推动修复。关系管理让感受转化为可沟通的行动。', keywords: ['表达', '修复', '支持网络'], suggestion: '用具体请求代替期待对方猜到，会让关系协作更顺畅。' },
   ],
 };
+
+export const emotionalIntelligenceDefinition = withAssessmentModes(
+  emotionalIntelligenceDefinitionBase,
+  emotionalIntelligenceDefinitionBase.questions.slice(0, 12).map((question) => question.id),
+  3,
+);

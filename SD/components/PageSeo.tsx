@@ -1,4 +1,6 @@
 import { useEffect } from 'react';
+import { DEFAULT_KEYWORDS, DEFAULT_THEME_COLOR } from '../seo/pageMetadata';
+import { SITE } from '../lib/siteConfig';
 import type { PageMetadata } from '../seo/pageMetadata';
 
 type PageSeoProps = {
@@ -18,10 +20,17 @@ export function PageSeo({ metadata }: PageSeoProps) {
   useEffect(() => {
     document.title = metadata.title;
     upsertMeta('meta[name="description"]', { name: 'description', content: metadata.description });
+    upsertMeta('meta[name="keywords"]', { name: 'keywords', content: metadata.keywords ?? DEFAULT_KEYWORDS });
+    upsertMeta('meta[name="theme-color"]', { name: 'theme-color', content: metadata.themeColor ?? DEFAULT_THEME_COLOR });
+    upsertMeta('meta[name="application-name"]', { name: 'application-name', content: SITE.name });
+    upsertMeta('meta[name="apple-mobile-web-app-title"]', { name: 'apple-mobile-web-app-title', content: SITE.name });
     upsertMeta('meta[property="og:type"]', { property: 'og:type', content: metadata.type });
     upsertMeta('meta[property="og:title"]', { property: 'og:title', content: metadata.title });
     upsertMeta('meta[property="og:description"]', { property: 'og:description', content: metadata.description });
     upsertMeta('meta[property="og:url"]', { property: 'og:url', content: metadata.canonical });
+    upsertMeta('meta[property="og:site_name"]', { property: 'og:site_name', content: SITE.name });
+    upsertMeta('meta[property="og:locale"]', { property: 'og:locale', content: SITE.locale });
+    upsertMeta('meta[name="twitter:card"]', { name: 'twitter:card', content: 'summary_large_image' });
     upsertMeta('meta[name="twitter:title"]', { name: 'twitter:title', content: metadata.title });
     upsertMeta('meta[name="twitter:description"]', { name: 'twitter:description', content: metadata.description });
 

@@ -1,9 +1,10 @@
-import React, { useMemo, useReducer } from 'react';
+import React, { useEffect, useMemo, useReducer, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import {
   ArrowLeft,
   ArrowRight,
   Clock3,
+  History,
   LockKeyhole,
   ShieldCheck,
   Sparkles,
@@ -11,13 +12,20 @@ import {
 } from 'lucide-react';
 
 import { AssessmentResult } from './AssessmentResult';
+import {
+  getAssessmentProgress,
+  removeAssessmentProgress,
+  saveAssessmentProgress,
+  saveAssessmentResult,
+} from './assessmentHistory';
+import { getAssessmentVariant, getAssessmentVariants } from './modes';
 import { scoreAssessment } from './scoring';
 import {
   assessmentReducer,
   canAdvance,
   createAssessmentState,
 } from './state';
-import type { AssessmentDefinition } from './types';
+import type { AssessmentDefinition, AssessmentVariantId } from './types';
 
 export interface AssessmentRunnerProps {
   definition?: AssessmentDefinition;
@@ -50,12 +58,56 @@ const groupStyles = {
 
 export function AssessmentRunner({ definition, onClose }: AssessmentRunnerProps) {
   const [state, dispatch] = useReducer(assessmentReducer, undefined, createAssessmentState);
-  const score = useMemo(
-    () => definition && state.phase === 'result'
-      ? scoreAssessment(definition, state.answers)
-      : null,
-    [definition, state.answers, state.phase],
+  const [variantId, setVariantId] = useState<AssessmentVariantId>('complete');
+  const [resumeDismissed, setResumeDismissed] = useState(false);
+  const variants = definition ? getAssessmentVariants(definition) : [];
+  const variant = definition ? getAssessmentVariant(definition, variantId) : null;
+  const savedProgress = useMemo(
+    () => definition ? getAssessmentProgress(definition.id, variantId) : null,
+    [definition, variantId],
   );
+  const score = useMemo(
+    () => definition && variant && state.phase === 'result'
+      ? scoreAssessment(definition, state.answers, variant.questions)
+      : null,
+    [definition, state.answers, state.phase, variant],
+  );
+
+  useEffect(() => {
+    if (!definition || !variant || state.phase !== 'questions') return;
+    saveAssessmentProgress({
+      definitionId: definition.id,
+      variantId: variant.id,
+      currentIndex: state.currentIndex,
+      totalQuestions: variant.questions.length,
+      answers: state.answers,
+    });
+  }, [definition, state.answers, state.currentIndex, state.phase, variant]);
+
+  useEffect(() => {
+    if (!definition || !variant || !score || state.phase !== 'result') return;
+
+    const profilesById = new Map(definition.results.map((profile) => [profile.id, profile]));
+    const resultLabel = score.mbtiType
+      ?? (score.primaryResultId ? profilesById.get(score.primaryResultId)?.title : undefined)
+      ?? (score.rankedDimensionIds[0]
+        ? definition.dimensions.find((dimension) => dimension.id === score.rankedDimensionIds[0])?.label
+        : undefined);
+    const secondaryResultLabel = score.secondaryResultId
+      ? profilesById.get(score.secondaryResultId)?.title
+      : undefined;
+
+    saveAssessmentResult({
+      definitionId: definition.id,
+      variantId: variant.id,
+      totalQuestions: variant.questions.length,
+      answers: state.answers,
+      resultLabel,
+      secondaryResultLabel,
+      mbtiType: score.mbtiType,
+      overallPercentage: score.overallPercentage,
+    });
+  }, [definition, score, state.answers, state.phase, variant]);
 
   if (!definition) {
     return (
@@ -75,6 +127,24 @@ export function AssessmentRunner({ definition, onClose }: AssessmentRunnerProps)
   }
 
   const style = groupStyles[definition.group];
+  const hasSelectableVariants = variants.length > 1;
+
+  const startFresh = () => {
+    if (!variant) return;
+    removeAssessmentProgress(definition.id, variant.id);
+    setResumeDismissed(true);
+    dispatch({ type: 'start' });
+  };
+
+  const resumeSavedProgress = () => {
+    if (!variant || !savedProgress) return;
+    dispatch({
+      type: 'restore',
+      currentIndex: Math.min(savedProgress.currentIndex, Math.max(variant.questions.length - 1, 0)),
+      answers: savedProgress.answers,
+    });
+    setResumeDismissed(true);
+  };
 
   if (state.phase === 'intro') {
     return (
@@ -94,12 +164,80 @@ export function AssessmentRunner({ definition, onClose }: AssessmentRunnerProps)
 
             <div className="mt-7 flex flex-wrap gap-3">
               <span className="inline-flex items-center gap-2 rounded-full border border-[#dec4a6] bg-white/70 px-4 py-2 text-sm font-bold text-[#5f4935]">
-                <Clock3 className="h-4 w-4" /> {definition.questionCount} 题 · 约 {definition.estimatedMinutes} 分钟
+                <Clock3 className="h-4 w-4" /> {variant?.questions.length ?? definition.questionCount} 题 · 约 {variant?.estimatedMinutes ?? definition.estimatedMinutes} 分钟
               </span>
               <span className="inline-flex items-center gap-2 rounded-full border border-[#c7d5bd] bg-[#edf2e6]/80 px-4 py-2 text-sm font-bold text-[#4d6036]">
                 <ShieldCheck className="h-4 w-4" /> 答案仅在当前页面处理
               </span>
             </div>
+
+            {hasSelectableVariants && (
+              <div className="mt-7">
+                <div className="mb-3 flex items-end justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-black text-[#4f3928]">选择测试长度</p>
+                    <p className="mt-1 text-xs leading-5 text-[#806b56]">先快速体验，或一次完成更完整的题目。</p>
+                  </div>
+                  <span className="rounded-full bg-[#f6e8d8] px-3 py-1 text-xs font-bold text-[#8b6545]">可随时重测</span>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2" role="radiogroup" aria-label="选择测试长度">
+                  {variants.map((candidate) => {
+                    const selected = candidate.id === variant?.id;
+                    return (
+                      <button
+                        key={candidate.id}
+                        type="button"
+                        role="radio"
+                        aria-checked={selected}
+                        onClick={() => {
+                          setVariantId(candidate.id);
+                          setResumeDismissed(false);
+                        }}
+                        className={`rounded-2xl border-2 p-4 text-left transition focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c89a70]/30 motion-reduce:transition-none ${selected ? style.selected : 'border-[#e5d6c3] bg-white/65 text-[#574536] hover:border-[#c9a77f] hover:bg-[#fff6e9]'}`}
+                      >
+                        <div className="flex items-center justify-between gap-3">
+                          <span className="font-black">{candidate.label}</span>
+                          <span className="text-xs font-bold opacity-80">{candidate.questions.length} 题 · {candidate.estimatedMinutes} 分钟</span>
+                        </div>
+                        <p className="mt-2 text-sm leading-6 opacity-85">{candidate.description}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {savedProgress && !resumeDismissed && (
+              <div className="mt-6 rounded-2xl border border-[#c7d5bd] bg-[#edf2e6]/85 p-4">
+                <div className="flex items-start gap-3">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white/80 text-[#4d6036]">
+                    <History className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <p className="font-black text-[#4d6036]">发现未完成的测评</p>
+                    <p className="mt-1 text-sm leading-6 text-[#62734e]">
+                      上次做到第 {Math.min(savedProgress.currentIndex + 1, variant?.questions.length ?? savedProgress.totalQuestions)} 题，答案会继续保存在当前浏览器。
+                    </p>
+                  </div>
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={resumeSavedProgress}
+                    className="rounded-xl bg-[#5d7543] px-4 py-2.5 text-sm font-black text-white transition hover:bg-[#4d6036] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#8da472]/35"
+                  >
+                    继续上次进度
+                  </button>
+                  <button
+                    type="button"
+                    onClick={startFresh}
+                    className="rounded-xl border border-[#b9c7ab] bg-white/70 px-4 py-2.5 text-sm font-bold text-[#62734e] transition hover:bg-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#8da472]/35"
+                  >
+                    重新开始
+                  </button>
+                </div>
+              </div>
+            )}
 
             {definition.sensitive && (
               <div className="mt-6 flex gap-3 rounded-2xl border border-[#d9bdc5] bg-[#f9edf0]/85 p-4 text-sm leading-6 text-[#704858]">
@@ -111,10 +249,10 @@ export function AssessmentRunner({ definition, onClose }: AssessmentRunnerProps)
             <p className="mt-6 text-sm leading-6 text-[#806b56]">{definition.disclaimer}</p>
             <button
               type="button"
-              onClick={() => dispatch({ type: 'start' })}
+              onClick={startFresh}
               className={`mt-7 inline-flex w-full items-center justify-center gap-2 rounded-2xl px-6 py-4 text-lg font-black text-white shadow-lg transition hover:-translate-y-0.5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#c89a70]/35 motion-reduce:transform-none sm:w-auto ${style.button}`}
             >
-              开始测评 <ArrowRight className="h-5 w-5" />
+              {hasSelectableVariants ? `开始${variant?.label ?? '测评'}` : '开始测评'} <ArrowRight className="h-5 w-5" />
             </button>
           </div>
         </section>
@@ -128,6 +266,7 @@ export function AssessmentRunner({ definition, onClose }: AssessmentRunnerProps)
         <AssessmentResult
           definition={definition}
           score={score}
+          variant={variant ?? undefined}
           onRestart={() => dispatch({ type: 'restart' })}
           onClose={onClose}
         />
@@ -135,16 +274,17 @@ export function AssessmentRunner({ definition, onClose }: AssessmentRunnerProps)
     );
   }
 
-  const question = definition.questions[state.currentIndex];
+  const questions = variant?.questions ?? definition.questions;
+  const question = questions[state.currentIndex];
   const selectedAnswer = state.answers[question.id];
-  const progress = ((state.currentIndex + 1) / definition.questions.length) * 100;
-  const isLastQuestion = state.currentIndex === definition.questions.length - 1;
+  const progress = ((state.currentIndex + 1) / questions.length) * 100;
+  const isLastQuestion = state.currentIndex === questions.length - 1;
   const advanceAllowed = canAdvance(state, question.id, definition.sensitive);
 
   const advance = () => {
     if (!advanceAllowed) return;
     if (isLastQuestion) dispatch({ type: 'finish' });
-    else dispatch({ type: 'next', lastIndex: definition.questions.length - 1 });
+    else dispatch({ type: 'next', lastIndex: questions.length - 1 });
   };
 
   return (
@@ -152,7 +292,7 @@ export function AssessmentRunner({ definition, onClose }: AssessmentRunnerProps)
       <div className="mb-5 rounded-2xl border border-[#dfccb6] bg-[#fffaf2]/90 p-4 shadow-sm">
         <div className="flex items-center justify-between gap-4 text-sm font-bold text-[#6d5a47]">
           <span>{definition.title}</span>
-          <span>{state.currentIndex + 1} / {definition.questions.length}</span>
+          <span>{state.currentIndex + 1} / {questions.length}</span>
         </div>
         <div className="mt-3 h-2 overflow-hidden rounded-full bg-[#eadfce]">
           <div

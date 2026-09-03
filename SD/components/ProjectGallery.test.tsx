@@ -16,6 +16,7 @@ describe('ProjectGallery', () => {
     );
 
     expect(screen.getAllByRole('link')).toHaveLength(PROJECT_LINKS.length);
+    expect(screen.queryByRole('link', { name: /趣味游戏/ })).toBeNull();
     fireEvent.click(screen.getByRole('link', { name: /股票研究/ }));
     expect(onAuthRequired).toHaveBeenCalledWith('/stock/');
   });

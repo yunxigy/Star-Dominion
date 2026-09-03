@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Search, SearchX, Filter } from 'lucide-react';
+import { Filter, History, Search, SearchX, Trash2 } from 'lucide-react';
 import { getIcon } from '../lib/iconMap';
 import { CATEGORIES, TOOLS, getToolsByCategory } from '../tools/registry';
 import { ToolLink } from '../components/ToolLink';
@@ -9,8 +9,15 @@ import { AdSlot } from '../components/AdSlot';
 import { getRecentTools, getFavoriteTools, toggleFavorite, isFavorite } from '../lib/userTools';
 import type { AssessmentGroup } from '../components/tools/test/assessment/types';
 import {
+  ASSESSMENT_HISTORY_EVENT,
+  clearAssessmentHistory,
+  getAssessmentHistory,
+} from '../components/tools/test/assessment/assessmentHistory';
+import type { AssessmentHistoryRecord } from '../components/tools/test/assessment/assessmentHistory';
+import {
   ASSESSMENT_GROUPS,
   filterAssessmentTools,
+  formatAssessmentHistorySummary,
   isAssessmentGroup,
   syncAssessmentParam,
 } from './assessmentToolbox';
@@ -27,6 +34,7 @@ export const ToolboxPage: React.FC = () => {
   const [activeAssessmentGroup, setActiveAssessmentGroup] = useState<AssessmentGroup | null>(null);
   const [search, setSearch] = useState('');
   const [favRefresh, setFavRefresh] = useState(0);
+  const [assessmentRecords, setAssessmentRecords] = useState<AssessmentHistoryRecord[]>(() => getAssessmentHistory());
 
   const recentTools = useMemo(() => {
     const ids = getRecentTools();
@@ -37,6 +45,16 @@ export const ToolboxPage: React.FC = () => {
     const ids = getFavoriteTools();
     return ids.map(id => TOOLS.find(t => t.id === id)).filter(Boolean);
   }, [favRefresh]);
+
+  useEffect(() => {
+    const refreshAssessmentRecords = () => setAssessmentRecords(getAssessmentHistory());
+    window.addEventListener(ASSESSMENT_HISTORY_EVENT, refreshAssessmentRecords);
+    window.addEventListener('storage', refreshAssessmentRecords);
+    return () => {
+      window.removeEventListener(ASSESSMENT_HISTORY_EVENT, refreshAssessmentRecords);
+      window.removeEventListener('storage', refreshAssessmentRecords);
+    };
+  }, []);
 
   const handleToggleFav = (e: React.MouseEvent, toolId: string) => {
     e.stopPropagation();
@@ -322,6 +340,56 @@ export const ToolboxPage: React.FC = () => {
         </div>
       )}
 
+      {!search.trim() && (!activeCategory || activeCategory === 'test') && assessmentRecords.length > 0 && (
+        <section className="rounded-[1.75rem] border border-[#c7d5bd] bg-[linear-gradient(135deg,#f4f7ef_0%,#fff8ef_72%)] p-5 shadow-sm sm:p-6" aria-labelledby="my-assessments-title">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-3">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#dfe9d5] text-[#4d6036]">
+                <History className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <div>
+                <h2 id="my-assessments-title" className="font-serif text-2xl font-black text-[#2f241b]">我的测评</h2>
+                <p className="mt-1 text-sm text-[#6d5a47]">最近的结果和未完成进度只保存在这台设备上。</p>
+              </div>
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                clearAssessmentHistory();
+                setAssessmentRecords([]);
+              }}
+              className="inline-flex items-center gap-1.5 self-start rounded-xl border border-[#c7d5bd] bg-white/70 px-3 py-2 text-sm font-bold text-[#62734e] transition hover:bg-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#8da472]/35 sm:self-auto"
+            >
+              <Trash2 className="h-4 w-4" aria-hidden="true" />
+              清空记录
+            </button>
+          </div>
+          <div className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {assessmentRecords.slice(0, 6).map((record) => {
+              const tool = TOOLS.find((candidate) => candidate.id === record.definitionId);
+              if (!tool) return null;
+              const AssessmentIcon = getIcon(tool.icon);
+              return (
+                <ToolLink
+                  key={record.id}
+                  toolId={tool.id}
+                  className="group flex items-center gap-3 rounded-2xl border border-[#d8e1d0] bg-white/75 p-3 text-left transition hover:-translate-y-0.5 hover:border-[#9db08d] hover:bg-white focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#8da472]/35"
+                  aria-label={`打开${tool.name}，${formatAssessmentHistorySummary(record)}`}
+                >
+                  <span className={`rounded-xl bg-gradient-to-br ${tool.gradient} p-2.5 shadow-sm`}>
+                    <AssessmentIcon className="h-5 w-5 text-white" aria-hidden="true" />
+                  </span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate text-sm font-black text-[#2f241b] group-hover:text-[#6f3714]">{tool.name}</span>
+                    <span className="mt-1 block truncate text-xs font-semibold text-[#6d5a47]">{formatAssessmentHistorySummary(record)}</span>
+                  </span>
+                </ToolLink>
+              );
+            })}
+          </div>
+        </section>
+      )}
+
       {/* Tool Grid */}
       {displayTools.length === 0 ? (
         <div className="empty-state" role="status">
@@ -404,7 +472,14 @@ export const ToolboxPage: React.FC = () => {
                       </p>
                       {tool.category === 'test' && (
                         <div className="mt-3 flex flex-wrap gap-1.5 text-[11px] font-semibold text-[#725945]">
-                          {getAssessmentBadges(tool.assessmentGroup, tool.questionCount, tool.estimatedMinutes).map((badge) => (
+                          {getAssessmentBadges(
+                            tool.assessmentGroup,
+                            tool.questionCount,
+                            tool.estimatedMinutes,
+                            tool.quickQuestionCount,
+                            tool.quickEstimatedMinutes,
+                            tool.assessmentKind,
+                          ).map((badge) => (
                             <span key={badge.label} className={`rounded-full px-2.5 py-1 ${
                               badge.tone === 'fun'
                                 ? 'bg-orange-100 text-orange-800'

@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">逐梦工具箱</title>
+  <desc id="desc">橙紫渐变的工具箱图标</desc>
+  <defs>
+    <linearGradient id="bg" x1="8" y1="6" x2="57" y2="60" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#c96f35" />
+      <stop offset="1" stop-color="#70458f" />
+    </linearGradient>
+    <linearGradient id="box" x1="16" y1="26" x2="49" y2="53" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff8e8" />
+      <stop offset="1" stop-color="#f1d8bd" />
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="18" fill="url(#bg)" />
+  <path d="m49 12 1.8 4.2L55 18l-4.2 1.8L49 24l-1.8-4.2L43 18l4.2-1.8L49 12Z" fill="#fff8e8" />
+  <path d="m15 15 1 2.3 2.3 1-2.3 1L15 21.6l-1-2.3-2.3-1 2.3-1 1-2.3Z" fill="#ffe0a9" />
+  <path d="M14 27.5h36a4 4 0 0 1 4 4v17a4 4 0 0 1-4 4H14a4 4 0 0 1-4-4v-17a4 4 0 0 1 4-4Z" fill="url(#box)" />
+  <path d="M22 27.5v-3a4 4 0 0 1 4-4h12a4 4 0 0 1 4 4v3" fill="none" stroke="#fff8e8" stroke-width="4" stroke-linecap="round" />
+  <path d="M10 35h44M29 35v5h6v-5" fill="none" stroke="#a85d39" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+  <circle cx="32" cy="45" r="3" fill="#70458f" />
+</svg>

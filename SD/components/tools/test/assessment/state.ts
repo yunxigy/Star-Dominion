@@ -13,6 +13,7 @@ export type AssessmentAction =
   | { type: 'previous' }
   | { type: 'next'; lastIndex: number }
   | { type: 'finish' }
+  | { type: 'restore'; currentIndex: number; answers: AnswerMap }
   | { type: 'restart' };
 
 export const createAssessmentState = (): AssessmentState => ({
@@ -44,6 +45,12 @@ export function assessmentReducer(
       return { ...state, currentIndex: Math.min(action.lastIndex, state.currentIndex + 1) };
     case 'finish':
       return { ...state, phase: 'result' };
+    case 'restore':
+      return {
+        phase: 'questions',
+        currentIndex: Math.max(0, Math.floor(action.currentIndex)),
+        answers: { ...action.answers },
+      };
     case 'restart':
       return createAssessmentState();
     default:

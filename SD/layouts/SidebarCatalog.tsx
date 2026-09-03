@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Search, SearchX, Star } from 'lucide-react';
+import { Gamepad2, Search, SearchX, Star } from 'lucide-react';
 import { CATEGORIES, TOOLS, getToolsByCategory } from '../tools/registry';
+import { GAME_CATALOG } from '../games/catalog';
 import { getIcon } from '../lib/iconMap';
 import { ToolLink } from '../components/ToolLink';
 import { filterSidebarTools } from './filterSidebarTools';
@@ -17,6 +18,7 @@ export const SidebarCatalog: React.FC<SidebarCatalogProps> = ({ onNavigate }) =>
   const currentTool = TOOLS.find(tool => tool.id === currentToolId);
   const matches = useMemo(() => filterSidebarTools(TOOLS, query), [query]);
   const selectedCategory = new URLSearchParams(location.search).get('category');
+  const isGameLobby = location.pathname.startsWith('/games');
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -65,19 +67,34 @@ export const SidebarCatalog: React.FC<SidebarCatalogProps> = ({ onNavigate }) =>
                 || selectedCategory === category.id
                 || currentTool?.category === category.id;
               return (
-                <Link
-                  key={category.id}
-                  to={`/gj?category=${encodeURIComponent(category.id)}`}
-                  onClick={onNavigate}
-                  aria-current={isActive ? 'page' : undefined}
-                  className={`sidebar-item ${isActive ? 'active' : ''}`}
-                >
-                  <span className={`rounded-lg bg-gradient-to-br ${category.gradient} p-1.5 ${isActive ? 'shadow-md shadow-emerald-500/25' : 'opacity-80'}`}>
-                    <CategoryIcon className="h-4 w-4 text-white" aria-hidden="true" />
-                  </span>
-                  <span className="min-w-0 flex-1 text-left font-medium">{category.name}</span>
-                  <span className="rounded-full bg-[#f1dcc2] px-2 py-0.5 text-xs text-[#6d5a47]">{count}</span>
-                </Link>
+                <React.Fragment key={category.id}>
+                  <Link
+                    to={`/gj?category=${encodeURIComponent(category.id)}`}
+                    onClick={onNavigate}
+                    aria-current={isActive ? 'page' : undefined}
+                    className={`sidebar-item ${isActive ? 'active' : ''}`}
+                  >
+                    <span className={`rounded-lg bg-gradient-to-br ${category.gradient} p-1.5 ${isActive ? 'shadow-md shadow-emerald-500/25' : 'opacity-80'}`}>
+                      <CategoryIcon className="h-4 w-4 text-white" aria-hidden="true" />
+                    </span>
+                    <span className="min-w-0 flex-1 text-left font-medium">{category.name}</span>
+                    <span className="rounded-full bg-[#f1dcc2] px-2 py-0.5 text-xs text-[#6d5a47]">{count}</span>
+                  </Link>
+                  {category.id === 'fun' && (
+                    <Link
+                      to="/games"
+                      onClick={onNavigate}
+                      aria-current={isGameLobby ? 'page' : undefined}
+                      className={`sidebar-item ${isGameLobby ? 'active' : ''}`}
+                    >
+                      <span className="rounded-lg bg-gradient-to-br from-emerald-600 to-teal-600 p-1.5">
+                        <Gamepad2 className="h-4 w-4 text-white" aria-hidden="true" />
+                      </span>
+                      <span className="min-w-0 flex-1 text-left font-medium">趣味游戏</span>
+                      <span className="rounded-full bg-[#f1dcc2] px-2 py-0.5 text-xs text-[#6d5a47]">{GAME_CATALOG.length}</span>
+                    </Link>
+                  )}
+                </React.Fragment>
               );
             })}
             <div className="mt-4 flex items-center gap-2 px-3 py-2 text-xs font-semibold uppercase tracking-widest text-[#8b735c]">

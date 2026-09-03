@@ -1,0 +1,19 @@
+{
+  "name": "逐梦工具箱",
+  "short_name": "逐梦工具箱",
+  "description": "免费在线工具箱，覆盖 PDF、图片、开发、办公、测评和趣味工具。",
+  "lang": "zh-CN",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#fffaf4",
+  "theme_color": "#f6eee2",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

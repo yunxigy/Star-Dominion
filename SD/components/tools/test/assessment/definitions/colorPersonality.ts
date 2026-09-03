@@ -1,11 +1,12 @@
 import type { AssessmentDefinition } from '../types';
+import { withAssessmentModes } from '../modes';
 import { scenarioQuestion } from './builders';
 
-export const colorPersonalityDefinition: AssessmentDefinition = {
+const colorPersonalityDefinitionBase: AssessmentDefinition = {
   id: 'color-personality-test',
   title: '色彩人格测试',
   subtitle: '你的行动、关系与灵感，更像哪一种颜色？',
-  group: 'fun', questionCount: 18, estimatedMinutes: 4, mode: 'dominant', sensitive: false,
+  group: 'fun', questionCount: 24, estimatedMinutes: 6, mode: 'dominant', sensitive: false,
   intro: '颜色不定义人格，却很适合描绘我们处理生活的不同方式。请根据真实习惯选择，而不是选择看起来最理想的答案。',
   disclaimer: '结果仅供自我探索和娱乐，不构成心理诊断或专业建议。',
   minAnsweredRatio: 1,
@@ -126,6 +127,42 @@ export const colorPersonalityDefinition: AssessmentDefinition = {
       ['能力和系统越来越成熟可靠', 'blue', 'green'],
       ['活出鲜明而有意义的个人表达', 'purple', 'yellow'],
     ]),
+    scenarioQuestion('color-19', '开始学习一个新技能时，你会？', [
+      ['先定一个可见目标，马上练第一步', 'red', 'orange'],
+      ['找同伴交流，让过程更有动力', 'orange', 'yellow'],
+      ['先发散各种玩法，找到最感兴趣的方向', 'yellow', 'purple'],
+      ['建立规律节奏，确保可以坚持', 'green', 'blue'],
+    ]),
+    scenarioQuestion('color-20', '看到一个复杂问题时，你更想？', [
+      ['先整理信息，找到结构和关键证据', 'blue', 'green'],
+      ['体会它背后的情绪、意义或故事', 'purple', 'yellow'],
+      ['直接试一个方案，看能否推动变化', 'red', 'orange'],
+      ['邀请别人一起讨论和分担', 'orange', 'yellow'],
+    ]),
+    scenarioQuestion('color-21', '生活节奏被打乱时，你会？', [
+      ['用新鲜活动换一个角度重新启动', 'yellow', 'purple'],
+      ['先恢复作息和环境的稳定', 'green', 'blue'],
+      ['把事情重新排出优先级和步骤', 'blue', 'green'],
+      ['写下感受，找回这段经历的意义', 'purple', 'yellow'],
+    ]),
+    scenarioQuestion('color-22', '团队需要做决定时，你倾向于？', [
+      ['提出明确选择并推动落地', 'red', 'orange'],
+      ['确保大家都愿意参与和表达', 'orange', 'yellow'],
+      ['提出一个打破惯性的第三方案', 'yellow', 'purple'],
+      ['总结共识，找到能持续执行的安排', 'green', 'blue'],
+    ]),
+    scenarioQuestion('color-23', '为自己安排休息时，你更看重？', [
+      ['安静整理思绪，减少信息干扰', 'blue', 'green'],
+      ['接触艺术、音乐或有审美的事物', 'purple', 'yellow'],
+      ['做一个有挑战的小目标', 'red', 'orange'],
+      ['和喜欢的人共享轻松时光', 'orange', 'yellow'],
+    ]),
+    scenarioQuestion('color-24', '想到下一阶段，你最希望？', [
+      ['拥有更多创造和尝试的空间', 'yellow', 'purple'],
+      ['生活关系稳定，也能慢慢成长', 'green', 'blue'],
+      ['建立更成熟可靠的方法和系统', 'blue', 'green'],
+      ['用鲜明的方式表达真正重要的东西', 'purple', 'yellow'],
+    ]),
   ],
   results: [
     { id: 'red', title: '红色行动者', description: '你偏爱清晰目标和直接行动，愿意在关键时刻推动事情向前。你的力量来自决断、勇气和看得见的进展。', keywords: ['果断', '行动力', '目标'], suggestion: '在加速之前多留一点倾听空间，会让行动获得更多支持。' },
@@ -137,3 +174,9 @@ export const colorPersonalityDefinition: AssessmentDefinition = {
   ],
   tieBreakOrder: ['red', 'orange', 'yellow', 'green', 'blue', 'purple'],
 };
+
+export const colorPersonalityDefinition = withAssessmentModes(
+  colorPersonalityDefinitionBase,
+  colorPersonalityDefinitionBase.questions.slice(0, 12).map((question) => question.id),
+  3,
+);

@@ -18,4 +18,12 @@ describe('pageMetadata', () => {
     expect(new Set(tools.map(item => item.title)).size).toBe(tools.length);
     expect(new Set(categories.map(item => item.description)).size).toBe(categories.length);
   });
+
+  it('builds page-specific keywords and browser theme hints', () => {
+    const brainGym = buildToolMetadata(TOOLS.find((tool) => tool.id === 'brain-gym')!);
+
+    expect(brainGym.keywords).toContain('脑力挑战台');
+    expect(brainGym.keywords).toContain('脑力小游戏');
+    expect(brainGym.themeColor).toBe('#f6eee2');
+  });
 });

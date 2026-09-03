@@ -4,6 +4,9 @@ import {
   buildLotteryPool,
   drawWinners,
   getWheelRotation,
+  getAvailableLotteryEntries,
+  getLotteryShareText,
+  LOTTERY_PRESETS,
   parseLotteryEntries,
 } from './lottery';
 
@@ -30,5 +33,20 @@ describe('lottery helpers', () => {
   it('returns an extra clockwise rotation that places the selected segment under the pointer', () => {
     expect(getWheelRotation(0, 4, 0, 4)).toBe(1755);
     expect(getWheelRotation(2, 8, 720, 3)).toBeGreaterThan(720);
+  });
+
+  it('exposes scenario presets and removes eliminated entries from later rounds', () => {
+    expect(LOTTERY_PRESETS.map((preset) => preset.id)).toEqual([
+      'classroom',
+      'party',
+      'tasks',
+    ]);
+    expect(getAvailableLotteryEntries(['A', 'B', 'A', 'C'], ['A'])).toEqual(['B', 'C']);
+  });
+
+  it('formats a compact share summary for a completed draw', () => {
+    expect(getLotteryShareText(['小红', '小明'], 'wheel', '20:18')).toBe(
+      '幸运转盘抽奖结果（20:18）\n第 1 名：小红\n第 2 名：小明',
+    );
   });
 });

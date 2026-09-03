@@ -6,6 +6,16 @@ import type { AnswerMap, AssessmentDefinition } from '../types';
 import { ASSESSMENT_DEFINITIONS } from '.';
 
 const expectedIds = [
+  'big-five-test',
+  'enneagram-test',
+  'attachment-style-test',
+  'love-language-test',
+  'career-interest-test',
+  'disc-test',
+  'procrastination-test',
+  'social-anxiety-test',
+  'learning-style-test',
+  'emotional-stability-test',
   'animal-personality-test',
   'color-personality-test',
   'life-energy-test',
@@ -16,6 +26,8 @@ const expectedIds = [
   'romantic-orientation-test',
   'intimacy-boundaries-test',
   'mbti-test',
+  'brain-power-test',
+  'intelligence-test',
 ];
 
 function answersFavoring(
@@ -35,7 +47,7 @@ function answersFavoring(
 }
 
 describe('complete assessment definition registry', () => {
-  it('contains exactly the ten expanded definitions with valid contracts', () => {
+  it('contains all assessment definitions with valid contracts', () => {
     expect(Object.keys(ASSESSMENT_DEFINITIONS).sort()).toEqual(expectedIds.sort());
     for (const definition of Object.values(ASSESSMENT_DEFINITIONS)) {
       expect(validateAssessmentDefinition(definition)).toEqual([]);
@@ -44,11 +56,17 @@ describe('complete assessment definition registry', () => {
     }
   });
 
-  it('keeps nine new tests at 18 questions and MBTI at 40', () => {
+  it('keeps complete question counts and exposes both test lengths', () => {
+    const expectedCounts: Record<string, number> = {
+      'mbti-test': 40,
+      'big-five-test': 25,
+      'enneagram-test': 27,
+      'love-language-test': 25,
+    };
     for (const definition of Object.values(ASSESSMENT_DEFINITIONS)) {
-      expect(definition.questions).toHaveLength(
-        definition.id === 'mbti-test' ? 40 : 18,
-      );
+      expect(definition.questions).toHaveLength(expectedCounts[definition.id] ?? 24);
+      expect(definition.variants?.quick?.questions.length).toBeLessThan(definition.questions.length);
+      expect(definition.variants?.complete?.questions).toEqual(definition.questions);
     }
   });
 
