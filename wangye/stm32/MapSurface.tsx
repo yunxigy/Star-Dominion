@@ -4,12 +4,6 @@ import AMapLoader from '@amap/amap-jsapi-loader';
 import type { DeviceRecord, MapTheme } from './types';
 import { deviceColor } from './telemetry';
 
-interface PositionSample {
-  latitude: number;
-  longitude: number;
-  altitude: number | null;
-}
-
 interface MapSurfaceProps {
   devices: Record<string, DeviceRecord>;
   selectedDeviceId: string | null;
@@ -20,7 +14,6 @@ interface MapSurfaceProps {
   onChangeTheme: (theme: MapTheme) => void;
   onClearPath: (deviceId: string) => void;
   onExportTrajectory: (deviceId: string, path: [number, number][]) => void;
-  onPositionChange: (device: DeviceRecord, previous: PositionSample | null) => void;
   onNotify: (message: string, type: 'success' | 'error' | 'info' | 'warning') => void;
 }
 
@@ -41,7 +34,6 @@ export function MapSurface({
   onChangeTheme,
   onClearPath,
   onExportTrajectory,
-  onPositionChange,
   onNotify,
 }: MapSurfaceProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -50,7 +42,6 @@ export function MapSurface({
   const markerRefsRef = useRef<Record<string, any>>({});
   const polylineRefsRef = useRef<Record<string, any>>({});
   const pathsRef = useRef<Record<string, [number, number][]>>({});
-  const previousPositionRef = useRef<Record<string, PositionSample | null>>({});
   const mapHasFittedRef = useRef(false);
   const mapConfigurationReportedRef = useRef(false);
 
@@ -140,13 +131,7 @@ export function MapSurface({
         || Math.abs(lastPosition[1] - position[1]) > 0.0000001;
       if (changed) {
         pathsRef.current[id] = [...currentPath.slice(-998), position];
-        onPositionChange(device, previousPositionRef.current[id] || null);
       }
-      previousPositionRef.current[id] = {
-        latitude: device.latitude as number,
-        longitude: device.longitude as number,
-        altitude: device.altitude,
-      };
 
       let polyline = polylineRefsRef.current[id];
       if (!polyline) {
@@ -178,7 +163,7 @@ export function MapSurface({
     if (isLocked && selected && Number.isFinite(selected.latitude) && Number.isFinite(selected.longitude)) {
       map.setCenter([selected.longitude as number, selected.latitude as number]);
     }
-  }, [devices, selectedDeviceId, isLocked, onPositionChange, onSelectDevice]);
+  }, [devices, selectedDeviceId, isLocked, onSelectDevice]);
 
   const clearSelectedPath = () => {
     if (!selectedDeviceId) {

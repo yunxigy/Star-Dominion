@@ -92,26 +92,8 @@ export default function Stm32Window() {
     }
   }, [acceptAlarmSettings, addNotification, dataSource]);
 
-  const handlePositionChange = useCallback((device: DeviceRecord, previous: { latitude: number; longitude: number; altitude: number | null } | null) => {
-    if (!previous || device.latitude === null || device.longitude === null) return;
-    const deltaLat = device.latitude - previous.latitude;
-    const deltaLon = device.longitude - previous.longitude;
-    const deltaAlt = (device.altitude || 0) - (previous.altitude || 0);
-    const point: DisplacementPoint = {
-      time: formatLogTime(Date.now()),
-      x: deltaLon * 111320 * Math.cos((device.latitude * Math.PI) / 180),
-      y: deltaLat * 111320,
-      z: deltaAlt,
-    };
-    setDisplacementHistoryByDevice((current) => ({
-      ...current,
-      [device.device_id]: [...(current[device.device_id] || []).slice(-29), point],
-    }));
-  }, []);
-
   const clearPath = useCallback((deviceId: string) => {
-    setDisplacementHistoryByDevice((current) => ({ ...current, [deviceId]: [] }));
-    addNotification(`[设备 ${deviceId}] 轨迹已清除`, 'info');
+    addNotification(`[设备 ${deviceId}] 地图轨迹已清除`, 'info');
   }, [addNotification]);
 
   const exportTrajectory = useCallback((deviceId: string, path: [number, number][]) => {
@@ -179,6 +161,11 @@ export default function Stm32Window() {
 
       if (hasDevicesSnapshot) setDevices(normalizedDevices);
       else if (entries.length > 0) setDevices((current) => ({ ...current, ...normalizedDevices }));
+      setDisplacementHistoryByDevice((current) => {
+        const next = hasDevicesSnapshot ? {} as Record<string, DisplacementPoint[]> : { ...current };
+        Object.values(normalizedDevices).forEach((device) => { next[device.device_id] = device.gnss?.history || []; });
+        return next;
+      });
       if (entries.length === 0) return;
 
       Object.values(normalizedDevices).forEach((device) => {
@@ -308,7 +295,6 @@ export default function Stm32Window() {
         onChangeTheme={setMapTheme}
         onClearPath={clearPath}
         onExportTrajectory={exportTrajectory}
-        onPositionChange={handlePositionChange}
         onNotify={addNotification}
       />
       <LeftTelemetryDock

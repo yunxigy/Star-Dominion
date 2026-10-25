@@ -15,6 +15,10 @@ from pathlib import Path
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from flask_sock import Sock
+from gnss_filter import GnssService
+
+GNSS_STATE_DIR = Path(os.environ.get('STM32_GNSS_STATE_DIR', '').strip() or Path(__file__).with_name('gnss_runtime'))
+gnss_service = GnssService(GNSS_STATE_DIR)
 
 
 def _environment_port(name, default):
@@ -442,6 +446,14 @@ def apply_device_message(device_id, payload, raw_line=None, now_ms=None, source_
             state['rtk_status'] = gngga_update['quality']
             state['satellites'] = gngga_update['satellites']
 
+        if NMEA_PATTERN.match(payload):
+            try:
+                state['gnss'] = gnss_service.update(device_id, payload, now_ms)
+            except ValueError:
+                state['gnss'] = {'algorithm': 'robust-adaptive-position-kf-v1',
+                                 'status': 'checkpoint_error', 'valid': False,
+                                 'history': [], 'persistence_error': True}
+
         environment_update = parse_environment_update(payload)
         if environment_update is not None:
             state['temperature'] = environment_update['temperature']
@@ -465,6 +477,9 @@ def build_data_snapshot(now_ms=None):
         age_ms = now_ms - last_seen_ms if last_seen_ms > 0 else -1
         state['data_age_ms'] = age_ms
         state['online'] = 0 <= age_ms < DEVICE_OFFLINE_MS
+        gnss_snapshot = gnss_service.snapshot(device_id, now_ms)
+        if gnss_snapshot is not None:
+            state['gnss'] = gnss_snapshot
         state['alarm'] = evaluate_cloud_alarm(state, now_ms)
         snapshot_devices[device_id] = state
 

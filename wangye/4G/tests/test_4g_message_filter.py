@@ -61,7 +61,11 @@ def load_4g_module():
 
     spec = importlib.util.spec_from_file_location("four_g", root / "4G.py")
     module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
+    sys.path.insert(0, str(root))
+    try:
+        spec.loader.exec_module(module)
+    finally:
+        sys.path.remove(str(root))
     return module
 
 
@@ -71,6 +75,9 @@ class MessageFilterTest(unittest.TestCase):
         cls.module = load_4g_module()
 
     def setUp(self):
+        self.gnss_directory = tempfile.TemporaryDirectory()
+        self.addCleanup(self.gnss_directory.cleanup)
+        self.module.gnss_service = self.module.GnssService(self.gnss_directory.name)
         for name in ("devices", "device_clients", "client_device_ids", "retired_clients"):
             collection = getattr(self.module, name, None)
             if hasattr(collection, "clear"):
@@ -93,6 +100,22 @@ class MessageFilterTest(unittest.TestCase):
 
     def _now_ms(self):
         return int(self.module.time.time() * 1000)
+
+    def test_snapshot_publishes_server_enu_once_and_expires_without_new_gnss(self):
+        from test_gnss_filter import gga
+        for k in range(20):
+            self.module.apply_device_message('1', gga(30000+4*k), now_ms=100000+4000*k)
+        snapshot = self.module.build_data_snapshot(now_ms=176000)['devices']['1']['gnss']
+        self.assertEqual(snapshot['sequence'], 20)
+        self.assertEqual(snapshot['status'], 'measured')
+        self.assertEqual(len(snapshot['history']), 20)
+        self.module.apply_device_message('1', gga(30076), now_ms=180000)
+        self.assertEqual(self.module.build_data_snapshot(now_ms=180000)['devices']['1']['gnss']['sequence'], 20)
+        self.module.apply_device_message('1', 'TEMP: 26.7 C, HUMI: 41.6 %', now_ms=190000)
+        expired = self.module.build_data_snapshot(now_ms=190000)['devices']['1']
+        self.assertTrue(expired['online'])
+        self.assertEqual(expired['gnss']['status'], 'expired')
+        self.assertIsNone(expired['gnss']['filtered_enu_mm'])
 
     def test_accepts_split_imu_lines_from_device(self):
         valid_lines = [

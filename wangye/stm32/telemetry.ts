@@ -1,4 +1,4 @@
-import type { AlarmCondition, AlarmData, AlarmMetric, DeviceRecord, DeviceMessage, GnggaData, ImuData } from './types';
+import type { AlarmCondition, AlarmData, AlarmMetric, DeviceRecord, DeviceMessage, GnggaData, ImuData, GnssDisplacement } from './types';
 
 export const QUALITY_COLORS: Record<string, string> = {
   '0': '#94a3b8',
@@ -176,6 +176,32 @@ export function normalizeAlarm(value: unknown): AlarmData | null {
   };
 }
 
+export function normalizeGnss(value: unknown): GnssDisplacement | null {
+  if (!value || typeof value !== 'object') return null;
+  const source = value as Record<string, any>;
+  const vector = (item: unknown): [number, number, number] | null => {
+    if (!Array.isArray(item) || item.length !== 3 || !item.every((n) => typeof n === 'number' && Number.isFinite(n))) return null;
+    return [item[0], item[1], item[2]];
+  };
+  const history = (Array.isArray(source.history) ? source.history : []).slice(-300).flatMap((point: any) => {
+    const raw = vector(point?.raw_enu_mm);
+    const filtered = vector(point?.filtered_enu_mm);
+    if (!raw || !filtered || typeof point.utc !== 'string') return [];
+    const utc = point.utc;
+    return [{ time: `${utc.slice(0, 2)}:${utc.slice(2, 4)}:${utc.slice(4, 6)} UTC`,
+      x: filtered[0] / 10, y: filtered[1] / 10, z: filtered[2] / 10,
+      raw_x: raw[0] / 10, raw_y: raw[1] / 10, raw_z: raw[2] / 10 }];
+  });
+  return {
+    status: String(source.status || 'no_data'), valid: source.valid === true,
+    reference_id: typeof source.reference_id === 'string' ? source.reference_id : null,
+    reference_progress: asFiniteNumber(source.reference_progress, 0),
+    reference_required: asFiniteNumber(source.reference_required, 20),
+    sequence: asFiniteNumber(source.sequence, 0), persistence_error: source.persistence_error === true,
+    filtered_enu_mm: vector(source.filtered_enu_mm), history,
+  };
+}
+
 export function normalizeDevice(id: string, value: unknown): DeviceRecord {
   const source = value && typeof value === 'object' ? value as Record<string, any> : {};
   const deviceId = String(source.device_id ?? id);
@@ -240,6 +266,7 @@ export function normalizeDevice(id: string, value: unknown): DeviceRecord {
     },
     alarm,
     messages,
+    gnss: normalizeGnss(source.gnss),
   };
 }
 

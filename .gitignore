@@ -18,6 +18,8 @@ venv/
 .env
 .env.production
 .runtime/
+4G/gnss_runtime/
+wangye/4G/gnss_runtime/
 
 # IDE
 .vscode/

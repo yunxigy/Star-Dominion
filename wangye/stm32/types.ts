@@ -76,9 +76,25 @@ export interface LogEntry {
 
 export interface DisplacementPoint {
   time: string;
+  // Fixed-reference ENU, in centimetres; x/y/z are filtered values.
   x: number;
   y: number;
   z: number;
+  raw_x?: number;
+  raw_y?: number;
+  raw_z?: number;
+}
+
+export interface GnssDisplacement {
+  status: string;
+  valid: boolean;
+  reference_id: string | null;
+  reference_progress: number;
+  reference_required: number;
+  sequence: number;
+  persistence_error: boolean;
+  filtered_enu_mm: [number, number, number] | null;
+  history: DisplacementPoint[];
 }
 
 export interface NotificationItem {
@@ -108,6 +124,7 @@ export interface DeviceRecord {
   imu: ImuData;
   alarm: AlarmData | null;
   messages: DeviceMessage[];
+  gnss?: GnssDisplacement | null;
 }
 
 export interface DeviceSnapshot {

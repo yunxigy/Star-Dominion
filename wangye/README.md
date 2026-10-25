@@ -9,7 +9,8 @@
 - 多台设备按数字 ID 独立保存状态。
 - 每台设备在地图上显示独立标记和轨迹。
 - 点击地图标记后，左侧面板同步切换到该设备。
-- 所有设备选择器共用一个当前设备：UM980、IMU、XYZ 位移、指令下发和 NMEA 监视器会同步切换。
+- 所有设备选择器共用一个当前设备：UM980、IMU、ENU 位移、指令下发和 NMEA 监视器会同步切换。
+- GNSS 位移由后端按设备处理：质量校验、固定参考点 ENU 转换和抗差自适应位置卡尔曼滤波。网页以厘米显示原始和滤波曲线，并标明参考建立、预测或过期状态。算法参数和更新步骤见 [GNSS 算法说明](4G/GNSS_ALGORITHM.md)。
 - UM980 面板使用 8 个位置：经度、纬度、海拔、定位状态、卫星数、温度、湿度，以及云端预警设置。
 - 预警由云端根据 JY901S 加速度 X/Y 和姿态角 X/Y/Z 的全局阈值计算，设备上报的旧 `ALARM:` 文本不会直接触发网页报警。
 - 左侧数据栏固定在一个视口内，不使用纵向滚动，也不显示旧的左上角常驻报警卡片。
@@ -30,7 +31,7 @@ wangye/
 │  ├─ AlarmSettingsCard.tsx  # 全局云端预警设置弹窗
 │  ├─ alarmSettings.ts       # 阈值归一化和启用状态
 │  ├─ ImuPanel.tsx           # IMU 数据
-│  ├─ DisplacementPanel.tsx  # XYZ 三轴位移曲线
+│  ├─ DisplacementPanel.tsx  # ENU 原始与滤波位移曲线
 │  ├─ AlertStack.tsx         # 旧组件，保留但新页面不渲染
 │  ├─ CommandPanel.tsx       # 指令下发
 │  ├─ NmeaPanel.tsx           # 原始数据/NMEA 监视器
@@ -40,6 +41,8 @@ wangye/
 │  └─ types.ts               # 前端共享类型
 ├─ 4G/
 │  ├─ 4G.py                  # Flask + WebSocket + TCP 服务
+│  ├─ gnss_filter.py         # 按设备保存参考与状态的 GNSS 处理模块
+│  ├─ GNSS_ALGORITHM.md      # 当前算法参数与部署说明
 │  ├─ requirements.txt       # Python 依赖
 │  └─ tests/                 # 后端协议和多设备测试
 └─ tests/                    # 前端源码契约测试
@@ -180,6 +183,8 @@ python 4G.py
 ```
 
 不要使用 Flask 开发服务器替代 `python 4G.py`。`4G.py` 启动时还会创建设备 TCP 服务和 WebSocket 服务。
+
+更新时同时替换 `4G.py` 和 `gnss_filter.py`，保留 `gnss_runtime/` 持久化目录；可用 `STM32_GNSS_STATE_DIR` 指定目录。每个设备只由一个后端实例计算状态，浏览器共享计算结果。刷新网页或清除地图轨迹不会改变位移零点。
 
 ## 7. 网站反向代理
 
