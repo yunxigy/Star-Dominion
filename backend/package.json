@@ -1,0 +1,14 @@
+{
+  "name": "vending-cabinet-backend",
+  "version": "1.0.0",
+  "description": "售水柜后端：设备TCP(9001) + 小程序HTTP(38080) + 标定与取货识别",
+  "type": "module",
+  "main": "server.mjs",
+  "scripts": {
+    "start": "node server.mjs",
+    "test": "node test-all.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

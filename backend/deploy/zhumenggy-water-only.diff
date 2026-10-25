@@ -1,0 +1,29 @@
+--- original-pasted-server.conf
++++ zhumenggy-server-with-water.conf
+@@ -52,6 +52,26 @@
+     include /www/server/panel/vhost/rewrite/110.40.174.239.conf;
+     #REWRITE-END
+
++    # WATER-ONLY-START
++    # Vending cabinet: /water/api/status -> 127.0.0.1:38080/api/status
++    location = /water {
++        return 301 /water/;
++    }
++
++    location ^~ /water/ {
++        # The trailing slash strips /water/ and preserves upstream /api/.
++        proxy_pass http://127.0.0.1:38080/;
++        proxy_http_version 1.1;
++        proxy_set_header Host $host;
++        proxy_set_header X-Real-IP $remote_addr;
++        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
++        proxy_set_header X-Forwarded-Proto $scheme;
++        proxy_connect_timeout 5s;
++        proxy_read_timeout 15s;
++        client_max_body_size 16k;
++    }
++    # WATER-ONLY-END
++
+     # ========================================================
+     # 安全防御
+     # ========================================================
