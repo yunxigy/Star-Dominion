@@ -4,10 +4,11 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
-$workspaceRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '../../..')).Path
 $platformRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
 . (Join-Path $PSScriptRoot 'local-services.ps1')
 $manifestPath = Get-LocalServiceManifestPath -ScriptRoot $PSScriptRoot
+$manifest = Get-LocalServiceManifest -Path $manifestPath
+$workspaceRoot = Get-LocalWorkspaceRoot -ManifestPath $manifestPath -Manifest $manifest
 $runtimeRoot = Join-Path $platformRoot '.runtime'
 $logRoot = Join-Path $runtimeRoot 'logs'
 $envFile = Join-Path $platformRoot '.env.local'
@@ -114,7 +115,6 @@ function Start-ManagedService($Service) {
     Write-Host ("START {0,-17} PID {1}" -f $Service.name, $process.Id)
 }
 
-$manifest = Get-LocalServiceManifest -Path $manifestPath
 Import-LocalEnvironment
 New-Item -ItemType Directory -Force -Path $runtimeRoot, $logRoot | Out-Null
 if (@($manifest.services.name) -contains 'stock-hub') {
@@ -122,7 +122,7 @@ if (@($manifest.services.name) -contains 'stock-hub') {
         $env:STOCK_XHS_MCP_COMMAND = 'npx.cmd -y rednote-mcp@0.2.3 --stdio'
     }
     if ([string]::IsNullOrWhiteSpace($env:STOCK_XHS_DATA_DIR)) {
-        $env:STOCK_XHS_DATA_DIR = Join-Path $workspaceRoot '股票/stock-module/data/xhs-mcp'
+        $env:STOCK_XHS_DATA_DIR = Join-Path $workspaceRoot '股票/data/xhs-mcp'
     }
     if (-not [System.IO.Path]::IsPathRooted($env:STOCK_XHS_DATA_DIR)) {
         $env:STOCK_XHS_DATA_DIR = Join-Path $workspaceRoot $env:STOCK_XHS_DATA_DIR
@@ -136,4 +136,4 @@ $services = @($manifest.services | Where-Object {
 })
 
 foreach ($service in $services) { Start-ManagedService $service }
-Write-Host 'Local services launched. Run 工具箱/平台管理/scripts/check-local.ps1 after startup completes.'
+Write-Host 'Local services launched. Run 平台管理/scripts/check-local.ps1 after startup completes.'

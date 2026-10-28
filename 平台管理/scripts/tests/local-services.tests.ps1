@@ -14,7 +14,7 @@ Describe 'local service manifest' {
         $manifest = Get-LocalServiceManifest -Path (Join-Path (Join-Path $PSScriptRoot '..') 'local-services.json')
         @($manifest.services).Count | Should Be 6
         foreach ($service in $manifest.services) {
-            $service.working_directory | Should Match '^工具箱/'
+            ($service.working_directory -like '工具箱/*') | Should Be $false
         }
     }
 
@@ -36,6 +36,16 @@ Describe 'local service manifest' {
         }
     }
 
+    It 'resolves public services from the toolbox repository root' {
+        $path = Join-Path (Join-Path $PSScriptRoot '..') 'local-services.json'
+        $manifest = Get-LocalServiceManifest -Path $path
+        $root = Get-LocalWorkspaceRoot -ManifestPath $path -Manifest $manifest
+        foreach ($service in $manifest.services) {
+            (Test-Path -LiteralPath (Join-Path $root $service.working_directory) -PathType Container) | Should Be $true
+        }
+        (Test-Path -LiteralPath (Join-Path $root 'SD/package.json') -PathType Leaf) | Should Be $true
+    }
+
     It 'runs the in-memory video service as one worker on 8011' {
         $manifest = Get-LocalServiceManifest -Path (Join-Path (Join-Path $PSScriptRoot '..') 'local-services.json')
         $video = @($manifest.services | Where-Object { $_.name -eq 'video-downloader' })
@@ -50,7 +60,7 @@ Describe 'local service manifest' {
         $service = @($manifest.services | Where-Object { $_.name -eq 'webmaster-inspector' })
         $service.Count | Should Be 1
         (@($service[0].ports) -contains 8012) | Should Be $true
-        [string]$service[0].working_directory | Should Be '工具箱/webmaster-inspector'
+        [string]$service[0].working_directory | Should Be 'webmaster-inspector'
         [string]$service[0].health_url | Should Be 'http://127.0.0.1:8012/health'
         ($service[0].arguments -join ' ') | Should Match '--workers 1'
     }

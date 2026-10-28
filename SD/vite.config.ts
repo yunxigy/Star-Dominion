@@ -5,10 +5,10 @@ import { resolve } from 'node:path';
 import { existsSync } from 'node:fs';
 
 const frontendRoot = fileURLToPath(new URL('.', import.meta.url));
-const repositoryRoot = resolve(frontendRoot, '../..');
+const workspaceRoot = resolve(frontendRoot, '../..');
 const standalone = process.env.GP_STANDALONE === '1';
 const optionalModule = (localPath: string, fallbackPath: string) => {
-  const candidate = resolve(repositoryRoot, localPath);
+  const candidate = resolve(workspaceRoot, localPath);
   return !standalone && existsSync(candidate) ? candidate : resolve(frontendRoot, fallbackPath);
 };
 const moduleAliases = [
@@ -50,8 +50,8 @@ export default defineConfig({
     fs: {
       allow: [
         frontendRoot,
-        resolve(repositoryRoot, 'STM32上位机/frontend'),
-        resolve(repositoryRoot, '登录/frontend'),
+        resolve(workspaceRoot, 'STM32上位机/frontend'),
+        resolve(workspaceRoot, '登录/frontend'),
       ],
     },
     proxy: {

@@ -2,7 +2,7 @@
 server {
     listen 80;
     server_name example.com;
-    root /www/wwwroot/Star-Dominion/工具箱/SD/dist;
+    root /www/wwwroot/Star-Dominion/SD/dist;
     index index.html;
 
     location ~ /\. { deny all; }

@@ -4,11 +4,11 @@
 
 ## 本地运行
 
-在仓库根目录配置 `.env.local` 后，推荐随全站启动：
+在仓库根目录的 `平台管理/` 中配置 `.env.local` 后，推荐随全站启动：
 
 ```powershell
-.\scripts\start-local.ps1
-.\scripts\check-local.ps1
+.\平台管理\scripts\start-local.ps1
+.\平台管理\scripts\check-local.ps1
 ```
 
 单独运行服务：
@@ -71,7 +71,7 @@ $env:RESEARCH_REPORTS_AI_MODEL='deepseek-v4-flash'
 
 Cloudflare Worker 负责读取 X 公开动态并调用 Gemini；本服务只负责校验、幂等保存和向前端提供最新批次。Worker 与本服务之间通过 HTTPS 发送数据，Gemini Key 不会经过本服务或浏览器。
 
-在根目录 `.env.local` 配置 `RESEARCH_REPORTS_X_INGEST_TOKEN`，并在 Cloudflare Worker 的 `SITE_PUSH_TOKEN` 中配置同一个随机强 Token。该项可留空，不影响旧功能；未配置时写入接口会 fail closed 并返回 503。请勿把 Token 放入前端变量或提交到 Git。
+在 `平台管理/.env.local` 配置 `RESEARCH_REPORTS_X_INGEST_TOKEN`，并在 Cloudflare Worker 的 `SITE_PUSH_TOKEN` 中配置同一个随机强 Token。该项可留空，不影响旧功能；未配置时写入接口会 fail closed 并返回 503。请勿把 Token 放入前端变量或提交到 Git。
 
 - `POST /api/v1/ingest/x`：需要 `Authorization: Bearer <token>` 和 `X-Idempotency-Key`；只接受 HTTPS 原文链接，单批请求体上限 1 MiB。数据验证、动态写入和报告写入在同一个 SQLite 事务中完成。
 - `GET /api/v1/x-events/latest`：公开读取最新一次 Gemini 批次及其关联动态；空库返回 `{"report":null,"posts":[]}`。它与旧的 `/api/v1/news/social-events` 是不同数据源，前端“社交大事”使用这个专属摘要接口。

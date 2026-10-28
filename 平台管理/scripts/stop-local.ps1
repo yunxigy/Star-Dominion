@@ -2,11 +2,11 @@
 param()
 
 $ErrorActionPreference = 'Stop'
-$workspaceRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '../../..')).Path
 $platformRoot = (Resolve-Path -LiteralPath (Join-Path $PSScriptRoot '..')).Path
 . (Join-Path $PSScriptRoot 'local-services.ps1')
 $manifestPath = Get-LocalServiceManifestPath -ScriptRoot $PSScriptRoot
 $manifest = Get-LocalServiceManifest -Path $manifestPath
+$workspaceRoot = Get-LocalWorkspaceRoot -ManifestPath $manifestPath -Manifest $manifest
 $runtimeRoot = Join-Path $platformRoot '.runtime'
 if (-not (Test-Path -LiteralPath $runtimeRoot -PathType Container)) {
     Write-Host 'No managed local processes are recorded.'

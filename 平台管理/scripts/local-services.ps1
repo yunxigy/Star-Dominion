@@ -44,3 +44,10 @@ function Get-LocalServiceManifestPath {
     if (Test-Path -LiteralPath $privatePath -PathType Leaf) { return $privatePath }
     return (Join-Path $ScriptRoot 'local-services.json')
 }
+
+function Get-LocalWorkspaceRoot {
+    param([Parameter(Mandatory = $true)][string]$ManifestPath,
+          [Parameter(Mandatory = $true)]$Manifest)
+    $relative = if ($Manifest.PSObject.Properties['workspace_root']) { [string]$Manifest.workspace_root } else { '../..' }
+    return (Resolve-Path -LiteralPath (Join-Path (Split-Path -Parent $ManifestPath) $relative)).Path
+}

@@ -3,7 +3,7 @@
   "services": [
     {
       "name": "plagiarism",
-      "working_directory": "工具箱/plagiarism",
+      "working_directory": "plagiarism",
       "executable": "python",
       "arguments": [
         "main.py"
@@ -15,7 +15,7 @@
     },
     {
       "name": "research-reports",
-      "working_directory": "工具箱/research-reports",
+      "working_directory": "research-reports",
       "executable": "python",
       "arguments": [
         "-m",
@@ -34,7 +34,7 @@
     },
     {
       "name": "document-converter",
-      "working_directory": "工具箱/document-converter",
+      "working_directory": "document-converter",
       "executable": "python",
       "arguments": [
         "-m",
@@ -52,7 +52,7 @@
     },
     {
       "name": "video-downloader",
-      "working_directory": "工具箱/video-downloader",
+      "working_directory": "video-downloader",
       "executable": "python",
       "arguments": [
         "-m",
@@ -72,7 +72,7 @@
     },
     {
       "name": "webmaster-inspector",
-      "working_directory": "工具箱/webmaster-inspector",
+      "working_directory": "webmaster-inspector",
       "executable": "python",
       "arguments": [
         "-m",
@@ -92,7 +92,7 @@
     },
     {
       "name": "sd-frontend",
-      "working_directory": "工具箱/SD",
+      "working_directory": "SD",
       "executable": "node",
       "arguments": [
         "node_modules/vite/bin/vite.js",
@@ -107,5 +107,6 @@
       "health_url": "http://127.0.0.1:8013/",
       "frontend": true
     }
-  ]
+  ],
+  "workspace_root": "../.."
 }
