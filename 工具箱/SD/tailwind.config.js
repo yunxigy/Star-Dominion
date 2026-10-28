@@ -1,0 +1,22 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./{App,pages,components,layouts,tools,lib,scripts}/**/*.{js,ts,jsx,tsx}",
+    "../../STM32上位机/frontend/{pages,lib}/**/*.{js,ts,jsx,tsx}",
+    "../../登录/frontend/{pages,context,lib}/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {
+      animation: {
+        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+      },
+      fontFamily: {
+        'art': ['Ma Shan Zheng', 'cursive'],
+        'wild': ['Zhi Mang Xing', 'cursive'],
+        'cang': ['Long Cang', 'cursive'],
+      }
+    },
+  },
+  plugins: [],
+}

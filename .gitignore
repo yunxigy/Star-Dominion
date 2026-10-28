@@ -1,14 +1,17 @@
 # Dependencies
 node_modules/
+工具箱/node_modules/
 
 # Build output
 dist/
 static/
-SD/public/vendor/mediapipe/wasm/
+工具箱/SD/public/vendor/mediapipe/wasm/
 
 # Python
 __pycache__/
 .pytest_cache/
+.runtime/
+工具箱/平台管理/.pytest_cache/
 *.egg-info/
 *.pyc
 *.pyo
@@ -17,9 +20,9 @@ __pycache__/
 venv/
 .env
 .env.production
-.runtime/
-4G/gnss_runtime/
-wangye/4G/gnss_runtime/
+工具箱/平台管理/原运行记录/
+STM32上位机/4G/gnss_runtime/
+STM32上位机/wangye/4G/gnss_runtime/
 
 # IDE
 .vscode/
@@ -31,10 +34,10 @@ wangye/4G/gnss_runtime/
 **/.agents/
 **/design-qa*.png
 **/design-qa.md
-docs/superpowers/plans/
-docs/superpowers/specs/
-SD/docs/superpowers/plans/
-SD/docs/superpowers/specs/
+工具箱/平台管理/docs/历史资料/superpowers/plans/
+工具箱/平台管理/docs/历史资料/superpowers/specs/
+工具箱/SD/docs/superpowers/plans/
+工具箱/SD/docs/superpowers/specs/
 
 # OS
 .DS_Store
@@ -45,7 +48,7 @@ desktop.ini
 *.log
 *.log.*
 npm-debug.log*
-logs/
+工具箱/平台管理/logs/
 **/logs/
 **/backend_err.log
 **/启动日志.txt
@@ -57,20 +60,21 @@ logs/
 
 # Env files
 .env.local
+工具箱/平台管理/.env.local
 .env.*.local
 
 # 守岸人数据目录（含 API Key）
-守岸人3.0/data/
-site-auth/data/
-stock-research-package/stock-module/data/
-stock-research-package/upstreams/
-stock-research-package/*.xlsx
-stock-research-package/*.docx
-research-reports/data/
-research-reports/cache/
+AI陪伴/守岸人3.0/data/
+登录/data/
+股票/stock-module/data/
+股票/upstreams/
+股票/*.xlsx
+股票/*.docx
+工具箱/research-reports/data/
+工具箱/research-reports/cache/
 
 # SillyTavern（第三方项目，不提交）
-SillyTavern/
+AI陪伴/SillyTavern/
 
 # Openwrite 小说运行时数据（不提交）
 Openwrite-main/data/novels/*/data/manuscript/
@@ -101,3 +105,29 @@ Openwrite-main/src/story/
 *.zip
 *.tar.gz
 风格参考小说/
+
+# Six-module local state and preserved runtime records
+工具箱/平台管理/原运行记录/
+OpenWrite/Openwrite-mainV2/.openwrite-runtime/
+工具箱/平台管理/.joycode/
+STM32上位机/backend/data/
+登录/data/
+AI陪伴/守岸人3.0/data/
+股票/stock-module/data/
+工具箱/research-reports/data/
+工具箱/research-reports/cache/
+OpenWrite/OpenWriteNovels/**/data/
+OpenWrite/Openwrite-mainV2/.env
+
+# Independent local repositories and private modules (never publish via Star-Dominion)
+/AI陪伴/
+/STM32上位机/
+/股票/
+/OpenWrite/
+/登录/
+工具箱/平台管理/scripts/local-services.private.json
+工具箱/平台管理/.env.*.private.example
+工具箱/平台管理/原项目说明.md
+工具箱/平台管理/docs/历史资料/
+工具箱/平台管理/docs/目录迁移计划.md
+工具箱/平台管理/docs/目录迁移验证.md

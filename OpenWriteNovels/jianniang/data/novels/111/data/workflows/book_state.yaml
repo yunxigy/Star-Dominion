@@ -1,9 +1,0 @@
-novel_id: '111'
-stage: chapter_preflight
-current_arc: ''
-current_section: ''
-current_chapter: ch_002
-pending_confirmation: ''
-blocking_reason: ''
-last_agent_action: review_review_passed
-last_handoff_from: ''
